@@ -40,8 +40,8 @@ export default function SignUpForm() {
   return (
     <>
       <h4 className="text-2xl font-bold">Create An Account</h4>
-      <form onSubmit={formik.handleSubmit}>
-
+      <form onSubmit={formik.handleSubmit} className="">
+        <Input type="email" variant="bordered" color="primary" label="Email" />
       </form>
     </>
   )
