@@ -4,7 +4,8 @@ import { useState } from "react"
 import { useFormik } from "formik"
 import * as Yup from 'yup';
 import {
-  Input
+  Input,
+  Button
 } from "@nextui-org/react";
 
 import { EyeSlashFilledIcon } from "@/app/icons/EyeSlashFilledIcon"
@@ -19,7 +20,7 @@ export default function SignUpForm() {
   const [ isPasswordVisible, setIsPasswordVisible ] = useState(false)
   const initialValues: ISignUp = {email: '', username: '', password: '', rePassword: ''}
 
-  const signUp = (e: ISignUp) => {}
+  const signUp = (e: ISignUp) => { console.log(e) }
   const formik = useFormik({
     initialValues,
     validationSchema: Yup.object({
@@ -33,7 +34,7 @@ export default function SignUpForm() {
       rePassword: Yup.string().required("Please re-type your password").oneOf([Yup.ref("password")], "Passwords does not match")
       
     }),
-    onSubmit: values => { console.log(values) }
+    onSubmit: signUp
   })
 
   return (
@@ -81,6 +82,12 @@ export default function SignUpForm() {
           {...formik.getFieldProps('rePassword')}
           errorMessage={formik.touched.rePassword && formik.errors.rePassword}
         />
+        <Button 
+          type="submit"
+          isDisabled={!(formik.isValid && formik.dirty)}
+        >
+          Sign Up
+        </Button>
       </form>
     </div>
   )
