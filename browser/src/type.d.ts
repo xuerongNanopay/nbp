@@ -4,3 +4,40 @@ interface ISignUp {
   password: string,
   rePassword: string,
 }
+
+interface ISignIn {
+  email: string
+  password: string
+}
+
+interface IEmailVerify {
+  code: string
+}
+
+interface IForgetPassword {
+  code: string
+}
+
+interface IUserOnboarding {
+  firstName: string,
+  middleName?: string,
+  lastName: string,
+  address1: string,
+  address2: string,
+  city: string,
+  province: string,
+  contry: string,
+  postalCode: string,
+  dob: string
+}
+
+interface ITransfer {
+
+}
+
+interface ITransferQuote {
+
+}
+
+interface IContact {
+}
