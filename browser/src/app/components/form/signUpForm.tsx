@@ -84,6 +84,7 @@ export default function SignUpForm() {
         />
         <Button 
           type="submit"
+          color="primary"
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Sign Up

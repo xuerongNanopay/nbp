@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss'
 import { nextui } from '@nextui-org/react';
+import CUSTOMIZE_NEXTUI_THEME from './theme';
 
 const config: Config = {
   content: [
@@ -12,6 +13,6 @@ const config: Config = {
     extend: {},
   },
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [nextui(CUSTOMIZE_NEXTUI_THEME)],
 }
 export default config
