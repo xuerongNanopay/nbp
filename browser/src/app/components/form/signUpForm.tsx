@@ -1,23 +1,22 @@
 'use client'
 
+import { useState } from "react"
 import { useFormik } from "formik"
 import * as Yup from 'yup';
 import {
   Input
 } from "@nextui-org/react";
 
-interface ISignUp {
-  email: string,
-  username: string,
-  password: string,
-  rePassword: string,
-}
+import { EyeSlashFilledIcon } from "@/app/icons/EyeSlashFilledIcon"
+import { EyeFilledIcon } from "@/app/icons/EyeFilledIcon"
+
 
 const getCharacterValidationError = (str: string) => {
   return `Your password must have at least 1 ${str} character`;
 };
 
 export default function SignUpForm() {
+  const [ isPasswordVisible, setIsPasswordVisible ] = useState(false)
   const initialValues: ISignUp = {email: '', username: '', password: '', rePassword: ''}
 
   const signUp = (e: ISignUp) => {}
@@ -40,7 +39,7 @@ export default function SignUpForm() {
   return (
     <div className="max-w-sm">
       <h4 className="text-2xl font-bold mb-4">Create An Account</h4>
-      <form onSubmit={formik.handleSubmit} className="flex flex-col gap-2">
+      <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Input
           id="email"
           type="email" 
@@ -56,6 +55,31 @@ export default function SignUpForm() {
           label="Username"
           {...formik.getFieldProps('username')}
           errorMessage={formik.touched.username && formik.errors.username}
+        />
+        <Input
+          id="password"
+          label="Password"
+          variant="bordered"
+          endContent={
+            <button className="focus:outline-none" type="button" onClick={() =>setIsPasswordVisible(pre => !pre)}>
+              {isPasswordVisible ? (
+                <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+              ) : (
+                <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+              )}
+            </button>
+          }
+          type={isPasswordVisible ? "text" : "password"}
+          {...formik.getFieldProps('password')}
+          errorMessage={formik.touched.password && formik.errors.password}
+        />
+        <Input
+          id="rePassword"
+          label="Re-Password"
+          variant="bordered"
+          type="password"
+          {...formik.getFieldProps('rePassword')}
+          errorMessage={formik.touched.rePassword && formik.errors.rePassword}
         />
       </form>
     </div>
