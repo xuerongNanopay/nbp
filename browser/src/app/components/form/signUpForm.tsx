@@ -38,11 +38,11 @@ export default function SignUpForm() {
   })
 
   return (
-    <>
+    <div className="max-w-sm">
       <h4 className="text-2xl font-bold mb-4">Create An Account</h4>
       <form onSubmit={formik.handleSubmit}>
         <Input type="email" variant="bordered" color="primary" label="Email" />
       </form>
-    </>
+    </div>
   )
 }
