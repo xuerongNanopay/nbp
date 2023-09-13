@@ -38,7 +38,7 @@ export default function EmailVerifyForm() {
           color="primary"
           size="sm"
           placeholder="Please enter the 6-digit code"
-          className="text-center placeholder:text-center"
+          className="text-center"
           {...formik.getFieldProps('code')}
           errorMessage={formik.touched.code && formik.errors.code}
         />
