@@ -54,11 +54,11 @@ interface IContact {
 }
 
 interface ICashPickup {
-  transferMethod: string
+  transferMethod: string    //Cash Pickup
 }
 
 interface IBankTransfer {
-  transferMethod: string,
+  transferMethod: string,  //Bank Account
   bankName: string,
   branchNo?: string,
   accountNumber: string
