@@ -39,7 +39,7 @@ export default function SignUpForm() {
 
   return (
     <div className="max-w-sm">
-      <h4 className="text-2xl font-bold mb-4">Create An Account</h4>
+      <h4 className="text-2xl font-bold mb-6">Create An Account</h4>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Input
           id="email"
@@ -89,6 +89,7 @@ export default function SignUpForm() {
         <Button 
           type="submit"
           color="primary"
+          className="mt-4"
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Sign Up
