@@ -9,7 +9,8 @@ import {
 } from "@nextui-org/react"
 
 export default function ContactForm() {
-  const initialValues: IContact & (ICashPickup | IBankTransfer) = {
+  type NewContact = IContact & ICashPickup & IBankTransfer
+  const initialValues: NewContact = {
     firstName: '',
     middleName: '',
     lastName: '',
@@ -26,6 +27,8 @@ export default function ContactForm() {
     branchNo: '',
     accountNumber: ''
   }
+
+  const createContactHandler = (e: NewContact) => { console.log(e) }
 
   const formik = useFormik({
     initialValues,
