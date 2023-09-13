@@ -40,4 +40,26 @@ interface ITransferQuote {
 }
 
 interface IContact {
+  firstName: string,
+  middleName?: string,
+  lastName: string,
+  address1: string,
+  address2?: string,
+  city: string,
+  province: string,
+  contry: string,
+  postalCode?: string,
+  relationship: string,
+  phoneNumber?: string,
+}
+
+interface ICashPickup {
+  transferMethod: string
+}
+
+interface IBankTransfer {
+  transferMethod: string,
+  bankName: string,
+  branchNo?: string,
+  accountNumber: string
 }
