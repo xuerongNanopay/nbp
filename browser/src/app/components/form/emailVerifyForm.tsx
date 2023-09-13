@@ -2,13 +2,11 @@
 
 import { useState } from "react"
 import { useFormik } from "formik"
-import * as Yup from 'yup';
+import * as Yup from 'yup'
 import {
   Input,
   Button
-} from "@nextui-org/react";
-
-import React from 'react'
+} from "@nextui-org/react"
 
 export default function EmailVerifyForm() {
   const initialValues: IEmailVerify = {code: ''}

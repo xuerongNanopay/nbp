@@ -1,6 +1,7 @@
 import SignUpForm from "./components/form/signUpForm"
 import SignInForm from "./components/form/signInForm"
 import ForgetPasswrodForm from "./components/form/forgetPasswordForm"
+import ContactForm from "./components/form/contactForm"
 
 export default function Home() {
   return (
@@ -8,7 +9,8 @@ export default function Home() {
       <section className="w-96">
         {/* <SignUpForm></SignUpForm> */}
         {/* <SignInForm></SignInForm> */}
-        <ForgetPasswrodForm></ForgetPasswrodForm>
+        {/* <ForgetPasswrodForm></ForgetPasswrodForm> */}
+        <ContactForm></ContactForm>
       </section>
     </main>
   )
