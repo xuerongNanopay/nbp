@@ -47,6 +47,7 @@ export default function SignUpForm() {
           variant="bordered" 
           label="Email"
           color="primary"
+          size="sm"
           {...formik.getFieldProps('email')}
           errorMessage={formik.touched.email && formik.errors.email}
         />
@@ -56,6 +57,7 @@ export default function SignUpForm() {
           variant="bordered" 
           label="Username"
           color="primary"
+          size="sm"
           {...formik.getFieldProps('username')}
           errorMessage={formik.touched.username && formik.errors.username}
         />
@@ -73,6 +75,7 @@ export default function SignUpForm() {
               )}
             </button>
           }
+          size="sm"
           type={isPasswordVisible ? "text" : "password"}
           {...formik.getFieldProps('password')}
           errorMessage={formik.touched.password && formik.errors.password}
@@ -83,6 +86,7 @@ export default function SignUpForm() {
           variant="bordered"
           type="password"
           color="primary"
+          size="sm"
           {...formik.getFieldProps('rePassword')}
           errorMessage={formik.touched.rePassword && formik.errors.rePassword}
         />
@@ -90,6 +94,7 @@ export default function SignUpForm() {
           type="submit"
           color="primary"
           className="mt-4"
+          size="md"
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Sign Up

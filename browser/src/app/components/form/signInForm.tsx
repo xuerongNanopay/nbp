@@ -35,6 +35,7 @@ export default function SignInForm() {
           variant="bordered" 
           label="Email"
           color="primary"
+          size="sm"
           {...formik.getFieldProps('email')}
           errorMessage={formik.touched.email && formik.errors.email}
         />
@@ -43,6 +44,7 @@ export default function SignInForm() {
           label="Password"
           variant="bordered"
           color="primary"
+          size="sm"
           endContent={
             <button className="focus:outline-none" type="button" onClick={() =>setIsPasswordVisible(pre => !pre)}>
               {isPasswordVisible ? (
@@ -60,6 +62,7 @@ export default function SignInForm() {
           type="submit"
           color="primary"
           className="mt-4"
+          size="md"
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Sign In
