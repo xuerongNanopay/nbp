@@ -46,6 +46,7 @@ export default function SignUpForm() {
           type="email" 
           variant="bordered" 
           label="Email"
+          color="primary"
           {...formik.getFieldProps('email')}
           errorMessage={formik.touched.email && formik.errors.email}
         />
@@ -54,6 +55,7 @@ export default function SignUpForm() {
           type="text" 
           variant="bordered" 
           label="Username"
+          color="primary"
           {...formik.getFieldProps('username')}
           errorMessage={formik.touched.username && formik.errors.username}
         />
@@ -61,6 +63,7 @@ export default function SignUpForm() {
           id="password"
           label="Password"
           variant="bordered"
+          color="primary"
           endContent={
             <button className="focus:outline-none" type="button" onClick={() =>setIsPasswordVisible(pre => !pre)}>
               {isPasswordVisible ? (
@@ -79,6 +82,7 @@ export default function SignUpForm() {
           label="Re-Password"
           variant="bordered"
           type="password"
+          color="primary"
           {...formik.getFieldProps('rePassword')}
           errorMessage={formik.touched.rePassword && formik.errors.rePassword}
         />
