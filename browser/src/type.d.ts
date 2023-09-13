@@ -15,7 +15,7 @@ interface IEmailVerify {
 }
 
 interface IForgetPassword {
-  code: string
+  email: string
 }
 
 interface IUserOnboarding {
