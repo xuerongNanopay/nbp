@@ -28,9 +28,14 @@ interface IUserOnboarding {
   province: string,
   country: string,
   postalCode: string,
+  phoneNumber: string,
   dob: string,
-  etransfer: string,
-  phoneNumber: string
+  pob: string,
+  nationality: string,
+  occupation: string,
+  identityType: string,
+  identityNumber: string
+  etransfer: string
 }
 
 interface ITransfer {

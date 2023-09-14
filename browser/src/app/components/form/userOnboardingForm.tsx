@@ -14,18 +14,23 @@ import CARegion from "@/constants/ca-region"
 export default function userOnboardingForm() {
 
   const initialValues: IUserOnboarding = {
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    province: "",
-    country: "Canada",
-    postalCode: "",
-    dob: "",
-    etransfer: "",
-    phoneNumber: ""
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    province: '',
+    country: 'Canada',
+    postalCode: '',
+    phoneNumber: '',
+    dob: '',
+    pob: '',
+    nationality: '',
+    occupation: '',
+    identityType: '',
+    identityNumber: '',
+    etransfer: ''
   }
 
   const onboardingHandler = ( e: IUserOnboarding ) => {
@@ -178,6 +183,78 @@ export default function userOnboardingForm() {
           {...formik.getFieldProps('phoneNumber')}
           errorMessage={formik.touched.phoneNumber && formik.errors.phoneNumber}
         />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            id="dob"
+            type="text" 
+            variant="bordered" 
+            label="Date of Birth"
+            placeholder="YYYY-MM-DD"
+            color="primary"
+            size="sm"
+            {...formik.getFieldProps('dob')}
+            errorMessage={formik.touched.dob && formik.errors.dob}
+          />
+          <Input
+            id="pob"
+            type="text" 
+            variant="bordered" 
+            label="Place of Birth"
+            color="primary"
+            size="sm"
+            {...formik.getFieldProps('pob')}
+            errorMessage={formik.touched.pob && formik.errors.pob}
+          />
+          <Input
+            id="nationality"
+            type="text" 
+            variant="bordered" 
+            label="Nationality"
+            color="primary"
+            size="sm"
+            {...formik.getFieldProps('nationality')}
+            errorMessage={formik.touched.nationality && formik.errors.nationality}
+          />
+          <Input
+            id="occupation"
+            type="text" 
+            variant="bordered" 
+            label="Occupation"
+            color="primary"
+            size="sm"
+            {...formik.getFieldProps('occupation')}
+            errorMessage={formik.touched.occupation && formik.errors.occupation}
+          />
+          <Input
+            id="identityType"
+            type="text" 
+            variant="bordered" 
+            label="Identification Type"
+            color="primary"
+            size="sm"
+            {...formik.getFieldProps('identityType')}
+            errorMessage={formik.touched.identityType && formik.errors.identityType}
+          />
+          <Input
+            id="identityNumber"
+            type="text" 
+            variant="bordered" 
+            label="Identification Number"
+            color="primary"
+            size="sm"
+            {...formik.getFieldProps('identityNumber')}
+            errorMessage={formik.touched.identityNumber && formik.errors.identityNumber}
+          />
+        </div>
+        <Button 
+          type="submit"
+          color="primary"
+          className="mt-2"
+          size="md"
+          isDisabled={!(formik.isValid && formik.dirty)}
+        >
+          Submit
+        </Button>
       </form>
     </div>
   )
