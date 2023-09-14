@@ -10,6 +10,7 @@ import {
 } from "@nextui-org/react"
 
 import CARegion from "@/constants/ca-region"
+import IdentityType from "@/constants/IdentityType"
 
 export default function userOnboardingForm() {
 
