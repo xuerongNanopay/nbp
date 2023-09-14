@@ -71,13 +71,17 @@ export default function userOnboardingForm() {
                   const parsedDate = isDate(originalValue)
                     ? originalValue
                     : parse(originalValue, "yyyy-MM-dd", new Date());
-                  console.log(parsedDate)
                   return parsedDate;
                 })
                 .typeError('Invalid Format(eg: YYYY-MM-DD)')
                 .required('Required')
                 .max(eighteen_years_age, "You must be at least 18 years old to register")
-                .min(hundred_years_age, "You must be at less 100 years old to register")
+                .min(hundred_years_age, "You must be at less 100 years old to register"),
+      pob: Yup.string().trim().required('Required'),
+      nationality: Yup.string().trim().required('Required'),
+      occupation: Yup.string().trim().required('Required'),
+      identityType: Yup.string().trim().required('Required'),
+      identityNumber: Yup.string().trim().required('Required'),
     }),
     onSubmit: onboardingHandler
   })
