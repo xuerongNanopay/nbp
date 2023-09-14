@@ -28,7 +28,9 @@ interface IUserOnboarding {
   province: string,
   country: string,
   postalCode: string,
-  dob: string
+  dob: string,
+  etransfer: string,
+  phoneNumber: string
 }
 
 interface ITransfer {

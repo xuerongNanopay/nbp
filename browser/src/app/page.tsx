@@ -3,6 +3,7 @@ import SignInForm from "./components/form/signInForm"
 import ForgetPasswrodForm from "./components/form/forgetPasswordForm"
 import ContactForm from "./components/form/contactForm"
 import EmailVerifyForm from "./components/form/emailVerifyForm"
+import UserOnboardingForm from "./components/form/userOnboardingForm"
 
 export default function Home() {
   return (
@@ -11,7 +12,8 @@ export default function Home() {
         {/* <SignUpForm></SignUpForm> */}
         {/* <SignInForm></SignInForm> */}
         {/* <ForgetPasswrodForm></ForgetPasswrodForm> */}
-        <ContactForm></ContactForm>
+        {/* <ContactForm></ContactForm> */}
+        <UserOnboardingForm></UserOnboardingForm>
         {/* <EmailVerifyForm></EmailVerifyForm> */}
       </section>
     </main>

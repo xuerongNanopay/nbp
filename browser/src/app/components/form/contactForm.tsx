@@ -43,21 +43,21 @@ export default function ContactForm() {
   const formik = useFormik({
     initialValues,
     validationSchema: Yup.object({
-      firstName: Yup.string().required('Required'),
-      lastName: Yup.string().required('Required'),
-      addressLine1: Yup.string().required('Required'),
-      city: Yup.string().required('Required'),
-      province: Yup.string().required('Required'),
-      country: Yup.string().required('Required'),
-      relationship: Yup.string().required('Required'),
-      transferMethod: Yup.string().required('Required'),
-      bankName: Yup.string().when(['transferMethod'], {
+      firstName: Yup.string().trim().required('Required'),
+      lastName: Yup.string().trim().required('Required'),
+      addressLine1: Yup.string().trim().required('Required'),
+      city: Yup.string().trim().required('Required'),
+      province: Yup.string().trim().required('Required'),
+      country: Yup.string().trim().required('Required'),
+      relationship: Yup.string().trim().required('Required'),
+      transferMethod: Yup.string().trim().required('Required'),
+      bankName: Yup.string().trim().when(['transferMethod'], {
         is: (transferMethod: string) => transferMethod === 'bankAccount',
-        then:() => Yup.string().required('Required')
+        then:() => Yup.string().trim().required('Required')
       }),
-      accountOrIban: Yup.string().when(['transferMethod'], {
+      accountOrIban: Yup.string().trim().when(['transferMethod'], {
         is: 'bankAccount',
-        then: () => Yup.string().required('Required')
+        then: () => Yup.string().trim().required('Required')
       })
     }),
     onSubmit: createContactHandler
