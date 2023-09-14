@@ -61,5 +61,5 @@ interface IBankTransfer {
   transferMethod: string,  //Bank Account
   bankName: string,
   branchNo?: string,
-  accountNumber: string
+  accountOrIban: string
 }

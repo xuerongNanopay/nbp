@@ -11,6 +11,10 @@ import {
 } from "@nextui-org/react"
 
 import PKRegion from "@/constants/pk-region"
+import PersonalRelationship from "@/constants/personal-relationship"
+import TransferMethod from "@/constants/transferMethod"
+import PKBank from "@/constants/pk-bank"
+
 
 export default function ContactForm() {
   type NewContact = IContact & ICashPickup & IBankTransfer
@@ -29,7 +33,7 @@ export default function ContactForm() {
     transferMethod: '',
     bankName: '',
     branchNo: '',
-    accountNumber: ''
+    accountOrIban: ''
   }
 
   const createContactHandler = (e: NewContact) => { console.log(e) }
@@ -43,18 +47,16 @@ export default function ContactForm() {
       city: Yup.string().required('Required'),
       province: Yup.string().required('Required'),
       country: Yup.string().required('Required'),
-      // relationship: Yup.string().required('Required'),
-      // transferMethod: Yup.string().required('Required'),
-      // // @ts-ignore
-      // bankName: Yup.string().when(['transferMethod'], {
-      //   is: (transferMethod: string) => transferMethod === 'Bank Account',
-      //   then: Yup.string().required('Required')
-      // }),
-      // // @ts-ignore
-      // accountNumber: Yup.string().when(['transferMethod'], {
-      //   is: 'Bank Account',
-      //   then: Yup.string().required('Required')
-      // })
+      relationship: Yup.string().required('Required'),
+      transferMethod: Yup.string().required('Required'),
+      bankName: Yup.string().when(['transferMethod'], {
+        is: (transferMethod: string) => transferMethod === 'bankAccount',
+        then:() => Yup.string().required('Required')
+      }),
+      accountOrIban: Yup.string().when(['transferMethod'], {
+        is: 'bankAccount',
+        then: () => Yup.string().required('Required')
+      })
     }),
     onSubmit: createContactHandler
   })
@@ -169,6 +171,97 @@ export default function ContactForm() {
             errorMessage={formik.touched.postalCode && formik.errors.postalCode}
           />
         </div>
+        <Select
+          id="relationship"
+          name="relationship"
+          label="Relationship to Contact"
+          variant="bordered"
+          selectionMode="single"
+          // defaultSelectedKeys={[]}
+          selectedKeys={!formik.values.relationship ? [] : [formik.values.relationship]}
+          placeholder="Choose from personal relationship types"
+          color="primary"
+          size="sm"
+          onBlur={formik.handleBlur}
+          onChange={formik.handleChange}
+          errorMessage={formik.touched.relationship && formik.errors.relationship}
+        >
+          {PersonalRelationship.map((relationship) => (
+            <SelectItem key={relationship.id} value={relationship.id}>
+              {relationship.id}
+            </SelectItem>
+          ))}
+        </Select>
+        <Input
+          id="phoneNumber"
+          type="text" 
+          variant="bordered" 
+          label="Phone Number"
+          color="primary"
+          size="sm"
+          {...formik.getFieldProps('phoneNumber')}
+          errorMessage={formik.touched.phoneNumber && formik.errors.phoneNumber}
+        />
+
+        <Select
+          id="transferMethod"
+          name="transferMethod"
+          label="Transfer Method"
+          variant="bordered"
+          selectionMode="single"
+          // defaultSelectedKeys={[]}
+          selectedKeys={!formik.values.transferMethod ? [] : [formik.values.transferMethod]}
+          placeholder="Select Transfer Method"
+          color="primary"
+          size="sm"
+          onBlur={formik.handleBlur}
+          onChange={formik.handleChange}
+          errorMessage={formik.touched.transferMethod && formik.errors.transferMethod}
+        >
+          {TransferMethod.map((transferMethod) => (
+            <SelectItem key={transferMethod.id} value={transferMethod.id}>
+              {transferMethod.name}
+            </SelectItem>
+          ))}
+        </Select>
+
+        {
+          formik.values.transferMethod === 'bankAccount' &&
+          <>
+            <Select
+              id="bankName"
+              name="bankName"
+              label="Bank Name"
+              variant="bordered"
+              selectionMode="single"
+              // defaultSelectedKeys={[]}
+              selectedKeys={!formik.values.bankName ? [] : [formik.values.bankName]}
+              placeholder="Select Transfer Method"
+              color="primary"
+              size="sm"
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              errorMessage={formik.touched.bankName && formik.errors.bankName}
+            >
+              {PKBank.map((bank) => (
+                <SelectItem key={bank.id} value={bank.id}>
+                  {bank.name}
+                </SelectItem>
+              ))}
+            </Select>
+            <Input
+              id="accountOrIban"
+              type="text" 
+              variant="bordered" 
+              label="Account Number or IBAN"
+              color="primary"
+              size="sm"
+              {...formik.getFieldProps('accountOrIban')}
+              errorMessage={formik.touched.accountOrIban && formik.errors.accountOrIban}
+            />
+          </>
+        }
+
         <Button 
           type="submit"
           color="primary"
