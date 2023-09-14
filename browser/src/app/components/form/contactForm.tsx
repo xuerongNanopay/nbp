@@ -1,7 +1,6 @@
 'use client'
 
-import { useState } from "react"
-import { useFormik } from "formik"
+import { FormikHelpers, useFormik } from "formik"
 import * as Yup from 'yup'
 import {
   Input,
@@ -36,7 +35,10 @@ export default function ContactForm() {
     accountOrIban: ''
   }
 
-  const createContactHandler = (e: NewContact) => { console.log(e) }
+  const createContactHandler = (e: NewContact) => { 
+    console.log(e)
+    // formik.resetForm()
+  }
 
   const formik = useFormik({
     initialValues,
