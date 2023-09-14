@@ -47,25 +47,25 @@ export default function userOnboardingForm() {
   const formik = useFormik({
     initialValues,
     validationSchema: Yup.object({
-      // firstName: Yup.string().trim().required('Required'),
-      // lastName: Yup.string().trim().required('Required'),
-      // addressLine1: Yup.string().trim().required('Required'),
-      // city: Yup.string().trim().required('Required'),
-      // province: Yup.string().trim().required('Required'),
-      // country: Yup.string().trim().required('Required'),
-      // postalCode: Yup.string()
-      //                 .trim()
-      //                 .required('Required')
-      //                 .matches(
-      //                   /^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ] ?[0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$/, 
-      //                   "Invalid Format(eg: S4S 3E8)"
-      //                 ),
-      // phoneNumber: Yup.string()
-      //                 .required('Required')
-      //                 .matches(
-      //                   /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/, 
-      //                   "Invalid Format(eg: 111-111-1111)"
-      //                 ),
+      firstName: Yup.string().trim().required('Required'),
+      lastName: Yup.string().trim().required('Required'),
+      addressLine1: Yup.string().trim().required('Required'),
+      city: Yup.string().trim().required('Required'),
+      province: Yup.string().trim().required('Required'),
+      country: Yup.string().trim().required('Required'),
+      postalCode: Yup.string()
+                      .trim()
+                      .required('Required')
+                      .matches(
+                        /^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ] ?[0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$/, 
+                        "Invalid Format(eg: S4S 3E8)"
+                      ),
+      phoneNumber: Yup.string()
+                      .required('Required')
+                      .matches(
+                        /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/, 
+                        "Invalid Format(eg: 111-111-1111)"
+                      ),
       dob: Yup.date()
                 .transform((value, originalValue) => {
                   const parsedDate = isDate(originalValue)
@@ -82,6 +82,7 @@ export default function userOnboardingForm() {
       occupation: Yup.string().trim().required('Required'),
       identityType: Yup.string().trim().required('Required'),
       identityNumber: Yup.string().trim().required('Required'),
+      etransfer: Yup.string().email('Invalid email address').required('Required')
     }),
     onSubmit: onboardingHandler
   })
@@ -248,16 +249,27 @@ export default function userOnboardingForm() {
             {...formik.getFieldProps('occupation')}
             errorMessage={formik.touched.occupation && formik.errors.occupation}
           />
-          <Input
+          <Select
             id="identityType"
-            type="text" 
-            variant="bordered" 
-            label="Identification Type"
+            name="identityType"
+            label="Identity Type"
+            variant="bordered"
+            selectionMode="single"
+            // defaultSelectedKeys={[]}
+            selectedKeys={!formik.values.identityType ? [] : [formik.values.identityType]}
+            placeholder="please select Identity Type"
             color="primary"
             size="sm"
-            {...formik.getFieldProps('identityType')}
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
             errorMessage={formik.touched.identityType && formik.errors.identityType}
-          />
+          >
+            {IdentityType.map((idType) => (
+              <SelectItem key={idType.id} value={idType.id}>
+                {idType.name}
+              </SelectItem>
+            ))}
+          </Select>
           <Input
             id="identityNumber"
             type="text" 
@@ -269,6 +281,17 @@ export default function userOnboardingForm() {
             errorMessage={formik.touched.identityNumber && formik.errors.identityNumber}
           />
         </div>
+        <Input
+          id="etransfer"
+          type="text" 
+          variant="bordered" 
+          label="E-transfer Email"
+          placeholder="Please make sure you enable AUTO-DEPOSIT"
+          color="primary"
+          size="sm"
+          {...formik.getFieldProps('etransfer')}
+          errorMessage={formik.touched.etransfer && formik.errors.etransfer}
+        />
         <Button 
           type="submit"
           color="primary"
