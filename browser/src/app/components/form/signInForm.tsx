@@ -26,7 +26,7 @@ export default function SignInForm() {
   })
 
   return (
-    <div className="max-w-sm">
+    <div className="w-full max-w-sm">
       <h4 className="text-2xl font-bold mb-6 text-center">Welcome Back</h4>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Input

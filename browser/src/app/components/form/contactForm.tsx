@@ -52,10 +52,55 @@ export default function ContactForm() {
         then: Yup.string().required('Required')
       })
     }),
-    onSubmit: (e) => {}
+    onSubmit: createContactHandler
   })
 
   return (
-    <div>ContactForm</div>
+    <div className="w-full max-w-4xl">
+      <h4 className="text-2xl font-bold mb-6 text-center">Create a Contact</h4>
+      <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          <Input
+            id="firstName"
+            type="text" 
+            variant="bordered" 
+            label="FirstName"
+            color="primary"
+            size="sm"
+            {...formik.getFieldProps('firstName')}
+            errorMessage={formik.touched.firstName && formik.errors.firstName}
+          />
+          <Input
+            id="middleName"
+            type="text" 
+            variant="bordered" 
+            label="MiddleName"
+            color="primary"
+            size="sm"
+            {...formik.getFieldProps('middleName')}
+            errorMessage={formik.touched.middleName && formik.errors.middleName}
+          />
+                    <Input
+            id="lastName"
+            type="text" 
+            variant="bordered" 
+            label="LastName"
+            color="primary"
+            size="sm"
+            {...formik.getFieldProps('lastName')}
+            errorMessage={formik.touched.lastName && formik.errors.lastName}
+          />
+        </div>
+        <Button 
+          type="submit"
+          color="primary"
+          className="mt-2"
+          size="md"
+          isDisabled={!(formik.isValid && formik.dirty)}
+        >
+          Submit
+        </Button>
+      </form>
+    </div>
   )
 }

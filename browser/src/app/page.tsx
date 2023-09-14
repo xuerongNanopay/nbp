@@ -6,13 +6,13 @@ import EmailVerifyForm from "./components/form/emailVerifyForm"
 
 export default function Home() {
   return (
-    <main className="nbp min-h-screen grid place-content-center">
-      <section className="w-96">
+    <main className="nbp min-h-screen">
+      <section className="p-4 w-screen flex justify-center">
         {/* <SignUpForm></SignUpForm> */}
         {/* <SignInForm></SignInForm> */}
         {/* <ForgetPasswrodForm></ForgetPasswrodForm> */}
-        {/* <ContactForm></ContactForm> */}
-        <EmailVerifyForm></EmailVerifyForm>
+        <ContactForm></ContactForm>
+        {/* <EmailVerifyForm></EmailVerifyForm> */}
       </section>
     </main>
   )

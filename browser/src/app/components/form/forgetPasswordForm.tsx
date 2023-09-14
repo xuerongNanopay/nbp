@@ -22,7 +22,7 @@ export default function ForgetPasswrodForm() {
   })
 
   return (
-    <div className="max-w-sm">
+    <div className="w-full max-w-sm">
       <h4 className="text-2xl font-bold mb-6 text-center">Forget Password?</h4>
       <p className="text-base mb-6 text-center">Enter the email you used to create your account in order to reset your password.</p>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">

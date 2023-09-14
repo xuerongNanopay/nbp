@@ -38,7 +38,7 @@ export default function SignUpForm() {
   })
 
   return (
-    <div className="max-w-sm">
+    <div className="w-full max-w-sm">
       <h4 className="text-2xl font-bold mb-6 text-center">Create An Account</h4>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Input
