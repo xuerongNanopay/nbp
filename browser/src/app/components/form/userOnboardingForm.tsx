@@ -67,7 +67,7 @@ export default function userOnboardingForm() {
     <div className="w-full max-w-4xl">
       <h4 className="text-2xl font-bold mb-6 text-center">Let's Get to Know You!</h4>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <Input
             id="firstName"
             type="text" 
@@ -99,7 +99,7 @@ export default function userOnboardingForm() {
             errorMessage={formik.touched.lastName && formik.errors.lastName}
           />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             id="addressLine1"
             type="text" 
@@ -183,7 +183,7 @@ export default function userOnboardingForm() {
           {...formik.getFieldProps('phoneNumber')}
           errorMessage={formik.touched.phoneNumber && formik.errors.phoneNumber}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             id="dob"
             type="text" 
