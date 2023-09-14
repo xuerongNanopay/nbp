@@ -2,15 +2,21 @@
 
 import { useFormik } from "formik"
 import * as Yup from 'yup'
+import dayjs from "dayjs"
 import {
   Input,
   Button,
   Select, 
   SelectItem
 } from "@nextui-org/react"
+import { parse, isDate } from "date-fns";
 
 import CARegion from "@/constants/ca-region"
 import IdentityType from "@/constants/IdentityType"
+
+const eighteen_years_age = dayjs().subtract(18, 'year').format('YYYY-MM-DD')
+const hundred_years_age = dayjs().subtract(100, 'year').format('YYYY-MM-DD')
+
 
 export default function userOnboardingForm() {
 
@@ -41,25 +47,37 @@ export default function userOnboardingForm() {
   const formik = useFormik({
     initialValues,
     validationSchema: Yup.object({
-      firstName: Yup.string().trim().required('Required'),
-      lastName: Yup.string().trim().required('Required'),
-      addressLine1: Yup.string().trim().required('Required'),
-      city: Yup.string().trim().required('Required'),
-      province: Yup.string().trim().required('Required'),
-      country: Yup.string().trim().required('Required'),
-      postalCode: Yup.string()
-                      .trim()
-                      .required('Required')
-                      .matches(
-                        /^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ] ?[0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$/, 
-                        "Invalid Format(eg: S4S 3E8)"
-                      ),
-      phoneNumber: Yup.string()
-                      .required('Required')
-                      .matches(
-                        /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/, 
-                        "Invalid Format(eg: 111-111-1111)"
-                      )
+      // firstName: Yup.string().trim().required('Required'),
+      // lastName: Yup.string().trim().required('Required'),
+      // addressLine1: Yup.string().trim().required('Required'),
+      // city: Yup.string().trim().required('Required'),
+      // province: Yup.string().trim().required('Required'),
+      // country: Yup.string().trim().required('Required'),
+      // postalCode: Yup.string()
+      //                 .trim()
+      //                 .required('Required')
+      //                 .matches(
+      //                   /^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ] ?[0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$/, 
+      //                   "Invalid Format(eg: S4S 3E8)"
+      //                 ),
+      // phoneNumber: Yup.string()
+      //                 .required('Required')
+      //                 .matches(
+      //                   /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/, 
+      //                   "Invalid Format(eg: 111-111-1111)"
+      //                 ),
+      dob: Yup.date()
+                .transform((value, originalValue) => {
+                  const parsedDate = isDate(originalValue)
+                    ? originalValue
+                    : parse(originalValue, "yyyy-MM-dd", new Date());
+                  console.log(parsedDate)
+                  return parsedDate;
+                })
+                .typeError('Invalid Format(eg: YYYY-MM-DD)')
+                .required('Required')
+                .max(eighteen_years_age, "You must be at least 18 years old to register")
+                .min(hundred_years_age, "You must be at less 100 years old to register")
     }),
     onSubmit: onboardingHandler
   })
