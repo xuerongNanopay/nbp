@@ -4,7 +4,7 @@ export default function Home() {
       <h1 className="mt-12 mb-12 text-3xl text-center dark:text-white">
         Hello and Welcome &nbsp;
         <span className="whitespace-nowrap">
-          I'm <span className="font-bold">Dave</span>
+          I'm <span className="font-bold">XUE</span>
         </span>
       </h1>
     </main>
