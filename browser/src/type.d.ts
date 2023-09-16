@@ -43,7 +43,12 @@ interface ITransfer {
 }
 
 interface ITransferQuote {
-
+  sourceAcount: number,
+  destinationAccount: number,
+  sourceCurreccy: string,
+  destinationCurrency: string,
+  sourceAmount: number,
+  destinationAmount: number
 }
 
 interface IContact {
