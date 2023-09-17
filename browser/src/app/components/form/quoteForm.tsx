@@ -18,7 +18,7 @@ type prop  = {
 // Retrieve Currency from Account.
 // TODO: isDefault
 // TODO: getRoughRate
-export default function TransferForm() {
+export default function QuoteForm() {
   const sourceAccounts = [
     {
       id: '1',
@@ -217,7 +217,7 @@ export default function TransferForm() {
           size="md"
           isDisabled={!(formik.isValid && formik.dirty)}
         >
-          Send
+          Quote
         </Button>
       </form>
     </div>
