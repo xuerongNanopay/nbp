@@ -8,7 +8,7 @@ export default function Posts() {
       <h2 className="text-4xl font-bold dark:text-white/90">Blog</h2>
       <ul className="w-full">
         {
-          posts.map(post => (<ListItem post={post}></ListItem>))
+          posts.map(post => (<ListItem key={post.id} post={post}></ListItem>))
         }
       </ul>
     </section>
