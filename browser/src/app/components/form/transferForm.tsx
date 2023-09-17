@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useFormik } from "formik"
 import * as Yup from 'yup';
 import {
@@ -17,6 +17,7 @@ type prop  = {
 // User have to select account first.
 // Retrieve Currency from Account.
 // TODO: isDefault
+// TODO: getRoughRate
 export default function TransferForm() {
   const sourceAccounts = [
     {
@@ -42,6 +43,10 @@ export default function TransferForm() {
     }
   ]
 
+  const [showAmountInput, setShowAmountInput] = useState(false)
+  const [selectSourceAccout, setSelectSourceAccount ] = useState<IAccount|null>(null)
+  const [selectDestinationAccount, setSelectDestinationAccount ] = useState<IAccount|null>(null)
+
   const initialValues: ITransferQuote = {
     sourceAccountId: '',
     destinationAccountId: '',
@@ -61,6 +66,44 @@ export default function TransferForm() {
     }),
     onSubmit: transferQuoteHandler
   })
+
+  useEffect(() => {
+    if ( formik.touched.destinationAccountId && formik.touched.sourceAccountId ) {
+      if ( !formik.errors.destinationAccountId && !formik.errors.sourceAccountId ) {
+        setShowAmountInput(true)
+      } else {
+        setShowAmountInput(false)
+        formik.setFieldValue('sourceAmount', 0)
+        formik.setFieldValue('destinationAmount', 0)
+      }
+    }
+  }, 
+  [
+    formik.touched.destinationAccountId, 
+    formik.touched.sourceAccountId,
+    formik.errors.destinationAccountId,
+    formik.errors.sourceAccountId
+  ])
+
+  useEffect(() => {
+    const sourceAccount = sourceAccounts.find((account) => account.id == formik.values.sourceAccountId)
+    sourceAccount && setSelectSourceAccount(sourceAccount)
+    const destinationAccount = destinationAccounts.find((account) => account.id == formik.values.destinationAccountId)
+    destinationAccount && setSelectDestinationAccount(destinationAccount)
+  }, [
+    formik.values.destinationAccountId, 
+    formik.values.sourceAccountId,
+  ])
+
+  useEffect(() => {
+    //TODO: async function for rate
+    const rate = 3.4
+    const sourceAmount = Math.round(formik.values.sourceAmount * 100) / 100
+    const destinationAmount =  Math.round(sourceAmount * rate * 100) / 100
+    formik.setFieldValue('sourceAmount', sourceAmount)
+    formik.setFieldValue('destinationAmount', destinationAmount)
+  }, [formik.values.sourceAmount])
+
   return (
     <div className="w-full max-w-xl">
       <h4 className="text-2xl font-bold mb-6 text-center">Transaction Details</h4>
@@ -110,6 +153,63 @@ export default function TransferForm() {
             </SelectItem>
           ))}
         </Select>
+        <Input
+          id="sourceAmount"
+          type="number"
+          labelPlacement="outside"
+          disableAnimation={true}
+          variant="bordered"
+          label="You Send"
+          color="primary"
+          size="md"
+          placeholder="0.00"
+          step=".01"
+          startContent={
+            <div className="pointer-events-none flex items-center">
+              <span className="text-default-400 text-small">$</span>
+            </div>
+          }
+          endContent={
+            <div className="flex items-center">
+              <p className="outline-none border-0 bg-transparent text-default-400 text-small">
+                {
+                  selectSourceAccout && selectSourceAccout.currency
+                }
+              </p>
+            </div>
+          }
+          disabled={!showAmountInput}
+          {...formik.getFieldProps('sourceAmount')}
+          errorMessage={formik.touched.sourceAmount && formik.errors.sourceAmount}
+        />
+        <Input
+          id="destinationAmount"
+          type="number"
+          labelPlacement="outside"
+          disableAnimation={true}
+          variant="bordered"
+          label="Recipient Receives"
+          color="primary"
+          size="md"
+          placeholder="0.00"
+          disabled
+          startContent={
+            <div className="pointer-events-none flex items-center">
+              <span className="text-default-400 text-small">$</span>
+            </div>
+          }
+          endContent={
+            <div className="flex items-center">
+              <p className="outline-none border-0 bg-transparent text-default-400 text-small">
+                {
+                  selectDestinationAccount && selectDestinationAccount.currency
+                }
+              </p>
+            </div>
+          }
+          {...formik.getFieldProps('destinationAmount')}
+          errorMessage={formik.touched.destinationAmount && formik.errors.destinationAmount}
+        />
         <Button 
           type="submit"
           color="primary"
