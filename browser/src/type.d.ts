@@ -94,3 +94,15 @@ interface IBankTransfer {
   branchNo?: string,
   accountOrIban: string
 }
+
+interface ITransaction {
+  receiver: string,
+  receiveAmount: string,
+  receiveCurrency: string,
+  totalCost: string,
+  status: string, //waitingForPayment, sending, complete
+  createDate: data,
+  etransferLink: string
+}
+
+type ITransactionDetail = ITransaction & {}
