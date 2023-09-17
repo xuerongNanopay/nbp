@@ -1,4 +1,4 @@
-export const EyeSlashFilledIcon = (props: {className: string}) => (
+export const EyeSlashFilledIcon = (props: IconSvgProps) => (
   <svg
     aria-hidden="true"
     fill="none"
