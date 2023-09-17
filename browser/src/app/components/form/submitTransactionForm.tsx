@@ -78,7 +78,7 @@ export default function SubmitTransactionForm({ quoteId }: prop) {
               <p>${`${transactionQuoteResult.transactionFee} ${transactionQuoteResult.sourceCurrency}`}</p>
             </div>
             <div className="flex justify-between">
-              <h6>Amount To Be Debited</h6>
+              <h6 className="text-primary">Amount To Be Debited</h6>
               <p>${`${transactionQuoteResult.totalDebitAmount} ${transactionQuoteResult.sourceCurrency}`}</p>
             </div>
           </section>
