@@ -56,6 +56,19 @@ interface ITransferQuote {
   destinationAmount: number
 }
 
+interface ITransferQuoteResult {
+  id: string,
+  sourceAccount: IAccount,
+  destinationAccout: IAccount,
+  sourceAmount: number,
+  destinationAmount: number,
+  sourceCurrency: string,
+  destinationCurrency: string,
+  exchangeRate: number,
+  transactionFee: number,
+  totalDebitAmount: number
+}
+
 interface IContact {
   firstName: string,
   middleName?: string,
