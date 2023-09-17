@@ -5,6 +5,7 @@ import ContactForm from "./components/form/contactForm"
 import EmailVerifyForm from "./components/form/emailVerifyForm"
 import UserOnboardingForm from "./components/form/userOnboardingForm"
 import QuoteForm from "./components/form/quoteForm"
+import SubmitTransactionForm from "./components/form/submitTransactionForm"
 
 export default function Home() {
   return (
@@ -16,7 +17,8 @@ export default function Home() {
         {/* <ContactForm></ContactForm> */}
         {/* <UserOnboardingForm></UserOnboardingForm> */}
         {/* <EmailVerifyForm></EmailVerifyForm> */}
-        <QuoteForm></QuoteForm>
+        {/* <QuoteForm></QuoteForm> */}
+        <SubmitTransactionForm quoteId="11"/>
       </section>
     </main>
   )

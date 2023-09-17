@@ -66,7 +66,8 @@ interface ITransferQuoteResult {
   destinationCurrency: string,
   exchangeRate: number,
   transactionFee: number,
-  totalDebitAmount: number
+  totalDebitAmount: number,
+  expireTimestamp: long
 }
 
 interface IContact {
