@@ -96,13 +96,14 @@ interface IBankTransfer {
 }
 
 interface ITransaction {
-  receiver: string,
-  receiveAmount: string,
-  receiveCurrency: string,
-  totalCost: string,
+  id: string,
+  remitee: string,
+  amount: string,
+  cost: string,
   status: string, //waitingForPayment, sending, complete
-  createDate: data,
-  etransferLink: string
+  created: date,
+  etransferLink: string,
+  paymentMethod: string
 }
 
 type ITransactionDetail = ITransaction & {}

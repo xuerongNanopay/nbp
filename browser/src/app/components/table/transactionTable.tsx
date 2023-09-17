@@ -8,13 +8,35 @@ import {
   TableCell,
   ChipProps
 } from "@nextui-org/react";
+import { date } from "yup";
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
   complete: "success",
   cancel: "danger",
+  process: "secondary",
   waitingPayment: "warning",
 };
 
+const columns = [
+  { name: 'Remittee', uid: 'remitee' },
+  { name: 'Amount', uid: 'amount' },
+  { name: 'Cost', uid: 'cost' },
+  { name: 'Created', uid: 'created'},
+  { name: 'Actions', uid: 'actions' }
+]
+
+const transactions = [
+  {
+    id: '1',
+    remitee: 'XXX XX',
+    amount: '12.22 PKR',
+    cost: '22.33 CAD',
+    status: 'awaitPayment', //waitingForPayment, sending, complete
+    created: new Date(),
+    etransferLink: 'https://www.youtube.com',
+    paymentMethod: 'etransfer'
+  }
+]
 
 export default function TransactionTable() {
   return (
