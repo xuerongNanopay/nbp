@@ -42,11 +42,16 @@ interface ITransfer {
 
 }
 
+interface IAccount {
+  id: string,
+  type: string,
+  name: string,
+  currency: string
+}
+
 interface ITransferQuote {
-  sourceAcount: number,
-  destinationAccount: number,
-  sourceCurreccy: string,
-  destinationCurrency: string,
+  sourceAccountId: string,
+  destinationAccountId: string,
   sourceAmount: number,
   destinationAmount: number
 }
