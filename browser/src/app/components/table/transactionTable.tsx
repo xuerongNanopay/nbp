@@ -1,5 +1,6 @@
 'use client'
 import React, { useEffect } from 'react'
+import { Selection } from '@nextui-org/react';
 
 import {
   Table,
@@ -143,8 +144,7 @@ export default function TransactionTable() {
   const [isLoading, setIsLoading] = React.useState(false)
   const [page, setPage] = React.useState(1)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
-  //@ts-ignore
-  const [statusFilter, setStatusFilter] = React.useState<Selection>(new Set(["cat", "dog"]))
+  const [statusFilter, setStatusFilter] = React.useState<Selection>('all')
 
   const renderCell = React.useCallback((transaction: ITransaction, columnKey: React.Key) => {
     switch(columnKey) {
@@ -239,7 +239,10 @@ export default function TransactionTable() {
     )
   },[
     searchValue,
-    onSearchValueChange
+    onSearchValueChange,
+    statusFilter,
+    setStatusFilter,
+    onClear
   ])
 
   return (

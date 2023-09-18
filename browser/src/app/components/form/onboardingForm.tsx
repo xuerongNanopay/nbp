@@ -18,7 +18,7 @@ const eighteen_years_age = dayjs().subtract(18, 'year').format('YYYY-MM-DD')
 const hundred_years_age = dayjs().subtract(100, 'year').format('YYYY-MM-DD')
 
 
-export default function userOnboardingForm() {
+export default function OnboardingForm() {
 
   const initialValues: IUserOnboarding = {
     firstName: '',

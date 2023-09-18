@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useFormik } from "formik"
 import * as Yup from 'yup';
 import {
@@ -18,30 +18,32 @@ type prop  = {
 // Retrieve Currency from Account.
 // TODO: isDefault
 // TODO: getRoughRate
-export default function QuoteForm() {
-  const sourceAccounts = [
-    {
-      id: '1',
-      type: 'eTransfer',
-      name: 'E-Transfer(xx@xx.com)',
-      currency: 'CAD'
-    }
-  ]
+const sourceAccounts = [
+  {
+    id: '1',
+    type: 'eTransfer',
+    name: 'E-Transfer(xx@xx.com)',
+    currency: 'CAD'
+  }
+]
 
-  const destinationAccounts = [
-    {
-      id: '2',
-      type: 'bankAccount',
-      name: 'xxx(acount: ***)',
-      currency: 'PKR'
-    },
-    {
-      id: '3',
-      type: 'cashPickup',
-      name: 'yyy(cash)',
-      currency: 'PKR'
-    }
-  ]
+const destinationAccounts = [
+  {
+    id: '2',
+    type: 'bankAccount',
+    name: 'xxx(acount: ***)',
+    currency: 'PKR'
+  },
+  {
+    id: '3',
+    type: 'cashPickup',
+    name: 'yyy(cash)',
+    currency: 'PKR'
+  }
+]
+
+export default function QuoteForm() {
+
 
   const [showAmountInput, setShowAmountInput] = useState(false)
   const [selectSourceAccout, setSelectSourceAccount ] = useState<IAccount|null>(null)
@@ -79,6 +81,7 @@ export default function QuoteForm() {
     }
   }, 
   [
+    formik,
     formik.touched.destinationAccountId, 
     formik.touched.sourceAccountId,
     formik.errors.destinationAccountId,
@@ -91,8 +94,9 @@ export default function QuoteForm() {
     const destinationAccount = destinationAccounts.find((account) => account.id == formik.values.destinationAccountId)
     destinationAccount && setSelectDestinationAccount(destinationAccount)
   }, [
+    formik,
     formik.values.destinationAccountId, 
-    formik.values.sourceAccountId,
+    formik.values.sourceAccountId
   ])
 
   useEffect(() => {
@@ -102,7 +106,7 @@ export default function QuoteForm() {
     const destinationAmount =  Math.round(sourceAmount * rate * 100) / 100
     formik.setFieldValue('sourceAmount', sourceAmount)
     formik.setFieldValue('destinationAmount', destinationAmount)
-  }, [formik.values.sourceAmount])
+  }, [formik, formik.values.sourceAmount])
 
   return (
     <div className="w-full max-w-xl">

@@ -45,7 +45,7 @@ export default function SubmitTransactionForm({ quoteId }: prop) {
       setTransactionQuoteResult(transactionQuoteResult)
     }
     fetchQuoteResult(quoteId)
-  }, [])
+  }, [quoteId])
   const handleTransactionTraction = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
