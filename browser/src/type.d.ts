@@ -100,7 +100,7 @@ interface ITransaction {
   remiteeName: string,
   remitAccount: string,
   remitMethod: string, //bankAccount or cashPickup
-  amount: string,
+  receiveAmount: string,
   cost: string,
   status: string, //waitingForPayment, sending, complete
   created: date,

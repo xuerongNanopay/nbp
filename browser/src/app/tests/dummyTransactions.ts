@@ -4,7 +4,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: 'NBP(****111)',
     remitMethod: 'bankAccount',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'complete', //waitingForPayment, sending, complete
     created: new Date(),
@@ -16,7 +16,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: 'NBP(****111)',
     remitMethod: 'bankAccount',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'cancel', //waitingForPayment, sending, complete
     created: new Date(),
@@ -28,7 +28,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: '',
     remitMethod: 'cashPickup',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'awaitPayent', //waitingForPayment, sending, complete
     created: new Date(),
@@ -40,7 +40,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: '',
     remitMethod: 'cashPickup',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'process', //waitingForPayment, sending, complete
     created: new Date(),
@@ -52,7 +52,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: 'NBP(****111)',
     remitMethod: 'bankAccount',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'complete', //waitingForPayment, sending, complete
     created: new Date(),
@@ -64,7 +64,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: 'NBP(****111)',
     remitMethod: 'bankAccount',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'cancel', //waitingForPayment, sending, complete
     created: new Date(),
@@ -76,7 +76,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: '',
     remitMethod: 'cashPickup',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'awaitPayent', //waitingForPayment, sending, complete
     created: new Date(),
@@ -88,7 +88,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: '',
     remitMethod: 'cashPickup',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'process', //waitingForPayment, sending, complete
     created: new Date(),
@@ -100,7 +100,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: 'NBP(****111)',
     remitMethod: 'bankAccount',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'complete', //waitingForPayment, sending, complete
     created: new Date(),
@@ -112,7 +112,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: 'NBP(****111)',
     remitMethod: 'bankAccount',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'cancel', //waitingForPayment, sending, complete
     created: new Date(),
@@ -124,7 +124,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: '',
     remitMethod: 'cashPickup',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'awaitPayent', //waitingForPayment, sending, complete
     created: new Date(),
@@ -136,7 +136,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: '',
     remitMethod: 'cashPickup',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'process', //waitingForPayment, sending, complete
     created: new Date(),
@@ -148,7 +148,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: 'NBP(****111)',
     remitMethod: 'bankAccount',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'complete', //waitingForPayment, sending, complete
     created: new Date(),
@@ -160,7 +160,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: 'NBP(****111)',
     remitMethod: 'bankAccount',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'cancel', //waitingForPayment, sending, complete
     created: new Date(),
@@ -172,7 +172,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: '',
     remitMethod: 'cashPickup',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'awaitPayent', //waitingForPayment, sending, complete
     created: new Date(),
@@ -184,7 +184,7 @@ const transactions: ITransaction[] = [
     remiteeName: 'XXX XX',
     remitAccount: '',
     remitMethod: 'cashPickup',
-    amount: '12.22 PKR',
+    receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'process', //waitingForPayment, sending, complete
     created: new Date(),

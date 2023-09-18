@@ -11,13 +11,15 @@ import {
   ChipProps,
   Chip,
   Tooltip,
-  Spinner
+  Spinner,
+  Input
 } from "@nextui-org/react";
 
 import { EyeIcon } from '@/app/icons/EyeIcon'
 import { formatRelativeDate } from '@/utils/dateUtil'
 import { SendMoneyIcon } from '@/app/icons/SendMoneyIcon'
-import transactions from '@/app/tests/dummyTransactions';
+import transactions from '@/app/tests/dummyTransactions'
+import { SearchIcon } from '@/app/icons/SearchIcon'
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
   complete: "success",
@@ -35,7 +37,7 @@ const statusTextMap: Record<string, string>  = {
 
 const columns = [
   { name: 'Remittee', uid: 'remitee' },
-  { name: 'Amount', uid: 'amount' },
+  { name: 'Receive', uid: 'receiveAmount' },
   { name: 'Cost', uid: 'cost' },
   { name: 'Created', uid: 'created'},
   { name: 'Status', uid: 'status' },
@@ -51,10 +53,10 @@ const RemitteeCell = ({remiteeName, remitAccount, remitMethod}: ITransaction) =>
   )
 }
 
-const AmountCell = ({amount}: ITransaction) => {
+const AmountCell = ({receiveAmount}: ITransaction) => {
   return (
     <>
-      <p>{amount}</p>
+      <p>{receiveAmount}</p>
     </>
   )
 }
@@ -84,36 +86,56 @@ const CreatedCell = ({created}: ITransaction) => {
   )
 }
 
+const showDetailWrapper = (transactionId: string) => {
+  return () => {
+    alert("TODO: SHOW DETAIl: " + transactionId)
+  }
+}
+const etransferLinkWrapper = (etransferLink: string) => {
+  return () => {
+    alert("TODO: Etransfer: " + etransferLink)
+  }
+}
+
 const ActionsCell = (transaction: ITransaction) => {
   return (
-    <>
-      <p>Actions</p>
-    </>
+    <div className="relative flex items-center gap-2">
+      <Tooltip content="Details">
+        <span 
+          className="text-lg text-default-400 cursor-pointer active:opacity-50"
+          onClick={showDetailWrapper(transaction.id)}
+        >
+          <EyeIcon/>
+        </span>
+      </Tooltip>
+      { transaction.status === 'awaitPayent' ?
+          <Tooltip content="Pay">
+            <span 
+              className="text-lg text-default-400 cursor-pointer active:opacity-50"
+              onClick={etransferLinkWrapper(transaction.etransferLink)}
+            >
+              <SendMoneyIcon/>
+            </span>
+          </Tooltip>
+        : <></>
+      }
+  </div>
   )
 }
 
 export default function TransactionTable() {
+  const [filterValue, setFilterValue] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false)
   const [page, setPage] = React.useState(1)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
 
-  const showDetailWrapper = (transactionId: string) => {
-    return () => {
-      alert("TODO: SHOW DETAIl: " + transactionId)
-    }
-  }
-  const etransferLinkWrapper = (etransferLink: string) => {
-    return () => {
-      alert("TODO: Etransfer: " + etransferLink)
-    }
-  }
   const renderCell = React.useCallback((transaction: ITransaction, columnKey: React.Key) => {
     switch(columnKey) {
       case "remitee":
         return (
           <RemitteeCell {...transaction}/>
         )
-      case "amount":
+      case "receiveAmount":
         return (
           <AmountCell {...transaction}/>
         )
@@ -131,35 +153,53 @@ export default function TransactionTable() {
         )
       case "actions":
         return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Details">
-              <span 
-                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                onClick={showDetailWrapper(transaction.id)}
-              >
-                <EyeIcon/>
-              </span>
-            </Tooltip>
-            <Tooltip content="Pay">
-              <span 
-                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                onClick={etransferLinkWrapper(transaction.etransferLink)}
-              >
-                <SendMoneyIcon/>
-              </span>
-            </Tooltip>
-          </div>
+          <ActionsCell {...transaction}/>
         )
       default:
         return null
     }
   }, [])
 
+  const onSearchChange = React.useCallback((value?: string) => {
+    if (value) {
+      console.log('aaa')
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
+
+  const onClear = React.useCallback(()=>{
+    setFilterValue("")
+    setPage(1)
+  },[])
+
+  const topContent = React.useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between gap-3 items-end">
+          <Input
+            isClearable
+            className="w-full sm:max-w-[44%]"
+            placeholder="Search by remitee..."
+            startContent={<SearchIcon />}
+            value={filterValue}
+            onClear={() => onClear()}
+            onValueChange={onSearchChange}
+          />
+        </div>
+      </div>
+    )
+  },[filterValue])
+
   return (
     <Table 
       aria-label="Transaction table"
       className="w-full max-w-4xl"
       isStriped={true}
+      topContent={topContent}
+      // topContentPlacement="outside"
       // removeWrapper
     >
       <TableHeader columns={columns}>
