@@ -9,16 +9,27 @@ import {
   TableRow,
   TableCell,
   ChipProps,
-  User
+  Chip,
+  User,
+  Tooltip
 } from "@nextui-org/react";
 
+import { EyeIcon } from '@/app/icons/EyeIcon'
 import { formatRelativeDate } from '@/utils/dateUtil'
+import { SendMoneyIcon } from '@/app/icons/SendMoneyIcon'
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
   complete: "success",
   cancel: "danger",
   process: "secondary",
-  waitingPayment: "warning",
+  awaitPayent: "warning",
+};
+
+const statusTextMap: Record<string, string>  = {
+  complete: "SUCCESS",
+  cancel: "CANCEL",
+  process: "PROCESS",
+  awaitPayent: "AWAIT PAYMENT",
 };
 
 const columns = [
@@ -38,7 +49,7 @@ const transactions: ITransaction[] = [
     remitMethod: 'bankAccount',
     amount: '12.22 PKR',
     cost: '22.33 CAD',
-    status: 'awaitPayment', //waitingForPayment, sending, complete
+    status: 'complete', //waitingForPayment, sending, complete
     created: new Date(),
     etransferLink: 'https://www.youtube.com',
     paymentMethod: 'etransfer'
@@ -50,7 +61,7 @@ const transactions: ITransaction[] = [
     remitMethod: 'bankAccount',
     amount: '12.22 PKR',
     cost: '22.33 CAD',
-    status: 'awaitPayment', //waitingForPayment, sending, complete
+    status: 'cancel', //waitingForPayment, sending, complete
     created: new Date(),
     etransferLink: 'https://www.youtube.com',
     paymentMethod: 'etransfer'
@@ -62,7 +73,19 @@ const transactions: ITransaction[] = [
     remitMethod: 'cashPickup',
     amount: '12.22 PKR',
     cost: '22.33 CAD',
-    status: 'awaitPayment', //waitingForPayment, sending, complete
+    status: 'awaitPayent', //waitingForPayment, sending, complete
+    created: new Date(),
+    etransferLink: 'https://www.youtube.com',
+    paymentMethod: 'etransfer'
+  },
+  {
+    id: '4',
+    remiteeName: 'XXX XX',
+    remitAccount: '',
+    remitMethod: 'cashPickup',
+    amount: '12.22 PKR',
+    cost: '22.33 CAD',
+    status: 'process', //waitingForPayment, sending, complete
     created: new Date(),
     etransferLink: 'https://www.youtube.com',
     paymentMethod: 'etransfer'
@@ -97,9 +120,9 @@ const CostCell = ({cost}: ITransaction) => {
 
 const StatusCell = ({status}: ITransaction) => {
   return (
-    <>
-      <p>{status}</p>
-    </>
+    <Chip className="capitalize" color={statusColorMap[status]} size="sm" variant="flat">
+      {statusTextMap[status]}
+    </Chip>
   )
 }
 
@@ -120,6 +143,16 @@ const ActionsCell = (transaction: ITransaction) => {
 }
 
 export default function TransactionTable() {
+  const showDetailWrapper = (transactionId: string) => {
+    return () => {
+      alert("TODO: SHOW DETAIl: " + transactionId)
+    }
+  }
+  const etransferLinkWrapper = (etransferLink: string) => {
+    return () => {
+      alert("TODO: Etransfer: " + etransferLink)
+    }
+  }
   const renderCell = React.useCallback((transaction: ITransaction, columnKey: React.Key) => {
     switch(columnKey) {
       case "remitee":
@@ -137,6 +170,31 @@ export default function TransactionTable() {
       case "created":
         return (
           <CreatedCell {...transaction}/>
+        )
+      case "status":
+        return (
+          <StatusCell {...transaction}/>
+        )
+      case "actions":
+        return (
+          <div className="relative flex items-center gap-2">
+            <Tooltip content="Details">
+              <span 
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                onClick={showDetailWrapper(transaction.id)}
+              >
+                <EyeIcon/>
+              </span>
+            </Tooltip>
+            <Tooltip content="Pay">
+              <span 
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                onClick={etransferLinkWrapper(transaction.etransferLink)}
+              >
+                <SendMoneyIcon/>
+              </span>
+            </Tooltip>
+          </div>
         )
       default:
         return null
