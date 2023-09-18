@@ -198,7 +198,7 @@ export default function TransactionTable() {
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
+        <div className="flex flex-col items-start sm:flex-row justify-between gap-3 sm:items-end">
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
@@ -210,7 +210,7 @@ export default function TransactionTable() {
           />
           <div className="flex gap-3">
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
+              <DropdownTrigger>
                 <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
                   Status
                 </Button>
@@ -245,12 +245,30 @@ export default function TransactionTable() {
     onClear
   ])
 
+  const filteredTransactions = React.useMemo(() => {
+    let filteredTransactions = [...transactions];
+
+    if (Boolean(searchValue)) {
+      filteredTransactions = filteredTransactions.filter((transaction) =>
+        transaction.remiteeName.toLowerCase().includes(searchValue.toLowerCase()),
+      );
+    }
+    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
+      filteredTransactions = filteredTransactions.filter((transaction) =>
+        Array.from(statusFilter).includes(transaction.status),
+      );
+    }
+
+    return filteredTransactions;
+  }, [transactions, searchValue, statusFilter]);
+
   return (
     <Table 
       aria-label="Transaction table"
       className="w-full max-w-4xl"
       isStriped={true}
       topContent={topContent}
+      isHeaderSticky
       // topContentPlacement="outside"
       // removeWrapper
     >
@@ -262,7 +280,7 @@ export default function TransactionTable() {
         )}
       </TableHeader>
       <TableBody 
-        items={transactions}
+        items={filteredTransactions}
         isLoading={isLoading}
         loadingContent={<Spinner label="Loading..." />}
       >
