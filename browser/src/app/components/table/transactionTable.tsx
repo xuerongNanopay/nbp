@@ -138,12 +138,12 @@ const ActionsCell = (transaction: ITransaction) => {
   )
 }
 
-//TODO: useEffect for searchKey?
+//FOR NOW, load all transactions and doing the fileter in frontEnd.
 export default function TransactionTable() {
   const [searchValue, setSearchValue] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false)
   const [page, setPage] = React.useState(1)
-  const [rowsPerPage, setRowsPerPage] = React.useState(5)
+  const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [statusFilter, setStatusFilter] = React.useState<Selection>('all')
 
   const renderCell = React.useCallback((transaction: ITransaction, columnKey: React.Key) => {
@@ -195,6 +195,50 @@ export default function TransactionTable() {
     setPage(1)
   },[])
 
+  //TODO: Improve to reduce the network load.
+  const filteredTransactions = React.useMemo(() => {
+    let filteredTransactions = [...transactions];
+
+    if (Boolean(searchValue)) {
+      filteredTransactions = filteredTransactions.filter((transaction) =>
+        transaction.remiteeName.toLowerCase().includes(searchValue.toLowerCase()),
+      );
+    }
+    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
+      filteredTransactions = filteredTransactions.filter((transaction) =>
+        Array.from(statusFilter).includes(transaction.status),
+      );
+    }
+
+    return filteredTransactions;
+  }, [transactions, searchValue, statusFilter])
+
+  const pages = Math.ceil(filteredTransactions.length / rowsPerPage);
+
+  const items = React.useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    return filteredTransactions.slice(start, end)
+  }, [page, filteredTransactions, rowsPerPage])
+
+  const onNextPage = React.useCallback(() => {
+    if (page < pages) {
+      setPage(page + 1);
+    }
+  }, [page, pages])
+
+  const onPreviousPage = React.useCallback(() => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  }, [page])
+
+  const onRowsPerPageChange = React.useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRowsPerPage(Number(e.target.value));
+    setPage(1);
+  }, [])
+
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
@@ -235,6 +279,20 @@ export default function TransactionTable() {
             </Button>
           </div>
         </div>
+        <div className="flex flex-col items-start sm:flex-row justify-between sm:items-center">
+          <span className="text-default-400 text-small">Total {filteredTransactions.length} transactions</span>
+          <label className="flex items-center text-default-400 text-small">
+            Rows per page:
+            <select
+              className="bg-transparent outline-none text-default-400 text-small"
+              onChange={onRowsPerPageChange}
+            >
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+            </select>
+          </label>
+        </div>
       </div>
     )
   },[
@@ -242,25 +300,9 @@ export default function TransactionTable() {
     onSearchValueChange,
     statusFilter,
     setStatusFilter,
-    onClear
+    onClear,
+    filteredTransactions.length
   ])
-
-  const filteredTransactions = React.useMemo(() => {
-    let filteredTransactions = [...transactions];
-
-    if (Boolean(searchValue)) {
-      filteredTransactions = filteredTransactions.filter((transaction) =>
-        transaction.remiteeName.toLowerCase().includes(searchValue.toLowerCase()),
-      );
-    }
-    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredTransactions = filteredTransactions.filter((transaction) =>
-        Array.from(statusFilter).includes(transaction.status),
-      );
-    }
-
-    return filteredTransactions;
-  }, [transactions, searchValue, statusFilter]);
 
   return (
     <Table 
@@ -280,9 +322,10 @@ export default function TransactionTable() {
         )}
       </TableHeader>
       <TableBody 
-        items={filteredTransactions}
-        isLoading={isLoading}
-        loadingContent={<Spinner label="Loading..." />}
+        items={items}
+        // isLoading={isLoading}
+        // loadingContent={<Spinner label="Loading..." />}
+        emptyContent={"No rows to display."}
       >
       {(item) => (
         <TableRow key={item.id}>
