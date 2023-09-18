@@ -1,5 +1,5 @@
 'use client'
-import React from "react"
+import React from 'react'
 
 import {
   Table,
@@ -8,8 +8,11 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-  ChipProps
+  ChipProps,
+  User
 } from "@nextui-org/react";
+
+import { formatRelativeDate } from '@/utils/dateUtil'
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
   complete: "success",
@@ -23,6 +26,7 @@ const columns = [
   { name: 'Amount', uid: 'amount' },
   { name: 'Cost', uid: 'cost' },
   { name: 'Created', uid: 'created'},
+  { name: 'Status', uid: 'status' },
   { name: 'Actions', uid: 'actions' }
 ]
 
@@ -30,8 +34,32 @@ const transactions: ITransaction[] = [
   {
     id: '1',
     remiteeName: 'XXX XX',
-    remitAccount: 'NBP(XXXX111)',
+    remitAccount: 'NBP(****111)',
     remitMethod: 'bankAccount',
+    amount: '12.22 PKR',
+    cost: '22.33 CAD',
+    status: 'awaitPayment', //waitingForPayment, sending, complete
+    created: new Date(),
+    etransferLink: 'https://www.youtube.com',
+    paymentMethod: 'etransfer'
+  },
+  {
+    id: '2',
+    remiteeName: 'XXX XX',
+    remitAccount: 'NBP(****111)',
+    remitMethod: 'bankAccount',
+    amount: '12.22 PKR',
+    cost: '22.33 CAD',
+    status: 'awaitPayment', //waitingForPayment, sending, complete
+    created: new Date(),
+    etransferLink: 'https://www.youtube.com',
+    paymentMethod: 'etransfer'
+  },
+  {
+    id: '3',
+    remiteeName: 'XXX XX',
+    remitAccount: '',
+    remitMethod: 'cashPickup',
     amount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'awaitPayment', //waitingForPayment, sending, complete
@@ -43,9 +71,10 @@ const transactions: ITransaction[] = [
 
 const RemitteeCell = ({remiteeName, remitAccount, remitMethod}: ITransaction) => {
   return (
-    <>
-      <p>{remiteeName}</p>
-    </>
+    <div className="flex flex-col">
+      <p className="text-bold text-sm capitalize">{remiteeName}</p>
+      <p className="text-tiny text-foreground-400">{remitMethod == 'cashPickup' ? 'Cash Pickup' : remitAccount}</p>
+    </div>
   )
 }
 
@@ -74,6 +103,14 @@ const StatusCell = ({status}: ITransaction) => {
   )
 }
 
+const CreatedCell = ({created}: ITransaction) => {
+  return (
+    <>
+      <p>{formatRelativeDate(created)}</p>
+    </>
+  )
+}
+
 const ActionsCell = (transaction: ITransaction) => {
   return (
     <>
@@ -84,9 +121,26 @@ const ActionsCell = (transaction: ITransaction) => {
 
 export default function TransactionTable() {
   const renderCell = React.useCallback((transaction: ITransaction, columnKey: React.Key) => {
-    console.log(columnKey)
-    // const cellValue = transaction[columnKey as keyof ITransaction];
-    return <></>
+    switch(columnKey) {
+      case "remitee":
+        return (
+          <RemitteeCell {...transaction}/>
+        )
+      case "amount":
+        return (
+          <AmountCell {...transaction}/>
+        )
+      case "cost":
+        return (
+          <CostCell {...transaction}/>
+        )
+      case "created":
+        return (
+          <CreatedCell {...transaction}/>
+        )
+      default:
+        return null
+    }
   }, [])
 
   return (
