@@ -97,7 +97,9 @@ interface IBankTransfer {
 
 interface ITransaction {
   id: string,
-  remitee: string,
+  remiteeName: string,
+  remitAccount: string,
+  remitMethod: string, //bankAccount or cashPickup
   amount: string,
   cost: string,
   status: string, //waitingForPayment, sending, complete
