@@ -17,6 +17,7 @@ import {
 import { EyeIcon } from '@/app/icons/EyeIcon'
 import { formatRelativeDate } from '@/utils/dateUtil'
 import { SendMoneyIcon } from '@/app/icons/SendMoneyIcon'
+import transactions from '@/app/tests/dummyTransactions';
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
   complete: "success",
@@ -39,57 +40,6 @@ const columns = [
   { name: 'Created', uid: 'created'},
   { name: 'Status', uid: 'status' },
   { name: 'Actions', uid: 'actions' }
-]
-
-const transactions: ITransaction[] = [
-  {
-    id: '1',
-    remiteeName: 'XXX XX',
-    remitAccount: 'NBP(****111)',
-    remitMethod: 'bankAccount',
-    amount: '12.22 PKR',
-    cost: '22.33 CAD',
-    status: 'complete', //waitingForPayment, sending, complete
-    created: new Date(),
-    etransferLink: 'https://www.youtube.com',
-    paymentMethod: 'etransfer'
-  },
-  {
-    id: '2',
-    remiteeName: 'XXX XX',
-    remitAccount: 'NBP(****111)',
-    remitMethod: 'bankAccount',
-    amount: '12.22 PKR',
-    cost: '22.33 CAD',
-    status: 'cancel', //waitingForPayment, sending, complete
-    created: new Date(),
-    etransferLink: 'https://www.youtube.com',
-    paymentMethod: 'etransfer'
-  },
-  {
-    id: '3',
-    remiteeName: 'XXX XX',
-    remitAccount: '',
-    remitMethod: 'cashPickup',
-    amount: '12.22 PKR',
-    cost: '22.33 CAD',
-    status: 'awaitPayent', //waitingForPayment, sending, complete
-    created: new Date(),
-    etransferLink: 'https://www.youtube.com',
-    paymentMethod: 'etransfer'
-  },
-  {
-    id: '4',
-    remiteeName: 'XXX XX',
-    remitAccount: '',
-    remitMethod: 'cashPickup',
-    amount: '12.22 PKR',
-    cost: '22.33 CAD',
-    status: 'process', //waitingForPayment, sending, complete
-    created: new Date(),
-    etransferLink: 'https://www.youtube.com',
-    paymentMethod: 'etransfer'
-  }
 ]
 
 const RemitteeCell = ({remiteeName, remitAccount, remitMethod}: ITransaction) => {
@@ -205,6 +155,7 @@ export default function TransactionTable() {
     <Table 
       aria-label="Transaction table"
       className="w-full max-w-4xl"
+      isStriped={true}
     >
       <TableHeader columns={columns}>
         {(column) => (
