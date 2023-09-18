@@ -113,3 +113,11 @@ type ITransactionDetail = ITransaction & {}
 type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
+
+interface IContact {
+  id: string,
+  remiteeName: string,
+  remitAccount: string,
+  remitMethod: string, //bankAccount or cashPickup
+  status: string //active or disabled or pending?
+}

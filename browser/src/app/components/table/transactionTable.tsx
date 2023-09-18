@@ -10,8 +10,8 @@ import {
   TableCell,
   ChipProps,
   Chip,
-  User,
-  Tooltip
+  Tooltip,
+  Spinner
 } from "@nextui-org/react";
 
 import { EyeIcon } from '@/app/icons/EyeIcon'
@@ -93,6 +93,10 @@ const ActionsCell = (transaction: ITransaction) => {
 }
 
 export default function TransactionTable() {
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [page, setPage] = React.useState(1)
+  const [rowsPerPage, setRowsPerPage] = React.useState(5)
+
   const showDetailWrapper = (transactionId: string) => {
     return () => {
       alert("TODO: SHOW DETAIl: " + transactionId)
@@ -156,6 +160,7 @@ export default function TransactionTable() {
       aria-label="Transaction table"
       className="w-full max-w-4xl"
       isStriped={true}
+      // removeWrapper
     >
       <TableHeader columns={columns}>
         {(column) => (
@@ -164,7 +169,11 @@ export default function TransactionTable() {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={transactions}>
+      <TableBody 
+        items={transactions}
+        isLoading={isLoading}
+        loadingContent={<Spinner label="Loading..." />}
+      >
       {(item) => (
         <TableRow key={item.id}>
           {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
