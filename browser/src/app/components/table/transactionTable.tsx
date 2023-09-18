@@ -18,7 +18,8 @@ import {
   DropdownTrigger,
   Button,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
+  Pagination
 } from "@nextui-org/react";
 
 import { EyeIcon } from '@/app/icons/EyeIcon'
@@ -304,6 +305,22 @@ export default function TransactionTable() {
     filteredTransactions.length
   ])
 
+  const bottomContent = React.useMemo(() => {
+    return (
+      <div className="py-2 px-2 flex justify-center items-center">
+        <Pagination
+          isCompact
+          showControls
+          showShadow
+          color="primary"
+          page={page}
+          total={pages}
+          onChange={setPage}
+        />
+      </div>
+    );
+  }, [page, pages]);
+
   return (
     <Table 
       aria-label="Transaction table"
@@ -313,6 +330,7 @@ export default function TransactionTable() {
       isHeaderSticky
       // topContentPlacement="outside"
       // removeWrapper
+      bottomContent={bottomContent}
     >
       <TableHeader columns={columns}>
         {(column) => (
