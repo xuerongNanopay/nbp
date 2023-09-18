@@ -89,7 +89,7 @@ export default function userOnboardingForm() {
 
   return (
     <div className="w-full max-w-4xl">
-      <h4 className="text-2xl font-bold mb-6 text-center">Let's Get to Know You!</h4>
+      <h4 className="text-2xl font-bold mb-6 text-center">Let&apos;s Get to Know You!</h4>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <Input

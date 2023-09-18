@@ -19,7 +19,7 @@ const transactions: ITransaction[] = [
     receiveAmount: '12.22 PKR',
     cost: '22.33 CAD',
     status: 'cancel', //waitingForPayment, sending, complete
-    created: new Date(),
+    created: new Date('2023-01-01'),
     etransferLink: 'https://www.youtube.com',
     paymentMethod: 'etransfer'
   },

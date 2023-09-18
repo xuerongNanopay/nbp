@@ -28,7 +28,7 @@ export default function EmailVerifyForm() {
 
   return (
     <div className="w-full max-w-sm">
-      <h4 className="text-2xl font-bold mb-6 text-center">Let's Verify Your Email</h4>
+      <h4 className="text-2xl font-bold mb-6 text-center">Let&apos;s Verify Your Email</h4>
       <p className="text-base mb-6 text-center">We have sent a verification code to your email. Please enter the code below to confirm that this account belongs to you.</p>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
       <Input

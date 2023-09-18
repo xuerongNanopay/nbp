@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import {
   Table,
@@ -12,7 +12,12 @@ import {
   Chip,
   Tooltip,
   Spinner,
-  Input
+  Input,
+  Dropdown,
+  DropdownTrigger,
+  Button,
+  DropdownMenu,
+  DropdownItem
 } from "@nextui-org/react";
 
 import { EyeIcon } from '@/app/icons/EyeIcon'
@@ -20,20 +25,29 @@ import { formatRelativeDate } from '@/utils/dateUtil'
 import { SendMoneyIcon } from '@/app/icons/SendMoneyIcon'
 import transactions from '@/app/tests/dummyTransactions'
 import { SearchIcon } from '@/app/icons/SearchIcon'
+import { PlusIcon } from '@/app/icons/PlusIcon'
+import { ChevronDownIcon } from '@/app/icons/ChevronDownIcon';
+
+const statusOptions = [
+  {name: "SUCCESS", uid: "complete"},
+  {name: "CANCEL", uid: "cancel"},
+  {name: "PROCESS", uid: "process"},
+  {name: "AWAIT PAYMENT", uid: "awaitPayent"}
+]
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
   complete: "success",
   cancel: "danger",
   process: "secondary",
   awaitPayent: "warning",
-};
+}
 
 const statusTextMap: Record<string, string>  = {
   complete: "SUCCESS",
   cancel: "CANCEL",
   process: "PROCESS",
   awaitPayent: "AWAIT PAYMENT",
-};
+}
 
 const columns = [
   { name: 'Remittee', uid: 'remitee' },
@@ -123,11 +137,14 @@ const ActionsCell = (transaction: ITransaction) => {
   )
 }
 
+//TODO: useEffect for searchKey?
 export default function TransactionTable() {
-  const [filterValue, setFilterValue] = React.useState('');
+  const [searchValue, setSearchValue] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false)
   const [page, setPage] = React.useState(1)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
+  //@ts-ignore
+  const [statusFilter, setStatusFilter] = React.useState<Selection>(new Set(["cat", "dog"]))
 
   const renderCell = React.useCallback((transaction: ITransaction, columnKey: React.Key) => {
     switch(columnKey) {
@@ -160,18 +177,21 @@ export default function TransactionTable() {
     }
   }, [])
 
-  const onSearchChange = React.useCallback((value?: string) => {
+  useEffect(() => {
+    console.log("SerchValueChange: " + searchValue)
+  }, [searchValue])
+
+  const onSearchValueChange = React.useCallback((value?: string) => {
     if (value) {
-      console.log('aaa')
-      setFilterValue(value);
+      setSearchValue(value);
       setPage(1);
     } else {
-      setFilterValue("");
+      setSearchValue("");
     }
   }, []);
 
   const onClear = React.useCallback(()=>{
-    setFilterValue("")
+    setSearchValue("")
     setPage(1)
   },[])
 
@@ -184,14 +204,43 @@ export default function TransactionTable() {
             className="w-full sm:max-w-[44%]"
             placeholder="Search by remitee..."
             startContent={<SearchIcon />}
-            value={filterValue}
+            value={searchValue}
             onClear={() => onClear()}
-            onValueChange={onSearchChange}
+            onValueChange={onSearchValueChange}
           />
+          <div className="flex gap-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                  Status
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={statusFilter}
+                selectionMode="multiple"
+                onSelectionChange={setStatusFilter}
+              >
+                {statusOptions.map((status) => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {status.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Button color="primary" endContent={<PlusIcon />}>
+              Transfer
+            </Button>
+          </div>
         </div>
       </div>
     )
-  },[filterValue])
+  },[
+    searchValue,
+    onSearchValueChange
+  ])
 
   return (
     <Table 
