@@ -113,3 +113,9 @@ type ITransactionDetail = ITransaction & {}
 type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 }
+
+type IContactResult = 
+  IContact & (IBankTransfer | ICashPickup) & {
+    id: string,
+    status: string // Unverifid, Verified, waitingVerify
+  }
