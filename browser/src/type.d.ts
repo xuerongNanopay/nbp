@@ -117,5 +117,5 @@ type IconSvgProps = SVGProps<SVGSVGElement> & {
 type IContactResult = 
   IContact & (IBankTransfer | ICashPickup) & {
     id: string,
-    status: string // Unverifid, Verified, waitingVerify
+    status: string // Unverified, Verified
   }

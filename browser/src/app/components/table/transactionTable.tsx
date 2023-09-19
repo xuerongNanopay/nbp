@@ -28,7 +28,7 @@ import { SendMoneyIcon } from '@/app/icons/SendMoneyIcon'
 import transactions from '@/app/tests/dummyTransactions'
 import { SearchIcon } from '@/app/icons/SearchIcon'
 import { PlusIcon } from '@/app/icons/PlusIcon'
-import { ChevronDownIcon } from '@/app/icons/ChevronDownIcon';
+import { ChevronDownIcon } from '@/app/icons/ChevronDownIcon'
 
 const statusOptions = [
   {name: "SUCCESS", uid: "complete"},
