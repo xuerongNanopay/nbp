@@ -178,10 +178,6 @@ export default function TransactionTable() {
     }
   }, [])
 
-  useEffect(() => {
-    console.log("SerchValueChange: " + searchValue)
-  }, [searchValue])
-
   const onSearchValueChange = React.useCallback((value?: string) => {
     if (value) {
       setSearchValue(value);
