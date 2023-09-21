@@ -208,7 +208,7 @@ export default function TransactionTable() {
     }
 
     return filteredTransactions;
-  }, [transactions, searchValue, statusFilter])
+  }, [searchValue, statusFilter])
 
   const pages = Math.ceil(filteredTransactions.length / rowsPerPage);
 
@@ -295,6 +295,7 @@ export default function TransactionTable() {
   },[
     searchValue,
     onSearchValueChange,
+    onRowsPerPageChange,
     statusFilter,
     setStatusFilter,
     onClear,

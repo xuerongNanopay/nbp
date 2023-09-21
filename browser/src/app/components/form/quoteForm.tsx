@@ -47,6 +47,7 @@ export default function QuoteForm() {
   const [showAmountInput, setShowAmountInput] = useState(false)
   const [selectSourceAccout, setSelectSourceAccount ] = useState<IAccount|null>(null)
   const [selectDestinationAccount, setSelectDestinationAccount ] = useState<IAccount|null>(null)
+  const [rate, setRate] = useState(0)
 
   const initialValues: ITransferQuote = {
     sourceAccountId: '',
@@ -64,7 +65,8 @@ export default function QuoteForm() {
     validationSchema: Yup.object({
       sourceAccountId: Yup.string().trim().required('Required'),
       destinationAccountId: Yup.string().trim().required('Required'),
-      sourceAmount: Yup.number().required('Required').moreThan(10).lessThan(1000)
+      sourceAmount: Yup.number().required('Required').moreThan(10).lessThan(1000),
+      destinationAmount: Yup.number().required('Required').moreThan(0)
     }),
     onSubmit: transferQuoteHandler
   })
@@ -79,7 +81,6 @@ export default function QuoteForm() {
     }
   }, 
   [
-    formik,
     formik.touched.destinationAccountId, 
     formik.touched.sourceAccountId,
     formik.errors.destinationAccountId,
@@ -92,13 +93,32 @@ export default function QuoteForm() {
     const destinationAccount = destinationAccounts.find((account) => account.id == formik.values.destinationAccountId)
     destinationAccount && setSelectDestinationAccount(destinationAccount)
   }, [
-    formik,
     formik.values.destinationAccountId, 
     formik.values.sourceAccountId
   ])
 
+  useEffect(() => {
+    setRate(0)
+    const controller = new AbortController();
+    const signal = controller.signal;
+    async function fetchRate(sourceCurrency: string, destinationCurrency: string) {
+
+      fetch("https://jsonplaceholder.typicode.com/posts", { signal: signal })
+      .then((res) => res.json())
+      .then((res) => setRate(4.8))
+      .catch((err) => {
+        if (err.name === "AbortError") {
+          console.log("successfully aborted");
+        } else {
+          console.log(err)
+        }
+      });
+    }
+    fetchRate("CAD", "PKR")
+    return () => controller.abort()
+  }, [formik.values.destinationAccountId, formik.values.sourceAccountId])
+
   const setSourceAmount = (e: ChangeEvent<HTMLInputElement>) => {
-    const rate = 3.4
     const sourceAmount = Math.round(Number(e.target.value) * 100) / 100
     const destinationAmount =  Math.round(sourceAmount * rate * 100) / 100
     formik.setFieldValue('sourceAmount', sourceAmount)

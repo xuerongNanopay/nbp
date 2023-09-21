@@ -259,6 +259,7 @@ export default function ContactTable() {
   },[
     searchValue,
     onSearchValueChange,
+    onRowsPerPageChange,
     statusFilter,
     setStatusFilter,
     onClear,
