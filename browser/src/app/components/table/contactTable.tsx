@@ -37,15 +37,15 @@ const statusOptions = [
 ]
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
-  verify: "success",
-  unverify: "secondary",
-  unknown: "danger"
+  verified: "success",
+  unverified: "danger",
+  pending: "danger"
 }
 
 const statusTextMap: Record<string, string>  = {
-  verify: "VERIFY",
-  unverify: "UNVERIFY",
-  unknown: "UNKNOWN"
+  verified: "VERIFIED",
+  unverified: "UNVERIFIED",
+  pending: "PENDING"
 }
 
 const columns = [
