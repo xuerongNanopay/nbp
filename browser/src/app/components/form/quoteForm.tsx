@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, ChangeEvent } from "react"
 import { useFormik } from "formik"
 import * as Yup from 'yup';
 import {
@@ -22,7 +22,7 @@ const sourceAccounts = [
   {
     id: '1',
     type: 'eTransfer',
-    name: 'E-Transfer(xx@xx.com)',
+    name: 'E-Transfer(xx@xxqqd.com)',
     currency: 'CAD'
   }
 ]
@@ -44,7 +44,6 @@ const destinationAccounts = [
 
 export default function QuoteForm() {
 
-
   const [showAmountInput, setShowAmountInput] = useState(false)
   const [selectSourceAccout, setSelectSourceAccount ] = useState<IAccount|null>(null)
   const [selectDestinationAccount, setSelectDestinationAccount ] = useState<IAccount|null>(null)
@@ -65,6 +64,7 @@ export default function QuoteForm() {
     validationSchema: Yup.object({
       sourceAccountId: Yup.string().trim().required('Required'),
       destinationAccountId: Yup.string().trim().required('Required'),
+      sourceAmount: Yup.number().required('Required').moreThan(10)
     }),
     onSubmit: transferQuoteHandler
   })
@@ -75,8 +75,6 @@ export default function QuoteForm() {
         setShowAmountInput(true)
       } else {
         setShowAmountInput(false)
-        formik.setFieldValue('sourceAmount', 0)
-        formik.setFieldValue('destinationAmount', 0)
       }
     }
   }, 
@@ -99,14 +97,13 @@ export default function QuoteForm() {
     formik.values.sourceAccountId
   ])
 
-  useEffect(() => {
-    //TODO: async function for rate
+  const setSourceAmount = (e: ChangeEvent<HTMLInputElement>) => {
     const rate = 3.4
-    const sourceAmount = Math.round(formik.values.sourceAmount * 100) / 100
+    const sourceAmount = Math.round(Number(e.target.value) * 100) / 100
     const destinationAmount =  Math.round(sourceAmount * rate * 100) / 100
     formik.setFieldValue('sourceAmount', sourceAmount)
     formik.setFieldValue('destinationAmount', destinationAmount)
-  }, [formik, formik.values.sourceAmount])
+  }
 
   return (
     <div className="w-full max-w-xl">
@@ -168,6 +165,7 @@ export default function QuoteForm() {
           size="md"
           placeholder="0.00"
           step=".01"
+          min="0"
           startContent={
             <div className="pointer-events-none flex items-center">
               <span className="text-default-400 text-small">$</span>
@@ -183,7 +181,9 @@ export default function QuoteForm() {
             </div>
           }
           disabled={!showAmountInput}
-          {...formik.getFieldProps('sourceAmount')}
+          onBlur={formik.handleBlur}
+          onChange={setSourceAmount}
+          value={''+formik.values.sourceAmount}
           errorMessage={formik.touched.sourceAmount && formik.errors.sourceAmount}
         />
         <Input
@@ -197,6 +197,7 @@ export default function QuoteForm() {
           size="md"
           placeholder="0.00"
           disabled
+          min="0"
           startContent={
             <div className="pointer-events-none flex items-center">
               <span className="text-default-400 text-small">$</span>
