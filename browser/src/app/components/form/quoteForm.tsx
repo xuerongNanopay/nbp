@@ -64,7 +64,7 @@ export default function QuoteForm() {
     validationSchema: Yup.object({
       sourceAccountId: Yup.string().trim().required('Required'),
       destinationAccountId: Yup.string().trim().required('Required'),
-      sourceAmount: Yup.number().required('Required').moreThan(10)
+      sourceAmount: Yup.number().required('Required').moreThan(10).lessThan(1000)
     }),
     onSubmit: transferQuoteHandler
   })
