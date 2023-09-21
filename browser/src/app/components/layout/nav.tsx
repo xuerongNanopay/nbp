@@ -3,14 +3,11 @@ import { useState } from "react"
 
 import {
   Navbar, 
-  NavbarBrand, 
   NavbarContent, 
-  NavbarItem, 
   Link, 
   NavbarMenuToggle,
   NavbarMenu,
   NavbarMenuItem,
-  Button,
   DropdownItem, 
   DropdownTrigger, 
   Dropdown, 
@@ -18,34 +15,65 @@ import {
   Avatar
 } from "@nextui-org/react"
 
+import NextLink from "next/link";
+
 const menuItems = [
-  "Dashboard",
-  "Send Money",
-  "Contacts",
-  "Transactions",
-  "Profile",
-  "About"
+  {
+    id: 'dashboard',
+    name: 'Dashboard',
+    href: '/dashboard'
+  },
+  {
+    id: 'sendMoney',
+    name: 'Send Money',
+    href: '/transfer'
+  },
+  {
+    id: 'contacts',
+    name: 'Contacts',
+    href: '/contacts'
+  },
+  {
+    id: 'transaction',
+    name: 'Transactions',
+    href: '/transactions'
+  },
+  {
+    id: 'profile',
+    name: 'Profile',
+    href: '/profile'
+  },
+  {
+    id: 'about',
+    name: 'About',
+    href: '/about'
+  }
 ];
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
-    <Navbar isBordered>
+    <Navbar 
+      isBordered
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+    >
       <NavbarContent justify="start">
         <NavbarMenuToggle />
       </NavbarContent>
 
       <NavbarMenu className="max-w-[1024px] px-6 mx-auto">
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
+        {menuItems.map((item) => (
+          <NavbarMenuItem key={item.id}>
             <Link
-              className="w-full"
+              className="w-full hover:font-semibold"
               color={"foreground"}
-              href="#"
+              href={item.href}
               size="lg"
+              as={NextLink}
             >
-              {item}
+              {item.name}
             </Link>
           </NavbarMenuItem>
         ))}
@@ -64,11 +92,11 @@ export default function Nav() {
             />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="profile" className="h-14 gap-2">
+            <DropdownItem textValue= "profle" key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
               <p className="font-semibold">zoey@example.com</p>
             </DropdownItem>
-            <DropdownItem key="logout" color="danger" onPress={_ => alert("TODO: Logout")}>
+            <DropdownItem textValue= "logout" key="logout" color="danger" onPress={_ => alert("TODO: Logout")}>
               Log Out
             </DropdownItem>
           </DropdownMenu>
