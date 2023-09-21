@@ -14,7 +14,7 @@ import NbpCard from "./components/dashboard/nbpCard"
 export default function Home() {
   return (
     <main className="nbp min-h-screen">
-      <section className="p-4 w-screen flex justify-center">
+      <section className="p-4 flex justify-center">
         {/* <SignUpForm></SignUpForm> */}
         {/* <SignInForm></SignInForm> */}
         {/* <ForgetPasswrodForm></ForgetPasswrodForm> */}
