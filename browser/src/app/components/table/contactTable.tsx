@@ -23,6 +23,8 @@ import {
   Pagination
 } from "@nextui-org/react";
 
+import contacts from '@/app/tests/dummyContactResults';
+
 import { SearchIcon } from '@/app/icons/SearchIcon'
 import { PlusIcon } from '@/app/icons/PlusIcon'
 import { EyeIcon } from '@/app/icons/EyeIcon'
@@ -31,15 +33,15 @@ import { DeleteIcon } from '@/app/icons/DeleteIcon'
 import { SendMoneyIcon } from '@/app/icons/SendMoneyIcon'
 
 const statusOptions = [
-  {name: "VERIFY", uid: "verify"},
-  {name: "UNVERIFY", uid: "unverify"},
-  {name: "UNKNOWN", uid: 'unknown'}
+  {name: "VERIFIED", uid: "verified"},
+  {name: "UNVERIFIED", uid: "unverified"},
+  {name: "PENDING", uid: 'pending'}
 ]
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
   verified: "success",
   unverified: "danger",
-  pending: "danger"
+  pending: "secondary"
 }
 
 const statusTextMap: Record<string, string>  = {
@@ -108,15 +110,6 @@ const ActionsCell = (contact: IContactResult) => {
           <EyeIcon/>
         </span>
       </Tooltip>
-      {/* TODO */}
-      {/* <Tooltip content="Send">
-        <span 
-          className="text-lg text-default-400 cursor-pointer active:opacity-50"
-          onClick={sendWrapper(contact.id)}
-        >
-          <SendMoneyIcon/>
-        </span>
-      </Tooltip> */}
     </div>
   )
 }
@@ -163,4 +156,161 @@ export default function ContactTable() {
     setSearchValue("")
     setPage(1)
   },[])
+
+  const filteredContacts = React.useMemo(() => {
+    let filteredContacts = [...contacts];
+
+    // if (Boolean(searchValue)) {
+    //   filteredContacts = filteredContacts.filter((transaction) =>
+    //     transaction.remiteeName.toLowerCase().includes(searchValue.toLowerCase()),
+    //   );
+    // }
+    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
+      filteredContacts = filteredContacts.filter((contact) =>
+        Array.from(statusFilter).includes(contact.status),
+      );
+    }
+
+    return filteredContacts;
+  }, [contacts, searchValue, statusFilter])
+
+  const pages = Math.ceil(filteredContacts.length / rowsPerPage);
+
+  const items = React.useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    return filteredContacts.slice(start, end)
+  }, [page, filteredContacts, rowsPerPage])
+
+  const onNextPage = React.useCallback(() => {
+    if (page < pages) {
+      setPage(page + 1);
+    }
+  }, [page, pages])
+
+  const onPreviousPage = React.useCallback(() => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  }, [page])
+
+  const onRowsPerPageChange = React.useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRowsPerPage(Number(e.target.value));
+    setPage(1);
+  }, [])
+
+  const topContent = React.useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col items-start sm:flex-row justify-between gap-3 sm:items-end">
+          <Input
+            isClearable
+            className="w-full sm:max-w-[44%]"
+            placeholder="Search by remitee..."
+            startContent={<SearchIcon />}
+            value={searchValue}
+            onClear={() => onClear()}
+            onValueChange={onSearchValueChange}
+          />
+          <div className="flex gap-3">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                  Status
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={statusFilter}
+                selectionMode="multiple"
+                onSelectionChange={setStatusFilter}
+              >
+                {statusOptions.map((status) => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {status.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Button color="primary" endContent={<PlusIcon />}>
+              New Contact
+            </Button>
+          </div>
+        </div>
+        <div className="flex flex-col items-start sm:flex-row justify-between sm:items-center">
+          <span className="text-default-400 text-small">Total {filteredContacts.length} Contacts</span>
+          <label className="flex items-center text-default-400 text-small">
+            Rows per page:
+            <select
+              className="bg-transparent outline-none text-default-400 text-small"
+              onChange={onRowsPerPageChange}
+            >
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    )
+  },[
+    searchValue,
+    onSearchValueChange,
+    statusFilter,
+    setStatusFilter,
+    onClear,
+    filteredContacts.length
+  ])
+
+  const bottomContent = React.useMemo(() => {
+    return (
+      <div className="py-2 px-2 flex justify-center items-center">
+        <Pagination
+          isCompact
+          showControls
+          showShadow
+          color="primary"
+          page={page}
+          total={pages}
+          onChange={setPage}
+        />
+      </div>
+    );
+  }, [page, pages]);
+
+  return (
+    <Table 
+      aria-label="Contact table"
+      className="w-full max-w-4xl"
+      isStriped={true}
+      topContent={topContent}
+      isHeaderSticky
+      // topContentPlacement="outside"
+      // removeWrapper
+      bottomContent={bottomContent}
+    >
+      <TableHeader columns={columns}>
+        {(column) => (
+          <TableColumn key={column.uid}>
+            {column.name}
+          </TableColumn>
+        )}
+      </TableHeader>
+      <TableBody 
+        items={items}
+        // isLoading={isLoading}
+        // loadingContent={<Spinner label="Loading..." />}
+        emptyContent={"No rows to display."}
+      >
+      {(item) => (
+        <TableRow key={item.id}>
+          {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+        </TableRow>
+      )}
+      </TableBody>
+    </Table>
+  )
 }

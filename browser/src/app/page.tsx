@@ -7,6 +7,7 @@ import OnboardingForm from "./components/form/onboardingForm"
 import QuoteForm from "./components/form/quoteForm"
 import SubmitTransactionForm from "./components/form/submitTransactionForm"
 import TransactionTable from "./components/table/transactionTable"
+import ContactTable from "./components/table/contactTable"
 
 export default function Home() {
   return (
@@ -20,7 +21,8 @@ export default function Home() {
         {/* <EmailVerifyForm></EmailVerifyForm> */}
         {/* <QuoteForm></QuoteForm> */}
         {/* <SubmitTransactionForm quoteId="11"/> */}
-        <TransactionTable></TransactionTable>
+        {/* <TransactionTable></TransactionTable> */}
+        <ContactTable></ContactTable>
       </section>
     </main>
   )
