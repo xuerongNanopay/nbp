@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import NextUIProvider from './providers/NextUIProvider'
 
+import Nav from './components/layout/nav'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,7 +21,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextUIProvider>
-          {children}
+          {/* <main> */}
+            <Nav></Nav>
+            <div className="max-w-[1000px] mx-auto">
+              {children}
+            </div>
+          {/* </main> */}
         </NextUIProvider>
       </body>
     </html>

@@ -13,7 +13,7 @@ import { SendMoneyIcon } from "@/app/icons/SendMoneyIcon"
 
 export default function NbpCard() {
   return (
-    <Card className="text-black bg-[#f2f7f5] min-h-[200px] min-w-[300px] max-h-[350px] max-w-[400px]">
+    <Card className="text-black bg-[#f2f7f5] min-h-[200px] max-h-[350px] max-w-[400px]">
       <CardBody className="grid place-content-center">
         <h4 className="font-medium">
           Stress-Free Money Transfers to TODO
