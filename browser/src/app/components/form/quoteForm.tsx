@@ -99,6 +99,8 @@ export default function QuoteForm() {
 
   useEffect(() => {
     setRate(0)
+    formik.setFieldValue('sourceAmount', 0)
+    formik.setFieldValue('destinationAmount', 0)
     const controller = new AbortController();
     const signal = controller.signal;
     async function fetchRate(sourceCurrency: string, destinationCurrency: string) {
