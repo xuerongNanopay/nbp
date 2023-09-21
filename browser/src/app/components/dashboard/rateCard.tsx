@@ -13,7 +13,7 @@ import { SendMoneyIcon } from "@/app/icons/SendMoneyIcon"
 
 export default function RateCard({rate}: {rate: string}) {
   return (
-    <Card className="text-black bg-[#f2f7f5] min-h-[200px] min-w-[300px] max-h-[350px] max-w-[400px]">
+    <Card className="text-black bg-[#f2f7f5] min-h-[200px] max-h-[350px] max-w-[400px]">
       <CardHeader>
         <h3 className="font-semibold">Current Rates</h3>
       </CardHeader>
