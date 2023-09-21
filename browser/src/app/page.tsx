@@ -8,6 +8,7 @@ import QuoteForm from "./components/form/quoteForm"
 import SubmitTransactionForm from "./components/form/submitTransactionForm"
 import TransactionTable from "./components/table/transactionTable"
 import ContactTable from "./components/table/contactTable"
+import RateCard from "./components/dashboard/rateCard"
 
 export default function Home() {
   return (
@@ -22,7 +23,8 @@ export default function Home() {
         {/* <QuoteForm></QuoteForm> */}
         {/* <SubmitTransactionForm quoteId="11"/> */}
         {/* <TransactionTable></TransactionTable> */}
-        <ContactTable></ContactTable>
+        {/* <ContactTable></ContactTable> */}
+        <RateCard></RateCard>
       </section>
     </main>
   )
