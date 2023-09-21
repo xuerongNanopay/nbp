@@ -87,12 +87,6 @@ const showDetailWrapper = (contactId: string) => {
   }
 }
 
-const sendWrapper = (contactId: string) => {
-  return () => {
-    alert("TODO: Send " + contactId)
-  }
-}
-
 const deleteWrapper = (contactId: string) => {
   return () => {
     alert("TODO: Delete Contact: " + contactId)
@@ -108,6 +102,14 @@ const ActionsCell = (contact: IContactResult) => {
           onClick={showDetailWrapper(contact.id)}
         >
           <EyeIcon/>
+        </span>
+      </Tooltip>
+      <Tooltip content="Delete">
+        <span 
+          className="text-lg text-default-400 cursor-pointer active:opacity-50"
+          onClick={deleteWrapper(contact.id)}
+        >
+          <DeleteIcon/>
         </span>
       </Tooltip>
     </div>

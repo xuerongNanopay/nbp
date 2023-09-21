@@ -21,10 +21,10 @@ export default function Home() {
         {/* <ContactForm></ContactForm> */}
         {/* <UserOnboardingForm></UserOnboardingForm> */}
         {/* <EmailVerifyForm></EmailVerifyForm> */}
-        <QuoteForm></QuoteForm>
+        {/* <QuoteForm></QuoteForm> */}
         {/* <SubmitTransactionForm quoteId="11"/> */}
         {/* <TransactionTable></TransactionTable> */}
-        {/* <ContactTable></ContactTable> */}
+        <ContactTable></ContactTable>
         {/* <RateCard rate="aaa"></RateCard> */}
         {/* <NbpCard></NbpCard> */}
       </section>

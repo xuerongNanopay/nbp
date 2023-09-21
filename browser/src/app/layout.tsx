@@ -23,7 +23,7 @@ export default function RootLayout({
         <NextUIProvider>
           {/* <main> */}
             <Nav></Nav>
-            <div className="max-w-[1024px] px-6 mx-auto">
+            <div className="max-w-[1024px] mx-auto">
               {children}
             </div>
           {/* </main> */}
