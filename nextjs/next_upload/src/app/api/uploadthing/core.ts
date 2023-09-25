@@ -25,6 +25,12 @@ export const ourFileRouter = {
     
     console.log("file url", file.url);
   }),
+  mediaPost: f({
+    image: { maxFileSize: "2MB", maxFileCount: 4 },
+    video: { maxFileSize: "256MB", maxFileCount: 1 },
+  })
+    .middleware(({ req }) => auth(req))
+    .onUploadComplete((data) => console.log("file", data))
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
