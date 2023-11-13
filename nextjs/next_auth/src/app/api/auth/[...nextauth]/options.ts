@@ -1,6 +1,8 @@
 import type { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 
+const ADMIN_EMAIL = 'admin@xrw.io'
+const ADMIN_PASSWORD= 'adminAb1'
 // Generate a Random Secret.
 // openssl rand -base64 32
 export const options: NextAuthOptions = {
@@ -11,15 +13,19 @@ export const options: NextAuthOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: "email", type: "text", placeholder: "xxx@xx.com" },
+        email: { label: "email", type: "text"},
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
+        if ( ! credentials ) return null
+        const { email, password } = credentials
         //TODO: load from database.
         console.log(credentials)
-        console.log(req.headers?.method)
-        return { username: 'xuerong', email: 'xuerong@nanopay.net', id: '1'}
-        // return null
+        console.log(req.body)
+        if ( email === ADMIN_EMAIL && password === ADMIN_PASSWORD ) {
+          return { id: '44', email: ADMIN_EMAIL }
+        }
+        return null
       }
     })
   ],

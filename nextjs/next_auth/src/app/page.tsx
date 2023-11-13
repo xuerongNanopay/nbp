@@ -1,11 +1,14 @@
-'use client'
-import { signIn } from "next-auth/react"
+import Link from 'next/link'
 
-export default function Home() {
+export default function Root() {
   return (
     <>
-      <h1 className=''>MAIN</h1>
-      <button onClick={() => signIn('credentials', { redirect: false, password: 'password', email:'xxx@gmail.com' })}>Sign In</button>
+      <div className='min-h-screen grid place-items-center'>
+        <div>
+          <h1 className=''>Root</h1>
+          <Link href='auth/signIn' className='text-amber-400'>Go to SignIn</Link>
+        </div>
+      </div>
     </>
   )
 }
