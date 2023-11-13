@@ -16,18 +16,6 @@ export const options: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         //TODO: load from database.
-        // const res = await fetch("/your/endpoint", {
-        //   method: 'POST',
-        //   body: JSON.stringify(credentials),
-        //   headers: { "Content-Type": "application/json" }
-        // })
-        // const user = await res.json()
-  
-        // // If no error and we have user data, return it
-        // if (res.ok && user) {
-        //   return user
-        // }
-        // // Return null if user data could not be retrieved
         console.log(credentials)
         console.log(req.headers?.method)
         return { username: 'xuerong', email: 'xuerong@nanopay.net', id: '1'}
@@ -37,12 +25,18 @@ export const options: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      console.log("clasbacks.signIn: ", { user, account, profile, email, credentials })
+      console.log('clasbacks.signIn')
+      // console.log("clasbacks.signIn: ", { user, account, profile, email, credentials })
       return true
     },
     async jwt({ token, user, account, profile }) {
-      console.log("clasbacks.signIn: ", { user, account, profile });
+      console.log('clasbacks.jwt')
+      // console.log("clasbacks.jwt: ", { user, account, profile });
       return token
+    },
+    async session({ session, token, user }) {
+      console.log('clasbacks.session', session)
+      return {...session, token, user}
     }
   },
   events: {
