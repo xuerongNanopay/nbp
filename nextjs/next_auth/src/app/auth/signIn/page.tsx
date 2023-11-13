@@ -13,6 +13,7 @@ export default function SignIn() {
     e.preventDefault()
     e.stopPropagation()
     const signInResponse = await signIn('credentials', {email, password, redirect: false})
+    console.log(signInResponse)
     if ( ! signInResponse ) {
       alert('Has problem during Sign In')
     } else if ( ! signInResponse.ok ) {

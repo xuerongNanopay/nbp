@@ -1,7 +1,10 @@
 'use client'
+// import { useSession } from "next-auth/react"
 import { signOut } from "next-auth/react"
 
 export default function Root() {
+  // const { data: session, status } = useSession()
+  // console.log(data)
   const signOutHandler = () => {
     signOut({ callbackUrl: '/auth/signIn' })
   }
