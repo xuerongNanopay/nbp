@@ -20,7 +20,7 @@ export default function SignIn() {
       setEmail('')
       setPassword('')
     } else {
-      router.replace('private/profile')
+      router.replace('/private/profile')
     }
   }
 
