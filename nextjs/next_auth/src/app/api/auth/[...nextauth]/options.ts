@@ -21,7 +21,6 @@ export const options: NextAuthOptions = {
         const { email, password } = credentials
         //TODO: load from database.
         console.log(credentials)
-        console.log(req.body)
         if ( email === ADMIN_EMAIL && password === ADMIN_PASSWORD ) {
           return { id: '44', email: ADMIN_EMAIL }
         }
@@ -49,9 +48,11 @@ export const options: NextAuthOptions = {
     async signIn(message) {
       console.log('events.signIn', message)
     }
-  }
+  },
   // Customize Auth page. refer to Next 
-  // pages: {
-  //   signIn: '/signin'
-  // }
+  pages: {
+    signIn: '/auth/signIn',
+    //TODO: redirect to page no found
+    // error: '/auth/signIn'
+  }
 }
