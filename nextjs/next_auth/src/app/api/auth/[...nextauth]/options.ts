@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
         console.log('authorize', credentials)
         if ( email === ADMIN_EMAIL && password === ADMIN_PASSWORD ) {
           //TODO: return login object from data base.
-          return { id: '4', email: ADMIN_EMAIL, isEmailLoginVerified: true }
+          return { id: '4', email: ADMIN_EMAIL}
         }
         return null
       }
@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
     // },
     async session({ session, token }) {
       //TODO: Using token.email or session.email to lookup realUser info in database.
-      return {...session, token, loginItem: {id: '4', isEmailLoginVerified: true}, realUser: {id: '44'}}
+      return {...session, token, loginItem: {id: '4', isEmailLoginVerified: true}, realUser: {id: '1'}}
     }
   },
   events: {
