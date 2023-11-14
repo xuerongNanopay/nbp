@@ -1,15 +1,25 @@
-import type { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { User } from "next-auth"
+import { Awaitable, User } from "next-auth"
+import type { Session, NextAuthOptions } from "next-auth"
+import type { JWT } from "next-auth/jwt"
 
-type Login = User & {
-  id: string
-  isEmailLoginVerified: boolean,
-  user: {
-    id: string,
-    name: string
-  } | undefined | null
+export interface AuthItem extends Session {
+  token: JWT
+  loginItem: LoginItem,
+  realUser: RealUser
 }
+
+type RealUser = {
+  id: string,
+  firstname?: string,
+  lastname?: string
+}
+
+type LoginItem = User & {
+  id: string
+  isEmailLoginVerified?: boolean,
+}
+
 const ADMIN_EMAIL = 'admin@xrw.io'
 const ADMIN_PASSWORD= 'adminAb1'
 // Generate a Random Secret.
@@ -26,42 +36,36 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       // Take login & user info from data base.
-      async authorize(credentials, req): Promise<Login | null> {
+      async authorize(credentials, req): Promise<LoginItem | null> {
         if ( ! credentials ) return null
         const { email, password } = credentials
         //TODO: load from database.
         console.log('authorize', credentials)
         if ( email === ADMIN_EMAIL && password === ADMIN_PASSWORD ) {
           //TODO: return login object from data base.
-          return { id: '4', email: ADMIN_EMAIL, isEmailLoginVerified: true, user: {id: '44', name: 'adminUser'} }
+          return { id: '4', email: ADMIN_EMAIL, isEmailLoginVerified: true }
         }
         return null
       }
     })
   ],
   callbacks: {
-    // user will be login object
-    // handle emailVerify at here
-    // diable user login
     async signIn({ user, account, profile, email, credentials }) {
       console.log('clasbacks.signIn', { user, account, profile, email, credentials } )
 
-      const login = user as Login
-      if ( ! login ) return false
-      // require verify email
-      if ( ! login.isEmailLoginVerified ) return '/auth/verifyEmail'
-      // require fill userOnboarding form
-      if ( ! login.user ) return '/auth/userOnboarding'
+      const loginItem = user as LoginItem
+      if ( ! loginItem ) return false
+      console.log('aaa')
       return true
     },
-    async jwt({ token, user, account, profile }) {
-      console.log('clasbacks.jwt', user, token)
-      // console.log("clasbacks.jwt: ", { user, account, profile });
-      return token
-    },
-    async session({ session, token, user }) {
-      console.log('clasbacks.session', session, token, user)
-      return {...session, token, user}
+    // async jwt({ token, user, account, profile }) {
+    //   console.log('clasbacks.jwt', user, token, account, profile)
+    //   // console.log("clasbacks.jwt: ", { user, account, profile });
+    //   return token
+    // },
+    async session({ session, token }) {
+      //TODO: Using token.email or session.email to lookup realUser info in database.
+      return {...session, token, loginItem: {id: '4', isEmailLoginVerified: true}, realUser: {id: '44'}}
     }
   },
   events: {
