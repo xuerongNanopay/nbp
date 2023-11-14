@@ -12,7 +12,6 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const authItem = await getServerSession(authOptions) as AuthItem
-  console.log(authItem)
 
   if (!authItem) redirect('/auth/signIn')
   if (!authItem.loginItem) redirect('/auth/signIn')

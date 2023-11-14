@@ -4,7 +4,7 @@ import { signOut } from "next-auth/react"
 
 export default function Root() {
   const session = useSession()
-  console.log(session)
+  // console.log(session)
   const signOutHandler = () => {
     signOut({ callbackUrl: '/auth/signIn' })
   }

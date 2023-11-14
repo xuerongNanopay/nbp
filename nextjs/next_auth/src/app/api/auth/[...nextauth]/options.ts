@@ -51,11 +51,10 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      console.log('clasbacks.signIn', { user, account, profile, email, credentials } )
+      // console.log('clasbacks.signIn', { user, account, profile, email, credentials } )
 
       const loginItem = user as LoginItem
       if ( ! loginItem ) return false
-      console.log('aaa')
       return true
     },
     // async jwt({ token, user, account, profile }) {
@@ -64,14 +63,16 @@ export const authOptions: NextAuthOptions = {
     //   return token
     // },
     // ***** Do not pass sensitive info in the return
+    // ***** This method invoke too often ? put session in redis.
     async session({ session, token }) {
+      console.log('sessoin call***')
       //TODO: Using token.email or session.email to lookup realUser info in database.
       return {...session, token, loginItem: {id: '4', isEmailLoginVerified: true}, realUser: {id: '1'}}
     }
   },
   events: {
     async signIn(message) {
-      console.log('events.signIn', message)
+      // console.log('events.signIn', message)
     }
   },
   // Customize Auth page. refer to Next 
