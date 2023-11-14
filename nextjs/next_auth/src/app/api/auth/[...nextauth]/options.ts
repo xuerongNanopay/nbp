@@ -63,6 +63,7 @@ export const authOptions: NextAuthOptions = {
     //   // console.log("clasbacks.jwt: ", { user, account, profile });
     //   return token
     // },
+    // ***** Do not pass sensitive info in the return
     async session({ session, token }) {
       //TODO: Using token.email or session.email to lookup realUser info in database.
       return {...session, token, loginItem: {id: '4', isEmailLoginVerified: true}, realUser: {id: '1'}}
