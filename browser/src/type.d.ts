@@ -117,4 +117,12 @@ type IContactResult =
   IContact & (IBankTransfer | ICashPickup) & {
     id: string,
     status: string // Unverified, Verified, pending
-  }
+}
+
+type Menu = {
+  id: string,
+  name: string,
+  href: string
+}
+
+type Menus = Menu[]

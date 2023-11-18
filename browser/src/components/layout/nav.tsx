@@ -16,46 +16,14 @@ import {
 } from "@nextui-org/react"
 
 import NextLink from "next/link";
-
-const menuItems = [
-  {
-    id: 'dashboard',
-    name: 'Dashboard',
-    href: '/dashboard'
-  },
-  {
-    id: 'sendMoney',
-    name: 'Send Money',
-    href: '/transfer'
-  },
-  {
-    id: 'contacts',
-    name: 'Contacts',
-    href: '/contacts'
-  },
-  {
-    id: 'transaction',
-    name: 'Transactions',
-    href: '/transactions'
-  },
-  {
-    id: 'profile',
-    name: 'Profile',
-    href: '/profile'
-  },
-  {
-    id: 'about',
-    name: 'About',
-    href: '/about'
-  }
-];
+import menus from './menu'
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
     <Navbar
-      className="bg-green-800"
+      className="bg-white border-b-2 border-green-800"
       isBordered
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
@@ -65,7 +33,7 @@ export default function Nav() {
       </NavbarContent>
 
       <NavbarMenu className="max-w-[1024px] px-6 mx-auto">
-        {menuItems.map((item) => (
+        {menus.map((item: Menu) => (
           <NavbarMenuItem key={item.id}>
             <Link
               className="w-full hover:font-semibold"
@@ -73,6 +41,7 @@ export default function Nav() {
               href={item.href}
               size="lg"
               as={NextLink}
+              onPressEnd={() => setIsMenuOpen(false)}
             >
               {item.name}
             </Link>
@@ -84,12 +53,12 @@ export default function Nav() {
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
             <Avatar
-              isBordered
+              // isBordered
               as="button"
               className="transition-transform"
-              color="secondary"
+              color="primary"
               name="Jason Hughes"
-              size="sm"
+              size="md"
             />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
