@@ -8,7 +8,7 @@ import {
   Button
 } from "@nextui-org/react"
 
-import { SendMoneyIcon } from "@/app/icons/SendMoneyIcon"
+import { SendMoneyIcon } from "@/icons/SendMoneyIcon"
 
 
 export default function RateCard({rate}: {rate: string}) {

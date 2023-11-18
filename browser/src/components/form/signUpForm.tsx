@@ -8,8 +8,8 @@ import {
   Button
 } from "@nextui-org/react";
 
-import { EyeSlashFilledIcon } from "@/app/icons/EyeSlashFilledIcon"
-import { EyeFilledIcon } from "@/app/icons/EyeFilledIcon"
+import { EyeSlashFilledIcon } from "@/icons/EyeSlashFilledIcon"
+import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
 
 
 const getCharacterValidationError = (str: string) => {

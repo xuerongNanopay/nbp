@@ -1,6 +1,7 @@
 'use client'
+
 import React, { useEffect } from 'react'
-import { Selection } from '@nextui-org/react';
+import { Selection } from '@nextui-org/react'
 
 import {
   Table,
@@ -22,71 +23,57 @@ import {
   Pagination
 } from "@nextui-org/react";
 
-import { EyeIcon } from '@/app/icons/EyeIcon'
-import { formatRelativeDate } from '@/utils/dateUtil'
-import { SendMoneyIcon } from '@/app/icons/SendMoneyIcon'
-import transactions from '@/app/tests/dummyTransactions'
-import { SearchIcon } from '@/app/icons/SearchIcon'
-import { PlusIcon } from '@/app/icons/PlusIcon'
-import { ChevronDownIcon } from '@/app/icons/ChevronDownIcon'
+import contacts from '@/tests/dummyContactResults';
+
+import { SearchIcon } from '@/icons/SearchIcon'
+import { PlusIcon } from '@/icons/PlusIcon'
+import { EyeIcon } from '@/icons/EyeIcon'
+import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
+import { DeleteIcon } from '@/icons/DeleteIcon'
+import { SendMoneyIcon } from '@/icons/SendMoneyIcon'
 
 const statusOptions = [
-  {name: "SUCCESS", uid: "complete"},
-  {name: "CANCEL", uid: "cancel"},
-  {name: "PROCESS", uid: "process"},
-  {name: "AWAIT PAYMENT", uid: "awaitPayent"}
+  {name: "VERIFIED", uid: "verified"},
+  {name: "UNVERIFIED", uid: "unverified"},
+  {name: "PENDING", uid: 'pending'}
 ]
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
-  complete: "success",
-  cancel: "danger",
-  process: "secondary",
-  awaitPayent: "warning",
+  verified: "success",
+  unverified: "danger",
+  pending: "secondary"
 }
 
 const statusTextMap: Record<string, string>  = {
-  complete: "SUCCESS",
-  cancel: "CANCEL",
-  process: "PROCESS",
-  awaitPayent: "AWAIT PAYMENT",
+  verified: "VERIFIED",
+  unverified: "UNVERIFIED",
+  pending: "PENDING"
 }
 
 const columns = [
   { name: 'Remittee', uid: 'remitee' },
-  { name: 'Receive', uid: 'receiveAmount' },
-  { name: 'Cost', uid: 'cost' },
-  { name: 'Created', uid: 'created'},
+  { name: 'Account', uid: 'remiteeAccount'},
   { name: 'Status', uid: 'status' },
   { name: 'Actions', uid: 'actions' }
 ]
 
-const RemitteeCell = ({remiteeName, remitAccount, remitMethod}: ITransaction) => {
+const RemitteeCell = (contact: IContactResult) => {
   return (
     <div className="flex flex-col">
-      <p className="text-bold text-sm capitalize">{remiteeName}</p>
-      <p className="text-tiny text-foreground-400">{remitMethod == 'cashPickup' ? 'Cash Pickup' : remitAccount}</p>
+      <p className="text-bold text-sm capitalize">{`${contact.firstName} ${contact.lastName}`}</p>
     </div>
   )
 }
 
-const AmountCell = ({receiveAmount}: ITransaction) => {
+const AccountCell = (contact: IContactResult) => {
   return (
     <>
-      <p>{receiveAmount}</p>
+      <p>{contact.transferMethod === 'bankAccount' ? "TODO: format" : "Cash Pickup"}</p>
     </>
   )
 }
 
-const CostCell = ({cost}: ITransaction) => {
-  return (
-    <>
-      <p>{cost}</p>
-    </>
-  )
-}
-
-
-const StatusCell = ({status}: ITransaction) => {
+const StatusCell = ({status}: IContactResult) => {
   return (
     <Chip className="capitalize" color={statusColorMap[status]} size="sm" variant="flat">
       {statusTextMap[status]}
@@ -94,84 +81,64 @@ const StatusCell = ({status}: ITransaction) => {
   )
 }
 
-const CreatedCell = ({created}: ITransaction) => {
-  return (
-    <>
-      <p>{formatRelativeDate(created)}</p>
-    </>
-  )
-}
-
-const showDetailWrapper = (transactionId: string) => {
+const showDetailWrapper = (contactId: string) => {
   return () => {
-    alert("TODO: SHOW DETAIl: " + transactionId)
-  }
-}
-const etransferLinkWrapper = (etransferLink: string) => {
-  return () => {
-    alert("TODO: Etransfer: " + etransferLink)
+    alert("TODO: SHOW DETAIl: " + contactId)
   }
 }
 
-const ActionsCell = (transaction: ITransaction) => {
+const deleteWrapper = (contactId: string) => {
+  return () => {
+    alert("TODO: Delete Contact: " + contactId)
+  }
+}
+
+const ActionsCell = (contact: IContactResult) => {
   return (
     <div className="relative flex items-center gap-2">
       <Tooltip content="Details">
         <span 
           className="text-lg text-default-400 cursor-pointer active:opacity-50"
-          onClick={showDetailWrapper(transaction.id)}
+          onClick={showDetailWrapper(contact.id)}
         >
           <EyeIcon/>
         </span>
       </Tooltip>
-      { transaction.status === 'awaitPayent' ?
-          <Tooltip content="Pay">
-            <span 
-              className="text-lg text-default-400 cursor-pointer active:opacity-50"
-              onClick={etransferLinkWrapper(transaction.etransferLink)}
-            >
-              <SendMoneyIcon/>
-            </span>
-          </Tooltip>
-        : <></>
-      }
-  </div>
+      <Tooltip content="Delete">
+        <span 
+          className="text-lg text-default-400 cursor-pointer active:opacity-50"
+          onClick={deleteWrapper(contact.id)}
+        >
+          <DeleteIcon/>
+        </span>
+      </Tooltip>
+    </div>
   )
 }
 
-//FOR NOW, load all transactions and doing the fileter in frontEnd.
-export default function TransactionTable() {
+export default function ContactTable() {
   const [searchValue, setSearchValue] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false)
   const [page, setPage] = React.useState(1)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [statusFilter, setStatusFilter] = React.useState<Selection>('all')
 
-  const renderCell = React.useCallback((transaction: ITransaction, columnKey: React.Key) => {
+  const renderCell = React.useCallback((contact: IContactResult, columnKey: React.Key) => {
     switch(columnKey) {
       case "remitee":
         return (
-          <RemitteeCell {...transaction}/>
+          <RemitteeCell {...contact}/>
         )
-      case "receiveAmount":
+      case "remiteeAccount":
         return (
-          <AmountCell {...transaction}/>
-        )
-      case "cost":
-        return (
-          <CostCell {...transaction}/>
-        )
-      case "created":
-        return (
-          <CreatedCell {...transaction}/>
+          <AccountCell {...contact}/>
         )
       case "status":
         return (
-          <StatusCell {...transaction}/>
+          <StatusCell {...contact}/>
         )
       case "actions":
         return (
-          <ActionsCell {...transaction}/>
+          <ActionsCell {...contact}/>
         )
       default:
         return null
@@ -192,32 +159,31 @@ export default function TransactionTable() {
     setPage(1)
   },[])
 
-  //TODO: Improve to reduce the network load.
-  const filteredTransactions = React.useMemo(() => {
-    let filteredTransactions = [...transactions];
+  const filteredContacts = React.useMemo(() => {
+    let filteredContacts = [...contacts];
 
-    if (Boolean(searchValue)) {
-      filteredTransactions = filteredTransactions.filter((transaction) =>
-        transaction.remiteeName.toLowerCase().includes(searchValue.toLowerCase()),
-      );
-    }
+    // if (Boolean(searchValue)) {
+    //   filteredContacts = filteredContacts.filter((transaction) =>
+    //     transaction.remiteeName.toLowerCase().includes(searchValue.toLowerCase()),
+    //   );
+    // }
     if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredTransactions = filteredTransactions.filter((transaction) =>
-        Array.from(statusFilter).includes(transaction.status),
+      filteredContacts = filteredContacts.filter((contact) =>
+        Array.from(statusFilter).includes(contact.status),
       );
     }
 
-    return filteredTransactions;
-  }, [searchValue, statusFilter])
+    return filteredContacts;
+  }, [contacts, searchValue, statusFilter])
 
-  const pages = Math.ceil(filteredTransactions.length / rowsPerPage);
+  const pages = Math.ceil(filteredContacts.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return filteredTransactions.slice(start, end)
-  }, [page, filteredTransactions, rowsPerPage])
+    return filteredContacts.slice(start, end)
+  }, [page, filteredContacts, rowsPerPage])
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -272,12 +238,12 @@ export default function TransactionTable() {
               </DropdownMenu>
             </Dropdown>
             <Button color="primary" endContent={<PlusIcon />}>
-              Transfer
+              New Contact
             </Button>
           </div>
         </div>
         <div className="flex flex-col items-start sm:flex-row justify-between sm:items-center">
-          <span className="text-default-400 text-small">Total {filteredTransactions.length} transactions</span>
+          <span className="text-default-400 text-small">Total {filteredContacts.length} Contacts</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -299,7 +265,7 @@ export default function TransactionTable() {
     statusFilter,
     setStatusFilter,
     onClear,
-    filteredTransactions.length
+    filteredContacts.length
   ])
 
   const bottomContent = React.useMemo(() => {
@@ -320,7 +286,7 @@ export default function TransactionTable() {
 
   return (
     <Table 
-      aria-label="Transaction table"
+      aria-label="Contact table"
       className="w-full max-w-4xl"
       isStriped={true}
       topContent={topContent}
