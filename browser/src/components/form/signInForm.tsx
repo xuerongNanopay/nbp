@@ -5,13 +5,14 @@ import { useFormik } from "formik"
 import * as Yup from 'yup';
 import {
   Input,
-  Button
+  Button,
+  Link
 } from "@nextui-org/react";
 
 import { EyeSlashFilledIcon } from "@/icons/EyeSlashFilledIcon"
 import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
 
-export default function SignInForm() {
+export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
   const [ isPasswordVisible, setIsPasswordVisible ] = useState(false)
   const initialValues: ISignIn = {email: '', password: ''}
 
@@ -58,10 +59,11 @@ export default function SignInForm() {
           {...formik.getFieldProps('password')}
           errorMessage={formik.touched.password && formik.errors.password}
         />
+        { !!forgetPWLink && <div className="flex justify-end"><Link href={forgetPWLink} className="text-gray-600">foget password?</Link></div>}
         <Button 
           type="submit"
           color="primary"
-          className="mt-4"
+          className={`${!forgetPWLink ? 'mt-4': ''}`}
           size="md"
           isDisabled={!(formik.isValid && formik.dirty)}
         >
