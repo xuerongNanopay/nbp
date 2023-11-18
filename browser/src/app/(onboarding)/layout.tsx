@@ -8,13 +8,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    // <NextUIProvider>
-      <div>
-        <IconHeader className="mb-8"></IconHeader>
-        <div className="flex justify-center">
-          {children}
-        </div>
+    <div>
+      <IconHeader className="mb-8"></IconHeader>
+      <div className="flex justify-center px-4 lg:px-0">
+        {children}
       </div>
-    // </NextUIProvider>
+    </div>
   )
 }

@@ -7,7 +7,7 @@ import {
 export default function IconHeader(props: {className: any}) {
   return (
     <Navbar
-      className={`border-green-800 border-b-2 ${props.className}`}
+      className={`border-green-800 border-b-2 bg-white ${props.className}`}
       isBordered
     >
       <NavbarContent justify="end">
