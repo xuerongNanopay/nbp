@@ -5,6 +5,7 @@ import {
   NavbarContent,
   Button
 } from "@nextui-org/react"
+import { CloseIcon } from "@/icons/CloseIcon"
 
 export default function IconHeaderWithLogout(props: {className: any}) {
   return (
@@ -18,9 +19,10 @@ export default function IconHeaderWithLogout(props: {className: any}) {
           <Button 
             color="primary" 
             variant="ghost"
-            className="absolute right-0 md:right-2"
+            radius="full"
+            className="absolute right-0 md:right-2 px-0"
           >
-            Out
+            <CloseIcon/>
           </Button>
         </div>
       </NavbarContent>
