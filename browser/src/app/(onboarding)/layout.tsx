@@ -1,5 +1,3 @@
-import NextUIProvider from '@/providers/NextUIProvider'
-
 import IconHeader  from '@/components/header/IconHeader'
 
 export default function RootLayout({

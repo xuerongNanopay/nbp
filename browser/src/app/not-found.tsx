@@ -9,7 +9,7 @@ export default function NotFound() {
   return (
     <>
       <Navbar
-        className="border-green-800 border-b-2"
+        className="border-green-800 bg-white border-b-2"
         isBordered
       >
         <NavbarContent justify="end">
@@ -20,6 +20,7 @@ export default function NotFound() {
       </Navbar>
       <div>
         <h4>404 Not Found</h4>
+        <Link href="/">Back to Main</Link>
       </div>
     </>
   )
