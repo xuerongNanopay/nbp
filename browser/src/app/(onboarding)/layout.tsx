@@ -1,4 +1,4 @@
-import IconHeader  from '@/components/header/IconHeader'
+import IconHeaderWithLogout  from '@/components/header/IconHeaderWithLogout'
 
 export default function RootLayout({
   children,
@@ -7,7 +7,7 @@ export default function RootLayout({
 }) {
   return (
     <div>
-      <IconHeader className="mb-8"></IconHeader>
+      <IconHeaderWithLogout className="mb-8"></IconHeaderWithLogout>
       <div className="flex justify-center px-4 lg:px-0">
         {children}
       </div>
