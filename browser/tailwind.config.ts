@@ -10,7 +10,11 @@ const config: Config = {
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        'nbp-background': "url('/images/background.svg')",
+      },
+    },
   },
   darkMode: "class",
   plugins: [nextui(CUSTOMIZE_NEXTUI_THEME)],
