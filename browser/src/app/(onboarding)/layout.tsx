@@ -1,3 +1,5 @@
+import IconHeader  from '@/components/header/IconHeader'
+
 export default function RootLayout({
   children,
 }: {
@@ -5,6 +7,7 @@ export default function RootLayout({
 }) {
   return (
     <div>
+      <IconHeader></IconHeader>
       {children}
     </div>
   )
