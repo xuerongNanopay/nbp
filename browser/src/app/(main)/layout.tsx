@@ -7,7 +7,7 @@ export default function RootLayout({
 }) {
   return (
     <main>
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <Nav></Nav>
       </div>
       <div className="max-w-[1024px] mx-auto">

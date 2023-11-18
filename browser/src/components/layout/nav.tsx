@@ -34,7 +34,7 @@ export default function Nav() {
 
       <NavbarMenu className="max-w-[1024px] px-6 mx-auto">
         {menus.map((item: Menu) => (
-          <NavbarMenuItem key={item.id}>
+          <NavbarMenuItem key={item.id} className="hover:bg-slate-200 rounded-md">
             <Link
               className="w-full hover:font-semibold"
               color={"foreground"}
