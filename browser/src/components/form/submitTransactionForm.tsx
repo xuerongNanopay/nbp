@@ -1,5 +1,5 @@
 'use client'
-
+//TODO: put quote and submit in the same form
 import { FormEvent, useEffect, useState } from "react";
 
 import {

@@ -54,7 +54,8 @@ export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
-    <Navbar 
+    <Navbar
+      className="bg-green-800"
       isBordered
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}

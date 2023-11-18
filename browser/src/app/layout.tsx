@@ -21,12 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextUIProvider>
-          {/* <main> */}
-            <Nav></Nav>
-            <div className="max-w-[1024px] mx-auto">
-              {children}
-            </div>
-          {/* </main> */}
+          {children}
         </NextUIProvider>
       </body>
     </html>
