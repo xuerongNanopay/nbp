@@ -10,7 +10,7 @@ export default function RootLayout({
       >
       </div>
       <div 
-        className="flex-auto md:grid md:place-content-center"
+        className="flex-auto"
       >
         {children}
       </div>

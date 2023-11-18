@@ -18,14 +18,13 @@ const getCharacterValidationError = (str: string) => {
 
 export default function SignUpForm() {
   const [ isPasswordVisible, setIsPasswordVisible ] = useState(false)
-  const initialValues: ISignUp = {email: '', username: '', password: '', rePassword: ''}
+  const initialValues: ISignUp = {email: '', password: '', rePassword: ''}
 
   const signUp = (e: ISignUp) => { console.log(e) }
   const formik = useFormik({
     initialValues,
     validationSchema: Yup.object({
       email: Yup.string().email('Invalid email address').required('Required'),
-      username: Yup.string().min(8, 'Must between 8 to 24 characters').max(24, 'Must between 8 to 24 characters').required('Required'),
       password: Yup.string()
                   .min(8, "Password must have at least 8 characters")
                   .matches(/[0-9]/, getCharacterValidationError("digit"))
@@ -50,16 +49,6 @@ export default function SignUpForm() {
           size="sm"
           {...formik.getFieldProps('email')}
           errorMessage={formik.touched.email && formik.errors.email}
-        />
-        <Input
-          id="username"
-          type="text" 
-          variant="bordered" 
-          label="Username"
-          color="primary"
-          size="sm"
-          {...formik.getFieldProps('username')}
-          errorMessage={formik.touched.username && formik.errors.username}
         />
         <Input
           id="password"
