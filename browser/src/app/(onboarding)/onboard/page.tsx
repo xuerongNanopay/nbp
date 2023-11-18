@@ -1,7 +1,9 @@
+import OnboardingForm from "@/components/form/onboardingForm"
+
 export default function Onboard() {
   return (
     <>
-      <h1>Onboard</h1>
+      <OnboardingForm/>
     </>
   )
 }

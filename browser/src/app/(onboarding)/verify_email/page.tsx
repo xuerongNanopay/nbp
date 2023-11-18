@@ -1,7 +1,9 @@
+import EmailVerifyForm from "@/components/form/emailVerifyForm"
+
 export default function VerifyEmail() {
   return (
     <>
-      <h1>VerifyEmail</h1>
+      <EmailVerifyForm></EmailVerifyForm>
     </>
   )
 }

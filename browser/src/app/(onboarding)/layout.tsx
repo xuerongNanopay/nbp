@@ -1,3 +1,5 @@
+import NextUIProvider from '@/providers/NextUIProvider'
+
 import IconHeader  from '@/components/header/IconHeader'
 
 export default function RootLayout({
@@ -6,9 +8,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <div>
-      <IconHeader></IconHeader>
-      {children}
-    </div>
+    // <NextUIProvider>
+      <div>
+        <IconHeader className="mb-8"></IconHeader>
+        <div className="flex justify-center">
+          {children}
+        </div>
+      </div>
+    // </NextUIProvider>
   )
 }

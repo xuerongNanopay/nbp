@@ -3,8 +3,6 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import NextUIProvider from '../providers/NextUIProvider'
 
-import Nav from '../components/layout/nav'
-
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -20,9 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <NextUIProvider>
+        {/* <NextUIProvider> */}
           {children}
-        </NextUIProvider>
+        {/* </NextUIProvider> */}
       </body>
     </html>
   )
