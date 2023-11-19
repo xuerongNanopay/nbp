@@ -16,7 +16,7 @@ import {
 } from "@nextui-org/react"
 
 import NextLink from "next/link";
-import menus from './menu'
+import menus from '@/constants/menu'
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
