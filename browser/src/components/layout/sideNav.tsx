@@ -15,7 +15,7 @@ import menus from '@/constants/sideNavMenu'
 export default function SideNav() {
   const router = useRouter()
   const curPath = usePathname()
-  console.log(curPath)
+
   return (
     <div className="h-full flex flex-col">
       <header className="h-16 flex-initial px-2 border border-red-500">Icon</header>
