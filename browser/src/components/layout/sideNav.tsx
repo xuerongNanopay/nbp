@@ -5,18 +5,21 @@ import {
   ListboxItem
 } from '@nextui-org/react'
 
-import { useRouter } from 'next/navigation'
+import { 
+  useRouter,
+  usePathname
+} from 'next/navigation'
 
 import menus from '@/constants/sideNavMenu'
 
-//TODO: using dropdown Menu
 export default function SideNav() {
   const router = useRouter()
-
+  const curPath = usePathname()
+  console.log(curPath)
   return (
     <div className="h-full flex flex-col">
       <header className="h-16 flex-initial px-2 border border-red-500">Icon</header>
-      <section className="flex-auto px-2 border border-red-500">
+      <section className="flex-auto px-2 pt-4 border border-red-500">
         <Listbox
           aria-label="Menu" 
           onAction={(key) => { 
@@ -25,18 +28,33 @@ export default function SideNav() {
           }}
         >
           {menus.map((menu)=> (
-            <ListboxItem key={menu.id}>{menu.name}</ListboxItem>
+            <ListboxItem key={menu.id} textValue={menu.name}>
+              <div className={`text-lg ${curPath === menu.href ? 'text-green-800 font-semibold' : ''}`}>{menu.name}</div>
+            </ListboxItem>
           ))}
         </Listbox>
       </section>
       <footer className="flex-initial px-2 border border-red-500">
         <Listbox
-          aria-label="Profile" 
-          // disabledKeys={["edit", "delete"]}
-          // onAction={(key) => alert(key)}
+          aria-label='Profile'
         >
-          <ListboxItem key="notifications">Notifications</ListboxItem>
-          <ListboxItem key="user">User</ListboxItem>
+          <ListboxItem 
+            key='notifications'
+            textValue='notifications'
+            onClick={() => {console.log('aaa');router.push('/notifications')}}
+          >
+            <div className={`text-lg ${curPath === '/notifications' ? 'text-green-800 font-semibold' : ''}`}>
+              Notifications
+            </div>
+          </ListboxItem>
+          <ListboxItem 
+            key='user'
+            textValue='User'
+          >
+            <div className={`text-lg ${curPath === '\\User' ? 'text-green-800 font-semibold' : ''}`}>
+              User
+            </div>
+          </ListboxItem>
         </Listbox>
       </footer>
     </div>
