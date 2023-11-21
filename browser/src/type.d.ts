@@ -122,7 +122,8 @@ type IContactResult =
 type Menu = {
   id: string,
   name: string,
-  href: string
+  href: string,
+  handler?: () => {}
 }
 
 type Menus = Menu[]
