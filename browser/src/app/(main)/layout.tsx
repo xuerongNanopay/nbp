@@ -15,11 +15,11 @@ export default function RootLayout({
         {children}
       </div>
       <div className="max-lg:hidden">
-        <div className="w-64 min-h-screen h-screen fixed border border-sky-800 z-50">
+        <div className="w-60 min-h-screen h-screen fixed border border-sky-800 z-50">
           <SideNav></SideNav>
         </div>
         <div className="flex">
-          <div className="flex-none min-h-screen w-64">
+          <div className="flex-none min-h-screen w-60">
           </div>
           <div 
             className="flex-auto border border-orange-800 pt-12"
