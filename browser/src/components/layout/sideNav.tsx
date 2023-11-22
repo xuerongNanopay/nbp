@@ -2,6 +2,8 @@
 import {
   Listbox,
   ListboxItem,
+  Modal,
+  ModalContent
 } from '@nextui-org/react'
 
 import { 
@@ -10,6 +12,8 @@ import {
 } from 'next/navigation'
 
 import menus from '@/constants/sideNavMenu'
+import QuoteForm from "../form/quoteForm";
+import NextUIProvider from "@/providers/NextUIProvider";
 
 export default function SideNav() {
   const router = useRouter()
@@ -62,6 +66,19 @@ export default function SideNav() {
           </ListboxItem>
         </Listbox>
       </footer>
+      <Modal
+        isOpen={true} 
+        placement="center"
+      >
+        <ModalContent>
+          {/* Modal will escape NextUIProvider, so need to add it again*/}
+          <NextUIProvider>
+            <div className="nbp">
+              <QuoteForm/>
+            </div>
+          </NextUIProvider>
+        </ModalContent>
+      </Modal>
     </div>
   )
 }
