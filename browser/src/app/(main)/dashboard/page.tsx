@@ -5,7 +5,6 @@ export default function Dashboard() {
     <>
     {/* TODO: get from Token */}
       <h2>Good evening, {'TODO: Username'}</h2>
-      
     </>
   )
 }

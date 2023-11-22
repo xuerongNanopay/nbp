@@ -12,7 +12,9 @@ export default function RootLayout({
         <Nav></Nav>
       </div>
       <div className="max-w-[1024px] mx-auto lg:hidden">
-        {children}
+        <div className="pt-4 px-2">
+          {children}
+        </div>
       </div>
       <div className="max-lg:hidden">
         <div className="w-60 min-h-screen h-screen fixed border border-sky-800 z-50">

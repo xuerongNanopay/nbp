@@ -18,11 +18,6 @@ const  menus: Menus = [
     id: 'transactions',
     name: 'Transactions',
     href: '/transactions'
-  },
-  {
-    id: 'profile',
-    name: 'Profile',
-    href: '/profile'
   }
 ]
 export default menus
