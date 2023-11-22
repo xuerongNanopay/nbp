@@ -1,5 +1,14 @@
+import {
+  Modal,
+  ModalContent,
+  useDisclosure
+} from '@nextui-org/react'
+
 import Nav from '@/components/layout/nav'
 import SideNav from '@/components/layout/sideNav'
+import QuoteForm from '@/components/form/quoteForm'
+import SignInForm from '@/components/form/signInForm'
+import NextUIProvider from '@/providers/NextUIProvider'
 
 export default function RootLayout({
   children,
@@ -32,6 +41,19 @@ export default function RootLayout({
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={true} 
+        placement="center"
+      >
+        <ModalContent>
+          {/* Modal will escape NextUIProvider, so need to add it again*/}
+          <NextUIProvider>
+            <div className="nbp">
+              <QuoteForm/>
+            </div>
+          </NextUIProvider>
+        </ModalContent>
+      </Modal>
     </main>
   )
 }
