@@ -123,7 +123,7 @@ type Menu = {
   id: string,
   name: string,
   href: string,
-  handler?: () => {}
+  handler?: () => void
 }
 
 type Menus = Menu[]

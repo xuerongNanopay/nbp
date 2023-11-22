@@ -7,7 +7,10 @@ const  menus: Menus = [
   {
     id: 'sendMoney',
     name: 'Send Money',
-    href: '/transfer'
+    href: '/sendMoney',
+    handler: () => {
+      alert("TODO: Transafer")
+    }
   },
   {
     id: 'contacts',

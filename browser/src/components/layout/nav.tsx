@@ -12,9 +12,10 @@ import {
   DropdownTrigger, 
   Dropdown, 
   DropdownMenu,
-  Avatar
+  Avatar,
 } from "@nextui-org/react"
 
+import { PressEvent } from "@react-types/shared"
 import NextLink from "next/link";
 import menus from '@/constants/menu'
 
@@ -33,20 +34,29 @@ export default function Nav() {
       </NavbarContent>
 
       <NavbarMenu className="max-w-[1024px] px-6 mx-auto">
-        {menus.map((item: Menu) => (
-          <NavbarMenuItem key={item.id} className="hover:bg-slate-200 rounded-md">
-            <Link
-              className="w-full hover:font-semibold"
-              color={"foreground"}
-              href={item.href}
-              size="lg"
-              as={NextLink}
-              onPressEnd={() => setIsMenuOpen(false)}
-            >
-              {item.name}
-            </Link>
-          </NavbarMenuItem>
-        ))}
+        {menus.map((item: Menu) => {
+          const customerHandler = !item.handler ? 
+            (e: PressEvent) => {
+              setIsMenuOpen(false)
+            }
+            : (e: PressEvent) => {
+              setIsMenuOpen(false)
+              if ( !!item.handler ) item.handler()
+            }
+          return (
+            <NavbarMenuItem key={item.id} className="hover:bg-slate-200 rounded-md">
+              <Link
+                className="w-full hover:font-semibold"
+                color={"foreground"}
+                href={!item.handler ? item.href : '#'}
+                size="lg"
+                as={NextLink}
+                onPress={customerHandler}
+              >
+                {item.name}
+              </Link>
+            </NavbarMenuItem>
+        )})}
       </NavbarMenu>
 
       <NavbarContent as="div" className="items-center" justify="end">

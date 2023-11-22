@@ -22,9 +22,15 @@ export default function SideNav() {
       <section className="flex-auto px-2 pt-4 border border-red-500">
         <Listbox
           aria-label="Menu" 
-          onAction={(key) => { 
+          onAction={(key) => {
             const m = menus.find(menu => menu.id === key)
-            if ( !!m ) router.push(m?.href)
+            if ( !!m ) {
+              if ( !m.handler ) {
+                router.push(m.href)
+              } else {
+                m.handler()
+              }
+            }
           }}
         >
           {menus.map((menu)=> (

@@ -17,7 +17,10 @@ const  menus: Menus = [
   {
     id: 'sendMoney',
     name: 'Send Money',
-    href: '/transfer'
+    href: '/transfer',
+    handler: () => {
+      alert("TODO: Transafer")
+    }
   },
 ]
 export default menus
