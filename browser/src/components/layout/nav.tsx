@@ -19,9 +19,6 @@ import { PressEvent } from "@react-types/shared"
 import NextLink from "next/link";
 import menus from '@/constants/menu'
 
-import QuoteForm from "../form/quoteForm";
-import NextUIProvider from "@/providers/NextUIProvider";
-
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isTransferWizardOpen, setisTransferWizardOpen] = useState(false)

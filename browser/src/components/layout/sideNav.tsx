@@ -10,8 +10,6 @@ import {
 } from 'next/navigation'
 
 import menus from '@/constants/sideNavMenu'
-import QuoteForm from "../form/quoteForm";
-import NextUIProvider from "@/providers/NextUIProvider";
 
 export default function SideNav() {
   const router = useRouter()
