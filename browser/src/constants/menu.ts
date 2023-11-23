@@ -4,12 +4,11 @@ const  menus: Menus = [
     name: 'Dashboard',
     href: '/dashboard'
   },
-  // {
-  //   id: 'sendMoney',
-  //   name: 'Send Money',
-  //   href: '/sendMoney',
-  //   handler: () => {}
-  // },
+  {
+    id: 'sendMoney',
+    name: 'Send Money',
+    href: '/transfer'
+  },
   {
     id: 'contacts',
     name: 'Contacts',

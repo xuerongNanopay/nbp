@@ -21,14 +21,7 @@ import menus from '@/constants/menu'
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isTransferWizardOpen, setisTransferWizardOpen] = useState(false)
   
-  const newMenus = [...menus, {
-    id: 'sendMoney',
-    name: 'Send Money',
-    href: '/sendMoney',
-    handler: () => {setisTransferWizardOpen(true)}
-  }]
   return (
     <>
       <Navbar
@@ -42,24 +35,15 @@ export default function Nav() {
         </NavbarContent>
 
         <NavbarMenu className="max-w-[1024px] px-6 mx-auto">
-          {newMenus.map((item: Menu) => {
-            const customerHandler = !item.handler ? 
-              (e: PressEvent) => {
-                setIsMenuOpen(false)
-              }
-              : (e: PressEvent) => {
-                setIsMenuOpen(false)
-                if ( !!item.handler ) item.handler()
-              }
+          {menus.map((item: Menu) => {
             return (
               <NavbarMenuItem key={item.id} className="hover:bg-slate-200 rounded-md">
                 <Link
                   className="w-full hover:font-semibold"
                   color={"foreground"}
-                  href={!item.handler ? item.href : '#'}
+                  href={item.href}
                   size="lg"
                   as={NextLink}
-                  onPress={customerHandler}
                 >
                   {item.name}
                 </Link>

@@ -9,7 +9,7 @@ import {
   usePathname
 } from 'next/navigation'
 
-import menus from '@/constants/sideNavMenu'
+import menus from '@/constants/menu'
 
 export default function SideNav() {
   const router = useRouter()
@@ -24,11 +24,7 @@ export default function SideNav() {
           onAction={(key) => {
             const m = menus.find(menu => menu.id === key)
             if ( !!m ) {
-              if ( !m.handler ) {
-                router.push(m.href)
-              } else {
-                m.handler()
-              }
+              router.push(m.href)
             }
           }}
         >
