@@ -11,7 +11,7 @@ type prop = {
   quoteId: string
 }
 
-export default function TransactionForm({ quoteId }: prop) {
+export default function SubmitTransactionForm({ quoteId }: prop) {
   //TODO: using quoteId to fetch transaction detail.
 
   const [transactionQuoteResult, setTransactionQuoteResult] = useState<ITransferQuoteResult|null>(null)

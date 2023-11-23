@@ -10,10 +10,6 @@ import {
   SelectItem
 } from "@nextui-org/react";
 
-type prop  = {
-  sourceAccount: IAccount[]
-  destinationAccount: IAccount[]
-}
 // User have to select account first.
 // Retrieve Currency from Account.
 // TODO: isDefault
@@ -42,7 +38,12 @@ const destinationAccounts = [
   }
 ]
 
-export default function TransferForm() {
+type Props  = {
+  sourceAccountId?: string
+  destinationAccountId?: string
+}
+
+export default function TransferFrom({sourceAccountId, destinationAccountId}: Props) {
 
   const [showAmountInput, setShowAmountInput] = useState(false)
   const [selectSourceAccout, setSelectSourceAccount ] = useState<IAccount|null>(null)

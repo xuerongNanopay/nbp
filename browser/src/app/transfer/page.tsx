@@ -1,7 +1,9 @@
+import { TransactionForm } from "@/components/form"
+
 export default function TransferView() {
   return (
     <>
-      <h1>Transfer</h1>
+      <TransactionForm/>
     </>
   )
 }
