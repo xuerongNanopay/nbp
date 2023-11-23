@@ -44,7 +44,6 @@ type Props  = {
 }
 
 export default function TransferFrom({sourceAccountId, destinationAccountId}: Props) {
-
   const [showAmountInput, setShowAmountInput] = useState(false)
   const [selectSourceAccout, setSelectSourceAccount ] = useState<IAccount|null>(null)
   const [selectDestinationAccount, setSelectDestinationAccount ] = useState<IAccount|null>(null)
@@ -99,6 +98,7 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
   ])
 
   useEffect(() => {
+    console.log('aaa3')
     setRate(0)
     formik.setFieldValue('sourceAmount', 0)
     formik.setFieldValue('destinationAmount', 0)
@@ -119,7 +119,7 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
     }
     fetchRate("CAD", "PKR")
     return () => controller.abort()
-  }, [formik, formik.values.destinationAccountId, formik.values.sourceAccountId])
+  }, [formik.values.destinationAccountId, formik.values.sourceAccountId])
 
   const setSourceAmount = (e: ChangeEvent<HTMLInputElement>) => {
     const sourceAmount = Math.round(Number(e.target.value) * 100) / 100
