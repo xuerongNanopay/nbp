@@ -1,10 +1,10 @@
 version: "3.8"
 
 services:
-  nbp_browser:
+  nbp_dev:
     build: .
-    container_name: nbp_browser
-    hostname: nbp_browser
+    container_name: nbp_dev
+    hostname: nbp_dev
     volumes:
       - .:/App
     ports:

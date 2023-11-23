@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  nbp_browser:
+  nbp_production:
     build:
       dockerfile: production.Dockerfile
     container_name: nbp_production
