@@ -12,9 +12,7 @@ import {
   DropdownTrigger, 
   Dropdown, 
   DropdownMenu,
-  Avatar,
-  Modal,
-  ModalContent
+  Avatar
 } from "@nextui-org/react"
 
 import { PressEvent } from "@react-types/shared"
@@ -96,19 +94,6 @@ export default function Nav() {
           </Dropdown>
         </NavbarContent>
       </Navbar>
-      <Modal
-        isOpen={isTransferWizardOpen} 
-        placement="center"
-      >
-        {/* <ModalContent>
-          {/* Modal will escape NextUIProvider, so need to add it again*/}
-          <NextUIProvider>
-            <div className="nbp">
-              <QuoteForm/>
-            </div>
-          </NextUIProvider>
-        </ModalContent> */}
-      </Modal>
     </>
   )
 }

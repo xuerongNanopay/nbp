@@ -1,9 +1,7 @@
 'use client'
 import {
   Listbox,
-  ListboxItem,
-  Modal,
-  ModalContent
+  ListboxItem
 } from '@nextui-org/react'
 
 import { 
@@ -66,19 +64,6 @@ export default function SideNav() {
           </ListboxItem>
         </Listbox>
       </footer>
-      <Modal
-        isOpen={true} 
-        placement="center"
-      >
-        <ModalContent>
-          {/* Modal will escape NextUIProvider, so need to add it again*/}
-          <NextUIProvider>
-            <div className="nbp">
-              <QuoteForm/>
-            </div>
-          </NextUIProvider>
-        </ModalContent>
-      </Modal>
     </div>
   )
 }
