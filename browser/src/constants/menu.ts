@@ -4,14 +4,12 @@ const  menus: Menus = [
     name: 'Dashboard',
     href: '/dashboard'
   },
-  {
-    id: 'sendMoney',
-    name: 'Send Money',
-    href: '/sendMoney',
-    handler: () => {
-      alert("TODO: Transafer")
-    }
-  },
+  // {
+  //   id: 'sendMoney',
+  //   name: 'Send Money',
+  //   href: '/sendMoney',
+  //   handler: () => {}
+  // },
   {
     id: 'contacts',
     name: 'Contacts',

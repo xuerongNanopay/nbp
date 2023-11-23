@@ -26,7 +26,14 @@ import NextUIProvider from "@/providers/NextUIProvider";
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
+  const [isTransferWizardOpen, setisTransferWizardOpen] = useState(false)
+  
+  const newMenus = [...menus, {
+    id: 'sendMoney',
+    name: 'Send Money',
+    href: '/sendMoney',
+    handler: () => {setisTransferWizardOpen(true)}
+  }]
   return (
     <>
       <Navbar
@@ -40,7 +47,7 @@ export default function Nav() {
         </NavbarContent>
 
         <NavbarMenu className="max-w-[1024px] px-6 mx-auto">
-          {menus.map((item: Menu) => {
+          {newMenus.map((item: Menu) => {
             const customerHandler = !item.handler ? 
               (e: PressEvent) => {
                 setIsMenuOpen(false)
@@ -90,17 +97,17 @@ export default function Nav() {
         </NavbarContent>
       </Navbar>
       <Modal
-        isOpen={true} 
+        isOpen={isTransferWizardOpen} 
         placement="center"
       >
-        <ModalContent>
+        {/* <ModalContent>
           {/* Modal will escape NextUIProvider, so need to add it again*/}
           <NextUIProvider>
             <div className="nbp">
               <QuoteForm/>
             </div>
           </NextUIProvider>
-        </ModalContent>
+        </ModalContent> */}
       </Modal>
     </>
   )
