@@ -44,6 +44,7 @@ export default function Nav() {
                   href={item.href}
                   size="lg"
                   as={NextLink}
+                  onPressEnd={() => {setIsMenuOpen(false)}}
                 >
                   {item.name}
                 </Link>
