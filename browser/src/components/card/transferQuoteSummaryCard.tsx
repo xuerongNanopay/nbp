@@ -8,7 +8,7 @@ type Props = {
 
 function TransferQuoteSummaryCard({quoteSummary}: Props) {
   return (
-    <div>
+    <div className="w-full max-w-xl">
       <section className="flex flex-col gap-1">
         <Skeleton isLoaded={!!quoteSummary} className="rounded-lg">
           <div className="flex justify-between">

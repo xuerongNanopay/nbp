@@ -2,13 +2,15 @@
 
 import { useState, useEffect, useMemo, ChangeEvent } from "react"
 import { useFormik } from "formik"
-import * as Yup from 'yup';
+import * as Yup from 'yup'
 import {
   Input,
   Button,
   Select, 
   SelectItem
-} from "@nextui-org/react";
+} from "@nextui-org/react"
+
+import { TransferQuoteSummaryCard } from "../card"
 
 // User have to select account first.
 // Retrieve Currency from Account.
@@ -37,6 +39,30 @@ const destinationAccounts = [
     currency: 'PKR'
   }
 ]
+
+const transactionQuoteResult: ITransferQuoteResult = {
+  id: '1',
+  sourceAccount: {
+    id: '',
+    type: '',
+    name: '',
+    currency: ''
+  },
+  destinationAccout: {
+    id: '',
+    type: '',
+    name: '',
+    currency: ''
+  },
+  sourceAmount: 11.11,
+  destinationAmount: 22.22,
+  sourceCurrency: 'CAD',
+  destinationCurrency: 'PKR',
+  exchangeRate: 2.22,
+  transactionFee: 3.4,
+  totalDebitAmount: 44.44,
+  expireTimestamp: new Date().getTime()
+}
 
 type Props  = {
   sourceAccountId?: string | null
