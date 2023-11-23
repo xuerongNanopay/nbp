@@ -12,6 +12,7 @@ type Props = {
   className?: string,
   closeHandler: (e: PressEvent) => void
 }
+// TODO: using back url as 
 export default function IconHeaderWithLogout({className, closeHandler}: Props) {
   return (
     <Navbar
