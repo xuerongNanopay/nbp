@@ -39,8 +39,8 @@ const destinationAccounts = [
 ]
 
 type Props  = {
-  sourceAccountId?: string
-  destinationAccountId?: string
+  sourceAccountId?: string | null
+  destinationAccountId?: string | null
 }
 
 export default function TransferFrom({sourceAccountId, destinationAccountId}: Props) {
@@ -98,7 +98,6 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
   ])
 
   useEffect(() => {
-    console.log('aaa3')
     setRate(0)
     formik.setFieldValue('sourceAmount', 0)
     formik.setFieldValue('destinationAmount', 0)

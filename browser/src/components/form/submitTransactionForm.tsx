@@ -7,6 +7,8 @@ import {
   Skeleton
 } from "@nextui-org/react";
 
+import { TransferQuoteSummaryCard } from "../card";
+
 type prop = {
   quoteId: string
 }
@@ -59,38 +61,7 @@ export default function SubmitTransactionForm({ quoteId }: prop) {
         onSubmit={handleTransactionTraction}
         className="flex flex-col gap-4"
       >
-        <section className="flex flex-col gap-1">
-          <Skeleton isLoaded={!!transactionQuoteResult} className="rounded-lg">
-            <div className="flex justify-between">
-              <h6>Amount To Be Converted</h6>
-              <p>${`${transactionQuoteResult?.sourceAmount} ${transactionQuoteResult?.sourceCurrency}`}</p>
-            </div>
-          </Skeleton>
-          <Skeleton isLoaded={!!transactionQuoteResult} className="rounded-lg">
-            <div className="flex justify-between">
-              <h6>Exchange Rate</h6>
-              <p>{`$1.00 ${transactionQuoteResult?.sourceCurrency} = $${transactionQuoteResult?.exchangeRate.toFixed(2)} ${transactionQuoteResult?.destinationCurrency}`}</p>
-            </div>
-          </Skeleton>
-          <Skeleton isLoaded={!!transactionQuoteResult} className="rounded-lg">
-            <div className="flex justify-between">
-              <h6>Recipient Receives</h6>
-              <p>${`${transactionQuoteResult?.destinationAmount} ${transactionQuoteResult?.destinationCurrency}`}</p>
-            </div>
-          </Skeleton>
-          <Skeleton isLoaded={!!transactionQuoteResult} className="rounded-lg">
-            <div className="flex justify-between">
-              <h6>Transaction Fee</h6>
-              <p>${`${transactionQuoteResult?.transactionFee} ${transactionQuoteResult?.sourceCurrency}`}</p>
-            </div>
-          </Skeleton>
-          <Skeleton isLoaded={!!transactionQuoteResult} className="rounded-lg">
-            <div className="flex justify-between">
-              <h6 className="text-primary">Amount To Be Debited</h6>
-              <p>${`${transactionQuoteResult?.totalDebitAmount} ${transactionQuoteResult?.sourceCurrency}`}</p>
-            </div>
-          </Skeleton>
-        </section>
+        <TransferQuoteSummaryCard quoteSummary={transactionQuoteResult}/>
         <Button 
           type="submit"
           color="primary"
