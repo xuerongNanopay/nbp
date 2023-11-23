@@ -1,4 +1,4 @@
-export default function AuthLayout({
+export default function TransferLayout({
   children,
 }: {
   children: React.ReactNode

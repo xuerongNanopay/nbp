@@ -1,6 +1,6 @@
 import IconHeaderWithLogout  from '@/components/header/IconHeaderWithLogout'
 
-export default function RootLayout({
+export default function OnboardLayout({
   children,
 }: {
   children: React.ReactNode
