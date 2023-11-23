@@ -118,7 +118,7 @@ export default function QuoteForm() {
     }
     fetchRate("CAD", "PKR")
     return () => controller.abort()
-  }, [formik.values.destinationAccountId, formik.values.sourceAccountId])
+  }, [formik, formik.values.destinationAccountId, formik.values.sourceAccountId])
 
   const setSourceAmount = (e: ChangeEvent<HTMLInputElement>) => {
     const sourceAmount = Math.round(Number(e.target.value) * 100) / 100
