@@ -1,4 +1,3 @@
-//TODO: using close icon for Sign Out
 import { 
   Navbar,
   NavbarBrand,
