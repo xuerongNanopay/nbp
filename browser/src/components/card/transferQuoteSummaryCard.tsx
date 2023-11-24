@@ -37,7 +37,7 @@ function TransferQuoteSummaryCard({quoteSummary}: Props) {
         <Skeleton isLoaded={!!quoteSummary} className="rounded-lg">
           <div className="flex justify-between">
             <h6 className="text-primary">Amount To Be Debited</h6>
-            <p>${`${quoteSummary?.totalDebitAmount} ${quoteSummary?.sourceCurrency}`}</p>
+            <p className="text-primary">${`${quoteSummary?.totalDebitAmount} ${quoteSummary?.sourceCurrency}`}</p>
           </div>
         </Skeleton>
       </section>

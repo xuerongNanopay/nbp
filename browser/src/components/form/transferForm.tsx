@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, ChangeEvent } from "react"
+import { useState, useEffect, useMemo, ChangeEvent, FormEvent } from "react"
 import { useFormik } from "formik"
 import * as Yup from 'yup'
 import {
@@ -10,7 +10,7 @@ import {
   SelectItem
 } from "@nextui-org/react"
 
-import { TransferQuoteSummaryCard } from "../card"
+import { ConfirmTransferModal } from '@/components/modal'
 
 // User have to select account first.
 // Retrieve Currency from Account.
@@ -73,7 +73,15 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
   const [showAmountInput, setShowAmountInput] = useState(false)
   const [selectSourceAccout, setSelectSourceAccount ] = useState<IAccount|null>(null)
   const [selectDestinationAccount, setSelectDestinationAccount ] = useState<IAccount|null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [quoteSummary, setQuoteSummary] = useState<ITransferQuoteResult|null>(transactionQuoteResult)
+  const [isQuoting, setIsQuoting] = useState(false)
   const [rate, setRate] = useState(0)
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setIsQuoting(false)
+  }
 
   const initialValues: ITransferQuote = {
     sourceAccountId: '',
@@ -84,6 +92,10 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
 
   const transferQuoteHandler = (e: ITransferQuote) => {
     console.log(e)
+    setIsQuoting(true)
+    //TODO: making button loading
+    //
+    setIsModalOpen(true)
   }
 
   const formik = useFormik({
@@ -157,6 +169,7 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
     <div className="w-full max-w-xl">
       <h4 className="text-2xl font-bold mb-6 text-center">Transaction Details</h4>
       <p className="text-base mb-6 text-center">Enter the details for your transaction.</p>
+      <ConfirmTransferModal isOpen={isModalOpen} closeModal={closeModal} quoteSummary={quoteSummary}/>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Select
           id="sourceAccountId"
@@ -268,6 +281,7 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
           color="primary"
           className="mt-6"
           size="md"
+          isLoading={isQuoting}
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Quote
