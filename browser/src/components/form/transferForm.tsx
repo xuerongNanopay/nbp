@@ -58,7 +58,7 @@ const transactionQuoteResult: ITransferQuoteResult = {
   destinationAmount: 22.22,
   sourceCurrency: 'CAD',
   destinationCurrency: 'PKR',
-  exchangeRate: 2.22,
+  exchangeRate: 111133.2233,
   transactionFee: 3.4,
   totalDebitAmount: 44.44,
   expireTimestamp: new Date().getTime()
