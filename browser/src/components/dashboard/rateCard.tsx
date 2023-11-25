@@ -5,15 +5,16 @@ import {
   CardBody, 
   CardFooter, 
   Image, 
-  Button
+  Button,
+  Link
 } from "@nextui-org/react"
 
 import { SendMoneyIcon } from "@/icons/SendMoneyIcon"
 
 
-export default function RateCard({rate}: {rate: string}) {
+export default function RateCard({className, rate}: {className?: string, rate: string}) {
   return (
-    <Card className="text-black bg-[#f2f7f5] min-h-[200px] max-h-[350px] max-w-[400px]">
+    <Card className={`text-black bg-[#f2f7f5] min-h-[200px] max-h-[350px] max-w-[500px] ${!className ? '' : className}`}>
       <CardHeader>
         <h3 className="font-semibold">Current Rates</h3>
       </CardHeader>
@@ -23,7 +24,7 @@ export default function RateCard({rate}: {rate: string}) {
         </h4>
       </CardBody>
       <CardFooter className="grid place-content-stretch">
-        <Button color="primary" startContent={<SendMoneyIcon />}>
+        <Button href="/transfer" as={Link} color="primary" startContent={<SendMoneyIcon />}>
           Send Money
         </Button>
       </CardFooter>

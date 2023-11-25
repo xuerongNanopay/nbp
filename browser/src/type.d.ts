@@ -127,3 +127,8 @@ type Menu = {
 }
 
 type Menus = Menu[]
+
+type LoginUser = {
+  session: string,
+  user: string
+}
