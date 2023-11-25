@@ -25,9 +25,9 @@ export default function MainLayout({
           <div className="flex-none min-h-screen w-60">
           </div>
           <div 
-            className="flex-auto border border-orange-800 pt-12"
+            className="flex-auto border border-orange-800 pt-4"
           >
-            <div className="border border-orange-800 max-w-[1048px] py-4 px-2 mx-auto">
+            <div className="max-w-[1048px] py-2 px-2 mx-auto">
               {children}
             </div>
           </div>

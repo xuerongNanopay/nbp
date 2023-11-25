@@ -9,8 +9,10 @@ export default function TransferView() {
   const to = searhParams.get('to') as string
 
   return (
-    <div className="flex justify-center">
-      <TransferForm sourceAccountId={from} destinationAccountId={to}/>
-    </div>
+    <>
+      <div className="flex justify-center">
+        <TransferForm sourceAccountId={from} destinationAccountId={to}/>
+      </div>
+    </>
   )
 }
