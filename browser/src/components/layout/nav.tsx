@@ -69,13 +69,13 @@ export default function Nav() {
                 <p className="font-semibold">zoey@example.com</p>
               </DropdownItem>
               <DropdownItem textValue="profile" key="profile">
-                <Link href="/profile" className="text-slate-950">profile</Link>
+                <Link href="/profile" className="text-slate-950 w-full">profile</Link>
               </DropdownItem>
               <DropdownItem textValue="notifications" key="notifications">
-                <Link href="/notifications" className="text-slate-950">notifications</Link>
+                <Link href="/notifications" className="text-slate-950 w-full">notifications</Link>
               </DropdownItem>
               <DropdownItem textValue="about" key="about">
-                <Link href="/about" className="text-slate-950">about</Link>
+                <Link href="/about" className="text-slate-950 w-full">about</Link>
               </DropdownItem>
               <DropdownItem textValue= "logout" key="logout" color="danger" onPress={_ => alert("TODO: Logout")}>
                 <p>Log Out</p>
