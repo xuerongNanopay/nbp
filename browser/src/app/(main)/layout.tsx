@@ -15,7 +15,7 @@ export default function MainLayout({
           <Nav/>
         </div>
         <div className="max-w-[1024px] mx-auto lg:hidden">
-          <div className="pt-4 px-2">
+          <div className="pt-4 px-2 mb-4">
             {children}
           </div>
         </div>
@@ -29,7 +29,7 @@ export default function MainLayout({
             <div 
               className="flex-auto border border-orange-800 pt-4"
             >
-              <div className="max-w-[1048px] py-2 px-4 mx-auto">
+              <div className="max-w-[1048px] py-2 px-4 mb-4 mx-auto">
                 {children}
               </div>
             </div>
