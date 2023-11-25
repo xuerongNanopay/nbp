@@ -15,7 +15,6 @@ export default function Dashboard() {
         <NBPCard className="w-full flex-auto" />
       </div>
       <div className="mt-4 mx-2">
-        <h4 className="font-semibold text-xl text-slate-600">Recent Transactions</h4>
         <TransactionCard/>
       </div>
     </>

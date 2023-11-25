@@ -11,8 +11,8 @@ export default function MainLayout({
     // TODO: use nextAuth backEnd UI
     // <UserProvider value={111}>
       <main>
-        <div className="lg:hidden">
-          <Nav></Nav>
+        <div className="lg:hidden sticky top-0 z-50">
+          <Nav/>
         </div>
         <div className="max-w-[1024px] mx-auto lg:hidden">
           <div className="pt-4 px-2">
