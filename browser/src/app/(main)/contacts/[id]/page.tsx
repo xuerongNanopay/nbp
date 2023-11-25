@@ -1,5 +1,5 @@
-export default function Contacts() {
+export default function Contact() {
   return (
-    <div>Contact Detail By Id</div>
+    <div>Contact</div>
   )
 }
