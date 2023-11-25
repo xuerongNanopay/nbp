@@ -15,7 +15,6 @@ import {
   Avatar
 } from "@nextui-org/react"
 
-import { PressEvent } from "@react-types/shared"
 import NextLink from "next/link";
 import menus from '@/constants/menu'
 
@@ -69,8 +68,17 @@ export default function Nav() {
                 <p className="font-semibold">Signed in as</p>
                 <p className="font-semibold">zoey@example.com</p>
               </DropdownItem>
+              <DropdownItem textValue="profile" key="profile">
+                <Link href="/profile" className="text-slate-950">profile</Link>
+              </DropdownItem>
+              <DropdownItem textValue="notifications" key="notifications">
+                <Link href="/notifications" className="text-slate-950">notifications</Link>
+              </DropdownItem>
+              <DropdownItem textValue="about" key="about">
+                <Link href="/about" className="text-slate-950">about</Link>
+              </DropdownItem>
               <DropdownItem textValue= "logout" key="logout" color="danger" onPress={_ => alert("TODO: Logout")}>
-                Log Out
+                <p>Log Out</p>
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>

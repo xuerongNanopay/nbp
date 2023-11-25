@@ -10,7 +10,7 @@ export default function TransferView() {
 
   return (
     <>
-      <div className="flex justify-center">
+      <div className="flex justify-center mt-4">
         <TransferForm sourceAccountId={from} destinationAccountId={to}/>
       </div>
     </>

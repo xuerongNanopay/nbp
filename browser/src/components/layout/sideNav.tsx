@@ -1,7 +1,15 @@
 'use client'
 import {
+  Link,
   Listbox,
-  ListboxItem
+  ListboxItem,
+  Dropdown,
+  DropdownItem,
+  Avatar,
+  DropdownMenu,
+  DropdownTrigger,
+  User,
+  Badge
 } from '@nextui-org/react'
 
 import { 
@@ -35,28 +43,37 @@ export default function SideNav() {
           ))}
         </Listbox>
       </section>
-      <footer className="flex-initial px-2 border border-red-500">
-        <Listbox
-          aria-label='Profile'
-        >
-          <ListboxItem 
-            key='notifications'
-            textValue='notifications'
-            onClick={() => {console.log('aaa');router.push('/notifications')}}
-          >
-            <div className={`text-lg ${curPath === '/notifications' ? 'text-green-800 font-semibold' : ''}`}>
-              Notifications
-            </div>
-          </ListboxItem>
-          <ListboxItem 
-            key='user'
-            textValue='User'
-          >
-            <div className={`text-lg ${curPath === '\\User' ? 'text-green-800 font-semibold' : ''}`}>
-              User
-            </div>
-          </ListboxItem>
-        </Listbox>
+      <footer className="flex-initial px-2 border border-red-500 py-2">
+        <Dropdown placement="top">
+          <DropdownTrigger>
+            {/* <Badge content="5" color="default"> */}
+              <User
+                name="Xuerong Wu"
+                description="zoey@example.com"
+                avatarProps={{
+                  as: "button",
+                  className: "transition-transform",
+                  color: "primary",
+                  size: "lg"
+                }}
+              />
+            {/* </Badge> */}
+          </DropdownTrigger>
+          <DropdownMenu aria-label="Profile Actions" variant="flat">
+            <DropdownItem textValue="profile" key="profile">
+              <Link href="/profile" className="text-slate-950">profile</Link>
+            </DropdownItem>
+            <DropdownItem textValue="notifications" key="notifications">
+              <Link href="/notifications" className="text-slate-950">notifications</Link>
+            </DropdownItem>
+            <DropdownItem textValue="about" key="about">
+              <Link href="/about" className="text-slate-950">about</Link>
+            </DropdownItem>
+            <DropdownItem textValue= "logout" key="logout" color="danger" onPress={_ => alert("TODO: Logout")}>
+              <p>Log Out</p>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       </footer>
     </div>
   )
