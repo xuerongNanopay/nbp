@@ -144,3 +144,19 @@ type NBPTransactionSummary = {
   summary: string,
   etransferUrl?: string
 }
+
+type NBPTransactionDetail = {
+
+}
+
+type NBPContactSummary = {
+  firstName: string,
+  last: string,
+  accountSummary: string,
+  created: date,
+  status: string
+}
+
+type NBPContactDetain = {
+  
+}

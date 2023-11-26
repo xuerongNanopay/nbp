@@ -287,7 +287,7 @@ export default function ContactTable() {
   return (
     <Table 
       aria-label="Contact table"
-      className="w-full max-w-4xl"
+      className="w-full max-w-5xl"
       isStriped={true}
       topContent={topContent}
       isHeaderSticky
