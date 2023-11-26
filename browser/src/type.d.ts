@@ -161,3 +161,9 @@ type NBPContactSummary = {
 type NBPContactDetail = {
   
 }
+
+type ForgetPassword = {
+  originPassword: string,
+  newPassword: string,
+  reNewPassword: string
+}

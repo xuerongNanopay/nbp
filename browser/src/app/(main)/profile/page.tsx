@@ -1,5 +1,9 @@
-export default function Profile() {
+import { UpdatePasswordForm } from "@/components/form"
+export default async function Profile() {
+
   return (
-    <div>Profile</div>
+    <div className="flex justify-center">
+      <UpdatePasswordForm/>
+    </div>
   )
 }
