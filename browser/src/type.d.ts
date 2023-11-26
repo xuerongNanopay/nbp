@@ -150,13 +150,14 @@ type NBPTransactionDetail = {
 }
 
 type NBPContactSummary = {
+  id: string,
   firstName: string,
-  last: string,
+  lastName: string,
   accountSummary: string,
   created: date,
   status: string
 }
 
-type NBPContactDetain = {
+type NBPContactDetail = {
   
 }

@@ -20,10 +20,9 @@ import {
   Button,
   DropdownMenu,
   DropdownItem,
-  Pagination
+  Pagination,
+  Link
 } from "@nextui-org/react";
-
-import contacts from '@/tests/dummyContactResults';
 
 import { SearchIcon } from '@/icons/SearchIcon'
 import { PlusIcon } from '@/icons/PlusIcon'
@@ -33,31 +32,31 @@ import { DeleteIcon } from '@/icons/DeleteIcon'
 import { SendMoneyIcon } from '@/icons/SendMoneyIcon'
 
 const statusOptions = [
-  {name: "VERIFIED", uid: "verified"},
-  {name: "UNVERIFIED", uid: "unverified"},
-  {name: "PENDING", uid: 'pending'}
+  {name: "VERIFIED", id: "verified"},
+  {name: "FAILED", id: "failed"},
+  {name: "PENDING", id: 'pending'}
 ]
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
   verified: "success",
-  unverified: "danger",
+  failed: "danger",
   pending: "secondary"
 }
 
 const statusTextMap: Record<string, string>  = {
   verified: "VERIFIED",
-  unverified: "UNVERIFIED",
+  failed: "FAILED",
   pending: "PENDING"
 }
 
 const columns = [
-  { name: 'Remittee', uid: 'remitee' },
-  { name: 'Account', uid: 'remiteeAccount'},
-  { name: 'Status', uid: 'status' },
-  { name: 'Actions', uid: 'actions' }
+  { name: 'Name', id: 'name' },
+  { name: 'Account', id: 'account'},
+  { name: 'Status', id: 'status' },
+  { name: 'Actions', id: 'actions' }
 ]
 
-const RemitteeCell = (contact: IContactResult) => {
+const NameCell = (contact: NBPContactSummary) => {
   return (
     <div className="flex flex-col">
       <p className="text-bold text-sm capitalize">{`${contact.firstName} ${contact.lastName}`}</p>
@@ -65,15 +64,15 @@ const RemitteeCell = (contact: IContactResult) => {
   )
 }
 
-const AccountCell = (contact: IContactResult) => {
+const AccountCell = (contact: NBPContactSummary) => {
   return (
     <>
-      <p>{contact.transferMethod === 'bankAccount' ? "TODO: format" : "Cash Pickup"}</p>
+      <p>{contact.accountSummary}</p>
     </>
   )
 }
 
-const StatusCell = ({status}: IContactResult) => {
+const StatusCell = ({status}: NBPContactSummary) => {
   return (
     <Chip className="capitalize" color={statusColorMap[status]} size="sm" variant="flat">
       {statusTextMap[status]}
@@ -87,48 +86,35 @@ const showDetailWrapper = (contactId: string) => {
   }
 }
 
-const deleteWrapper = (contactId: string) => {
-  return () => {
-    alert("TODO: Delete Contact: " + contactId)
-  }
-}
-
-const ActionsCell = (contact: IContactResult) => {
+const ActionsCell = (contact: NBPContactSummary) => {
   return (
     <div className="relative flex items-center gap-2">
-      <Tooltip content="Details">
-        <span 
-          className="text-lg text-default-400 cursor-pointer active:opacity-50"
-          onClick={showDetailWrapper(contact.id)}
-        >
-          <EyeIcon/>
-        </span>
-      </Tooltip>
-      <Tooltip content="Delete">
-        <span 
-          className="text-lg text-default-400 cursor-pointer active:opacity-50"
-          onClick={deleteWrapper(contact.id)}
-        >
-          <DeleteIcon/>
-        </span>
-      </Tooltip>
+      <Link href={`/contacts/${contact.id}`}>
+        <Tooltip content="Details">
+          <span 
+            className="text-lg text-default-400 cursor-pointer active:opacity-50"
+          >
+            <EyeIcon/>
+          </span>
+        </Tooltip>
+      </Link>
     </div>
   )
 }
 
-export default function ContactTable() {
+export default function ContactTable({className, contacts}: {className?: string, contacts: NBPContactSummary[]}) {
   const [searchValue, setSearchValue] = React.useState('');
   const [page, setPage] = React.useState(1)
-  const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [rowsPerPage, setRowsPerPage] = React.useState(14)
   const [statusFilter, setStatusFilter] = React.useState<Selection>('all')
 
-  const renderCell = React.useCallback((contact: IContactResult, columnKey: React.Key) => {
+  const renderCell = React.useCallback((contact: NBPContactSummary, columnKey: React.Key) => {
     switch(columnKey) {
-      case "remitee":
+      case "name":
         return (
-          <RemitteeCell {...contact}/>
+          <NameCell {...contact}/>
         )
-      case "remiteeAccount":
+      case "account":
         return (
           <AccountCell {...contact}/>
         )
@@ -162,11 +148,11 @@ export default function ContactTable() {
   const filteredContacts = React.useMemo(() => {
     let filteredContacts = [...contacts];
 
-    // if (Boolean(searchValue)) {
-    //   filteredContacts = filteredContacts.filter((transaction) =>
-    //     transaction.remiteeName.toLowerCase().includes(searchValue.toLowerCase()),
-    //   );
-    // }
+    if (Boolean(searchValue)) {
+      filteredContacts = filteredContacts.filter((transaction) =>
+        (transaction.firstName + ' ' + transaction.lastName).toLowerCase().includes(searchValue.toLowerCase()),
+      );
+    }
     if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
       filteredContacts = filteredContacts.filter((contact) =>
         Array.from(statusFilter).includes(contact.status),
@@ -197,11 +183,6 @@ export default function ContactTable() {
     }
   }, [page])
 
-  const onRowsPerPageChange = React.useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRowsPerPage(Number(e.target.value));
-    setPage(1);
-  }, [])
-
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
@@ -209,7 +190,7 @@ export default function ContactTable() {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by remitee..."
+            placeholder="Search by name"
             startContent={<SearchIcon />}
             value={searchValue}
             onClear={() => onClear()}
@@ -231,37 +212,25 @@ export default function ContactTable() {
                 onSelectionChange={setStatusFilter}
               >
                 {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
+                  <DropdownItem key={status.id} className="capitalize">
                     {status.name}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />}>
+            <Button color="primary" href="/createContact" as={Link} endContent={<PlusIcon />}>
               New Contact
             </Button>
           </div>
         </div>
         <div className="flex flex-col items-start sm:flex-row justify-between sm:items-center">
           <span className="text-default-400 text-small">Total {filteredContacts.length} Contacts</span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="30">30</option>
-            </select>
-          </label>
         </div>
       </div>
     )
   },[
     searchValue,
     onSearchValueChange,
-    onRowsPerPageChange,
     statusFilter,
     setStatusFilter,
     onClear,
@@ -287,7 +256,7 @@ export default function ContactTable() {
   return (
     <Table 
       aria-label="Contact table"
-      className="w-full max-w-5xl"
+      className={`w-full max-w-5xl ${className}`}
       isStriped={true}
       topContent={topContent}
       isHeaderSticky
@@ -297,7 +266,7 @@ export default function ContactTable() {
     >
       <TableHeader columns={columns}>
         {(column) => (
-          <TableColumn key={column.uid}>
+          <TableColumn key={column.id}>
             {column.name}
           </TableColumn>
         )}
