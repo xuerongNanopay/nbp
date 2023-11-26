@@ -13,9 +13,14 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-  Tabs,
-  Tab
+  Tooltip,
+  Pagination
 } from '@nextui-org/react'
+
+import {
+  ReloadIcon
+} from '@/icons/ReloadIcon'
+import { EyeIcon } from '@/icons/EyeIcon'
 
 import { formatRelativeDate } from '@/utils/dateUtil'
 
@@ -50,6 +55,7 @@ const CreatedCell = ({created, status}: NotificationSummary) => {
   )
 }
 
+// TODO: Pagination
 export function NotificationTable({className, notifications}: Props): React.JSX.Element {
 
   const [page, setPage] = useState(1)
@@ -74,16 +80,57 @@ export function NotificationTable({className, notifications}: Props): React.JSX.
     }
   }, [])
 
+  const pages = Math.ceil(notifications.length / rowsPerPage);
+
+  const bottomContent = useMemo(() => {
+    return (
+      <div className="py-2 px-2 flex justify-center items-center">
+        <Pagination
+          isCompact
+          showControls
+          showShadow
+          color="primary"
+          page={page}
+          total={pages}
+          onChange={setPage}
+        />
+      </div>
+    );
+  }, [page, pages]);
+
+  const items = useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    return notifications.slice(start, end)
+  }, [page, notifications, rowsPerPage])
+
   const topContent = useMemo(() => {
     //TODO: reload, mark all, p
     return (
       <div className="flex justify-between">
-        <div className="flex">
-          <p className="me-2">reloading</p>
-          <p>mark all</p>
+        <div className="flex items-center">
+          <div className="mx-2">
+            <Tooltip content="reload">
+              <span 
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+              >
+                <ReloadIcon/>
+              </span>
+            </Tooltip>
+          </div>
+          <div>
+            <Tooltip content="Mark all as Read">
+            <span 
+              className="text-lg text-default-400 cursor-pointer active:opacity-50"
+            >
+              <EyeIcon/>
+            </span>
+            </Tooltip>  
+          </div>
         </div>
         <div className="flex">
-          <div className="me-2">1-50 of 100,1</div>
+          {/* <div className="me-2">1-50 of 100,1</div> */}
           <div>lefi right</div>
         </div>
       </div>
@@ -96,7 +143,8 @@ export function NotificationTable({className, notifications}: Props): React.JSX.
       isStriped
       className={`${className}`}
       removeWrapper
-      topContent={topContent}
+      // topContent={topContent}
+      bottomContent={bottomContent}
       topContentPlacement="outside"
       onRowAction={(key) => alert(`Opening item ${key}...`)}
     >
@@ -108,7 +156,7 @@ export function NotificationTable({className, notifications}: Props): React.JSX.
         )}
       </TableHeader>
       <TableBody
-        items={notifications}
+        items={items}
         emptyContent={"No rows to display."}
       >
         {(notification) => (
