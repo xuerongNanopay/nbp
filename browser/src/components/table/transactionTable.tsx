@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect } from 'react'
-import { Selection } from '@nextui-org/react';
+import { Selection, user } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
 
 import {
   Table,
@@ -141,6 +142,7 @@ const ActionsCell = (transaction: ITransaction) => {
 
 //FOR NOW, load all transactions and doing the fileter in frontEnd.
 export default function TransactionTable() {
+  const router = useRouter()
   const [searchValue, setSearchValue] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false)
   const [page, setPage] = React.useState(1)
@@ -271,7 +273,7 @@ export default function TransactionTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />}>
+            <Button color="primary" endContent={<PlusIcon />} onClick={() => {router.push('/transfer')}}>
               Transfer
             </Button>
           </div>
@@ -324,6 +326,7 @@ export default function TransactionTable() {
       className="w-full max-w-4xl"
       isStriped={true}
       topContent={topContent}
+      // hideHeader={true}
       isHeaderSticky
       // topContentPlacement="outside"
       // removeWrapper
