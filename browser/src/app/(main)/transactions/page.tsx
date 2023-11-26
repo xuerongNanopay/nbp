@@ -6,7 +6,7 @@ export default async function Transactions() {
   const transaction: NBPTransactionSummary= {
     id: '1',
     remiteeName: 'Xuerong Wu',
-    created: new Date(), // Or Date type
+    created: new Date("2023-11-26"), // Or Date type
     status: 'awaitPayent',
     nbpReference: 'NP000000000000000',
     sendAmount: "22.00 CAD",
