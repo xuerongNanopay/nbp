@@ -65,10 +65,21 @@ const StatusCell = ({status}: {status: string}) => {
 
 const TransactionSummaryCell = (transaction: NBPTransactionSummary) => {
   return (
-    <div>
-      <h4>{transaction.summary}</h4>
-      <p className="text-slate-400 my-1">{formatRelativeDate(transaction.created)}</p>
-      <StatusCell status={transaction.status}/>
+    <div className="flex justify-between items-center">
+      <div className="ms-2">
+        <h4>{transaction.summary}</h4>
+        <p className="text-slate-400 my-1">{formatRelativeDate(transaction.created)}</p>
+        <StatusCell status={transaction.status}/>
+      </div>
+      <Link href={'/transactions/' + transaction.id} className="me-2">
+        <Tooltip content="Details">
+          <span 
+            className="text-lg text-default-400 cursor-pointer active:opacity-50"
+          >
+            <EyeIcon/>
+          </span>
+        </Tooltip>     
+      </Link>
     </div>
   )
 }

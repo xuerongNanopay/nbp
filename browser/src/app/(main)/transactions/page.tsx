@@ -2,6 +2,7 @@ import TransactionTable from '@/components/table/transactionTable'
 import { MobileTransactionTable } from '@/components/table'
 
 export default async function Transactions() {
+
   const transaction: NBPTransactionSummary= {
     id: '1',
     remiteeName: 'Xuerong Wu',
@@ -13,9 +14,11 @@ export default async function Transactions() {
     summary: "aaa -> vvv | avvv -> ccc"
   }
   
-  const transactions: NBPTransactionSummary[] = Array(44).fill(null).map((_, idx): NBPTransactionSummary => {
+  const testTransactions: NBPTransactionSummary[] = Array(44).fill(null).map((_, idx): NBPTransactionSummary => {
     return {...transaction, id: idx.toString()}
   })
+
+  const transactions = await Promise.resolve(testTransactions)
 
   return (
     <div>
