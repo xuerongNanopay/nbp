@@ -16,4 +16,4 @@ export function UserProvider({
   )
 }
 
-export const getUser = () => {return useContext(UserContext)} 
+export const useUser = () => {return useContext(UserContext)} 
