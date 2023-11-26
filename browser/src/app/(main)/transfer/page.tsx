@@ -1,6 +1,5 @@
 import { TransferForm } from "@/components/form"
 
-
 export default function TransferView({
   searchParams
 }: {

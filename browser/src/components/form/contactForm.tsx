@@ -1,5 +1,5 @@
 'use client'
-
+import { useState } from "react"
 import { useFormik } from "formik"
 import * as Yup from 'yup'
 import {
@@ -16,6 +16,7 @@ import PKBank from "@/constants/pk-bank"
 
 
 export default function ContactForm() {
+  const [isCreating, setIsCreating] = useState<boolean>(false)
   type NewContact = IContact & ICashPickup & IBankTransfer
   const initialValues: NewContact = {
     firstName: '',
@@ -38,6 +39,8 @@ export default function ContactForm() {
   const createContactHandler = (e: NewContact) => { 
     console.log(e)
     // formik.resetForm()
+    setIsCreating(true)
+    //TODO: navigating to contact/id
   }
 
   const formik = useFormik({
@@ -269,6 +272,7 @@ export default function ContactForm() {
           color="primary"
           className="mt-6"
           size="md"
+          isLoading={isCreating}
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Submit

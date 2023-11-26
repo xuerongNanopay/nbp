@@ -132,3 +132,14 @@ type LoginUser = {
   session: string,
   user: string
 }
+
+type NBPStransactionSummary = {
+  id: string,
+  remiteeName: string,
+  created: string, // Or Date type
+  status: string,
+  nbpReference: string,
+  sendAmount: string,
+  receiveAmount: string,
+  summary: string
+}

@@ -12,16 +12,6 @@ import {
   RightArrow 
 } from '@/icons/RightArrow'
 
-type NBPStransactionSummary = {
-  id: string,
-  remiteeName: string,
-  created: string, // Or Date type
-  status: string,
-  nbpReference: string,
-  sendAmount: string,
-  receiveAmount: string
-}
-
 type Props = {
   maxContent?: number,
   className?: string,
@@ -37,7 +27,8 @@ export default function TransactionCard({className, transactions}: Props) {
     status: 'Await for payment',
     nbpReference: 'NP000000000000000',
     sendAmount: "22.00 CAD",
-    receiveAmount: "4520.34 PRK"
+    receiveAmount: "4520.34 PRK",
+    summary: "aaa -> vvv | avvv -> ccc"
   }
   
   const testTransactions: NBPStransactionSummary[] = Array(10).fill(null).map((_, idx): NBPStransactionSummary => {
