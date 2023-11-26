@@ -118,7 +118,7 @@ const ActionsCell = (transaction: NBPTransactionSummary) => {
 
 //FOR NOW, load all transactions and doing the fileter in frontEnd.
 export default function TransactionTable({className, transactions}: {className?: string, transactions: NBPTransactionSummary[]}) {
-  const [searchValue, setSearchValue] = React.useState('');
+  const [searchValue, setSearchValue] = React.useState('')
   const [page, setPage] = React.useState(1)
   const [rowsPerPage, setRowsPerPage] = React.useState(13)
   const [statusFilter, setStatusFilter] = React.useState<Selection>('all')

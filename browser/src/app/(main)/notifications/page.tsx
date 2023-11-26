@@ -4,8 +4,8 @@ export default async function Notifications() {
   const notification: NotificationSummary = {
     id: '1',
     subject: 'Payment',
-    description: 'Payment Fail',
-    status: 'read',
+    description: 'Payment Fail fffffffd asdf asdfasdf adsfasdfasdf asdfasdf asdfdsf',
+    status: 'unread',
     created: new Date('2013-11-11')
   }
 
