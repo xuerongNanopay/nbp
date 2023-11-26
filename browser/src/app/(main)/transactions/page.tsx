@@ -21,11 +21,9 @@ export default async function Transactions() {
 
   return (
     <div>
-      <div>
-        <h1 className="text-4xl font-bold mb-6 max-sm:text-2xl max-sm:mb-3">Transactions</h1>
-        <TransactionTable className="max-md:hidden" transactions={transactions}/>
-        <MobileTransactionTable className="md:hidden" transactions={transactions}/>
-      </div>
+      <h1 className="text-4xl font-bold mb-6 max-sm:text-2xl max-sm:mb-3">Transactions</h1>
+      <TransactionTable className="max-md:hidden" transactions={transactions}/>
+      <MobileTransactionTable className="md:hidden" transactions={transactions}/>
     </div>
   )
 }

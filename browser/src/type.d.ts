@@ -145,7 +145,7 @@ type NBPTransactionSummary = {
   etransferUrl?: string
 }
 
-type NBPTransactionDetail = {
+type NBPTransactionDetail = NBPTransactionSummary & {
 
 }
 
@@ -158,7 +158,7 @@ type NBPContactSummary = {
   status: string
 }
 
-type NBPContactDetail = {
+type NBPContactDetail = NBPContactSummary & {
   
 }
 
@@ -166,4 +166,16 @@ type ForgetPassword = {
   originPassword: string,
   newPassword: string,
   reNewPassword: string
+}
+
+type NotificationSummary = {
+  id: string
+  subject: string
+  status: 'read' | 'unread',
+  created: Date
+}
+
+type NotificationDetail = NotificationSummary & {
+  from?: string
+  content?: string
 }
