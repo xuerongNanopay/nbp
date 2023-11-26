@@ -29,7 +29,7 @@ type Props = {
 }
 // ·
 
-export default function TransactionCard({className, maxContent, transactions}: Props) {
+export default function TransactionCard({className, transactions}: Props) {
   const testTransaction: NBPStransactionSummary= {
     id: '1',
     remiteeName: 'Xuerong Wu',
@@ -40,15 +40,16 @@ export default function TransactionCard({className, maxContent, transactions}: P
     receiveAmount: "4520.34 PRK"
   }
   
-  const testTransactions: NBPStransactionSummary[] = Array(5).fill(null).map((_, idx): NBPStransactionSummary => {
+  const testTransactions: NBPStransactionSummary[] = Array(10).fill(null).map((_, idx): NBPStransactionSummary => {
     return {...testTransaction, id: idx.toString()}
   })
 
+  const renderTransactions = !testTransactions || testTransactions.length === 0 ? testTransactions : testTransactions.slice(0, 5)
   return (
     <Card className={`text-black bg-[#f2f7f5] max-w-[1080px] ${!className ? '' : className}`}>
       <CardHeader className="font-semibold text-lg">Recent Transaction</CardHeader>
       {
-        !testTransactions || testTransactions.length === 0 ?
+        !renderTransactions || renderTransactions.length === 0 ?
         <>
           <CardFooter>
             <p className="text-slate-600 text-lg font-semibold mx-auto">Empty</p>
@@ -58,7 +59,7 @@ export default function TransactionCard({className, maxContent, transactions}: P
         <>
           <CardBody className="max-sm:hidden">
             {
-              testTransactions.map((transaction) => {
+              renderTransactions.map((transaction) => {
                 return (
                   <div key={transaction.id} className="border-b-1 border-slate-200 last:border-b-0">
                     <Link href={`/transactions/${transaction.id}`} className="text-slate-900 block">
@@ -71,7 +72,7 @@ export default function TransactionCard({className, maxContent, transactions}: P
           </CardBody>
           <CardBody className="sm:hidden">
             {
-              testTransactions.map((transaction) => {
+              renderTransactions.map((transaction) => {
                 return (
                   <div key={transaction.id} className="border-b-1 border-slate-300 last:border-b-0">
                     <Link href={`/transactions/${transaction.id}`} className="text-slate-900 block">
@@ -126,8 +127,17 @@ function MobileTransactionItem(
   {transaction}: {transaction: NBPStransactionSummary}
 ) : React.JSX.Element {
   return (
-    <div className="">
-      <p>{transaction.id}</p>
+    <div className="flex justify-between items-center py-2">
+      <div>
+        <p className="font-semibold text-sm">Sent to {transaction.remiteeName}</p>
+        <p className="text-sm">Receive: {transaction.receiveAmount}</p>
+        {/* <p className="text-sm">{transaction.sendAmount}</p> */}
+        <p className="text-sm">Status: {transaction.status}</p>
+        <p className="text-sm text-slate-600">Created: {transaction.created}</p>
+      </div>
+      <div>
+        <RightArrow/>
+      </div>
     </div>
   )
 } 

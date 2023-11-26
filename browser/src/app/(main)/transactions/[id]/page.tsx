@@ -1,5 +1,5 @@
 export default function Transaction() {
   return (
-    <div>Transaction</div>
+    <div>Transaction By Id</div>
   )
 }

@@ -37,8 +37,8 @@ export default function Nav() {
         <NavbarContent justify="start">
           <NavbarMenuToggle />
         </NavbarContent>
-
         <NavbarMenu className="max-w-[1024px] px-6 mx-auto">
+          {/* TODO: investigating why mobile throw: Warning: Extra attributes from the server: aria-labelledby,aria-describedby */}
           <NextUIProvider>
             <div className="nbp">
               {
@@ -61,7 +61,6 @@ export default function Nav() {
             </div>
           </NextUIProvider>
         </NavbarMenu>
-
         <NavbarContent as="div" className="items-center" justify="end">
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
