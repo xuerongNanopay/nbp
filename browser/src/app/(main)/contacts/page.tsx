@@ -1,4 +1,4 @@
-import { ContactTable } from "@/components/table"
+import { ContactTable, MobileContactTable } from "@/components/table"
 
 export default async function Contacts() {
   const contact: NBPContactSummary = {
@@ -10,7 +10,7 @@ export default async function Contacts() {
     status: 'pending'
   }
 
-  const testContacts: NBPContactSummary[] = Array(44).fill(null).map((_, idx): NBPContactSummary => {
+  const testContacts: NBPContactSummary[] = Array(1000).fill(null).map((_, idx): NBPContactSummary => {
     return {...contact, id: idx.toString()}
   })
 
@@ -19,6 +19,7 @@ export default async function Contacts() {
       <div>
         <h1 className="text-4xl font-bold mb-6 max-sm:text-2xl max-sm:mb-3">Contacts</h1>
         <ContactTable className="max-md:hidden" contacts={testContacts}/>
+        <MobileContactTable className="md:hidden" contacts={testContacts}/>
       </div>
     </div>
   )

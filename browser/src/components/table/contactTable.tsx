@@ -80,12 +80,6 @@ const StatusCell = ({status}: NBPContactSummary) => {
   )
 }
 
-const showDetailWrapper = (contactId: string) => {
-  return () => {
-    alert("TODO: SHOW DETAIl: " + contactId)
-  }
-}
-
 const ActionsCell = (contact: NBPContactSummary) => {
   return (
     <div className="relative flex items-center gap-2">
