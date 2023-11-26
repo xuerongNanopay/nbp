@@ -13,16 +13,13 @@ import {
 } from '@nextui-org/react'
 
 import { 
-  useRouter,
   usePathname
 } from 'next/navigation'
 
 import menus from '@/constants/menu'
 
 export default function SideNav() {
-  const router = useRouter()
   const curPath = usePathname()
-
   return (
     <div className="h-full flex flex-col">
       <header className="h-16 flex-initial px-2 border border-red-500">Icon</header>
@@ -33,7 +30,7 @@ export default function SideNav() {
           {menus.map((menu)=> (
             <ListboxItem key={menu.id} textValue={menu.name}>
               <Link
-                className="text-slate-950 w-full"
+                className={`${menu.href === curPath ? 'text-primary': 'text-slate-800'} w-full text-lg font-semibold hover:ps-2`}
                 href={menu.href}
               >
                 {menu.name}

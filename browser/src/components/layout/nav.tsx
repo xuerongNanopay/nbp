@@ -15,12 +15,17 @@ import {
   Avatar
 } from "@nextui-org/react"
 
+import NextUIProvider from '@/providers/NextUIProvider'
+import { 
+  usePathname
+} from 'next/navigation'
+
 import NextLink from "next/link";
 import menus from '@/constants/menu'
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  
+  const curPath = usePathname()
   return (
     <>
       <Navbar
@@ -34,21 +39,27 @@ export default function Nav() {
         </NavbarContent>
 
         <NavbarMenu className="max-w-[1024px] px-6 mx-auto">
-          {menus.map((item: Menu) => {
-            return (
-              <NavbarMenuItem key={item.id} className="hover:bg-slate-200 rounded-md">
-                <Link
-                  className="w-full hover:font-semibold"
-                  color={"foreground"}
-                  href={item.href}
-                  size="lg"
-                  as={NextLink}
-                  onPressEnd={() => {setIsMenuOpen(false)}}
-                >
-                  {item.name}
-                </Link>
-              </NavbarMenuItem>
-          )})}
+          <NextUIProvider>
+            <div className="nbp">
+              {
+                menus.map((menu: Menu) => {
+                  return (
+                    <NavbarMenuItem key={menu.id} className="hover:bg-slate-200 rounded-md">
+                      <Link
+                        className={`${menu.href === curPath ? 'text-primary': 'text-slate-800'} w-full text-xl my-1 font-semibold hover:ps-2`}
+                        color={"foreground"}
+                        href={menu.href}
+                        size="lg"
+                        as={NextLink}
+                        onPressEnd={() => {setIsMenuOpen(false)}}
+                      >
+                        {menu.name}
+                      </Link>
+                    </NavbarMenuItem>
+                )})
+              }
+            </div>
+          </NextUIProvider>
         </NavbarMenu>
 
         <NavbarContent as="div" className="items-center" justify="end">
@@ -64,7 +75,7 @@ export default function Nav() {
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem textValue= "profle" key="profile" className="h-14 gap-2">
+              <DropdownItem textValue= "user" key="user" className="h-14 gap-2">
                 <p className="font-semibold">Signed in as</p>
                 <p className="font-semibold">zoey@example.com</p>
               </DropdownItem>
