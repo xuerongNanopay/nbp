@@ -171,6 +171,7 @@ type ForgetPassword = {
 type NotificationSummary = {
   id: string
   subject: string
+  description: string
   status: 'read' | 'unread',
   created: Date
 }
