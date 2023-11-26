@@ -1,17 +1,22 @@
-'use client'
-
-import { useSearchParams } from "next/navigation"
 import { TransferForm } from "@/components/form"
 
-export default function TransferView() {
-  const searhParams = useSearchParams()
-  const from = searhParams.get('from') as string
-  const to = searhParams.get('to') as string
 
+export default function TransferView({
+  searchParams
+}: {
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+  const from = searchParams['from'] as string
+  const to = searchParams['to'] as string
+  console.log(from , to)
   return (
     <>
       <div className="flex justify-center mt-4">
-        <TransferForm sourceAccountId={from} destinationAccountId={to}/>
+        {
+          !!from || !!to ? 
+          <TransferForm sourceAccountId={from} destinationAccountId={to}/>
+          : <TransferForm/>
+        }
       </div>
     </>
   )
