@@ -29,16 +29,15 @@ export default function SideNav() {
       <section className="flex-auto px-2 pt-4 border border-red-500">
         <Listbox
           aria-label="Menu" 
-          onAction={(key) => {
-            const m = menus.find(menu => menu.id === key)
-            if ( !!m ) {
-              router.push(m.href)
-            }
-          }}
         >
           {menus.map((menu)=> (
             <ListboxItem key={menu.id} textValue={menu.name}>
-              <div className={`text-lg ${curPath === menu.href ? 'text-green-800 font-semibold' : ''}`}>{menu.name}</div>
+              <Link
+                className="text-slate-950 w-full"
+                href={menu.href}
+              >
+                {menu.name}
+              </Link>
             </ListboxItem>
           ))}
         </Listbox>
