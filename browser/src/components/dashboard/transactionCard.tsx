@@ -44,7 +44,7 @@ export default function TransactionCard({className, transactions}: Props) {
     return {...testTransaction, id: idx.toString()}
   })
 
-  const renderTransactions = !testTransactions || testTransactions.length === 0 ? testTransactions : testTransactions.slice(0, 5)
+  const renderTransactions = testTransactions
   return (
     <Card className={`text-black bg-[#f2f7f5] max-w-[1080px] ${!className ? '' : className}`}>
       <CardHeader className="font-semibold text-lg">Recent Transaction</CardHeader>
@@ -59,7 +59,7 @@ export default function TransactionCard({className, transactions}: Props) {
         <>
           <CardBody className="max-sm:hidden">
             {
-              renderTransactions.map((transaction) => {
+              renderTransactions.slice(0,7).map((transaction) => {
                 return (
                   <div key={transaction.id} className="border-b-1 border-slate-200 last:border-b-0">
                     <Link href={`/transactions/${transaction.id}`} className="text-slate-900 block">
@@ -72,7 +72,7 @@ export default function TransactionCard({className, transactions}: Props) {
           </CardBody>
           <CardBody className="sm:hidden">
             {
-              renderTransactions.map((transaction) => {
+              renderTransactions.slice(0,4).map((transaction) => {
                 return (
                   <div key={transaction.id} className="border-b-1 border-slate-300 last:border-b-0">
                     <Link href={`/transactions/${transaction.id}`} className="text-slate-900 block">
