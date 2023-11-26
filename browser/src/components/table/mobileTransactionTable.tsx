@@ -12,7 +12,6 @@ import {
   ChipProps,
   Chip,
   Tooltip,
-  Spinner,
   Input,
   Dropdown,
   DropdownTrigger,
@@ -21,12 +20,11 @@ import {
   DropdownItem,
   Pagination,
   Link
-} from "@nextui-org/react";
+} from "@nextui-org/react"
 
 import { formatRelativeDate } from '@/utils/dateUtil'
 
 import { EyeIcon } from '@/icons/EyeIcon'
-import { SendMoneyIcon } from '@/icons/SendMoneyIcon'
 import { SearchIcon } from '@/icons/SearchIcon'
 import { PlusIcon } from '@/icons/PlusIcon'
 import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
@@ -54,20 +52,10 @@ const statusTextMap: Record<string, string>  = {
 }
 
 const columns = [
-  { id: 'summary', name: 'Summary' },
-  { id: 'created', name: 'Date' },
-  { id: 'status', name: 'Status' },
-  { id: 'receiveAmount', name: 'Amount' },
-  { id: 'actions', name: 'Actions'}
+  { id: 'transactionSummary', name: 'Transaction SUmmary' }
 ]
 
-const Summary = ({summary}: NBPTransactionSummary) => {
-  return (
-    <p>{summary}</p>
-  )
-}
-
-const StatusCell = ({status}: NBPTransactionSummary) => {
+const StatusCell = ({status}: {status: string}) => {
   return (
     <Chip className="capitalize" color={statusColorMap[status]} size="sm" variant="flat">
       {statusTextMap[status]}
@@ -75,75 +63,27 @@ const StatusCell = ({status}: NBPTransactionSummary) => {
   )
 }
 
-const CreatedCell = ({created}: NBPTransactionSummary) => {
+const TransactionSummaryCell = (transaction: NBPTransactionSummary) => {
   return (
-    <>
-      <p>{formatRelativeDate(created)}</p>
-    </>
+    <div>
+      <h4>{transaction.summary}</h4>
+      <p className="text-slate-400 my-1">{formatRelativeDate(transaction.created)}</p>
+      <StatusCell status={transaction.status}/>
+    </div>
   )
 }
 
-const AmountCell = ({receiveAmount}: NBPTransactionSummary) => {
-  return (
-    <p>{receiveAmount}</p>
-  )
-}
-
-const ActionsCell = (transaction: NBPTransactionSummary) => {
-  return (
-    <div className="relative flex items-center gap-2">
-      <Link href={'/transactions/' + transaction.id}>
-        <Tooltip content="Details">
-          <span 
-            className="text-lg text-default-400 cursor-pointer active:opacity-50"
-          >
-            <EyeIcon/>
-          </span>
-        </Tooltip>     
-      </Link>
-      { transaction.status === 'awaitPayent' &&
-        <Link href={'/transactions/' + transaction.id}>
-          <Tooltip content="Pay">
-            <span 
-              className="text-lg text-default-400 cursor-pointer active:opacity-50"
-            >
-              <SendMoneyIcon/>
-            </span>
-          </Tooltip>
-        </Link>
-      }
-  </div>
-  )
-}
-
-//FOR NOW, load all transactions and doing the fileter in frontEnd.
-export default function TransactionTable({className, transactions}: {className?: string, transactions: NBPTransactionSummary[]}) {
+export default function MobileTransactionTable({className, transactions}: {className?: string, transactions: NBPTransactionSummary[]}) {
   const [searchValue, setSearchValue] = React.useState('');
   const [page, setPage] = React.useState(1)
-  const [rowsPerPage, setRowsPerPage] = React.useState(13)
+  const [rowsPerPage, setRowsPerPage] = React.useState(5)
   const [statusFilter, setStatusFilter] = React.useState<Selection>('all')
 
   const renderCell = React.useCallback((transaction: NBPTransactionSummary, columnKey: React.Key) => {
     switch(columnKey) {
-      case "summary":
+      case "transactionSummary":
         return (
-          <Summary {...transaction}/>
-        )
-      case "created":
-        return (
-          <CreatedCell {...transaction}/>
-        )
-      case "status":
-        return (
-          <StatusCell {...transaction}/>
-        )
-      case "receiveAmount":
-        return (
-          <AmountCell {...transaction}/>
-        )
-      case "actions":
-        return (
-          <ActionsCell {...transaction}/>
+          <TransactionSummaryCell {...transaction}/>
         )
       default:
         return null
@@ -193,8 +133,8 @@ export default function TransactionTable({className, transactions}: {className?:
 
   const topContent = React.useMemo(() => {
     return (
-      <div className="flex flex-col gap-4 sticky top-0">
-        <div className="flex flex-col items-start sm:flex-row justify-between gap-3 sm:items-end">
+      <div className="flex flex-col gap-4">
+        <div className="sticky top-0 flex flex-col items-start sm:flex-row justify-between gap-3 sm:items-end">
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
@@ -231,7 +171,7 @@ export default function TransactionTable({className, transactions}: {className?:
               endContent={<PlusIcon />}
               href="/transfer"
               as={Link}
-            >              
+            >
               Transfer
             </Button>
           </div>
@@ -271,10 +211,10 @@ export default function TransactionTable({className, transactions}: {className?:
       aria-label="Transaction table"
       isStriped={true}
       topContent={topContent}
-      // hideHeader={true}
+      hideHeader={true}
       isHeaderSticky
-      // topContentPlacement="outside"
-      // removeWrapper
+      topContentPlacement="outside"
+      removeWrapper
       bottomContent={bottomContent}
       className={`w-full max-w-5xl ${className}`}
     >

@@ -1,3 +1,3 @@
-const transactions: NBPStransactionSummary[] = [
+const transactions: NBPTransactionSummary[] = [
 ]
 export default transactions
