@@ -12,18 +12,20 @@ import {
   RightArrow 
 } from '@/icons/RightArrow'
 
+import { formatRelativeDate } from '@/utils/dateUtil'
+
 type Props = {
   maxContent?: number,
   className?: string,
-  transactions?: NBPStransactionSummary[]
+  transactions?: NBPTransactionSummary[]
 }
 // ·
 
 export default function TransactionCard({className, transactions}: Props) {
-  const testTransaction: NBPStransactionSummary= {
+  const testTransaction: NBPTransactionSummary= {
     id: '1',
     remiteeName: 'Xuerong Wu',
-    created: '11/1/2023', // Or Date type
+    created: new Date(), // Or Date type
     status: 'Await for payment',
     nbpReference: 'NP000000000000000',
     sendAmount: "22.00 CAD",
@@ -31,7 +33,7 @@ export default function TransactionCard({className, transactions}: Props) {
     summary: "aaa -> vvv | avvv -> ccc"
   }
   
-  const testTransactions: NBPStransactionSummary[] = Array(10).fill(null).map((_, idx): NBPStransactionSummary => {
+  const testTransactions: NBPTransactionSummary[] = Array(10).fill(null).map((_, idx): NBPTransactionSummary => {
     return {...testTransaction, id: idx.toString()}
   })
 
@@ -86,7 +88,7 @@ export default function TransactionCard({className, transactions}: Props) {
 }
 
 function TransactionItem(
-  {transaction}: {transaction: NBPStransactionSummary}
+  {transaction}: {transaction: NBPTransactionSummary}
 ) : React.JSX.Element {
   return (
     <div className="py-2">
@@ -96,7 +98,7 @@ function TransactionItem(
             <RightArrow className="me-4"/>
             <div>
               <p className="font-semibold">Sent to {transaction.remiteeName}</p>
-              <p className="text-sm text-slate-600">{transaction.created} · {transaction.nbpReference} · {transaction.status}</p>
+              <p className="text-sm text-slate-600">{formatRelativeDate(transaction.created)} · {transaction.nbpReference} · {transaction.status}</p>
             </div>
           </div>
         </div>
@@ -115,7 +117,7 @@ function TransactionItem(
 }
 
 function MobileTransactionItem(
-  {transaction}: {transaction: NBPStransactionSummary}
+  {transaction}: {transaction: NBPTransactionSummary}
 ) : React.JSX.Element {
   return (
     <div className="flex justify-between items-center py-2">
@@ -124,7 +126,7 @@ function MobileTransactionItem(
         <p className="text-sm">Receive: {transaction.receiveAmount}</p>
         {/* <p className="text-sm">{transaction.sendAmount}</p> */}
         <p className="text-sm">Status: {transaction.status}</p>
-        <p className="text-sm text-slate-600">Created: {transaction.created}</p>
+        <p className="text-sm text-slate-600">Created: {formatRelativeDate(transaction.created)}</p>
       </div>
       <div>
         <RightArrow/>

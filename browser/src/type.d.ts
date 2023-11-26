@@ -133,13 +133,14 @@ type LoginUser = {
   user: string
 }
 
-type NBPStransactionSummary = {
+type NBPTransactionSummary = {
   id: string,
   remiteeName: string,
-  created: string, // Or Date type
+  created: date, // Or Date type
   status: string,
   nbpReference: string,
   sendAmount: string,
   receiveAmount: string,
-  summary: string
+  summary: string,
+  etransferUrl?: string
 }

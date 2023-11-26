@@ -20,13 +20,13 @@ import {
   Button,
   DropdownMenu,
   DropdownItem,
-  Pagination
+  Pagination,
+  Link
 } from "@nextui-org/react";
 
 import { EyeIcon } from '@/icons/EyeIcon'
 import { formatRelativeDate } from '@/utils/dateUtil'
 import { SendMoneyIcon } from '@/icons/SendMoneyIcon'
-import transactions from '@/tests/dummyTransactions'
 import { SearchIcon } from '@/icons/SearchIcon'
 import { PlusIcon } from '@/icons/PlusIcon'
 import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
@@ -50,44 +50,24 @@ const statusTextMap: Record<string, string>  = {
   cancel: "CANCEL",
   process: "PROCESS",
   awaitPayent: "AWAIT PAYMENT",
+  // refund: "REFUND IN PROGRESS"
 }
 
 const columns = [
-  { name: 'Remittee', uid: 'remitee' },
-  { name: 'Receive', uid: 'receiveAmount' },
-  { name: 'Cost', uid: 'cost' },
-  { name: 'Created', uid: 'created'},
-  { name: 'Status', uid: 'status' },
-  { name: 'Actions', uid: 'actions' }
+  { id: 'summary', name: 'Summary' },
+  { id: 'created', name: 'Date' },
+  { id: 'status', name: 'Status' },
+  { id: 'receiveAmount', name: 'Amount' },
+  { id: 'actions', name: 'Actions'}
 ]
 
-const RemitteeCell = ({remiteeName, remitAccount, remitMethod}: ITransaction) => {
+const Summary = ({summary}: NBPTransactionSummary) => {
   return (
-    <div className="flex flex-col">
-      <p className="text-bold text-sm capitalize">{remiteeName}</p>
-      <p className="text-tiny text-foreground-400">{remitMethod == 'cashPickup' ? 'Cash Pickup' : remitAccount}</p>
-    </div>
+    <p>{summary}</p>
   )
 }
 
-const AmountCell = ({receiveAmount}: ITransaction) => {
-  return (
-    <>
-      <p>{receiveAmount}</p>
-    </>
-  )
-}
-
-const CostCell = ({cost}: ITransaction) => {
-  return (
-    <>
-      <p>{cost}</p>
-    </>
-  )
-}
-
-
-const StatusCell = ({status}: ITransaction) => {
+const StatusCell = ({status}: NBPTransactionSummary) => {
   return (
     <Chip className="capitalize" color={statusColorMap[status]} size="sm" variant="flat">
       {statusTextMap[status]}
@@ -95,7 +75,7 @@ const StatusCell = ({status}: ITransaction) => {
   )
 }
 
-const CreatedCell = ({created}: ITransaction) => {
+const CreatedCell = ({created}: NBPTransactionSummary) => {
   return (
     <>
       <p>{formatRelativeDate(created)}</p>
@@ -103,38 +83,34 @@ const CreatedCell = ({created}: ITransaction) => {
   )
 }
 
-const showDetailWrapper = (transactionId: string) => {
-  return () => {
-    alert("TODO: SHOW DETAIl: " + transactionId)
-  }
-}
-const etransferLinkWrapper = (etransferLink: string) => {
-  return () => {
-    alert("TODO: Etransfer: " + etransferLink)
-  }
+const AmountCell = ({receiveAmount}: NBPTransactionSummary) => {
+  return (
+    <p>{receiveAmount}</p>
+  )
 }
 
-const ActionsCell = (transaction: ITransaction) => {
+const ActionsCell = (transaction: NBPTransactionSummary) => {
   return (
     <div className="relative flex items-center gap-2">
-      <Tooltip content="Details">
-        <span 
-          className="text-lg text-default-400 cursor-pointer active:opacity-50"
-          onClick={showDetailWrapper(transaction.id)}
-        >
-          <EyeIcon/>
-        </span>
-      </Tooltip>
-      { transaction.status === 'awaitPayent' ?
+      <Link href={'/transactions/' + transaction.id}>
+        <Tooltip content="Details">
+          <span 
+            className="text-lg text-default-400 cursor-pointer active:opacity-50"
+          >
+            <EyeIcon/>
+          </span>
+        </Tooltip>     
+      </Link>
+      { transaction.status === 'awaitPayent' &&
+        <Link href={'/transactions/' + transaction.id}>
           <Tooltip content="Pay">
             <span 
               className="text-lg text-default-400 cursor-pointer active:opacity-50"
-              onClick={etransferLinkWrapper(transaction.etransferLink)}
             >
               <SendMoneyIcon/>
             </span>
           </Tooltip>
-        : <></>
+        </Link>
       }
   </div>
   )
@@ -144,24 +120,30 @@ const ActionsCell = (transaction: ITransaction) => {
 export default function TransactionTable() {
   const router = useRouter()
   const [searchValue, setSearchValue] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false)
   const [page, setPage] = React.useState(1)
-  const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [rowsPerPage, setRowsPerPage] = React.useState(13)
   const [statusFilter, setStatusFilter] = React.useState<Selection>('all')
 
-  const renderCell = React.useCallback((transaction: ITransaction, columnKey: React.Key) => {
+  const transaction: NBPTransactionSummary= {
+    id: '1',
+    remiteeName: 'Xuerong Wu',
+    created: new Date(), // Or Date type
+    status: 'awaitPayent',
+    nbpReference: 'NP000000000000000',
+    sendAmount: "22.00 CAD",
+    receiveAmount: "4,520.34 PRK",
+    summary: "aaa -> vvv | avvv -> ccc"
+  }
+  
+  const transactions: NBPTransactionSummary[] = Array(44).fill(null).map((_, idx): NBPTransactionSummary => {
+    return {...transaction, id: idx.toString()}
+  })
+
+  const renderCell = React.useCallback((transaction: NBPTransactionSummary, columnKey: React.Key) => {
     switch(columnKey) {
-      case "remitee":
+      case "summary":
         return (
-          <RemitteeCell {...transaction}/>
-        )
-      case "receiveAmount":
-        return (
-          <AmountCell {...transaction}/>
-        )
-      case "cost":
-        return (
-          <CostCell {...transaction}/>
+          <Summary {...transaction}/>
         )
       case "created":
         return (
@@ -170,6 +152,10 @@ export default function TransactionTable() {
       case "status":
         return (
           <StatusCell {...transaction}/>
+        )
+      case "receiveAmount":
+        return (
+          <AmountCell {...transaction}/>
         )
       case "actions":
         return (
@@ -200,7 +186,7 @@ export default function TransactionTable() {
 
     if (Boolean(searchValue)) {
       filteredTransactions = filteredTransactions.filter((transaction) =>
-        transaction.remiteeName.toLowerCase().includes(searchValue.toLowerCase()),
+        transaction.summary.toLowerCase().includes(searchValue.toLowerCase()),
       );
     }
     if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
@@ -221,23 +207,6 @@ export default function TransactionTable() {
     return filteredTransactions.slice(start, end)
   }, [page, filteredTransactions, rowsPerPage])
 
-  const onNextPage = React.useCallback(() => {
-    if (page < pages) {
-      setPage(page + 1);
-    }
-  }, [page, pages])
-
-  const onPreviousPage = React.useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page])
-
-  const onRowsPerPageChange = React.useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRowsPerPage(Number(e.target.value));
-    setPage(1);
-  }, [])
-
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
@@ -245,7 +214,7 @@ export default function TransactionTable() {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by remitee..."
+            placeholder="Search by summary..."
             startContent={<SearchIcon />}
             value={searchValue}
             onClear={() => onClear()}
@@ -280,24 +249,12 @@ export default function TransactionTable() {
         </div>
         <div className="flex flex-col items-start sm:flex-row justify-between sm:items-center">
           <span className="text-default-400 text-small">Total {filteredTransactions.length} transactions</span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="30">30</option>
-            </select>
-          </label>
         </div>
       </div>
     )
   },[
     searchValue,
     onSearchValueChange,
-    onRowsPerPageChange,
     statusFilter,
     setStatusFilter,
     onClear,
@@ -323,7 +280,7 @@ export default function TransactionTable() {
   return (
     <Table 
       aria-label="Transaction table"
-      className="w-full max-w-4xl"
+      className="w-full max-w-5xl"
       isStriped={true}
       topContent={topContent}
       // hideHeader={true}
@@ -334,15 +291,13 @@ export default function TransactionTable() {
     >
       <TableHeader columns={columns}>
         {(column) => (
-          <TableColumn key={column.uid}>
+          <TableColumn key={column.id}>
             {column.name}
           </TableColumn>
         )}
       </TableHeader>
       <TableBody 
         items={items}
-        // isLoading={isLoading}
-        // loadingContent={<Spinner label="Loading..." />}
         emptyContent={"No rows to display."}
       >
       {(item) => (
