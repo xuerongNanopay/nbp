@@ -99,7 +99,7 @@ const ActionsCell = (contact: NBPContactSummary) => {
 export default function ContactTable({className, contacts}: {className?: string, contacts: NBPContactSummary[]}) {
   const [searchValue, setSearchValue] = React.useState('');
   const [page, setPage] = React.useState(1)
-  const [rowsPerPage, setRowsPerPage] = React.useState(7)
+  const [rowsPerPage, setRowsPerPage] = React.useState(5)
   const [statusFilter, setStatusFilter] = React.useState<Selection>('all')
 
   const renderCell = React.useCallback((contact: NBPContactSummary, columnKey: React.Key) => {
