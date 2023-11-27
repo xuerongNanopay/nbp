@@ -135,18 +135,22 @@ type LoginUser = {
 
 type NBPTransactionSummary = {
   id: string,
-  remiteeName: string,
-  created: date, // Or Date type
-  status: string,
+  sendName: string,
+  receiveName: String
+  created: Date, // Or Date type
+  status: string, //awaitPayment, success, process, failed, refundInProgress, cancel
   nbpReference: string,
   sendAmount: string,
   receiveAmount: string,
   summary: string,
-  etransferUrl?: string
 }
 
 type NBPTransactionDetail = NBPTransactionSummary & {
-
+  etransferUrl: string,
+  fxRate: string,
+  fee: string
+  receiveAccountSummary: string
+  sendAccountSummary: string
 }
 
 type NBPContactSummary = {
