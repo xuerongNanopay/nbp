@@ -3,7 +3,9 @@ import { notFound } from 'next/navigation'
 
 import {
   Button,
-  Link
+  Link,
+  Breadcrumbs,
+  BreadcrumbItem
 } from '@nextui-org/react'
 
 export default async function Transaction({ params: {id} }: { params: { id: string } }) {
@@ -32,6 +34,11 @@ export default async function Transaction({ params: {id} }: { params: { id: stri
   const transactionDetail = testTransactionDetail
   return (
     <div className="px-2 sm:px-2 py-2 sm:py-4 max-w-4xl mx-auto">
+      {/* TODO: investigation why not show */}
+      <Breadcrumbs className="mb-4">
+        <BreadcrumbItem href='/transactions'>transactions</BreadcrumbItem>
+        <BreadcrumbItem href='#'>{transactionDetail.id}</BreadcrumbItem>
+      </Breadcrumbs>
       <h1 className="font-semibold text-ellipsis sm:font-bold sm:text-3xl mb-4">
         {transactionDetail.summary}
       </h1>

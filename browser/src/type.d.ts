@@ -157,13 +157,18 @@ type NBPContactSummary = {
   id: string,
   firstName: string,
   lastName: string,
-  accountSummary: string,
   created: date,
-  status: string
+  status: 'suspend' | 'verified' | 'pending' 
+  type: 'cashPickUp' | 'bankAccount'
+  accountSummary: string
 }
 
 type NBPContactDetail = NBPContactSummary & {
-  
+  relationship: string,
+  address: string,
+  bankName: string,
+  accountNumberOrIban: string,
+  phoneNumber: string
 }
 
 type ForgetPassword = {

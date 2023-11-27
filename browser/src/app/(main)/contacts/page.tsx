@@ -7,7 +7,8 @@ export default async function Contacts() {
     lastName: 'Wu',
     accountSummary: 'NBP(3e32432455553333)',
     created: new Date('2023-12-12'),
-    status: 'pending'
+    status: 'pending',
+    type: 'bankAccount'
   }
 
   const testContacts: NBPContactSummary[] = Array(1000).fill(null).map((_, idx): NBPContactSummary => {
