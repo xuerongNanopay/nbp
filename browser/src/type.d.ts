@@ -164,7 +164,7 @@ type NBPContactSummary = {
 }
 
 type NBPContactDetail = NBPContactSummary & {
-  relationship: string,
+  relationshipToOwner: string,
   address: string,
   bankName: string,
   accountNumberOrIban: string,

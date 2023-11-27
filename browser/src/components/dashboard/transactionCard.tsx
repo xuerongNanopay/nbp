@@ -24,7 +24,8 @@ type Props = {
 export default function TransactionCard({className, transactions}: Props) {
   const testTransaction: NBPTransactionSummary= {
     id: '1',
-    remiteeName: 'Xuerong Wu',
+    sendName: 'vvvd dd',
+    receiveName: 'Xuerong Wu',
     created: new Date(), // Or Date type
     status: 'Await for payment',
     nbpReference: 'NP000000000000000',
@@ -97,7 +98,7 @@ function TransactionItem(
           <div className="flex items-center">
             <RightArrow className="me-4"/>
             <div>
-              <p className="font-semibold">Sent to {transaction.remiteeName}</p>
+              <p className="font-semibold">Sent to {transaction.receiveName}</p>
               <p className="text-sm text-slate-600">{formatRelativeDate(transaction.created)} · {transaction.nbpReference} · {transaction.status}</p>
             </div>
           </div>
@@ -122,7 +123,7 @@ function MobileTransactionItem(
   return (
     <div className="flex justify-between items-center py-2">
       <div>
-        <p className="font-semibold text-sm">Sent to {transaction.remiteeName}</p>
+        <p className="font-semibold text-sm">Sent to {transaction.receiveName}</p>
         <p className="text-sm">Receive: {transaction.receiveAmount}</p>
         {/* <p className="text-sm">{transaction.sendAmount}</p> */}
         <p className="text-sm">Status: {transaction.status}</p>
