@@ -63,8 +63,8 @@ export default function UpdatePasswordForm() {
           errorMessage={formik.touched.originPassword && formik.errors.originPassword}
         />
         <Input
-          id="password"
-          label="Password"
+          id="newPassword"
+          label="New Password"
           variant="bordered"
           color="primary"
           endContent={
