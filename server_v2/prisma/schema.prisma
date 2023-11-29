@@ -39,36 +39,22 @@ model Login {
   @@map("login")
 }
 
-// firstName varchar(255) not null,
-// middleName varchar(255),
-// lastName varchar(255) not null,
-// dob date not null,
-// address1 varchar(255),
-// address2 varchar(255),
-// province varchar(8) references region(isoCode),
-// country varchar(4) references country(isoCode),
-// postCode varchar(64),
-// phoneNumber varchar(64),
-// pob varchar(4) references country(isoCode),
-// nationality varchar(4) references country(isoCode),
 model User {
   id Int @id @default(autoincrement())
 
-  firstName       String
-  middleName      String?
-  lastName        String
-  dob             DateTime
-  address1        String
-  address2        String?
-  regionCode      String
-  region          Region   @relation(fields: [regionCode], references: [isoCode])
-  countryCode     String
-  country         Country  @relation(fields: [countryCode], references: [iso2Code])
-  postCode        String
-  phoneNumber     String
-  pobCode         String // strict it on sql schema
-  nationalityCode String // strict it on sql schema
-  Login           Login[] // only support one way login
+  firstName   String
+  middleName  String?
+  lastName    String
+  dob         DateTime
+  address1    String
+  address2    String?
+  province    String
+  country     String
+  postCode    String
+  phoneNumber String
+  pob         String
+  nationality String
+  Login       Login[] // only support one way login
 
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
@@ -117,40 +103,34 @@ model Currency {
 }
 
 model Country {
-  id          Int             @id @default(autoincrement())
-  iso2Code    String          @unique
-  iso3Code    String          @unique
-  numCode     String          @unique
-  name        String
-  status      LifeCycleStatus @default(ACTIVE)
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  Institution Institution[]
-  Region      Region[]
-  User        User[]
+  id        Int             @id @default(autoincrement())
+  iso2Code  String          @unique
+  iso3Code  String          @unique
+  numCode   String          @unique
+  name      String
+  status    LifeCycleStatus @default(ACTIVE)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 
   @@map("country")
 }
 
 model Region {
-  id          Int             @id @default(autoincrement())
-  isoCode     String          @unique
-  name        String
-  abbr        String
-  countryCode String
-  country     Country         @relation(fields: [countryCode], references: [iso2Code])
-  status      LifeCycleStatus @default(ACTIVE)
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  User        User[]
+  id        Int             @id @default(autoincrement())
+  isoCode   String          @unique
+  name      String
+  abbr      String
+  country   String
+  status    LifeCycleStatus @default(ACTIVE)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 
   @@map("region")
 }
 
 model Institution {
   id             Int             @id @default(autoincrement())
-  countryCode    String
-  country        Country         @relation(fields: [countryCode], references: [iso2Code])
+  country        String
   abbr           String
   name           String
   institutionNum String
@@ -176,7 +156,7 @@ model occupation {
 // create table notification(
 //     id serial primary key,
 //     ownerId int not null references user(id),
-//     level enum('info', 'warming', 'error') default 'info',
+//     level enum('info', 'warming', 'error', 'debug') default 'info',
 //     subject varchar(250) null,
 //     content varchar(250) null,
 //     status enum('read', 'unread') default 'unread',
