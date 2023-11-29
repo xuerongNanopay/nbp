@@ -27,6 +27,7 @@ model Login {
 
   retrieveToken       String
   retrieveTokenExpire DateTime
+  lastLogin DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -34,17 +35,30 @@ model Login {
   @@map("login")
 }
 
-//     email varchar(255) unique not null,
-//     password varchar(255) not null,
-//     verifyCode varchar(16),
-//     isEmailLoginVerified boolean default false,
-//     status enum('active', 'disable', 'pending', 'delete') default 'pending',
-
-//     retrieveToken varchar(255) null,
-//     retrieveTokenExpire timestamp null,
-//     lastLogin timestamp,
-// #     loginAttempts
-// #     lastLogin timestamp,
-
+// create table personRelationship(
+//     id serial primary key,
+//     name varchar(255) not null,
+//     description varchar(255) not null,
+//     status enum('disable', 'enable') default 'enable',
 //     createAt timestamp default current_timestamp,
 //     updateAt timestamp default current_timestamp on update current_timestamp
+// );
+
+// create table institution (
+//     id serial primary key,
+//     countryCode varchar(4)  not null references country(isoCode),
+//     abbreviation varchar(10) null,
+//     name varchar(100) not null,
+//     institutionNumber varchar(50),
+//     status enum('disable', 'enable') default 'enable',
+//     createAt timestamp default current_timestamp,
+//     updateAt timestamp default current_timestamp on update current_timestamp
+// );
+
+// create table occupation(
+//     id serial primary key,
+//     name varchar(255) not null,
+//     status enum('disable', 'enable') default 'enable',
+//     createAt timestamp default current_timestamp,
+//     updateAt timestamp default current_timestamp on update current_timestamp
+// );

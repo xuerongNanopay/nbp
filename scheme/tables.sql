@@ -1,6 +1,10 @@
+show databases;
+create database nbp;
+
 # login table
 create table login(
     id serial primary key,
+    ownId int null references user(id),
     # login_type enum('email', 'username', 'sms') default 'email',
 
     # field for email login
@@ -8,10 +12,13 @@ create table login(
     password varchar(255) not null,
     verifyCode varchar(16),
     isEmailLoginVerified boolean default false,
-    status enum('active', 'disable', 'unVerified') default 'unVerified',
+    status enum('active', 'disable', 'pending', 'delete') default 'pending',
 
-    ownId int null references user(id),
-    lastUse timestamp,
+    retrieveToken varchar(255) null,
+    retrieveTokenExpire timestamp null,
+    lastLogin timestamp,
+#     loginAttempts
+#     lastLogin timestamp,
 
     createAt timestamp default current_timestamp,
     updateAt timestamp default current_timestamp on update current_timestamp
@@ -81,7 +88,7 @@ create table contact(
     country varchar(4) references country(isoCode),
     postCode varchar(64),
     phoneNumber varchar(64),
-    relationshipToOwner int not null references personRelationship(id),
+    relationshipToOwner int not null references personal_relationship(id),
 
     status enum('active', 'pending', 'invalid', 'delete') default 'pending',
 
@@ -89,7 +96,7 @@ create table contact(
     updateAt timestamp default current_timestamp on update current_timestamp
 );
 
-create table feeDetail(
+create table fee_detail(
     id serial primary key,
     ownerId int not null references user(id),
     transactionId int not null references transaction(id),
@@ -103,7 +110,7 @@ create table feeDetail(
 );
 
 # SummaryTransaction only contain info that need for frontEnd
-create table summaryTransaction(
+create table summary_transaction(
     id serial primary key,
     ownerId int not null references user(id),
     transactionId int references transaction(id),
@@ -144,20 +151,20 @@ create table transaction(
     destinationCurrency varchar(8) not null references currency(isoCode),
 
     #     Initial Status for all transaction
-    transferState int not null references transferState(id),
+    transferState int not null references transfer_state(id),
 
     createAt timestamp default current_timestamp,
     updateAt timestamp default current_timestamp on update current_timestamp
 );
 
 
-create table transferState(
+create table transfer_state(
     id serial primary key,
     ownerId int not null references user(id),
     transactionId int not null references transaction(id),
     name varchar(255) not null,
 
-    previousState int null references transferState(id),
+    previousState int null references transfer_state(id),
     retryAttempt int,
     transferStatus enum('initial', 'processing', 'pending', 'complete', 'rejected', 'retry', 'cancel') not null default 'initial',
 
@@ -168,8 +175,8 @@ create table transferState(
 create table transferLog(
     id serial primary key,
     ownerId int not null references user(id),
-    stateId int not null references transferState(id),
-    preState  int null references transferState(id),
+    stateId int not null references transfer_state(id),
+    preState  int null references transfer_state(id),
 
     transferStatus enum('initial', 'processing', 'pending', 'complete', 'rejected', 'retry', 'cancel') not null,
     severity enum('info', 'warming', 'error', 'debug') not null default 'info',
@@ -219,7 +226,7 @@ create table currency(
     createAt timestamp default current_timestamp,
     updateAt timestamp default current_timestamp on update current_timestamp
 );
-create index currency._isoCode_idx on currency(isoCode);
+create index currency_isoCode_idx on currency(isoCode);
 
 create table country (
     id serial primary key,
@@ -264,10 +271,10 @@ create table occupation(
     updateAt timestamp default current_timestamp on update current_timestamp
 );
 
-create table apiLog (
+create table api_log (
     id serial primary key,
     ownerId int not null references user(id),
-    transferId int references transferState(id),
+    transferId int references transfer_state(id),
     provider varchar(255) not null,
     name varchar(255) not null,
     requestPayload TEXT null,
@@ -278,7 +285,7 @@ create table apiLog (
     updateAt timestamp default current_timestamp on update current_timestamp
 );
 
-create table personRelationship(
+create table personal_relationship(
     id serial primary key,
     name varchar(255) not null,
     description varchar(255) not null,
