@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum LoginStatus {
+  ACTIVE  @map("active")
+  DISABLE @map("disable")
+  PENDING @map("pending")
+  DELETE  @map("delete")
+}
+
+model Login {
+  id                   Int         @id @default(autoincrement())
+  email                String      @unique
+  password             String
+  verifyCode           String
+  isEmailLoginVerified Boolean     @default(false)
+  status               LoginStatus @default(PENDING)
+
+  retrieveToken       String
+  retrieveTokenExpire DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("login")
+}
+
+//     email varchar(255) unique not null,
+//     password varchar(255) not null,
+//     verifyCode varchar(16),
+//     isEmailLoginVerified boolean default false,
+//     status enum('active', 'disable', 'pending', 'delete') default 'pending',
+
+//     retrieveToken varchar(255) null,
+//     retrieveTokenExpire timestamp null,
+//     lastLogin timestamp,
+// #     loginAttempts
+// #     lastLogin timestamp,
+
+//     createAt timestamp default current_timestamp,
+//     updateAt timestamp default current_timestamp on update current_timestamp
