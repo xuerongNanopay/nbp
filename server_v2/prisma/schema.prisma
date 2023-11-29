@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "../generated/client"
+  output   = "../generated/client"
 }
 
 datasource db {
@@ -11,7 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum LoginStatus {
+enum LifeCycleStatus {
   ACTIVE  @map("active")
   DISABLE @map("disable")
   PENDING @map("pending")
@@ -19,16 +19,18 @@ enum LoginStatus {
 }
 
 model Login {
-  id                   Int         @id @default(autoincrement())
-  email                String      @unique
+  id                   Int             @id @default(autoincrement())
+  // ownId                Int         @relation()
+  email                String          @unique
   password             String
   verifyCode           String?
-  isEmailLoginVerified Boolean     @default(false)
-  status               LoginStatus @default(PENDING)
+  verifyCodeAt         DateTime?
+  isEmailLoginVerified Boolean         @default(false)
+  status               LifeCycleStatus @default(PENDING)
 
-  retrieveToken       String?
+  retrieveToken         String?
   retrieveTokenExpireAt DateTime?
-  lastLoginAt DateTime?
+  lastLoginAt           DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -37,33 +39,80 @@ model Login {
 }
 
 model PersonalRelationship {
-  id                   Int         @id @default(autoincrement())
+  id          Int             @id @default(autoincrement())
+  name        String
+  description String?
+  status      LifeCycleStatus @default(ACTIVE)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
   @@map("personal_relationship")
 }
-// create table personRelationship(
-//     id serial primary key,
-//     name varchar(255) not null,
-//     description varchar(255) not null,
-//     status enum('disable', 'enable') default 'enable',
-//     createAt timestamp default current_timestamp,
-//     updateAt timestamp default current_timestamp on update current_timestamp
-// );
 
-// create table institution (
-//     id serial primary key,
-//     countryCode varchar(4)  not null references country(isoCode),
-//     abbreviation varchar(10) null,
-//     name varchar(100) not null,
-//     institutionNumber varchar(50),
-//     status enum('disable', 'enable') default 'enable',
-//     createAt timestamp default current_timestamp,
-//     updateAt timestamp default current_timestamp on update current_timestamp
-// );
+model Currency {
+  id        Int             @id @default(autoincrement())
+  isoCode   String          @unique
+  numCode   String          @unique
+  decimal   Int
+  name      String
+  status    LifeCycleStatus @default(ACTIVE)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 
-// create table occupation(
-//     id serial primary key,
-//     name varchar(255) not null,
-//     status enum('disable', 'enable') default 'enable',
-//     createAt timestamp default current_timestamp,
-//     updateAt timestamp default current_timestamp on update current_timestamp
-// );
+  @@map("currency")
+}
+
+model Country {
+  id          Int             @id @default(autoincrement())
+  iso2Code    String          @unique
+  iso3Code    String          @unique
+  numCode     String          @unique
+  name        String
+  status      LifeCycleStatus @default(ACTIVE)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  Institution Institution[]
+  Region      Region[]
+
+  @@map("country")
+}
+
+model Region {
+  id          Int             @id @default(autoincrement())
+  isoCode     String
+  name        String
+  abbr        String
+  countryCode String
+  country     Country         @relation(fields: [countryCode], references: [iso2Code])
+  status      LifeCycleStatus @default(ACTIVE)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("region")
+}
+
+model Institution {
+  id             Int             @id @default(autoincrement())
+  countryCode    String
+  country        Country         @relation(fields: [countryCode], references: [iso2Code])
+  abbr           String
+  name           String
+  institutionNum String
+  status         LifeCycleStatus @default(ACTIVE)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@map("institution")
+}
+
+model occupation {
+  id          Int             @id @default(autoincrement())
+  name        String
+  description String?
+  status      LifeCycleStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("occupation")
+}
