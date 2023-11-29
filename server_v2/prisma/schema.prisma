@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output = "../src/generated/client"
 }
 
 datasource db {
@@ -21,13 +22,13 @@ model Login {
   id                   Int         @id @default(autoincrement())
   email                String      @unique
   password             String
-  verifyCode           String
+  verifyCode           String?
   isEmailLoginVerified Boolean     @default(false)
   status               LoginStatus @default(PENDING)
 
-  retrieveToken       String
-  retrieveTokenExpire DateTime
-  lastLogin DateTime
+  retrieveToken       String?
+  retrieveTokenExpireAt DateTime?
+  lastLoginAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -35,6 +36,10 @@ model Login {
   @@map("login")
 }
 
+model PersonalRelationship {
+  id                   Int         @id @default(autoincrement())
+  @@map("personal_relationship")
+}
 // create table personRelationship(
 //     id serial primary key,
 //     name varchar(255) not null,
