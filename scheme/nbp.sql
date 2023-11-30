@@ -1,4 +1,3 @@
-
 # login table
 create table login(
     id serial primary key,
@@ -89,7 +88,7 @@ create table contact(
     country varchar(4) not null references country(iso2Code),
     postCode varchar(64),
     phoneNumber varchar(64),
-    relationshipToOwner varchar(64) not null references personal_relationship(name),
+    relationshipToOwner varchar(64) not null references personal_relationship(type),
 
     status enum('active', 'pending', 'invalid', 'delete') default 'pending',
 
@@ -102,7 +101,7 @@ create table fee_detail(
     ownerId int not null references user(id),
     transactionId int not null references transaction(id),
 
-    name varchar(255) not null,
+    type varchar(255) not null,
     amount integer not null,
     currency varchar(8) not null references currency(isoCode),
 
@@ -156,22 +155,22 @@ create table transaction(
     destinationCurrency varchar(8) not null references currency(isoCode),
 
     #     Initial Status for all transaction
-    transferState int not null references transfer_state(id),
+    curTransferId int not null references transfer(id),
 
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp
 );
 
 
-create table transfer_state(
+create table transfer(
     id serial primary key,
     ownerId int not null references user(id),
     transactionId int not null references transaction(id),
     name varchar(255) not null,
 
-    previousState int null references transfer_state(id),
+    preTransferId int null references transfer(id),
     retryAttempt int,
-    transferStatus enum('initial', 'processing', 'pending', 'complete', 'rejected', 'retry', 'cancel') not null default 'initial',
+    status enum('initial', 'processing', 'pending', 'complete', 'rejected', 'retry', 'cancel') not null default 'initial',
 
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp
@@ -180,8 +179,8 @@ create table transfer_state(
 create table transferLog(
     id serial primary key,
     ownerId int not null references user(id),
-    stateId int not null references transfer_state(id),
-    preState  int null references transfer_state(id),
+    stateId int not null references transfer(id),
+    preState  int null references transfer(id),
 
     transferStatus enum('initial', 'processing', 'pending', 'complete', 'rejected', 'retry', 'cancel') not null,
     severity enum('info', 'warming', 'error', 'debug') not null default 'info',
@@ -295,7 +294,8 @@ create table occupation(
 create table api_log (
     id serial primary key,
     ownerId int not null references user(id),
-    transferId int null references transfer_state(id),
+    transferId int null references transfer(id),
+    externalReference varchar(255) null,
     provider varchar(255) not null,
     apiName varchar(255) not null,
     requestPayload TEXT null,
