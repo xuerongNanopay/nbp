@@ -18,6 +18,13 @@ enum LifeCycleStatus {
   DELETE  @map("delete")
 }
 
+enum LogLevel {
+  DEBUG   @map("debug")
+  INFO    @map("info")
+  WARMING @map("warming")
+  ERROR   @map("error")
+}
+
 model Login {
   id                   Int             @id @default(autoincrement())
   owner                User            @relation(fields: [ownerId], references: [id])
@@ -141,7 +148,7 @@ model Institution {
   @@map("institution")
 }
 
-model occupation {
+model Occupation {
   id          Int             @id @default(autoincrement())
   name        String
   description String?
@@ -163,3 +170,22 @@ model occupation {
 //     createdAt timestamp default current_timestamp,
 //     updatedAt timestamp default current_timestamp on update current_timestamp
 // );
+
+enum NotificationStatus {
+  READ   @map("read")
+  UNREAD @map("unread")
+}
+
+model Notification {
+  id      Int                @id @default(autoincrement())
+  ownerId Int
+  level   LogLevel           @default(INFO)
+  subject String
+  content String
+  status  NotificationStatus @default(UNREAD)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("notification")
+}
