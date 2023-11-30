@@ -164,17 +164,6 @@ model Occupation {
   @@map("occupation")
 }
 
-// create table notification(
-//     id serial primary key,
-//     ownerId int not null references user(id),
-//     level enum('info', 'warming', 'error', 'debug') default 'info',
-//     subject varchar(250) null,
-//     content varchar(250) null,
-//     status enum('read', 'unread') default 'unread',
-//     createdAt timestamp default current_timestamp,
-//     updatedAt timestamp default current_timestamp on update current_timestamp
-// );
-
 enum NotificationStatus {
   READ   @map("read")
   UNREAD @map("unread")
@@ -217,9 +206,10 @@ model Account {
   interacEmail String
   isDefault    Boolean @default(false)
 
-  status    AccountStatus @default(ACTIVE)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  status      AccountStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Transaction Transaction[]
 
   @@map("account")
 }
@@ -249,9 +239,10 @@ model Contact {
   phoneNumber         String
   relationshipToOwner String
 
-  status    ContactStatus @default(ACTIVE)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  status      ContactStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Transaction Transaction[]
 
   @@map("contact")
 }
@@ -274,56 +265,40 @@ model ApiLog {
   @@map("api_log")
 }
 
-    // errorMessage varchar(255) null,
-    // sourceAccount int not null references account(id),
-    // destinationAccount int not null references contact(id),
-    // sourceAmount INTEGER not null,
-    // destinationAmount INTEGER not null,
-    // sourceCurrency varchar(8) not null references currency(isoCode),
-    // destinationCurrency varchar(8) not null references currency(isoCode),
-    // fee Integer null,
-    // feeCurrency varchar(8) not null references currency(isoCode),
-    // debitAmount Integer not null,
-    // debitCurrency varchar(8) not null references currency(isoCode),
-    // nbpReference varchar(100),
-
-    // # intial process success failed pending cancel.
-    // status enum('initial','waitingForPayment', 'process', 'complete', 'failed', 'refundInProgress', 'cancel') default 'initial',
 enum SummaryTransactionStatus {
-  INITIAL @map("initial")
+  INITIAL             @map("initial")
   WAITING_FOR_PAYMENT @map("waitingForPayment")
-  PROCESS @map("process")
-  COMPLETE @map("complete")
-  FAILED @map("failed")
-  REFUND_IN_PROGRESS @map("refundInProgress")
-  CANCEL @map("cancel")
+  PROCESS             @map("process")
+  COMPLETE            @map("complete")
+  FAILED              @map("failed")
+  REFUND_IN_PROGRESS  @map("refundInProgress")
+  CANCEL              @map("cancel")
 }
 
 model SummaryTransaction {
-  id      Int  @id @default(autoincrement())
-  owner   User @relation(fields: [ownerId], references: [id])
-  ownerId Int
-  transactionId Int @unique
-  transaction Transaction @relation(fields: [transactionId], references: [id])
+  id            Int         @id @default(autoincrement())
+  owner         User        @relation(fields: [ownerId], references: [id])
+  ownerId       Int
+  transactionId Int         @unique
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
 
-  sourceAccountId Int
-  destinationContactId Int
-  sourceAccountSummary String?
+  sourceAccountId           Int
+  destinationContactId      Int
+  sourceAccountSummary      String?
   destinationContactSummary String?
-  senderName String?
-  receiverName String?
-  sourceAmount Int
-  destinationAmount Int
-  sourceCurrency String
-  destinationCurrency String
-  fee Int
-  feeCurrency String
-  debitAmount Int
-  debitCurrency String
-  nbpReference String
-  errorMessage String?
+  senderName                String?
+  receiverName              String?
+  sourceAmount              Int
+  destinationAmount         Int
+  sourceCurrency            String
+  destinationCurrency       String
+  fee                       Int
+  feeCurrency               String
+  debitAmount               Int
+  debitCurrency             String
+  nbpReference              String
+  errorMessage              String?
 
-  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -331,26 +306,52 @@ model SummaryTransaction {
 }
 
 model Transaction {
-  id      Int  @id @default(autoincrement())
-  owner   User @relation(fields: [ownerId], references: [id])
-  ownerId Int
+  id                 Int                 @id @default(autoincrement())
+  owner              User                @relation(fields: [ownerId], references: [id])
+  ownerId            Int
   summaryTransaction SummaryTransaction?
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  transfer  transfer[]
+  fromIp               String?
+  sourceAccountId      Int
+  sourceAccount        Account @relation(fields: [sourceAccountId], references: [id])
+  destinationContactId Int
+  desticationContact   Contact @relation(fields: [destinationContactId], references: [id])
+  sourceAmount         Int
+  destinationAmount    Int
+  sourceCurrency       String
+  destinationCurrency  String
+
+  curTransferId Int?
+  transfer      Transfer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("transaction")
 }
 
-model transfer {
+enum TransferStatus {
+  INITIAL    @map("initial")
+  PROCESSING @map("processing")
+  PENDING    @map("pending")
+  COMPLETE   @map("complete")
+  REJECTED   @map("rejected")
+  RETRY      @map("retry")
+  CANCEL     @map("cancel")
+}
+
+model Transfer {
   id            Int         @id @default(autoincrement())
   ownerId       Int
   transactionId Int
   transaction   Transaction @relation(fields: [transactionId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  preTransferId Int?
+  retryAttempt  Int  @default(0)
+
+  status    TransferStatus @default(INITIAL)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 
   @@map("transfer")
 }
