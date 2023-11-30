@@ -320,12 +320,14 @@ model Transaction {
   destinationAmount    Int
   sourceCurrency       String
   destinationCurrency  String
+  nbpReference         String?
 
   curTransferId Int?
   transfer      Transfer[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  TransferLog TransferLog[]
 
   @@map("transaction")
 }
@@ -355,3 +357,60 @@ model Transfer {
 
   @@map("transfer")
 }
+
+model TransferLog {
+  id            Int         @id @default(autoincrement())
+  ownerId       Int
+  transactionId Int
+  transferId    Int
+  transfer      Transaction @relation(fields: [transferId], references: [id])
+  preTransferId Int?
+
+  subject     String
+  description String?
+
+  transferStatus TransferStatus
+  severity       LogLevel       @default(INFO)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@map("transfer_log")
+}
+
+model FeeDetail {
+  id            Int @id @default(autoincrement())
+  ownerId       Int
+  transactionId Int
+
+  type        String
+  description String
+  amount      Int
+  currency    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("fee_detail")
+}
+
+model Quote {
+  id      Int @id @default(autoincrement())
+  ownerId Int
+}
+
+// create table quote(
+//     id serial primary key,
+//     transactionId int references transaction(id),
+
+//     sourceAccount int not null references account(id),
+//     destinationAccount int not null references contact(id),
+//     sourceAmount INTEGER not null,
+//     destinationAmount INTEGER not null,
+//     sourceCurrency varchar(8) not null references currency(isoCode),
+//     destinationCurrency varchar(8) not null references currency(isoCode),
+
+//     expired timestamp,
+
+//     createdAt timestamp default current_timestamp,
+//     updatedAt timestamp default current_timestamp on update current_timestamp
+// );
