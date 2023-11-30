@@ -66,6 +66,8 @@ model User {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   Identification Identification[]
+  Account        Account[]
+  Contact        Contact[]
 
   @@map("user")
 }
@@ -188,4 +190,64 @@ model Notification {
   updatedAt DateTime @updatedAt
 
   @@map("notification")
+}
+
+enum AccountType {
+  INTERAC     @map("interac")
+  BANKACCOUNT @map("bankAccount")
+}
+
+//status enum('active', 'pending', 'disable', 'invalid', 'delete') default 'active',
+enum AccountStatus {
+  ACTIVE  @map("active")
+  PENDING @map("pending")
+  DISABLE @map("disable")
+  INVALID @map("invalid")
+  DELETE  @map("delete")
+}
+
+// TODO: using split to different table?
+model Account {
+  id      Int  @id @default(autoincrement())
+  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId Int
+
+  interacEmail String
+  isDefault    Boolean @default(false)
+
+  status    AccountStatus @default(ACTIVE)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("account")
+}
+
+enum ContactStatus {
+  ACTIVE  @map("active")
+  PENDING @map("pending")
+  DISABLE @map("disable")
+  INVALID @map("invalid")
+  DELETE  @map("delete")
+}
+
+model Contact {
+  id      Int  @id @default(autoincrement())
+  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId Int
+
+  firstName           String
+  middleName          String?
+  lastName            String
+  dob                 DateTime
+  address1            String
+  address2            String?
+  province            String
+  country             String
+  postCode            String
+  phoneNumber         String
+  relationshipToOwner String
+
+  status    ContactStatus @default(ACTIVE)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
