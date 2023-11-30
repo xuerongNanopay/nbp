@@ -63,11 +63,13 @@ model User {
   nationality String
   Login       Login[] // only support one way login
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  Identification Identification[]
-  Account        Account[]
-  Contact        Contact[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  Identification     Identification[]
+  Account            Account[]
+  Contact            Contact[]
+  SummaryTransaction SummaryTransaction[]
+  Transaction        Transaction[]
 
   @@map("user")
 }
@@ -254,12 +256,6 @@ model Contact {
   @@map("contact")
 }
 
-// provider varchar(255) not null,
-// name varchar(255) not null,
-// requestPayload TEXT null,
-// responsePayload TEXT null,
-// httpStatus varchar(10) null,
-// errorMessage TEXT null,
 model ApiLog {
   id         Int  @id @default(autoincrement())
   ownerId    Int
@@ -276,4 +272,85 @@ model ApiLog {
   updatedAt DateTime @updatedAt
 
   @@map("api_log")
+}
+
+    // errorMessage varchar(255) null,
+    // sourceAccount int not null references account(id),
+    // destinationAccount int not null references contact(id),
+    // sourceAmount INTEGER not null,
+    // destinationAmount INTEGER not null,
+    // sourceCurrency varchar(8) not null references currency(isoCode),
+    // destinationCurrency varchar(8) not null references currency(isoCode),
+    // fee Integer null,
+    // feeCurrency varchar(8) not null references currency(isoCode),
+    // debitAmount Integer not null,
+    // debitCurrency varchar(8) not null references currency(isoCode),
+    // nbpReference varchar(100),
+
+    // # intial process success failed pending cancel.
+    // status enum('initial','waitingForPayment', 'process', 'complete', 'failed', 'refundInProgress', 'cancel') default 'initial',
+enum SummaryTransactionStatus {
+  INITIAL @map("initial")
+  WAITING_FOR_PAYMENT @map("waitingForPayment")
+  PROCESS @map("process")
+  COMPLETE @map("complete")
+  FAILED @map("failed")
+  REFUND_IN_PROGRESS @map("refundInProgress")
+  CANCEL @map("cancel")
+}
+
+model SummaryTransaction {
+  id      Int  @id @default(autoincrement())
+  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId Int
+  transactionId Int @unique
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+
+  sourceAccountId Int
+  destinationContactId Int
+  sourceAccountSummary String?
+  destinationContactSummary String?
+  senderName String?
+  receiverName String?
+  sourceAmount Int
+  destinationAmount Int
+  sourceCurrency String
+  destinationCurrency String
+  fee Int
+  feeCurrency String
+  debitAmount Int
+  debitCurrency String
+  nbpReference String
+  errorMessage String?
+
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("summary_transaction")
+}
+
+model Transaction {
+  id      Int  @id @default(autoincrement())
+  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId Int
+  summaryTransaction SummaryTransaction?
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  transfer  transfer[]
+
+  @@map("transaction")
+}
+
+model transfer {
+  id            Int         @id @default(autoincrement())
+  ownerId       Int
+  transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("transfer")
 }
