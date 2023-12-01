@@ -334,10 +334,9 @@ model Transaction {
 
 enum TransferStatus {
   INITIAL    @map("initial")
-  PROCESSING @map("processing")
-  PENDING    @map("pending")
-  COMPLETE   @map("complete")
-  REJECTED   @map("rejected")
+  WAITING @map("waiting")
+  SUCCESS   @map("success")
+  FAIL   @map("fail")
   RETRY      @map("retry")
   CANCEL     @map("cancel")
 }
@@ -393,9 +392,30 @@ model FeeDetail {
   @@map("fee_detail")
 }
 
+// where to store the Quote Redis
 model Quote {
   id      Int @id @default(autoincrement())
   ownerId Int
+  transactionId Int?
+
+  sourceAccountId           Int
+  destinationContactId      Int
+  sourceAccountSummary      String?
+  destinationContactSummary String?
+  senderName                String?
+  receiverName              String?
+  sourceAmount              Int
+  destinationAmount         Int
+  sourceCurrency            String
+  destinationCurrency       String
+  fee                       Int
+  feeCurrency               String
+  debitAmount               Int
+  debitCurrency             String
+
+  expired DateTime
+
+  @@map("quote")
 }
 
 // create table quote(
