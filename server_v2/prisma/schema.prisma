@@ -328,17 +328,19 @@ model Transaction {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   TransferLog TransferLog[]
+  FeeDetail   FeeDetail[]
 
   @@map("transaction")
 }
 
 enum TransferStatus {
-  INITIAL    @map("initial")
-  WAITING @map("waiting")
-  SUCCESS   @map("success")
-  FAIL   @map("fail")
-  RETRY      @map("retry")
-  CANCEL     @map("cancel")
+  START   @map("start")
+  WAIT    @map("wait")
+  SUCCESS @map("success")
+  FAIL    @map("fail")
+  RETRY   @map("retry")
+  CANCEL  @map("cancel")
+  END     @map("end")
 }
 
 model Transfer {
@@ -350,7 +352,7 @@ model Transfer {
   preTransferId Int?
   retryAttempt  Int  @default(0)
 
-  status    TransferStatus @default(INITIAL)
+  status    TransferStatus @default(START)
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
 
@@ -377,9 +379,10 @@ model TransferLog {
 }
 
 model FeeDetail {
-  id            Int @id @default(autoincrement())
+  id            Int         @id @default(autoincrement())
   ownerId       Int
   transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
 
   type        String
   description String
@@ -394,8 +397,8 @@ model FeeDetail {
 
 // where to store the Quote Redis
 model Quote {
-  id      Int @id @default(autoincrement())
-  ownerId Int
+  id            Int  @id @default(autoincrement())
+  ownerId       Int
   transactionId Int?
 
   sourceAccountId           Int
@@ -417,6 +420,10 @@ model Quote {
 
   @@map("quote")
 }
+
+// model QuoteFeeDetail {
+
+// }
 
 // create table quote(
 //     id serial primary key,
