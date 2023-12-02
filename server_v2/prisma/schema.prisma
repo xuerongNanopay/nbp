@@ -26,8 +26,8 @@ enum LogLevel {
 
 model Login {
   id                   Int             @id @default(autoincrement())
-  owner                User            @relation(fields: [ownerId], references: [id])
-  ownerId              Int
+  owner                User?            @relation(fields: [ownerId], references: [id])
+  ownerId              Int?
   email                String          @unique
   password             String
   verifyCode           String?

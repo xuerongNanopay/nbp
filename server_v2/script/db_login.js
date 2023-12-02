@@ -1,11 +1,18 @@
-import { PrismaClient } from "../generated/client"
+import { PrismaClient } from "@prisma/client"
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({
+  log: [
+    {
+      emit: "event",
+      level: "query",
+    },
+  ],
+})
 
 async function main() {
   const login = await prisma.login.create({data:{
-    email: 'aa',
-    password: 'vv',
+    email: 'aaavvv1@gmail.com',
+    password: 'vv'
   }})
   console.log(login)
 }
