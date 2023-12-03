@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "clean": "rm -rf ./dist",
-    "compile": "npm run clean && tsc && tsc-alias",
+    "compile": "npm run clean && tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,7 +17,6 @@
     "nodemon": "^3.0.1",
     "prisma": "^5.6.0",
     "ts-node": "^10.9.1",
-    "tsc-alias": "^1.8.8",
     "typescript": "^5.3.2"
   },
   "dependencies": {
