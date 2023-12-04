@@ -8,8 +8,9 @@ import json
 
 
 s3 = boto3.client('s3')
+dynamodb = boto3.resource('dynamodb', region_name=str(os.environ['REGION_NAME']))
 size = int(os.environ['THUMBNAIL_SIZE'])
-
+dbtable = str(os.environ['DYNAMODB_TABLE'])
 
 def s3_thumbnail_generator(event, context):
     #parse event
@@ -24,7 +25,8 @@ def s3_thumbnail_generator(event, context):
 
         thumbnail = image_to_thumbnail(image)
         thumbnail_key = new_filename(key)
-        url = upload_to_s3(bucket, thumbnail_key, thumbnail, img_size)
+        url = upload_to_s3(bucket, thumbnail_key, thumbnail)
+
 
         return url
 
@@ -36,10 +38,11 @@ def s3_thumbnail_generator(event, context):
     return {"statusCode": 200, "body": json.dumps(body)}
 
 # upload image into s3 bucket with associate key
-def upload_to_s3(bucket, key, image, img_size):
+def upload_to_s3(bucket, key, image):
     out_thumbnail = BytesIO()
 
     image.save(out_thumbnail, 'PNG')
+    image_size = out_thumbnail.tell()
     out_thumbnail.seek(0)
 
     response = s3.put_object(
@@ -52,6 +55,8 @@ def upload_to_s3(bucket, key, image, img_size):
     print(response)
 
     url = '{}/{}/{}'.format(s3.meta.endpoint_url, bucket, key)
+
+    s3_save_thumbnail_utl_to_dynamo(url, image_size)
 
     return url
 
@@ -72,3 +77,23 @@ def get_s3_image(bucket, key):
     file = BytesIO(imagecontent)
     img = Image.open(file)
     return img
+
+# save thumbnail url in to dynamo db.
+def s3_save_thumbnail_utl_to_dynamo(url_path, img_size):
+    to_kB = round(img_size/1000, 2)
+    table = dynamodb.Table(dbtable)
+    response = table.put_item(
+        Item={
+            'id': str(uuid.uuid4()),
+            'url': str(url_path),
+            'approxReducedSize': str(to_kB) + str(' KB'),
+            'createAt': str(datetime.now()),
+            'updateAt': str(datetime.now())
+        }
+    )
+
+    return {
+        'statusCode': 200,
+        'headers': {'Content-Type': 'application/json'},
+        'body': json.dumps(response)
+    }
