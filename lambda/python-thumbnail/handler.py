@@ -19,14 +19,14 @@ def s3_thumbnail_generator(event, context):
     key = event['Records'][0]['s3']['object']['key']
     img_size = event['Records'][0]['s3']['object']['size']
 
-    if (not key.endsWith("_thmbnail.png")):
+    if (not key.endswith("_thumbnail.png")):
         image = get_s3_image(bucket, key)
 
         thumbnail = image_to_thumbnail(image)
         thumbnail_key = new_filename(key)
         url = upload_to_s3(bucket, thumbnail_key, thumbnail, img_size)
 
-        return null
+        return url
 
     body = {
         "message": "Go Serverless v3.0! Your function executed successfully!",
@@ -43,7 +43,7 @@ def upload_to_s3(bucket, key, image, img_size):
     out_thumbnail.seek(0)
 
     response = s3.put_object(
-        ACL='public-read',
+        # ACL='public-read',
         Body=out_thumbnail,
         Bucket=bucket,
         ContentType='image/png',

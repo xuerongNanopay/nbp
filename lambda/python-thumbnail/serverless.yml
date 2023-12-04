@@ -15,10 +15,27 @@ provider:
   iam:
     role:
       statements:
-        - Effect: Allow
-          Resource: '*'
-          Action: s3:*
+        - Effect: 'Allow'
+          Resource: 
+            - 'arn:aws:s3:::${self:custom.bucket}/*'
+          Action:
+            - "s3:*"
+
+custom:
+  bucket: xrw-thumbnails
+  pythonRequirements:
+    dockerizePip: true
 
 functions:
-  hello:
-    handler: handler.hello
+  s3_thumbnail_generator:
+    handler: handler.s3_thumbnail_generator
+    reservedConcurrency: 4
+    events:
+      - s3:
+          bucket: ${self:custom.bucket}
+          event: s3:ObjectCreated:*
+          rules:
+            - suffix: .png
+
+plugins:
+  - serverless-python-requirements
