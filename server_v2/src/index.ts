@@ -1,3 +1,2 @@
-import boot from './boot.js'
-
-await boot()
+// Run boot to initial dependency
+import './boot/index.js'
