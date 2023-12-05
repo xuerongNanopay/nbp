@@ -13,4 +13,8 @@ export interface DefaultJWT extends Record<string, unknown> {
   userId?: string | null
 }
 
-export interface JWT extends Record<string, unknown>, DefaultJWT {}
+export interface JWT extends Record<string, unknown>, DefaultJWT {
+  //TODO: using real type after schema added.
+  login: Record<string, unknown>,
+  user: Record<string, unknown>
+}
