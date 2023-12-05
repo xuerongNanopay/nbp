@@ -1,6 +1,7 @@
 'use client'
 import IconHeaderWithLogout  from '@/components/header/IconHeaderWithLogout'
 
+// TODO: redirect to API sign out.
 export default function OnboardLayout({
   children,
 }: {
