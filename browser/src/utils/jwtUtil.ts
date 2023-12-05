@@ -49,7 +49,7 @@ export async function decryptJWT<P extends JWTPayload = JWT>(
 }
 
 export async function sign() {
-
+  
 }
 
 export async function verify() {
