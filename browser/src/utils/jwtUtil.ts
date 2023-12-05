@@ -7,11 +7,12 @@ import type {
   JWTPayload
 } from 'jose'
 import { hkdf } from "@panva/hkdf"
+import * as crypto from 'crypto'
 
 const now = () => (Date.now() / 1000) | 0
 const DEFAULT_MAX_AGE = 7 * 24 * 60 * 60 // default 7 days
 
-export async function encrypt<P extends JWTPayload = JWTPayload>(params: JWTEncodeParams<P>) {
+export async function encryptJWT<P extends JWTPayload = JWTPayload>(params: JWTEncryptParams<P>) {
   const { token = {}, secret, maxAge = DEFAULT_MAX_AGE, salt } = params
   const encryptKey = await generateEncryptionKey(secret, salt)
   return await new EncryptJWT(token)
@@ -23,12 +24,12 @@ export async function encrypt<P extends JWTPayload = JWTPayload>(params: JWTEnco
 }
 
 async function generateEncryptionKey(
-  key: Parameters<typeof hkdf>[1],
+  secret: Parameters<typeof hkdf>[1],
   salt: Parameters<typeof hkdf>[2]
 ) {
   return await hkdf(
     "sha256",
-    key,
+    secret,
     salt,
     `encrypt key generation`,
     32
@@ -49,7 +50,7 @@ export async function verify() {
 
 
 
-interface JWTEncodeParams<Payload> {
+export interface JWTEncryptParams<Payload> {
   /**
    * @default 7 * 24 * 60 * 60 // 7 days
    */
@@ -59,13 +60,13 @@ interface JWTEncodeParams<Payload> {
   token?: Payload
 }
 
-interface JWTDecodeParams {
+export interface JWTDecodeParams {
   salt: string
   secret: string
   token?: string
 }
 
-interface JWT extends JWTPayload {
-  loginId: string,
-  userId?: string | null
+export interface JWT extends JWTPayload {
+  loginId: number,
+  userId?: number | null
 }
