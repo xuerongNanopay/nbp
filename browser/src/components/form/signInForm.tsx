@@ -16,7 +16,18 @@ export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
   const [ isPasswordVisible, setIsPasswordVisible ] = useState(false)
   const initialValues: ISignIn = {email: '', password: ''}
 
-  const signIn = (e: ISignIn) => { console.log(e) }
+  const signIn = async (e: ISignIn) => { 
+    console.log(e)
+    const resp = await fetch('/api/signin', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(e),
+    })
+    console.log(await resp.json())
+  }
+
   const formik = useFormik({
     initialValues,
     validationSchema: Yup.object({
