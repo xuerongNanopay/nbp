@@ -50,6 +50,36 @@ functions:
           event: s3:ObjectCreated:*
           rules:
             - suffix: .png
+  list:
+    handler: handler.s3_get_thumbnail_urls
+    reservedConcurrency: 4
+    layers:
+      - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p39-pillow:1
+    events:
+      - http:
+          path: images/all
+          method: get
+          cors: true
+  get:
+    handler: handler.s3_get_item
+    reservedConcurrency: 4
+    layers:
+      - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p39-pillow:1
+    events:
+      - http:
+          path: images/get/{id}
+          method: get
+          cors: true
+  delete:
+    handler: handler.s3_delete_item
+    reservedConcurrency: 4
+    layers:
+      - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p39-pillow:1
+    events:
+      - http:
+          path: images/delete/{id}
+          method: delete
+          cors: true
 
 resources:
   Resources:
