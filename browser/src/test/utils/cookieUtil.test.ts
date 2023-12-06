@@ -1,4 +1,4 @@
-import { CookieChunker, RawCookies, Cookie } from "@/utils/cookieUtil"
+import { CookieChunker, RawCookies, CHUNK_SIZE } from "@/utils/cookieUtil"
 
 describe("Cookie chunker", () => {
   test("compose cookie", async () => {
@@ -17,7 +17,7 @@ describe("Cookie chunker", () => {
   })
 
   test("chunk cookie less and equal to CHUNK_SIZE", async () => {
-    const cookieValue = Array(4096-256).fill('A').join("")
+    const cookieValue = Array(CHUNK_SIZE).fill('A').join("")
 
     const cookieChunker = new CookieChunker({name: 'bar'})
     const cookies = cookieChunker.chunker(cookieValue)
@@ -28,7 +28,7 @@ describe("Cookie chunker", () => {
   })
 
   test("chunk cookie greater than CHUNK_SIZE", async () => {
-    const cookieValue = Array((4096-256)*2 + 1).fill('A').join("")
+    const cookieValue = Array((CHUNK_SIZE)*2 + 1).fill('A').join("")
 
     const cookieChunker = new CookieChunker({name: 'bar'})
     const cookies = cookieChunker.chunker(cookieValue)
