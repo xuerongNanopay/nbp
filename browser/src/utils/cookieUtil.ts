@@ -1,3 +1,4 @@
+import { serialize } from "cookie"
 import type {
   GetServerSidePropsContext,
   NextApiRequest,
@@ -27,7 +28,7 @@ export type RawCookies = Record<string, string>
 export class CookieChunker {
   #option: CookieOption
 
-  constructor(option: CookieOption) {
+  constructor(option: Pick<CookieOption, 'name' | 'options'>) {
     if (!option.options) {
       //TODO: fill default.
       this.#option = {...option, options: {}}
@@ -40,6 +41,7 @@ export class CookieChunker {
     const { name: cookieNamePrefix } = this.#option
     for (const [name, value] of Object.entries(cookies)) {
       if (!name.startsWith(cookieNamePrefix) || !value) continue
+      c[name] = value
     }
 
     const sortedKeys = Object.keys(c).sort((a, b) => {
