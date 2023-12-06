@@ -1,6 +1,5 @@
-import { serialize } from "cookie"
+import { serialize, parse } from "cookie"
 import type {
-  GetServerSidePropsContext,
   NextApiRequest,
   NextApiResponse,
 } from "next"
@@ -27,6 +26,7 @@ export type RawCookies = Record<string, string>
 // compose cookie string from multiple chunkers
 export class CookieChunker {
   #option: CookieOption
+  #logger: Console | undefined
 
   constructor(option: Pick<CookieOption, 'name' | 'options'>) {
     if (!option.options) {
@@ -44,14 +44,14 @@ export class CookieChunker {
       c[name] = value
     }
 
-    const sortedKeys = Object.keys(c).sort((a, b) => {
+    const sortedKeys = Object.keys(cookies).sort((a, b) => {
       const aSuffix = parseInt(a.split(".").pop() || "0")
       const bSuffix = parseInt(b.split(".").pop() || "0")
 
       return aSuffix - bSuffix
     })
 
-    const value = sortedKeys.map((key) => c[key]).join("")
+    const value = sortedKeys.map((key) => cookies[key]).join("")
 
     return {
       name: cookieNamePrefix,
@@ -77,15 +77,17 @@ export class CookieChunker {
       const c = {
         ...this.#option,
         name: `cookieNamePrefix.${i}`,
-        value: value.substring(i * CHUNK_SIZE, CHUNK_SIZE)
+        value: value.substring(i * CHUNK_SIZE, (i+1) * CHUNK_SIZE)
       }
       ret.push(c)
     }
 
-    console.warn({
-      message: `Session cookie exceeds allowed ${CHUNK_SIZE} bytes.`,
-      valueSize: value.length
-    })
+    if ( !!this.#logger ) {
+      this.#logger.warn({
+        message: `Session cookie exceeds allowed ${CHUNK_SIZE} bytes.`,
+        valueSize: value.length
+      })
+    }
 
     return ret
   }
@@ -99,7 +101,7 @@ export interface SessionStore<S> {
 // Manage cookie
 // Get from request and apply to response.
 // Handle encryption and decryption.
-export class JWTSessionStore<S extends JWT = JWT> implements SessionStore<S> {
+export class CookieSessionStore<S extends JWT = JWT> implements SessionStore<S> {
   
   async loadSession(req: NextApiRequest): Promise<S> {
     const s = {loginId: 1} as S
