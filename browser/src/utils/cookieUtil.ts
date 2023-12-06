@@ -1,4 +1,10 @@
+import type {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from "next"
 import type { CookieSerializeOptions } from 'cookie'
+import { JWT } from './jwtUtil'
 
 const MAX_COOKIE_SIZE = 4096
 const PRESERVED_SIZE = 256
@@ -83,8 +89,22 @@ export class CookieChunker {
   }
 }
 
-// Manage cookie.
-// Get from request and apply to response.
-export class CookieStore {
+export interface SessionStore<S> {
+  loadSession(req: NextApiRequest):Promise<S>,
+  applySession(res: NextApiResponse, s: S): void 
+}
 
+// Manage cookie
+// Get from request and apply to response.
+// Handle encryption and decryption.
+export class JWTSessionStore<S extends JWT = JWT> implements SessionStore<S> {
+  
+  async loadSession(req: NextApiRequest): Promise<S> {
+    const s = {loginId: 1} as S
+    return s;
+  }
+
+  applySession(res: NextApiResponse, s: S) {
+
+  } 
 }
