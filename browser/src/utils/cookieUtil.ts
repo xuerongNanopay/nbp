@@ -19,10 +19,15 @@ export interface Cookie extends CookieOption {
 
 // Seperate a string into multiple chunker against CHUNK_SIZE.
 export class CookieChunker {
+  #option: CookieOption
 
+  constructor(option: CookieOption) {
+    this.#option = option
+  }
 }
 
-// Manage cookie for a request.
+// Manage cookie.
+// Get from request and apply to response.
 export class CookieStore {
 
 }
