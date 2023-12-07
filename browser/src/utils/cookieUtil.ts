@@ -2,11 +2,6 @@ import { encryptJWT, decryptJWT } from "./jwtUtil"
 // import { serialize, parse } from "cookie"
 import type { NextRequest, NextResponse } from 'next/server'
 
-import type {
-  NextApiRequest,
-  NextApiResponse,
-} from "next"
-
 import type { CookieSerializeOptions } from 'cookie'
 import { JWT } from './jwtUtil'
 
@@ -97,10 +92,10 @@ export class CookieChunker {
   }
 }
 
-export interface SessionStore<S> {
-  loadSession(req: NextRequest):Promise<S|null>,
-  applySession(res: NextResponse, s: S): void 
-}
+// export interface SessionStore<S> {
+//   loadSession(req: any):Promise<S|null>,
+//   applySession(res: any, s: S): void 
+// }
 
 const defaultCookieChunker = new CookieChunker({name: '__session'})
 
@@ -115,7 +110,8 @@ export type CookieSessionStoreParam = {
 // Manage cookie
 // Get from request and apply to response.
 // Handle encryption and decryption.
-export class CookieSessionStore<S extends JWT = JWT> implements SessionStore<S> {
+// export class CookieSessionStore<S extends JWT = JWT> implements SessionStore<S> {
+  export class CookieSessionStore<S extends JWT = JWT>{
 
   #cookieChunker
   #jwtParams
@@ -125,10 +121,14 @@ export class CookieSessionStore<S extends JWT = JWT> implements SessionStore<S> 
     this.#jwtParams = {...params.jwtParams}
   }
   
-  async loadSession(req: NextRequest): Promise<S|null> {
+  async loadSession(allCookies: {name: string, value: string}[]): Promise<S|null> {
     // const cookies = parse(req.headers['cookie'] ?? "")
-    const cookies = req.cookies.getAll().reduce<RawCookies>((arr, c)=> {arr[c.name]=c.value; return arr}, {})
+    if ( ! allCookies || allCookies.length == 0 ) return null
+
+    const cookies = allCookies.reduce<RawCookies>((arr, c)=> {arr[c.name]=c.value; return arr}, {})
     const cookie = this.#cookieChunker.compose(cookies)
+    if ( cookie.value.trim() === "" ) return null
+
     try {
       const payload = await decryptJWT<S>({
         secret: this.#jwtParams.secret,
@@ -143,10 +143,10 @@ export class CookieSessionStore<S extends JWT = JWT> implements SessionStore<S> 
     }
   }
 
-  async applySession(res: NextResponse, s: S) {
+  async applySession(nextCookies: any, s: S, maxAge?: number) {
     try {
       const encryptedPayload = await encryptJWT<S>({
-        maxAge: 7 * 24 * 60 * 60, // default 7 days
+        maxAge: maxAge ?? this.#jwtParams.maxAge, // default 7 days
         secret: this.#jwtParams.secret,
         //TODO: store salt in another cookie.
         salt: '5;Vv0_N4H:c',
@@ -155,7 +155,7 @@ export class CookieSessionStore<S extends JWT = JWT> implements SessionStore<S> 
       const cookies = this.#cookieChunker.chunker(encryptedPayload)
   
       for (const c of cookies) {
-        res.cookies.set(c.name, c.value, c.options)
+        nextCookies().set(c.name, c.value, c.options)
       }
     } catch ( err ) {
       console.error("Session apply error: ", err)
