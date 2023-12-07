@@ -1,0 +1,19 @@
+service: rest-api
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  stage: dev
+  timeout: 10
+  memorySize: 128
+  environment:
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
