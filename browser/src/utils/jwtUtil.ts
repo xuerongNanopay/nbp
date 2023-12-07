@@ -75,9 +75,5 @@ export interface JWTDecodeParams {
 }
 
 export interface JWT extends JWTPayload {
-  loginId: number,
-  userId?: number | null,
-  //TODO
-  login?: {},
-  user?: {},
+  loginId: number
 }
