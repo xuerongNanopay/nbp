@@ -6,9 +6,9 @@ import type {
 import type { CookieSerializeOptions } from 'cookie'
 import { JWT } from './jwtUtil'
 
-const MAX_COOKIE_SIZE = 4096
-const PRESERVED_SIZE = 256
-const CHUNK_SIZE = MAX_COOKIE_SIZE - PRESERVED_SIZE
+export const MAX_COOKIE_SIZE = 4096
+export const PRESERVED_SIZE = 256
+export const CHUNK_SIZE = MAX_COOKIE_SIZE - PRESERVED_SIZE
 
 export interface CookieOption {
   name: string
@@ -98,12 +98,32 @@ export interface SessionStore<S> {
   applySession(res: NextApiResponse, s: S): void 
 }
 
+const defaultCookieChunker = new CookieChunker({name: '__session'})
+
+
+export type CookieSessionStoreParam = {
+  jwtParams: {
+    secret: string,
+    maxAge?: number
+  },
+  cookieParams: CookieOption
+}
 // Manage cookie
 // Get from request and apply to response.
 // Handle encryption and decryption.
 export class CookieSessionStore<S extends JWT = JWT> implements SessionStore<S> {
+
+  #cookieChunker
+  #jwtParams
+
+  constructor(params: CookieSessionStoreParam) {
+    this.#cookieChunker = new CookieChunker({name: params.cookieParams.name})
+    this.#jwtParams = {...params.jwtParams}
+  }
   
   async loadSession(req: NextApiRequest): Promise<S> {
+    const cookies = parse(req.headers['cookie'] ?? "")
+
     const s = {loginId: 1} as S
     return s;
   }
