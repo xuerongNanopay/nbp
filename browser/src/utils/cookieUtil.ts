@@ -129,27 +129,38 @@ export class CookieSessionStore<S extends JWT = JWT> implements SessionStore<S> 
     // const cookies = parse(req.headers['cookie'] ?? "")
     const cookies = req.cookies.getAll().reduce<RawCookies>((arr, c)=> {arr[c.name]=c.value; return arr}, {})
     const cookie = this.#cookieChunker.compose(cookies)
-    const payload = await decryptJWT<S>({
-      secret: this.#jwtParams.secret,
-      //TODO: store salt in another cookie.
-      salt: '5;Vv0_N4H:c',
-      token: cookie.value
-    })
-    return payload;
+    try {
+      const payload = await decryptJWT<S>({
+        secret: this.#jwtParams.secret,
+        //TODO: store salt in another cookie.
+        salt: '5;Vv0_N4H:c',
+        token: cookie.value
+      })
+      return payload;
+    } catch ( err ) {
+      console.error("Session parse error: ", err)
+      return null;
+    }
   }
 
   async applySession(res: NextResponse, s: S) {
-    const encryptedPayload = await encryptJWT<S>({
-      maxAge: 7 * 24 * 60 * 60, // default 7 days
-      secret: this.#jwtParams.secret,
-      //TODO: store salt in another cookie.
-      salt: '5;Vv0_N4H:c',
-      token: s
-    })
-    const cookies = this.#cookieChunker.chunker(encryptedPayload)
-
-    for (const c of cookies) {
-      res.cookies.set(c.name, c.value, c.options)
+    try {
+      const encryptedPayload = await encryptJWT<S>({
+        maxAge: 7 * 24 * 60 * 60, // default 7 days
+        secret: this.#jwtParams.secret,
+        //TODO: store salt in another cookie.
+        salt: '5;Vv0_N4H:c',
+        token: s
+      })
+      const cookies = this.#cookieChunker.chunker(encryptedPayload)
+  
+      for (const c of cookies) {
+        res.cookies.set(c.name, c.value, c.options)
+      }
+    } catch ( err ) {
+      console.error("Session apply error: ", err)
+      // System should halt if session error happen.
+      // process.exit(1);
     }
   } 
 }
