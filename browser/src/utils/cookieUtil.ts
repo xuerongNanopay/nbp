@@ -1,8 +1,12 @@
-import { serialize, parse } from "cookie"
+import { encryptJWT, decryptJWT } from "./jwtUtil"
+// import { serialize, parse } from "cookie"
+import type { NextRequest, NextResponse } from 'next/server'
+
 import type {
   NextApiRequest,
   NextApiResponse,
 } from "next"
+
 import type { CookieSerializeOptions } from 'cookie'
 import { JWT } from './jwtUtil'
 
@@ -94,8 +98,8 @@ export class CookieChunker {
 }
 
 export interface SessionStore<S> {
-  loadSession(req: NextApiRequest):Promise<S>,
-  applySession(res: NextApiResponse, s: S): void 
+  loadSession(req: NextRequest):Promise<S|null>,
+  applySession(res: NextResponse, s: S): void 
 }
 
 const defaultCookieChunker = new CookieChunker({name: '__session'})
@@ -121,15 +125,32 @@ export class CookieSessionStore<S extends JWT = JWT> implements SessionStore<S> 
     this.#jwtParams = {...params.jwtParams}
   }
   
-  async loadSession(req: NextApiRequest): Promise<S> {
-    const cookies = parse(req.headers['cookie'] ?? "")
-
-    const s = {loginId: 1} as S
-    return s;
+  async loadSession(req: NextRequest): Promise<S|null> {
+    // const cookies = parse(req.headers['cookie'] ?? "")
+    const cookies = req.cookies.getAll().reduce<RawCookies>((arr, c)=> {arr[c.name]=c.value; return arr}, {})
+    const cookie = this.#cookieChunker.compose(cookies)
+    const payload = await decryptJWT<S>({
+      secret: this.#jwtParams.secret,
+      //TODO: store salt in another cookie.
+      salt: '5;Vv0_N4H:c',
+      token: cookie.value
+    })
+    return payload;
   }
 
-  applySession(res: NextApiResponse, s: S) {
+  async applySession(res: NextResponse, s: S) {
+    const encryptedPayload = await encryptJWT<S>({
+      maxAge: 7 * 24 * 60 * 60, // default 7 days
+      secret: this.#jwtParams.secret,
+      //TODO: store salt in another cookie.
+      salt: '5;Vv0_N4H:c',
+      token: s
+    })
+    const cookies = this.#cookieChunker.chunker(encryptedPayload)
 
+    for (const c of cookies) {
+      res.cookies.set(c.name, c.value, c.options)
+    }
   } 
 }
 
