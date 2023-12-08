@@ -1,6 +1,7 @@
 import { CookieSessionStore, SessionPayload } from '@/utils/cookieUtil'
 import { JWT } from '@/utils/jwtUtil'
 import { cookies as nextCookies } from 'next/headers'
+import { DEFAULT_SESSION_AGE } from '@/utils/cookieUtil'
 
 const now = () => (Date.now() / 1000) | 0
 
@@ -9,14 +10,14 @@ if ( ! JWT_SECRET ) process.exit(1)
 
 const cookieSessionStore = new CookieSessionStore<JWT>({
   jwtParams: {
-    maxAge: 1 * 60,
+    maxAge: DEFAULT_SESSION_AGE,
     // maxAge: 0,
     secret: JWT_SECRET
   },
   cookieParams: {
     name: 'NANO_ID',
     options: {
-      maxAge: 1 * 60,
+      maxAge: DEFAULT_SESSION_AGE,
     }
   }
 })
