@@ -28,10 +28,6 @@ export class CookieChunker {
   #logger: Console | undefined
 
   constructor(option: Pick<CookieOption, 'name' | 'options'>) {
-    if (!option.options) {
-      //TODO: fill default.
-      this.#option = {...option, options: {}}
-    }
     this.#option = option
   }
 
@@ -56,23 +52,23 @@ export class CookieChunker {
     }
   }
 
-  chunker(value: Cookie['value']): Cookie[] {
+  chunker(value: Cookie['value'], opt?: CookieOption): Cookie[] {
     const chunkCount = Math.ceil(value.length / CHUNK_SIZE)
-
+    const opts = opt ?? this.#option
     if ( chunkCount === 1 ) {
       return [
         {
-          ...this.#option,
+          ...opts,
           value
         }
       ]
     }
 
     const ret: Cookie[] = []
-    const { name: cookieNamePrefix } = this.#option
+    const { name: cookieNamePrefix } = opts
     for (let i = 0 ; i < chunkCount ; i++ ) {
       const c = {
-        ...this.#option,
+        ...opts,
         name: `${cookieNamePrefix}.${i}`,
         value: value.substring(i * CHUNK_SIZE, (i+1) * CHUNK_SIZE)
       }
@@ -115,7 +111,7 @@ export type CookieSessionStoreParam = {
   #jwtParams
 
   constructor(params: CookieSessionStoreParam) {
-    this.#cookieChunker = new CookieChunker({name: params.cookieParams.name})
+    this.#cookieChunker = new CookieChunker(params.cookieParams)
     this.#jwtParams = {...params.jwtParams}
   }
   
@@ -142,6 +138,7 @@ export type CookieSessionStoreParam = {
 
   async applySession(nextCookies: any, s: S, maxAge?: number) {
     try {
+
       const encryptedPayload = await encryptJWT<S>({
         maxAge: maxAge ?? this.#jwtParams.maxAge, // default 7 days
         secret: this.#jwtParams.secret,
@@ -150,9 +147,8 @@ export type CookieSessionStoreParam = {
         token: s
       })
       const cookies = this.#cookieChunker.chunker(encryptedPayload)
-  
       for (const c of cookies) {
-        nextCookies().set(c.name, c.value, c.options)
+        nextCookies().set(c.name, c.value, {...c.options, maxAge: maxAge ?? c.options?.maxAge})
       }
     } catch ( err ) {
       console.error("Session apply error: ", err)

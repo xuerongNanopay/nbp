@@ -10,12 +10,13 @@ if ( ! JWT_SECRET ) process.exit(1)
 const cookieSessionStore = new CookieSessionStore<JWT>({
   jwtParams: {
     maxAge: 1 * 60,
+    // maxAge: 0,
     secret: JWT_SECRET
   },
   cookieParams: {
-    name: 'CCCCC',
+    name: 'NANO_ID',
     options: {
-      // maxAge: 7 * 24 * 60 * 60,
+      maxAge: 1 * 60,
     }
   }
 })
@@ -27,7 +28,7 @@ export async function fetchSession(): ReturnType<typeof cookieSessionStore.loadS
   if ( sessionPayload == null ) return null
 
   if ( ! sessionPayload.exp || sessionPayload.exp < now() ) {
-    // console.log("session expire", sessionPayload.exp)
+    console.log("session expire", sessionPayload.exp)
     return null
   }
 
@@ -41,7 +42,6 @@ export async function setSession(payload: Awaited<ReturnType<typeof cookieSessio
     //TODO: log
     return
   }
-  // const { cookies } = require("next/headers")
   await cookieSessionStore.applySession(nextCookies, payload)
 }
 
