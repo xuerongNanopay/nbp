@@ -2,7 +2,6 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import NextUIProvider from '../providers/NextUIProvider'
-import { fetchSession } from '@/lib/auth'
 
 const inter = Inter({ subsets: ['latin'] })
 
