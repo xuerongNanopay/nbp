@@ -2,13 +2,13 @@ import { CookieSessionStore, SessionPayload } from '@/utils/cookieUtil'
 import { JWT } from '@/utils/jwtUtil'
 import { cookies as nextCookies } from 'next/headers'
 import { DEFAULT_SESSION_AGE } from '@/utils/cookieUtil'
-
-const now = () => (Date.now() / 1000) | 0
+import { JWTExpired } from "jose/errors"
+import { permanentRedirect } from 'next/navigation'
 
 const JWT_SECRET = process.env['JWT_SECRET']
 if ( ! JWT_SECRET ) process.exit(1)
 
-const cookieSessionStore = new CookieSessionStore<JWT>({
+const cookieSessionStore = new CookieSessionStore<SessionPayload>({
   jwtParams: {
     maxAge: DEFAULT_SESSION_AGE,
     // maxAge: 0,
@@ -24,17 +24,17 @@ const cookieSessionStore = new CookieSessionStore<JWT>({
 
 //If the session is expire or valid, then return null
 export async function fetchSession(): ReturnType<typeof cookieSessionStore.loadSession> {
-  // const { cookies } = require("next/headers")
-  const sessionPayload = await cookieSessionStore.loadSession(nextCookies().getAll())
-  if ( sessionPayload == null ) return null
+  try {
+    let sessionPayload = await cookieSessionStore.loadSession(nextCookies().getAll())
+    if ( sessionPayload == null ) return null
 
-  if ( ! sessionPayload.exp || sessionPayload.exp < now() ) {
-    console.log("session expire", sessionPayload.exp)
+    return sessionPayload
+  } catch ( err ) {
+    if ( !(err instanceof JWTExpired) ) {
+      console.error("Session parse error: ", err)
+    }
     return null
   }
-
-  //TODO: check is token valid
-  return sessionPayload
 }
 
 // Using in signIn
@@ -43,6 +43,7 @@ export async function setSession(payload: Awaited<ReturnType<typeof cookieSessio
     //TODO: log
     return
   }
+  await cookieSessionStore.cleanSession(nextCookies)
   await cookieSessionStore.applySession(nextCookies, payload)
 }
 
@@ -50,5 +51,6 @@ export async function setSession(payload: Awaited<ReturnType<typeof cookieSessio
 export async function cleanSession() {
   const payload = await fetchSession()
   if (!payload) return
+  await cookieSessionStore.cleanSession(nextCookies)
   await cookieSessionStore.applySession(nextCookies, payload, -1)
 }

@@ -3,6 +3,19 @@ import type {
 } from 'next/server'
 
 import { setSession } from '@/lib/auth'
+import { SessionPayload } from '@/utils/cookieUtil'
+
+const dummySessionPayload: SessionPayload = {
+  loginId: 11111111111,
+  userId: 55555555555,
+  username: 'Xufdsafd Wu',
+  loginStatus: 'active',
+  thumbnail: 'ffffffffffffffffffffffffffffffffffffffffff',
+  userStatus: 'active',
+  isVerifyEmail: true,
+  isOnboarding: true,
+  role: ['ADMIN', "NBP_USER"]
+}
 
 //TODO: fecth from node backend.
 export async function POST(req: NextRequest) {
@@ -14,7 +27,7 @@ export async function POST(req: NextRequest) {
     userId: 222
   }
 
-  await setSession({loginId: 111})
+  await setSession(dummySessionPayload)
 
   console.log(signInData)
   return Response.json(user,{
@@ -32,7 +45,7 @@ export async function GET() {
     userId: 222
   }
 
-  await setSession({loginId: 111})
+  await setSession(dummySessionPayload)
 
   return Response.json(user,{
       status: 200,

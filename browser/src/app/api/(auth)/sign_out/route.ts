@@ -1,4 +1,4 @@
-import { cleanSession } from "@/lib/auth";
+import { cleanSession } from "@/lib/auth"
 
 async function logout() {
   await cleanSession()

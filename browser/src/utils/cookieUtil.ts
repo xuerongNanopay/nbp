@@ -107,10 +107,12 @@ export type CookieSessionStoreParam = {
 // export class CookieSessionStore<S extends JWT = JWT> implements SessionStore<S> {
   export class CookieSessionStore<S extends JWT = JWT>{
 
+  #params
   #cookieChunker
   #jwtParams
 
   constructor(params: CookieSessionStoreParam) {
+    this.#params = params
     this.#cookieChunker = new CookieChunker(params.cookieParams)
     this.#jwtParams = {...params.jwtParams}
   }
@@ -122,43 +124,37 @@ export type CookieSessionStoreParam = {
     const cookies = allCookies.reduce<RawCookies>((arr, c)=> {arr[c.name]=c.value; return arr}, {})
     const cookie = this.#cookieChunker.compose(cookies)
     if ( cookie.value.trim() === "" ) return null
-    try {
-      const payload = await decryptJWT<S>({
-        secret: this.#jwtParams.secret,
-        //TODO: store salt in another cookie.
-        salt: '5;Vv0_N4H:c',
-        token: cookie.value
-      })
-      return payload;
-    } catch ( err ) {
-      if ( err instanceof JWTExpired ) {
-        return null
-      }
-      console.error("Session parse error: ", err)
-      return null;
-    }
+
+    const payload = await decryptJWT<S>({
+      secret: this.#jwtParams.secret,
+      //TODO: store salt in another cookie.
+      salt: '5;Vv0_N4H:c',
+      token: cookie.value
+    })
+    return payload;
   }
 
   async applySession(nextCookies: any, s: S, maxAge?: number) {
-    try {
-
-      const encryptedPayload = await encryptJWT<S>({
-        maxAge: maxAge ?? this.#jwtParams.maxAge, // default 7 days
-        secret: this.#jwtParams.secret,
-        //TODO: store salt in another cookie.
-        salt: '5;Vv0_N4H:c',
-        token: s
-      })
-      const cookies = this.#cookieChunker.chunker(encryptedPayload)
-      for (const c of cookies) {
-        nextCookies().set(c.name, c.value, {...c.options, maxAge: maxAge ?? c.options?.maxAge})
-      }
-    } catch ( err ) {
-      console.error("Session apply error: ", err)
-      // System should halt if session error happen.
-      // process.exit(1);
+    const encryptedPayload = await encryptJWT<S>({
+      maxAge: maxAge ?? this.#jwtParams.maxAge, // default 7 days
+      secret: this.#jwtParams.secret,
+      //TODO: store salt in another cookie.
+      salt: '5;Vv0_N4H:c',
+      token: s
+    })
+    const cookies = this.#cookieChunker.chunker(encryptedPayload)
+    for (const c of cookies) {
+      nextCookies().set(c.name, c.value, {...c.options, maxAge: maxAge ?? c.options?.maxAge})
     }
-  } 
+  }
+
+  async cleanSession(nextCookies: any) {
+    nextCookies().getAll().forEach((c:any) => {
+      if ( c.name.startsWith(this.#params.cookieParams.name) ) {
+        nextCookies().delete(c.name)
+      }
+    })
+  }
 }
 
 export interface SessionPayload extends JWT {
