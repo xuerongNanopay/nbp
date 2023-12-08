@@ -5,7 +5,8 @@ describe("Cookie chunker", () => {
     const cookies: RawCookies = {
       "foo.1": "bbbbb",
       "foo.2": "ccccc",
-      "foo.0": "aaaaa"
+      "foo.0": "aaaaa",
+      "bbbb": "vvvv"
     }
 
     const cookieChunker = new CookieChunker({name: 'foo'})
@@ -14,6 +15,19 @@ describe("Cookie chunker", () => {
     expect(cookie).not.toBeNull()
     expect(cookie.name).toBe('foo')
     expect(cookie.value).toBe('aaaaabbbbbccccc')
+  })
+
+  test("compose cookie with singal value", async () => {
+    const cookies: RawCookies = {
+      "foo": "aaaaa"
+    }
+
+    const cookieChunker = new CookieChunker({name: 'foo'})
+    const cookie = cookieChunker.compose(cookies)
+
+    expect(cookie).not.toBeNull()
+    expect(cookie.name).toBe('foo')
+    expect(cookie.value).toBe('aaaaa')
   })
 
   test("chunk cookie less and equal to CHUNK_SIZE", async () => {

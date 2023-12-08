@@ -37,21 +37,19 @@ export class CookieChunker {
 
   compose(cookies: RawCookies): Pick<Cookie, 'name' | 'value'> {
     const c: RawCookies = {}
-    const { name: cookieNamePrefix } = this.#option
+    const cookieNamePrefix = this.#option.name
     for (const [name, value] of Object.entries(cookies)) {
       if (!name.startsWith(cookieNamePrefix) || !value) continue
       c[name] = value
     }
-
-    const sortedKeys = Object.keys(cookies).sort((a, b) => {
+    const sortedKeys = Object.keys(c).sort((a, b) => {
       const aSuffix = parseInt(a.split(".").pop() || "0")
       const bSuffix = parseInt(b.split(".").pop() || "0")
 
       return aSuffix - bSuffix
     })
 
-    const value = sortedKeys.map((key) => cookies[key]).join("")
-
+    const value = sortedKeys.map((key) => c[key]).join("")
     return {
       name: cookieNamePrefix,
       value
@@ -75,7 +73,7 @@ export class CookieChunker {
     for (let i = 0 ; i < chunkCount ; i++ ) {
       const c = {
         ...this.#option,
-        name: `cookieNamePrefix.${i}`,
+        name: `${cookieNamePrefix}.${i}`,
         value: value.substring(i * CHUNK_SIZE, (i+1) * CHUNK_SIZE)
       }
       ret.push(c)
@@ -128,7 +126,6 @@ export type CookieSessionStoreParam = {
     const cookies = allCookies.reduce<RawCookies>((arr, c)=> {arr[c.name]=c.value; return arr}, {})
     const cookie = this.#cookieChunker.compose(cookies)
     if ( cookie.value.trim() === "" ) return null
-
     try {
       const payload = await decryptJWT<S>({
         secret: this.#jwtParams.secret,

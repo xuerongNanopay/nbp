@@ -2,18 +2,22 @@ import type {
   NextRequest
 } from 'next/server'
 
+import { setSession } from '@/lib/auth'
+
 //TODO: fecth from node backend.
 export async function POST(req: NextRequest) {
   const signInData: ISignIn = await req.json()
 
-  // TODO: signIn in back and and get JWT from there.
-  // Front end can reuse JWT as they can sure same security.
+  //TODO: load user from DB.
+  const user = {
+    loginId: 111,
+    userId: 222
+  }
+
+  setSession({loginId: 111})
 
   console.log(signInData)
-  return Response.json({
-      "loginId": "aaaa",
-      "message": "success"
-    },{
+  return Response.json(user,{
       status: 200,
       headers: {
         'Content-Type': 'application/json'
