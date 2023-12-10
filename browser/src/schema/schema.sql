@@ -70,6 +70,16 @@ create table personal_relationship(
 
     type varchar(64) not null,
     description varchar(255) null,
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+);
+
+create table occupation(
+    id serial primary key,
+    status enum('disable', 'active') default 'active',
+    type varchar(64) not null,
+    description varchar(255) null,
     
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp

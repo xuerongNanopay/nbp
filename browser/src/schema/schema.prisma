@@ -135,3 +135,21 @@ model PersonalRelationship {
 
   @@map("personal_relationship")
 }
+
+enum OccupationStatus {
+  ACTIVE @map("active")
+  DISABLE @map("disable")
+}
+
+model Occupation {
+  id          Int             @id @default(autoincrement())
+  status      OccupationStatus @default(ACTIVE)
+
+  type        String
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("occupation")
+}
