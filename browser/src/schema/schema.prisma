@@ -119,31 +119,31 @@ model Identification {
 }
 
 enum PersonalRelationshipStatus {
-  ACTIVE @map("active")
+  ACTIVE  @map("active")
   DISABLE @map("disable")
 }
 
 model PersonalRelationship {
-  id          Int             @id @default(autoincrement())
-  status      PersonalRelationshipStatus @default(ACTIVE)
+  id     Int                        @id @default(autoincrement())
+  status PersonalRelationshipStatus @default(ACTIVE)
 
   type        String
   description String?
 
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("personal_relationship")
 }
 
 enum OccupationStatus {
-  ACTIVE @map("active")
+  ACTIVE  @map("active")
   DISABLE @map("disable")
 }
 
 model Occupation {
-  id          Int             @id @default(autoincrement())
-  status      OccupationStatus @default(ACTIVE)
+  id     Int              @id @default(autoincrement())
+  status OccupationStatus @default(ACTIVE)
 
   type        String
   description String?
@@ -155,20 +155,41 @@ model Occupation {
 }
 
 enum CurrencyStatus {
-  ACTIVE @map("active")
+  ACTIVE  @map("active")
   DISABLE @map("disable")
 }
+
 model Currency {
-  id        Int             @id @default(autoincrement())
-  status    CurrencyStatus @default(ACTIVE)
+  id     Int            @id @default(autoincrement())
+  status CurrencyStatus @default(ACTIVE)
 
-  isoCode   String          @unique
-  numCode   String          @unique
-  decimal   Int
-  name      String
+  isoCode String @unique
+  numCode String @unique
+  decimal Int
+  name    String
 
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("currency")
+}
+
+enum CountryStatus {
+  ACTIVE  @map("active")
+  DISABLE @map("disable")
+}
+
+model Country {
+  id     Int           @id @default(autoincrement())
+  status CountryStatus @default(ACTIVE)
+
+  iso2Code String @unique
+  iso3Code String @unique
+  numCode  String @unique
+  name     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("country")
 }

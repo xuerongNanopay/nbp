@@ -98,3 +98,17 @@ create table currency(
     updatedAt timestamp default current_timestamp on update current_timestamp
 );
 create index currency_isoCode_idx on currency(isoCode);
+
+create table country (
+    id serial primary key,
+    status enum('disable', 'active') default 'active',
+    
+    iso2Code char(2) not null unique,
+    iso3Code char(3) not null unique,
+    numCode char(3) not null unique,
+    name varchar(128) not null,
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+);
+create index country_iso2Code_idx on country(iso2Code);
