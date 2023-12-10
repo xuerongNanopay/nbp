@@ -370,8 +370,14 @@ model FeeDetail {
   @@map("fee_detail")
 }
 
+enum TransactionStatus {
+  QUOTE @map("quote")
+  CONFIRM @map("confirm")
+}
+
 model Transaction {
   id                 Int                 @id @default(autoincrement())
+  status TransactionStatus @default(QUOTE)
 
   sourceAccountId      Int
   sourceAccount        Account @relation(fields: [sourceAccountId], references: [id])
@@ -389,6 +395,8 @@ model Transaction {
   nbpReference         String?
 
   curTransferId Int?
+
+  quoteExpired DateTime
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt

@@ -224,6 +224,7 @@ create table fee_detail(
 
 create table transaction(
     id serial primary key,
+    status enum('quote', 'confirmed') default 'quote',
 
     sourceAccountId int not null references account(id),
     destinationContactId int not null references contact(id),
@@ -239,7 +240,9 @@ create table transaction(
 
     #     Initial Status for all transaction
     ownerId int not null references user(id),
-    curTransferId int not null references transfer(id),
+    curTransferId int null references transfer(id),
+
+    quoteExpired datetime not null,
 
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp
