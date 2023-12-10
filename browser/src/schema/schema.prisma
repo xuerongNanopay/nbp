@@ -79,7 +79,7 @@ model User {
   Account        Account[]
   Contact        Contact[]
   SummaryTransaction SummaryTransaction[]
-  // Transaction        Transaction[]
+  Transaction        Transaction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -260,7 +260,7 @@ model Account {
 
   owner   User @relation(fields: [ownerId], references: [id])
   ownerId Int
-  // Transaction Transaction[]
+  Transaction Transaction[]
 
   @@map("account")
 }
@@ -298,7 +298,7 @@ model Contact {
 
   owner   User @relation(fields: [ownerId], references: [id])
   ownerId Int
-  // Transaction Transaction[]
+  Transaction Transaction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -340,11 +340,65 @@ model SummaryTransaction {
   nbpReference              String
   ownerId       Int
   owner         User        @relation(fields: [ownerId], references: [id])
-  // transactionId Int         @unique
-  // transaction   Transaction @relation(fields: [transactionId], references: [id])
+  transactionId Int         @unique
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("summary_transaction")
+}
+
+enum FeeType {
+  BASIC @map("basic")
+}
+
+model FeeDetail {
+  id            Int         @id @default(autoincrement())
+  type FeeType @default(BASIC)
+
+  description String
+  amount      Int
+  currency    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownerId       Int
+  transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  @@map("fee_detail")
+}
+
+model Transaction {
+  id                 Int                 @id @default(autoincrement())
+
+  sourceAccountId      Int
+  sourceAccount        Account @relation(fields: [sourceAccountId], references: [id])
+
+  destinationContactId Int
+  desticationContact   Contact @relation(fields: [destinationContactId], references: [id])
+
+  sourceAmount         Int
+  sourceCurrency       String
+
+  destinationAmount    Int
+  destinationCurrency  String
+
+  fromIp               String?
+  nbpReference         String?
+
+  curTransferId Int?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  owner              User                @relation(fields: [ownerId], references: [id])
+  ownerId            Int
+  FeeDetail   FeeDetail[]
+  summaryTransaction SummaryTransaction?
+  // transfer      Transfer[]
+  // TransferLog TransferLog[]
+
+  @@map("transaction")
 }

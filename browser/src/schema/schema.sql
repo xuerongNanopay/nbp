@@ -206,3 +206,41 @@ create table summary_transaction(
     updatedAt timestamp default current_timestamp on update current_timestamp
 
 );
+
+create table fee_detail(
+    id serial primary key,
+    type varchar(255) not null,
+    
+    description varchar(255) null,
+    amount integer not null,
+    currency varchar(8) not null references currency(isoCode),
+
+    ownerId int not null references user(id),
+    transactionId int not null references transaction(id),
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+);
+
+create table transaction(
+    id serial primary key,
+
+    sourceAccountId int not null references account(id),
+    destinationContactId int not null references contact(id),
+
+    sourceAmount INTEGER not null,
+    sourceCurrency varchar(8) not null references currency(isoCode),
+
+    destinationAmount INTEGER not null,
+    destinationCurrency varchar(8) not null references currency(isoCode),
+
+    fromIp varchar(255) null,
+    nbpReference varchar(255) null unique,
+
+    #     Initial Status for all transaction
+    ownerId int not null references user(id),
+    curTransferId int not null references transfer(id),
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+);
