@@ -139,3 +139,17 @@ create table institution (
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp
 );
+
+create table account (
+    id serial primary key,
+    status enum('active', 'await_verify', 'suspend', 'delete') default 'await_verify',
+    type enum('interac', 'bank_account') not null,
+
+    email varchar(255) null,
+    isDefault boolean default false,
+
+    ownerId int not null references user(id),
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+);

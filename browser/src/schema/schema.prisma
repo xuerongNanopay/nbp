@@ -76,7 +76,7 @@ model User {
 
   Login          Login[] // only support one way login
   Identification Identification[]
-  // Account            Account[]
+  Account        Account[]
   // Contact            Contact[]
   // SummaryTransaction SummaryTransaction[]
   // Transaction        Transaction[]
@@ -232,4 +232,34 @@ model Institution {
   updatedAt DateTime @updatedAt
 
   @@map("institution")
+}
+
+enum AccountStatus {
+  ACTIVE       @map("active")
+  AWAIT_VERIFY @map("await_verify")
+  SUSPEND      @map("suspend")
+  DELETE       @map("delete")
+}
+
+enum AccountType {
+  INTERACT     @map("interac")
+  BANK_ACCOUNT @map("bank_account")
+}
+
+model Account {
+  id     Int           @id @default(autoincrement())
+  status AccountStatus @default(AWAIT_VERIFY)
+  type   AccountType
+
+  email     String
+  isDefault Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId Int
+  // Transaction Transaction[]
+
+  @@map("account")
 }
