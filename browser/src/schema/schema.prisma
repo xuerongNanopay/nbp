@@ -117,3 +117,21 @@ model Identification {
 
   @@map("identification")
 }
+
+enum PersonalRelationshipStatus {
+  ACTIVE @map("active")
+  DISABLE @map("disable")
+}
+
+model PersonalRelationship {
+  id          Int             @id @default(autoincrement())
+  status      PersonalRelationshipStatus @default(ACTIVE)
+
+  type        String
+  description String?
+
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("personal_relationship")
+}
