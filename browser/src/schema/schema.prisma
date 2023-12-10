@@ -153,3 +153,22 @@ model Occupation {
 
   @@map("occupation")
 }
+
+enum CurrencyStatus {
+  ACTIVE @map("active")
+  DISABLE @map("disable")
+}
+model Currency {
+  id        Int             @id @default(autoincrement())
+  status    CurrencyStatus @default(ACTIVE)
+
+  isoCode   String          @unique
+  numCode   String          @unique
+  decimal   Int
+  name      String
+
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@map("currency")
+}
