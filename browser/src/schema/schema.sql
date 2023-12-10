@@ -49,3 +49,17 @@ create table user(
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp
 );
+
+create table identification(
+    id serial primary key,
+    status enum('active', 'suspend', 'await_verify', 'delete') default 'active',
+    type enum('password', 'driver_license', 'identification') not null,
+
+    value varchar(64) not null,
+    addition_info varchar(128) null,
+
+    ownerId int not null references user(id),
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+);
