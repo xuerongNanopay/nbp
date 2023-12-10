@@ -12,28 +12,77 @@ datasource db {
 
 //status enum('active', 'awaitVerify', 'suspend', 'delete') default 'awaitEmailConfirm',
 enum LoginStatus {
-  ACTIVE @map("active")
-  AWAIT_VERIFY @map("awaitVerify")
-  SUSPEND @map("suspend")
-  DELETE @map("delete")
+  ACTIVE       @map("active")
+  AWAIT_VERIFY @map("await_verify")
+  SUSPEND      @map("suspend")
+  DELETE       @map("delete")
 }
 
 model Login {
-  id                   Int             @id @default(autoincrement())
-  owner                User?            @relation(fields: [ownerId], references: [id])
-  ownerId              Int?
-  email                String          @unique
-  password             String
-  verifyCode           String?
-  verifyCodeAt         DateTime?
-  status               LoginStatus @default(AWAIT_VERIFY)
+  id     Int         @id @default(autoincrement())
+  status LoginStatus @default(AWAIT_VERIFY)
+
+  email        String    @unique
+  password     String
+  verifyCode   String?
+  verifyCodeAt DateTime?
 
   recoverToken         String?
   recoverTokenExpireAt DateTime?
-  lastLoginAt           DateTime?
+  lastLoginAt          DateTime?
+
+  owner   User? @relation(fields: [ownerId], references: [id])
+  ownerId Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("login")
+}
+
+enum UserStatus {
+  ACTIVE       @map("active")
+  AWAIT_VERIFY @map("await_verify")
+  SUSPEND      @map("suspend")
+  DELETE       @map("delete")
+}
+
+enum UserRole {
+  ADMIN      @map("admin")
+  NBP_CLIENT @map("nbp_client")
+}
+
+model User {
+  id     Int        @id @default(autoincrement())
+  status UserStatus @default(ACTIVE)
+  role   UserRole   @default(NBP_CLIENT)
+
+  firstName   String
+  middleName  String?
+  lastName    String
+  dob         DateTime
+  address1    String
+  address2    String?
+  province    String
+  country     String
+  postCode    String
+  phoneNumber String
+
+  pob         String
+  nationality String
+
+  occupationId Int
+  avatarUrl    String
+
+  Login Login[] // only support one way login
+  // Identification     Identification[]
+  // Account            Account[]
+  // Contact            Contact[]
+  // SummaryTransaction SummaryTransaction[]
+  // Transaction        Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user")
 }
