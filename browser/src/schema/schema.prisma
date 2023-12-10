@@ -213,3 +213,23 @@ model Region {
 
   @@map("region")
 }
+
+enum InstitutionStatus {
+  ACTIVE  @map("active")
+  DISABLE @map("disable")
+}
+
+model Institution {
+  id     Int               @id @default(autoincrement())
+  status InstitutionStatus @default(ACTIVE)
+
+  country        String
+  abbr           String
+  name           String
+  institutionNum String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("institution")
+}
