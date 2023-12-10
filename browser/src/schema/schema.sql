@@ -112,3 +112,17 @@ create table country (
     updatedAt timestamp default current_timestamp on update current_timestamp
 );
 create index country_iso2Code_idx on country(iso2Code);
+
+create table region (
+    id          serial primary key,
+    status enum('disable', 'active') default 'active',
+
+    isoCode     varchar(8)   not null unique,
+    country char(2)   not null references country(iso2Code),
+    abbr        varchar(10) not null,
+    name        varchar(128) not null,
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+);
+create index region_isoCode_idx on region(isoCode);
