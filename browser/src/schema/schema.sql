@@ -153,3 +153,26 @@ create table account (
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp
 );
+
+create table contact(
+    id serial primary key,
+    status enum('active', 'pending', 'invalid', 'delete') default 'pending',
+    type enum('cash_pickup', 'bank_account') not null,
+
+    firstName varchar(255) not null,
+    middleName varchar(255),
+    lastName varchar(255) not null,
+    address1 varchar(255) not null,
+    address2 varchar(255),
+    province varchar(8) not null references region(isoCode),
+    country varchar(4) not null references country(iso2Code),
+    postCode varchar(64),
+    phoneNumber varchar(64),
+    dob date not null,
+
+    ownerId int not null references user(id),
+    relationshipToOwner varchar(64) not null references personal_relationship(type),
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+);

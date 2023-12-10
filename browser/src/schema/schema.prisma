@@ -77,7 +77,7 @@ model User {
   Login          Login[] // only support one way login
   Identification Identification[]
   Account        Account[]
-  // Contact            Contact[]
+  Contact        Contact[]
   // SummaryTransaction SummaryTransaction[]
   // Transaction        Transaction[]
 
@@ -239,6 +239,7 @@ enum AccountStatus {
   AWAIT_VERIFY @map("await_verify")
   SUSPEND      @map("suspend")
   DELETE       @map("delete")
+  INVALID      @map("invalid")
 }
 
 enum AccountType {
@@ -262,4 +263,45 @@ model Account {
   // Transaction Transaction[]
 
   @@map("account")
+}
+
+enum ContactStatus {
+  ACTIVE       @map("active")
+  AWAIT_VERIFY @map("await_verify")
+  SUSPEND      @map("suspend")
+  DELETE       @map("delete")
+  INVALID      @map("invalid")
+}
+
+enum ContactType {
+  CASH_PICKUP  @map("cash_pickup")
+  BANK_ACCOUNT @map("bank_account")
+}
+
+model Contact {
+  id     Int           @id @default(autoincrement())
+  status ContactStatus @default(ACTIVE)
+  type   ContactType
+
+  firstName   String
+  middleName  String?
+  lastName    String
+  address1    String
+  address2    String?
+  province    String
+  country     String
+  postCode    String
+  phoneNumber String
+
+  dob                 DateTime
+  relationshipToOwner String
+
+  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId Int
+  // Transaction Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contact")
 }
