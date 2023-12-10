@@ -247,3 +247,19 @@ create table transaction(
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp
 );
+
+create table transfer(
+    id serial primary key,
+    status enum('start', 'wait', 'success', 'failed', 'retry', 'cancel') not null default 'start',
+
+    name varchar(255) not null,
+    retryAttempt int,
+
+    ownerId int not null references user(id),
+    transactionId int not null references transaction(id),
+    preTransferId int null references transfer(id),
+    nextTransferId int null references transfer(id),
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+);
