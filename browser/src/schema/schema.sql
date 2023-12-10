@@ -176,3 +176,33 @@ create table contact(
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp
 );
+
+create table summary_transaction(
+    id serial primary key,
+    status enum('initial','waiting_for_payment', 'process', 'complete', 'rejected', 'refund_in_progress', 'cancel') default 'initial',
+
+    sourceAccountId int not null references account(id),
+    destinationContactId int not null references contact(id),
+
+    sourceAmount INTEGER not null,
+    sourceCurrency varchar(8) not null references currency(isoCode),
+
+    destinationAmount INTEGER not null,
+    destinationCurrency varchar(8) not null references currency(isoCode),
+
+    fee Integer null,
+    feeCurrency varchar(8) not null references currency(isoCode),
+
+    debitAmount Integer not null,
+    debitCurrency varchar(8) not null references currency(isoCode),
+
+    errorMessage varchar(255) null,
+
+    nbpReference varchar(100),
+    ownerId int not null references user(id),
+    transactionId int not null references transaction(id),
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+
+);

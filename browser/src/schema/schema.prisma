@@ -78,7 +78,7 @@ model User {
   Identification Identification[]
   Account        Account[]
   Contact        Contact[]
-  // SummaryTransaction SummaryTransaction[]
+  SummaryTransaction SummaryTransaction[]
   // Transaction        Transaction[]
 
   createdAt DateTime @default(now())
@@ -304,4 +304,47 @@ model Contact {
   updatedAt DateTime @updatedAt
 
   @@map("contact")
+}
+
+enum SummaryTransactionStatus {
+  INITIAL             @map("initial")
+  WAITING_FOR_PAYMENT @map("waiting_for_payment")
+  PROCESS             @map("process")
+  COMPLETE            @map("complete")
+  REJECTED              @map("rejected")
+  CANCEL              @map("cancel")
+  REFUND_IN_PROGRESS  @map("refund_in_progress")
+  REFUNDED            @map("refunded")
+}
+
+model SummaryTransaction {
+  id            Int         @id @default(autoincrement())
+
+  sourceAccountId           Int
+  destinationContactId      Int
+
+  sourceAmount              Int
+  sourceCurrency            String
+
+  destinationAmount         Int
+  destinationCurrency       String
+
+  fee                       Int
+  feeCurrency               String
+
+  debitAmount               Int
+  debitCurrency             String
+
+  errorMessage              String?
+
+  nbpReference              String
+  ownerId       Int
+  owner         User        @relation(fields: [ownerId], references: [id])
+  // transactionId Int         @unique
+  // transaction   Transaction @relation(fields: [transactionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("summary_transaction")
 }
