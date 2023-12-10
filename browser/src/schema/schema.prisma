@@ -475,3 +475,45 @@ model ReverseTransfer {
 
   @@map("reverse_transfer")
 }
+
+// create table api_log (
+//     id serial primary key,
+//     ownerId int not null references user(id),
+//     transferId int null references transfer(id),
+//     externalReference varchar(255) null,
+//     provider varchar(255) not null,
+//     apiName varchar(255) not null,
+//     requestPayload TEXT null,
+//     responsePayload TEXT null,
+//     httpResponseCode int null,
+//     errorMessage TEXT null,
+//     createdAt timestamp default current_timestamp,
+//     updatedAt timestamp default current_timestamp on update current_timestamp
+// );
+
+// create table notification(
+//     id serial primary key,
+//     ownerId int not null references user(id),
+//     level enum('info', 'warming', 'error', 'debug') default 'info',
+//     subject varchar(250) null,
+//     content varchar(250) null,
+//     status enum('read', 'unread') default 'unread',
+//     createdAt timestamp default current_timestamp,
+//     updatedAt timestamp default current_timestamp on update current_timestamp
+// );
+
+// create table transfer_log(
+//     id serial primary key,
+//     ownerId int not null references user(id),
+//     transferId int not null references transfer(id),
+//     preTransferId  int null references transfer(id),
+
+//     status enum('start', 'wait', 'success', 'fail', 'retry', 'cancel', 'end') not null,
+//     severity enum('info', 'warming', 'error', 'debug') not null default 'info',
+
+//     subject varchar(255) not null,
+//     description TEXT,
+
+//     createdAt timestamp default current_timestamp,
+//     updatedAt timestamp default current_timestamp on update current_timestamp
+// );
