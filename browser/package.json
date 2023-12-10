@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "prismaGen": "npx prisma generate --schema=./src/schema/schema.prisma"
+    "prismaGen": "npx prisma generate --schema=./src/schema/schema.prisma",
+    "prismaFormat": "npx prisma format --schema=./src/schema/schema.prisma"
   },
   "dependencies": {
     "@nextui-org/react": "^2.2.9",
