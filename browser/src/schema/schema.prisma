@@ -74,8 +74,8 @@ model User {
   occupationId Int
   avatarUrl    String
 
-  Login Login[] // only support one way login
-  // Identification     Identification[]
+  Login          Login[] // only support one way login
+  Identification Identification[]
   // Account            Account[]
   // Contact            Contact[]
   // SummaryTransaction SummaryTransaction[]
@@ -85,4 +85,35 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@map("user")
+}
+
+enum IdentificationStatus {
+  ACTIVE       @map("active")
+  AWAIT_VERIFY @map("await_verify")
+  SUSPEND      @map("suspend")
+  DELETE       @map("delete")
+}
+
+enum IdentificationType {
+  PASSWORD       @map("password")
+  DRIVER_LICENSE @map("driver_license")
+  PROVINCAL_ID   @map("provincial_id")
+  NATIONAL_ID    @map("national_id")
+}
+
+model Identification {
+  id     Int                  @id @default(autoincrement())
+  status IdentificationStatus @default(ACTIVE)
+  type   IdentificationType
+
+  num          String
+  additionInfo String @map("addition_info")
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("identification")
 }
