@@ -361,12 +361,12 @@ model FeeDetail {
   amount      Int
   currency    String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   ownerId       Int
   transactionId Int
   transaction   Transaction @relation(fields: [transactionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("fee_detail")
 }
@@ -399,15 +399,17 @@ model Transaction {
 
   quoteExpired DateTime
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   owner              User                @relation(fields: [ownerId], references: [id])
   ownerId            Int
   FeeDetail          FeeDetail[]
   summaryTransaction SummaryTransaction?
   transfer           Transfer[]
+  reverseTransaction ReverseTransaction?
+
   // TransferLog TransferLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("transaction")
 }
@@ -428,14 +430,48 @@ model Transfer {
   name         String
   retryAttempt Int    @default(0)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   ownerId       Int
   transactionId Int
   transaction   Transaction @relation(fields: [transactionId], references: [id])
   preTransferId Int?
   nexTransferId Int?
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("transfer")
+}
+
+model ReverseTransaction {
+  id Int @id @default(autoincrement())
+
+  ownerId             Int
+  originTransaction   Transaction       @relation(fields: [originTransactionId], references: [id])
+  originTransactionId Int               @unique
+  curTransferId       Int?
+  transfer            ReverseTransfer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reverse_transaction")
+}
+
+model ReverseTransfer {
+  id     Int            @id @default(autoincrement())
+  status TransferStatus @default(START)
+
+  name         String
+  retryAttempt Int    @default(0)
+
+  ownerId              Int
+  reverseTransactionId Int
+  reverseTransaction   ReverseTransaction @relation(fields: [reverseTransactionId], references: [id])
+  preTransferId        Int?
+  nexTransferId        Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reverse_transfer")
 }

@@ -263,3 +263,30 @@ create table transfer(
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp
 );
+
+create table reverse_transaction(
+    id serial primary key,
+
+    ownerId int not null references user(id),
+    originTransactionId int not null references transaction(id),
+    curTransferId int null references reverse_transfer(id),
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+);
+
+create table reverse_transfer(
+    id serial primary key,
+    status enum('start', 'wait', 'success', 'failed', 'retry', 'cancel') not null default 'start',
+
+    name varchar(255) not null,
+    retryAttempt int,
+
+    ownerId int not null references user(id),
+    reverseTransactionId int not null references reverse_transaction(id),
+    preTransferId int null references reverse_transaction(id),
+    nextTransferId int null references reverse_transaction(id),
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+);
