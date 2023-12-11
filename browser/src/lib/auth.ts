@@ -1,8 +1,10 @@
 import { 
   EmailVerifyData,
+  ForgetPasswordData,
   Session, 
   SignInData,
-  SignUpDate
+  SignUpDate,
+  OnboardingData
 } from '@/type'
 import { getPrismaClient } from '@/utils/prisma'
 import { 
@@ -148,5 +150,20 @@ export async function verifyEmail(
   } catch (err: any) {
     throw new PrismaError(err.code, err.message)
   }
+}
 
+//TODO: send email to user with url+oneTimeToken
+// Check your email.
+// export async function retrieveLogin(
+//   forgetPasswordDate: ForgetPasswordData
+// ) {
+
+// }
+
+//TODO: onboarding
+export async function onboarding(
+  session: Session,
+  onboardingData: OnboardingData
+) {
+  
 }

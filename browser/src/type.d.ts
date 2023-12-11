@@ -219,3 +219,27 @@ interface SignUpData {
 interface EmailVerifyData {
   code: string
 }
+
+interface ForgetPasswordData {
+  email: string
+}
+
+interface OnboardingData {
+  firstName: string,
+  middleName?: string,
+  lastName: string,
+  addressLine1: string,
+  addressLine2?: string,
+  city: string,
+  province: string,
+  country: string,
+  postalCode: string,
+  phoneNumber: string,
+  dob: string,
+  pob: string,
+  nationality: string,
+  occupation: string,
+  identityType: string,
+  identityNumber: string
+  etransfer: string
+}
