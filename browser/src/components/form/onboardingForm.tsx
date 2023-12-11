@@ -31,7 +31,7 @@ export default function OnboardingForm() {
     dob: '',
     pob: '',
     nationality: '',
-    occupation: '',
+    occupationId: -1,
     identityType: '',
     identityNumber: '',
     etransfer: ''
@@ -39,6 +39,7 @@ export default function OnboardingForm() {
 
   const onboardingHandler = ( e: OnboardingData ) => {
     console.log(e)
+    // console.log(OnboardingDataValidator.cast(e))
   }
 
   const formik = useFormik({
@@ -200,14 +201,14 @@ export default function OnboardingForm() {
             errorMessage={formik.touched.nationality && formik.errors.nationality}
           />
           <Input
-            id="occupation"
+            id="occupationId"
             type="text" 
             variant="bordered" 
             label="Occupation"
             color="primary"
             size="sm"
-            {...formik.getFieldProps('occupation')}
-            errorMessage={formik.touched.occupation && formik.errors.occupation}
+            {...formik.getFieldProps('occupationId')}
+            errorMessage={formik.touched.occupationId && formik.errors.occupationId}
           />
           <Select
             id="identityType"

@@ -1,14 +1,16 @@
+import { IdentificationType } from "@prisma/client"
+
 const IdentityType = [
   {
-    "id": "driverLicense",
+    "id": IdentificationType.DRIVER_LICENSE,
     "name": "Driver's License"
   },
   {
-    "id": "idCard",
+    "id": IdentificationType.PROVINCAL_ID,
     "name": "Provincial ID Card"
   },
   {
-    "id": "passport",
+    "id": IdentificationType.PASSWORD,
     "name": "Passport"
   }
 ]

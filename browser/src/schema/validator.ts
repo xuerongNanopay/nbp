@@ -72,7 +72,7 @@ export const OnboardingDataValidator = Yup.object<OnboardingData>({
             .min(hundred_years_age, "You must be at less 100 years old to register"),
   pob: Yup.string().trim().required('Required'),
   nationality: Yup.string().trim().required('Required'),
-  occupation: Yup.string().trim().required('Required'),
+  occupationId: Yup.number().required('Required'),
   identityType: Yup.string().trim().required('Required'),
   identityNumber: Yup.string().trim().required('Required'),
   etransfer: Yup.string().email('Invalid email address').required('Required')

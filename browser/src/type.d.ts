@@ -238,7 +238,7 @@ interface OnboardingData {
   dob: string,
   pob: string,
   nationality: string,
-  occupation: string,
+  occupationId: number,
   identityType: string,
   identityNumber: string
   etransfer: string

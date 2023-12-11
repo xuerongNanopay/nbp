@@ -178,33 +178,50 @@ export async function onboarding(
     throw new AuthenticateError("Duplicate Onboarding")
   }
 
+  const d = OnboardingDataValidator.cast(onboardingData) as OnboardingData
+  const idType = mapToIdentificationType(d.identityType)
   try {
     const ns = await getPrismaClient().user.create({
       data: {
-        firstName: onboardingData.firstName.trim(),
-        middleName: onboardingData.middleName?.trim(),
-        lastName: onboardingData.lastName.trim(),
-        address1: onboardingData.address1.trim(),
-        address2: onboardingData.address2?.trim(),
-        city: onboardingData.city.trim(),
-        province: onboardingData.province.trim(),
-        country: onboardingData.country.trim(),
-        postalCode: onboardingData.postalCode.trim(),
-        phoneNumber: onboardingData.phoneNumber.trim(),
-        dob: onboardingData.dob.trim(),
-        pob: onboardingData.pob.trim(),
-        nationality: onboardingData.nationality.trim(),
-        // occupationId: onboardingData.occupation.trim(),
+        firstName: d.firstName,
+        middleName: d.middleName,
+        lastName: d.lastName,
+        address1: d.address1,
+        address2: d.address2,
+        city: d.city,
+        province: d.province,
+        country: d.country,
+        postalCode: d.postalCode,
+        phoneNumber: d.phoneNumber,
+        dob: d.dob,
+        pob: d.pob,
+        nationality: d.nationality,
+        occupationId: d.occupationId,
         identification: {
           create: {
-            type: IdentificationType.DRIVER_LICENSE,
-            value: onboardingData.identityNumber,
-          },
+            type: idType,
+            value: d.identityNumber,
+          }
         }
       },
     })
     return await getSessionOrThrow(ns.id) 
   } catch (err: any) {
     throw new PrismaError(err.code, err.message)
+  }
+}
+
+function mapToIdentificationType(identityType: string) {
+  switch(identityType) {
+    case IdentificationType.DRIVER_LICENSE:
+      return IdentificationType.DRIVER_LICENSE
+    case IdentificationType.NATIONAL_ID:
+      return IdentificationType.NATIONAL_ID
+    case IdentificationType.PASSWORD:
+      return IdentificationType.PASSWORD
+    case IdentificationType.PROVINCAL_ID:
+      return IdentificationType.PROVINCAL_ID
+    default:
+      throw new InvalidInputError("Onboarding Error", ["Invalid Identification Type"])
   }
 }

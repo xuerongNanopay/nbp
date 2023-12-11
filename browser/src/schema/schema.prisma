@@ -73,14 +73,14 @@ model User {
   nationality String
 
   occupationId Int
-  avatarUrl    String
+  avatarUrl    String?
 
-  Login              Login[] // only support one way login
+  logins              Login[] // only support one way login
   identification     Identification?
-  Account            Account[]
-  Contact            Contact[]
-  SummaryTransaction SummaryTransaction[]
-  Transaction        Transaction[]
+  accounts            Account[]
+  contacts            Contact[]
+  summaryTransactions SummaryTransaction[]
+  transactions        Transaction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -261,7 +261,7 @@ model Account {
 
   owner       User          @relation(fields: [ownerId], references: [id])
   ownerId     Int
-  Transaction Transaction[]
+  transactions Transaction[]
 
   @@map("account")
 }
@@ -299,7 +299,7 @@ model Contact {
 
   owner       User          @relation(fields: [ownerId], references: [id])
   ownerId     Int
-  Transaction Transaction[]
+  transactions Transaction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -402,10 +402,10 @@ model Transaction {
 
   owner              User                @relation(fields: [ownerId], references: [id])
   ownerId            Int
-  FeeDetail          FeeDetail[]
+  feeDetails          FeeDetail[]
   summaryTransaction SummaryTransaction?
-  transfer           Transfer[]
-  reverseTransaction ReverseTransaction?
+  transfers           Transfer[]
+  reverseTransactions ReverseTransaction?
 
   // TransferLog TransferLog[]
 
