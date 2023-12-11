@@ -1,7 +1,5 @@
 import { Session } from "@/type";
 
-import type { ObjectSchema } from "yup";
-
 export function assertSession(session: Session) {
   if (!session) throw new AuthenticateError("Please Login!")
   if (!session.login) throw new AuthenticateError("Please Login!")
