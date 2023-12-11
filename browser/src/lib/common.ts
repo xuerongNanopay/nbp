@@ -7,7 +7,8 @@ export async function getRegionsByCountryCode(
   return null
 }
 
-export async function getCountries(): Promise<Pick<Country, 'id' | 'iso2Code' | 'name'> | null>{
+export async function getCountries()
+: Promise<Pick<Country, 'id' | 'iso2Code' | 'name'> | null>{
   return null
 }
 
@@ -18,14 +19,17 @@ export async function getInstitutionsByCountryCode(
   return null
 }
 
-export async function getPersinoalRelationships(): Promise<Pick<PersonalRelationship, 'id' | 'type' | 'description'> | null> {
+export async function getPersinoalRelationships()
+: Promise<Pick<PersonalRelationship, 'id' | 'type' | 'description'> | null> {
   return null
 }
 
-export async function getOccupations(): Promise<Pick<Occupation, 'id' | 'type' | 'description'> | null> {
+export async function getOccupations()
+: Promise<Pick<Occupation, 'id' | 'type' | 'description'> | null> {
   return null
 }
 
-export async function getCurrencies(): Promise<Pick<Currency, 'id' | 'isoCode' | 'decimal' | 'name'> | null> {
+export async function getCurrencies()
+: Promise<Pick<Currency, 'id' | 'isoCode' | 'decimal' | 'name'> | null> {
   return  null
 }
