@@ -33,9 +33,10 @@ create table user(
     dob date not null,
     address1 varchar(255),
     address2 varchar(255),
+    city varchar(64),
     province varchar(4) references region(isoCode),
     country varchar(4) references country(iso2Code),
-    postCode varchar(16),
+    postalCode varchar(16),
     phoneNumber varchar(32),
 
     pob varchar(4) references country(iso2Code),

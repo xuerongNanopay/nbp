@@ -9,7 +9,8 @@ import {
 import { getPrismaClient } from '@/utils/prisma'
 import { 
   SignUpDataValidator,
-  EmailVerifyDataValidator
+  EmailVerifyDataValidator,
+  OnboardingDataValidator
 } from '@/schema/validator'
 import { Login, LoginStatus } from '@prisma/client'
 import { randSixDigits } from '@/utils/idUtil'
@@ -164,6 +165,41 @@ export async function verifyEmail(
 export async function onboarding(
   session: Session,
   onboardingData: OnboardingData
-) {
+): Promise<Session> {
   
+  assertSession(session)
+  await validateData(onboardingData, OnboardingDataValidator)
+
+  const s = await getSession(session.login.id)
+  if (!s) throw new AuthenticateError("Please Login!")
+
+  if ( s.user !== null ) {
+    throw new AuthenticateError("Duplicate Onboarding")
+  }
+
+  try {
+    const ns = await getPrismaClient().user.create({
+      data: {
+        firstName: onboardingData.firstName.trim(),
+        middleName: onboardingData.middleName?.trim(),
+        lastName: onboardingData.lastName.trim(),
+        address1: onboardingData.address1.trim(),
+        address2: onboardingData.address2?.trim(),
+        city: onboardingData.city.trim(),
+        province: onboardingData.province.trim(),
+        country: onboardingData.country.trim(),
+        postalCode: onboardingData.postalCode.trim(),
+        phoneNumber: onboardingData.phoneNumber.trim(),
+        dob: onboardingData.dob.trim(),
+        pob: onboardingData.pob.trim(),
+        nationality: onboardingData.nationality.trim(),
+        occupation: onboardingData.occupation.trim(),
+        identityType: onboardingData.identityType.trim(),
+        identityNumber: onboardingData.identityNumber.trim(),
+      },
+    })
+    return await getSessionOrThrow(ns.id) 
+  } catch (err: any) {
+    throw new PrismaError(err.code, err.message)
+  }
 }

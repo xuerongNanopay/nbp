@@ -21,8 +21,8 @@ export default function OnboardingForm() {
     firstName: '',
     middleName: '',
     lastName: '',
-    addressLine1: '',
-    addressLine2: '',
+    address1: '',
+    address2: '',
     city: '',
     province: '',
     country: 'Canada',
@@ -85,24 +85,24 @@ export default function OnboardingForm() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
-            id="addressLine1"
+            id="address1"
             type="text" 
             variant="bordered" 
             label="Address Line 1"
             color="primary"
             size="sm"
-            {...formik.getFieldProps('addressLine1')}
-            errorMessage={formik.touched.addressLine1 && formik.errors.addressLine1}
+            {...formik.getFieldProps('address1')}
+            errorMessage={formik.touched.address1 && formik.errors.address1}
           />
           <Input
-            id="addressLine2"
+            id="address2"
             type="text" 
             variant="bordered" 
             label="Address Line 2"
             color="primary"
             size="sm"
-            {...formik.getFieldProps('addressLine2')}
-            errorMessage={formik.touched.addressLine2 && formik.errors.addressLine2}
+            {...formik.getFieldProps('address2')}
+            errorMessage={formik.touched.address2 && formik.errors.address2}
           />
           <Input
             id="city"

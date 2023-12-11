@@ -42,7 +42,7 @@ export const EmailVerifyDataValidator = Yup.object<EmailVerifyData>({
 export const OnboardingDataValidator = Yup.object<OnboardingData>({
   firstName: Yup.string().trim().required('Required'),
   lastName: Yup.string().trim().required('Required'),
-  addressLine1: Yup.string().trim().required('Required'),
+  address1: Yup.string().trim().required('Required'),
   city: Yup.string().trim().required('Required'),
   province: Yup.string().trim().required('Required'),
   country: Yup.string().trim().required('Required'),
