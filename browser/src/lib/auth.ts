@@ -12,7 +12,7 @@ import {
   EmailVerifyDataValidator,
   OnboardingDataValidator
 } from '@/schema/validator'
-import { IdentificationType, Login, LoginStatus } from '@prisma/client'
+import { AccountType, IdentificationType, Login, LoginStatus } from '@prisma/client'
 import { randSixDigits } from '@/utils/idUtil'
 import { 
   assertSession,
@@ -201,6 +201,13 @@ export async function onboarding(
           create: {
             type: idType,
             value: d.identityNumber,
+          }
+        },
+        accounts: {
+          create: {
+            type: AccountType.INTERACT,
+            email: d.interacEmail,
+            isDefault: true
           }
         }
       },

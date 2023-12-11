@@ -34,7 +34,7 @@ export default function OnboardingForm() {
     occupationId: -1,
     identityType: '',
     identityNumber: '',
-    etransfer: ''
+    interacEmail: ''
   }
 
   const onboardingHandler = ( e: OnboardingData ) => {
@@ -243,15 +243,15 @@ export default function OnboardingForm() {
           />
         </div>
         <Input
-          id="etransfer"
+          id="interacEmail"
           type="text" 
           variant="bordered" 
           label="E-transfer Email"
           placeholder="Please make sure you enable AUTO-DEPOSIT"
           color="primary"
           size="sm"
-          {...formik.getFieldProps('etransfer')}
-          errorMessage={formik.touched.etransfer && formik.errors.etransfer}
+          {...formik.getFieldProps('interacEmail')}
+          errorMessage={formik.touched.interacEmail && formik.errors.interacEmail}
         />
         <Button 
           type="submit"

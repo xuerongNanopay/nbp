@@ -75,5 +75,5 @@ export const OnboardingDataValidator = Yup.object<OnboardingData>({
   occupationId: Yup.number().required('Required'),
   identityType: Yup.string().trim().required('Required'),
   identityNumber: Yup.string().trim().required('Required'),
-  etransfer: Yup.string().email('Invalid email address').required('Required')
+  interacEmail: Yup.string().email('Invalid email address').required('Required')
 })

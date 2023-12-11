@@ -241,5 +241,5 @@ interface OnboardingData {
   occupationId: number,
   identityType: string,
   identityNumber: string
-  etransfer: string
+  interacEmail: string
 }
