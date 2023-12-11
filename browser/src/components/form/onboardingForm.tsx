@@ -1,7 +1,6 @@
 'use client'
 
 import { useFormik } from "formik"
-import * as Yup from 'yup'
 
 import {
   Input,
@@ -9,7 +8,7 @@ import {
   Select, 
   SelectItem
 } from "@nextui-org/react"
-import { OnboardingData } from '@/type'
+import type { OnboardingData } from '@/type'
 
 import CARegion from "@/constants/ca-region"
 import IdentityType from "@/constants/IdentityType"

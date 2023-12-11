@@ -1,7 +1,8 @@
 import { 
   EmailVerifyData,
   SignInData, 
-  SignUpData 
+  SignUpData,
+  OnboardingData
 } from '@/type';
 import * as Yup from 'yup';
 import dayjs from "dayjs"
@@ -38,7 +39,7 @@ export const EmailVerifyDataValidator = Yup.object<EmailVerifyData>({
             .max(6, "wrong format")
 })
 
-export const OnboardingDataValidator = Yup.object({
+export const OnboardingDataValidator = Yup.object<OnboardingData>({
   firstName: Yup.string().trim().required('Required'),
   lastName: Yup.string().trim().required('Required'),
   addressLine1: Yup.string().trim().required('Required'),
