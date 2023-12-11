@@ -2,25 +2,23 @@
 
 import { useFormik } from "formik"
 import * as Yup from 'yup'
-import dayjs from "dayjs"
+
 import {
   Input,
   Button,
   Select, 
   SelectItem
 } from "@nextui-org/react"
-import { parse, isDate } from "date-fns";
+import { OnboardingData } from '@/type'
 
 import CARegion from "@/constants/ca-region"
 import IdentityType from "@/constants/IdentityType"
-
-const eighteen_years_age = dayjs().subtract(18, 'year').format('YYYY-MM-DD')
-const hundred_years_age = dayjs().subtract(100, 'year').format('YYYY-MM-DD')
+import { OnboardingDataValidator } from "@/schema/validator"
 
 
 export default function OnboardingForm() {
 
-  const initialValues: IUserOnboarding = {
+  const initialValues: OnboardingData = {
     firstName: '',
     middleName: '',
     lastName: '',
@@ -40,50 +38,13 @@ export default function OnboardingForm() {
     etransfer: ''
   }
 
-  const onboardingHandler = ( e: IUserOnboarding ) => {
+  const onboardingHandler = ( e: OnboardingData ) => {
     console.log(e)
   }
 
   const formik = useFormik({
     initialValues,
-    validationSchema: Yup.object({
-      firstName: Yup.string().trim().required('Required'),
-      lastName: Yup.string().trim().required('Required'),
-      addressLine1: Yup.string().trim().required('Required'),
-      city: Yup.string().trim().required('Required'),
-      province: Yup.string().trim().required('Required'),
-      country: Yup.string().trim().required('Required'),
-      postalCode: Yup.string()
-                      .trim()
-                      .required('Required')
-                      .matches(
-                        /^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ] ?[0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$/, 
-                        "Invalid Format(eg: S4S 3E8)"
-                      ),
-      phoneNumber: Yup.string()
-                      .required('Required')
-                      .matches(
-                        /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/, 
-                        "Invalid Format(eg: 111-111-1111)"
-                      ),
-      dob: Yup.date()
-                .transform((value, originalValue) => {
-                  const parsedDate = isDate(originalValue)
-                    ? originalValue
-                    : parse(originalValue, "yyyy-MM-dd", new Date());
-                  return parsedDate;
-                })
-                .typeError('Invalid Format(eg: YYYY-MM-DD)')
-                .required('Required')
-                .max(eighteen_years_age, "You must be at least 18 years old to register")
-                .min(hundred_years_age, "You must be at less 100 years old to register"),
-      pob: Yup.string().trim().required('Required'),
-      nationality: Yup.string().trim().required('Required'),
-      occupation: Yup.string().trim().required('Required'),
-      identityType: Yup.string().trim().required('Required'),
-      identityNumber: Yup.string().trim().required('Required'),
-      etransfer: Yup.string().email('Invalid email address').required('Required')
-    }),
+    validationSchema: OnboardingDataValidator,
     onSubmit: onboardingHandler
   })
 
