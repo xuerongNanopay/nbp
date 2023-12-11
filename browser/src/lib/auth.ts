@@ -209,6 +209,11 @@ export async function onboarding(
             email: d.interacEmail,
             isDefault: true
           }
+        },
+        logins: {
+          connect: {
+            id: s.login.id
+          }
         }
       },
     })
