@@ -12,7 +12,7 @@ import {
   EmailVerifyDataValidator,
   OnboardingDataValidator
 } from '@/schema/validator'
-import { Login, LoginStatus } from '@prisma/client'
+import { IdentificationType, Login, LoginStatus } from '@prisma/client'
 import { randSixDigits } from '@/utils/idUtil'
 import { 
   assertSession,
@@ -195,11 +195,11 @@ export async function onboarding(
         pob: onboardingData.pob.trim(),
         nationality: onboardingData.nationality.trim(),
         // occupationId: onboardingData.occupation.trim(),
-        identifications: {
+        identification: {
           create: {
-            type: onboardingData.identityType,
-            value: onboardingData.identityNumber
-          }
+            type: IdentificationType.DRIVER_LICENSE,
+            value: onboardingData.identityNumber,
+          },
         }
       },
     })

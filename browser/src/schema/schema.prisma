@@ -35,7 +35,7 @@ model Login {
   ownerId Int?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("login")
 }
@@ -76,14 +76,14 @@ model User {
   avatarUrl    String
 
   Login              Login[] // only support one way login
-  identifications     Identification[]
+  identification     Identification?
   Account            Account[]
   Contact            Contact[]
   SummaryTransaction SummaryTransaction[]
   Transaction        Transaction[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("user")
 }
@@ -108,13 +108,13 @@ model Identification {
   type   IdentificationType
 
   value          String
-  additionInfo String @map("addition_info")
+  additionInfo String? @map("addition_info")
 
-  ownerId Int
+  ownerId Int @unique
   owner   User @relation(fields: [ownerId], references: [id])
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("identification")
 }
@@ -132,7 +132,7 @@ model PersonalRelationship {
   description String?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("personal_relationship")
 }
@@ -150,7 +150,7 @@ model Occupation {
   description String?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("occupation")
 }
@@ -170,7 +170,7 @@ model Currency {
   name    String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("currency")
 }
@@ -190,7 +190,7 @@ model Country {
   name     String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("country")
 }
@@ -210,7 +210,7 @@ model Region {
   country String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("region")
 }
@@ -230,7 +230,7 @@ model Institution {
   institutionNum String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("institution")
 }
@@ -257,7 +257,7 @@ model Account {
   isDefault Boolean @default(false)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   owner       User          @relation(fields: [ownerId], references: [id])
   ownerId     Int
@@ -302,7 +302,7 @@ model Contact {
   Transaction Transaction[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("contact")
 }
@@ -345,7 +345,7 @@ model SummaryTransaction {
   transaction   Transaction @relation(fields: [transactionId], references: [id])
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("summary_transaction")
 }
@@ -367,7 +367,7 @@ model FeeDetail {
   transaction   Transaction @relation(fields: [transactionId], references: [id])
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("fee_detail")
 }
@@ -410,7 +410,7 @@ model Transaction {
   // TransferLog TransferLog[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("transaction")
 }
@@ -438,7 +438,7 @@ model Transfer {
   nexTransferId Int?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("transfer")
 }
@@ -453,7 +453,7 @@ model ReverseTransaction {
   transfer            ReverseTransfer[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("reverse_transaction")
 }
@@ -472,7 +472,7 @@ model ReverseTransfer {
   nexTransferId        Int?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 
   @@map("reverse_transfer")
 }
