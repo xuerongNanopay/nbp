@@ -215,3 +215,7 @@ interface SignUpData {
   password: string,
   rePassword: string,
 }
+
+interface EmailVerifyData {
+  code: string
+}

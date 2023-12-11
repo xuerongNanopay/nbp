@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from "react"
 import { useFormik } from "formik"
 import * as Yup from 'yup'
 import {
@@ -8,21 +7,18 @@ import {
   Button
 } from "@nextui-org/react"
 
-export default function EmailVerifyForm() {
-  const initialValues: IEmailVerify = {code: ''}
+import { EmailVerifyData } from '@/type'
+import { EmailVerifyDataValidator } from "@/schema/validator"
 
-  const emailVerifyFormHandle = (e: IEmailVerify) => { console.log(e) }
+export default function EmailVerifyForm() {
+  const initialValues: EmailVerifyData = {code: ''}
+
+  const emailVerifyFormHandle = (e: EmailVerifyData) => { console.log(e) }
   const resendCodeHandler = () => { alert("TODO: send user new code") }
 
   const formik = useFormik({
     initialValues,
-    validationSchema: Yup.object({
-      code: Yup.string()
-                .required('Required')
-                .matches(/^[0-9]+$/, "wrong format")
-                .min(6, "wrong format")
-                .max(6, "wrong format")
-    }),
+    validationSchema: EmailVerifyDataValidator,
     onSubmit: emailVerifyFormHandle
   })
 
