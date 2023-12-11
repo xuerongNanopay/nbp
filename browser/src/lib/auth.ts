@@ -1,5 +1,12 @@
-import { Session, SignInData } from '@/type'
+import { 
+  Session, 
+  SignInData,
+  SignUpDate
+} from '@/type'
 import { getPrismaClient } from '@/utils/prisma'
+import { SignUpDataValidator } from '@/schema/validator'
+import { Login } from '@prisma/client'
+import { randSixDigits } from '@/utils/idUtil'
 
 export async function signIn(
   {
@@ -30,13 +37,37 @@ export async function signIn(
       }
     }
   })
-  return null;
+  if ( !login ) return null
+
+  return {
+    login,
+    user: login.owner
+  };
 }
 
 export async function signUp(
-  {
+  signUpData: SignUpDate
+): Promise<Login | null>  {
+  
+  try {
+    await SignUpDataValidator.validate(signUpData, {strict: true})
+  } catch (err: any) {
+    // ValidationError
+    throw new InvalidInputError(err.name, err.errors)
+  }
 
-  }: SignUpDate
-) {
+  const { email, password } = signUpData
 
+  //TODO: hash password
+  const login = await getPrismaClient().login.create({
+    data: {
+      email,
+      password,
+      verifyCode: randSixDigits()
+    }
+  })
+
+  //TODO: send email to user
+
+  return login
 }
