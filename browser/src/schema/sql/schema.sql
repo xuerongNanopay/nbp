@@ -65,41 +65,6 @@ create table identification(
     updatedAt timestamp default current_timestamp on update current_timestamp
 );
 
-create table personal_relationship(
-    id serial primary key,
-    status enum('disable', 'active') default 'active',
-
-    type varchar(64) not null,
-    description varchar(255) null,
-
-    createdAt timestamp default current_timestamp,
-    updatedAt timestamp default current_timestamp on update current_timestamp
-);
-
-create table occupation(
-    id serial primary key,
-    status enum('disable', 'active') default 'active',
-    type varchar(64) not null,
-    description varchar(255) null,
-    
-    createdAt timestamp default current_timestamp,
-    updatedAt timestamp default current_timestamp on update current_timestamp
-);
-
-create table currency(
-    id serial primary key,
-    status enum('disable', 'active') default 'active',
-
-    isoCode char(3) not null unique,
-    numCode char(3) not null,
-    "decimal" smallint not null default 2,
-    name varchar(128) not null,
-
-    createdAt timestamp default current_timestamp,
-    updatedAt timestamp default current_timestamp on update current_timestamp
-);
-create index currency_isoCode_idx on currency(isoCode);
-
 create table institution (
     id serial primary key,
     status enum('disable', 'active') default 'active',
