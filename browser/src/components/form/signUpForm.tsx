@@ -1,8 +1,8 @@
 'use client'
-
+import type { SignUpData } from "@/type";
 import { useState } from "react"
 import { useFormik } from "formik"
-import * as Yup from 'yup';
+import { SignUpDataValidator } from "@/schema/validator";
 import {
   Input,
   Button
@@ -11,28 +11,14 @@ import {
 import { EyeSlashFilledIcon } from "@/icons/EyeSlashFilledIcon"
 import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
 
-
-const getCharacterValidationError = (str: string) => {
-  return `Your password must have at least 1 ${str} character`;
-};
-
 export default function SignUpForm() {
   const [ isPasswordVisible, setIsPasswordVisible ] = useState(false)
-  const initialValues: ISignUp = {email: '', password: '', rePassword: ''}
+  const initialValues: SignUpData = {email: '', password: '', rePassword: ''}
 
-  const signUp = (e: ISignUp) => { console.log(e) }
+  const signUp = (e: SignUpData) => { console.log(e) }
   const formik = useFormik({
     initialValues,
-    validationSchema: Yup.object({
-      email: Yup.string().email('Invalid email address').required('Required'),
-      password: Yup.string()
-                  .min(8, "Password must have at least 8 characters")
-                  .matches(/[0-9]/, getCharacterValidationError("digit"))
-                  .matches(/[a-z]/, getCharacterValidationError("lowercase"))
-                  .matches(/[A-Z]/, getCharacterValidationError("uppercase")),
-      rePassword: Yup.string().required("Please re-type your password").oneOf([Yup.ref("password")], "Passwords does not match")
-      
-    }),
+    validationSchema: SignUpDataValidator,
     onSubmit: signUp
   })
 
@@ -47,6 +33,7 @@ export default function SignUpForm() {
           label="Email"
           color="primary"
           size="sm"
+          autoComplete="off"
           {...formik.getFieldProps('email')}
           errorMessage={formik.touched.email && formik.errors.email}
         />
@@ -55,6 +42,7 @@ export default function SignUpForm() {
           label="Password"
           variant="bordered"
           color="primary"
+          autoComplete="off"
           endContent={
             <button className="focus:outline-none" type="button" onClick={() =>setIsPasswordVisible(pre => !pre)}>
               {isPasswordVisible ? (
@@ -76,6 +64,7 @@ export default function SignUpForm() {
           type="password"
           color="primary"
           size="sm"
+          autoComplete="off"
           {...formik.getFieldProps('rePassword')}
           errorMessage={formik.touched.rePassword && formik.errors.rePassword}
         />

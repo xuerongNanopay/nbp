@@ -1,8 +1,8 @@
 'use client'
-
+import type { SignInData } from "@/type";
 import { useState } from "react"
 import { useFormik } from "formik"
-import * as Yup from 'yup';
+import { SignInDataValidator } from "@/schema/validator";
 import {
   Input,
   Button,
@@ -14,9 +14,9 @@ import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
 
 export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
   const [ isPasswordVisible, setIsPasswordVisible ] = useState(false)
-  const initialValues: ISignIn = {email: '', password: ''}
+  const initialValues: SignInData = {email: '', password: ''}
 
-  const signIn = async (e: ISignIn) => { 
+  const signIn = async (e: SignInData) => { 
     console.log(e)
     const resp = await fetch('/api/signin', {
       method: 'POST',
@@ -30,10 +30,7 @@ export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
 
   const formik = useFormik({
     initialValues,
-    validationSchema: Yup.object({
-      email: Yup.string().email('Invalid email address').required('Required'),
-      password: Yup.string().required('Required')
-    }),
+    validationSchema: SignInDataValidator,
     onSubmit: signIn
   })
 
@@ -48,6 +45,7 @@ export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
           label="Email"
           color="primary"
           size="sm"
+          autoComplete="on"
           {...formik.getFieldProps('email')}
           errorMessage={formik.touched.email && formik.errors.email}
         />
@@ -57,6 +55,7 @@ export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
           variant="bordered"
           color="primary"
           size="sm"
+          autoComplete="on"
           endContent={
             <button className="focus:outline-none" type="button" onClick={() =>setIsPasswordVisible(pre => !pre)}>
               {isPasswordVisible ? (

@@ -1,56 +1,42 @@
-import { CookieSessionStore, SessionPayload } from '@/utils/cookieUtil'
-import { JWT } from '@/utils/jwtUtil'
-import { cookies as nextCookies } from 'next/headers'
-import { DEFAULT_SESSION_AGE } from '@/utils/cookieUtil'
-import { JWTExpired } from "jose/errors"
-import { permanentRedirect } from 'next/navigation'
+import { Session, SignInData } from '@/type'
+import { getPrismaClient } from '@/utils/prisma'
 
-const JWT_SECRET = process.env['JWT_SECRET']
-if ( ! JWT_SECRET ) process.exit(1)
+export async function signIn(
+  {
+    email,
+    password
+  }: SignInData
+): Promise<Session | null> {
 
-const cookieSessionStore = new CookieSessionStore<SessionPayload>({
-  jwtParams: {
-    maxAge: DEFAULT_SESSION_AGE,
-    // maxAge: 0,
-    secret: JWT_SECRET
-  },
-  cookieParams: {
-    name: 'NANO_ID',
-    options: {
-      maxAge: DEFAULT_SESSION_AGE,
+  //TODO: Hash password.
+  const login = await getPrismaClient().login.findUnique({
+    where: {
+      email,
+      password
+    },
+    select: {
+      id: true,
+      email: true,
+      status: true,
+      owner: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          avatarUrl: true,
+          status: true,
+          role: true
+        }
+      }
     }
-  }
-})
-
-//If the session is expire or valid, then return null
-export async function fetchSession(): ReturnType<typeof cookieSessionStore.loadSession> {
-  try {
-    let sessionPayload = await cookieSessionStore.loadSession(nextCookies().getAll())
-    if ( sessionPayload == null ) return null
-
-    return sessionPayload
-  } catch ( err ) {
-    if ( !(err instanceof JWTExpired) ) {
-      console.error("Session parse error: ", err)
-    }
-    return null
-  }
+  })
+  return null;
 }
 
-// Using in signIn
-export async function setSession(payload: Awaited<ReturnType<typeof cookieSessionStore.loadSession>> ) {
-  if ( ! payload ) {
-    //TODO: log
-    return
-  }
-  await cookieSessionStore.cleanSession(nextCookies)
-  await cookieSessionStore.applySession(nextCookies, payload)
-}
+export async function signUp(
+  {
 
-// Using in signOut
-export async function cleanSession() {
-  const payload = await fetchSession()
-  if (!payload) return
-  await cookieSessionStore.cleanSession(nextCookies)
-  await cookieSessionStore.applySession(nextCookies, payload, -1)
+  }: SignUpDate
+) {
+
 }

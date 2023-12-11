@@ -1,3 +1,6 @@
+import { Login, User } from "@prisma/client"
+import { JWT } from "./utils/jwtUtil"
+
 interface ISignUp {
   email: string,
   password: string,
@@ -7,6 +10,12 @@ interface ISignUp {
 interface ISignIn {
   email: string
   password: string
+}
+
+interface SignUpDate {
+  email: string,
+  password: string,
+  rePassword: string,
 }
 
 interface IEmailVerify {
@@ -188,4 +197,21 @@ type NotificationSummary = {
 type NotificationDetail = NotificationSummary & {
   from?: string
   content?: string
+}
+
+interface SignInData {
+  email: string
+  password: string
+}
+
+//TODO: use Pcik to filter out sensitive infos.
+interface Session extends JWT {
+  login: Login,
+  user?: User
+}
+
+interface ISignUpData {
+  email: string,
+  password: string,
+  rePassword: string,
 }

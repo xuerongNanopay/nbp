@@ -166,5 +166,5 @@ export interface SessionPayload extends JWT {
   userStatus: string,
   isVerifyEmail: boolean,
   isOnboarding: boolean,
-  role: string[]
+  role: String
 }
