@@ -18,6 +18,7 @@ import {
   assertSession,
   validateData
 } from './utils'
+import IdentityType from '@/constants/IdentityType'
 
 const Session_Project = {
   id: true,
@@ -193,9 +194,13 @@ export async function onboarding(
         dob: onboardingData.dob.trim(),
         pob: onboardingData.pob.trim(),
         nationality: onboardingData.nationality.trim(),
-        occupation: onboardingData.occupation.trim(),
-        identityType: onboardingData.identityType.trim(),
-        identityNumber: onboardingData.identityNumber.trim(),
+        // occupationId: onboardingData.occupation.trim(),
+        identifications: {
+          create: {
+            type: onboardingData.identityType,
+            value: onboardingData.identityNumber
+          }
+        }
       },
     })
     return await getSessionOrThrow(ns.id) 

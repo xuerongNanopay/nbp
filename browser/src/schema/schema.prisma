@@ -76,7 +76,7 @@ model User {
   avatarUrl    String
 
   Login              Login[] // only support one way login
-  Identification     Identification[]
+  identifications     Identification[]
   Account            Account[]
   Contact            Contact[]
   SummaryTransaction SummaryTransaction[]
@@ -107,7 +107,7 @@ model Identification {
   status IdentificationStatus @default(ACTIVE)
   type   IdentificationType
 
-  num          String
+  value          String
   additionInfo String @map("addition_info")
 
   ownerId Int
