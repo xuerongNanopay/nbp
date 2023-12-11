@@ -206,11 +206,11 @@ interface SignInData {
 
 //TODO: use Pcik to filter out sensitive infos.
 interface Session extends JWT {
-  login: Login,
-  user?: User
+  login: Pick<Login, 'id' | 'email', 'status'>,
+  user?: Pick<User, 'id', 'firstnName', 'lastName', 'avatarUrl', 'status', 'role'>
 }
 
-interface ISignUpData {
+interface SignUpData {
   email: string,
   password: string,
   rePassword: string,
