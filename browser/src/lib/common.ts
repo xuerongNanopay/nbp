@@ -3,33 +3,51 @@ import { Country, Currency, Institution, Occupation, PersonalRelationship, Regio
 
 export async function getRegionsByCountryCode(
   countryCode: string
-): Promise<Pick<Region, 'id' | 'abbr' | 'country' | 'name'> | null> {
-  return null
+): Promise<Pick<Region, 'id' | 'abbr' | 'country' | 'name'>[] | null > {
+  return await getPrismaClient().region.findMany({
+    where: {
+      country: countryCode
+    },
+    select: {
+      id: true,
+      abbr: true,
+      country: true,
+      name: true
+    }
+  })
 }
 
 export async function getCountries()
-: Promise<Pick<Country, 'id' | 'iso2Code' | 'name'> | null>{
-  return null
+: Promise<Pick<Country, 'id' | 'iso2Code' | 'name'>[] | null>{
+  return await getPrismaClient().country.findMany({
+    select: {
+      id: true,
+      iso2Code: true,
+      name: true
+    }
+  })
 }
 
 export async function getInstitutionsByCountryCode(
   countryCode: string
-) : Promise<Pick<Institution, 'id' | 'abbr' | 'country' | 'name'> | null>
+) : Promise<Pick<Institution, 'id' | 'abbr' | 'country' | 'name'>[] | null>
 {
-  return null
+  return await getPrismaClient().institution.findMany({
+    
+  })
 }
 
 export async function getPersinoalRelationships()
-: Promise<Pick<PersonalRelationship, 'id' | 'type' | 'description'> | null> {
+: Promise<Pick<PersonalRelationship, 'id' | 'type' | 'description'>[] | null> {
   return null
 }
 
 export async function getOccupations()
-: Promise<Pick<Occupation, 'id' | 'type' | 'description'> | null> {
+: Promise<Pick<Occupation, 'id' | 'type' | 'description'>[] | null> {
   return null
 }
 
 export async function getCurrencies()
-: Promise<Pick<Currency, 'id' | 'isoCode' | 'decimal' | 'name'> | null> {
+: Promise<Pick<Currency, 'id' | 'isoCode' | 'decimal' | 'name'>[] | null> {
   return  null
 }
