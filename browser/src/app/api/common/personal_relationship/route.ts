@@ -2,7 +2,7 @@ import {
   getPersinoalRelationships
 } from "@/lib/common"
 
-export async function GET(request: Request) {
+export async function GET() {
 
   try {
     const relstionships = await getPersinoalRelationships()
