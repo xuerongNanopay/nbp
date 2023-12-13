@@ -18,7 +18,6 @@ import {
   assertSession,
   validateData
 } from './utils'
-import IdentityType from '@/constants/IdentityType'
 
 const Session_Project = {
   id: true,
@@ -96,24 +95,31 @@ export async function signIn(
 
 export async function signUp(
   signUpData: SignUpDate
-): Promise<Login | null>  {
+): Promise<Session | null>  {
   
   await validateData(signUpData, SignUpDataValidator)
 
   const { email, password } = signUpData
 
-  //TODO: hash password
-  const login = await getPrismaClient().login.create({
-    data: {
-      email,
-      password,
-      verifyCode: randSixDigits()
-    }
-  })
+  try {
+    //TODO: hash password
+    const login = await getPrismaClient().login.create({
+      data: {
+        email,
+        password,
+        verifyCode: randSixDigits()
+      },
+      select: {
+        id: true
+      }
+    })
 
-  //TODO: send email to user
+    //TODO: send email to user
 
-  return login
+    return await getSessionOrThrow(login.id) 
+  } catch (err: any) {
+    throw new PrismaError(err.code, err.message)
+  }
 }
 
 export async function verifyEmail(
