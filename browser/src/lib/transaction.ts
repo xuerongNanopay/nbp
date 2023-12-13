@@ -4,6 +4,7 @@ import {
   AccountStatus, 
   Contact,
   ContactStatus, 
+  Prisma, 
   UserStatus 
 } from "@prisma/client"
 
@@ -35,7 +36,18 @@ export async function getAllAcountsByOwnerId(
 
 export async function getAllContactsByOwnerId(
   ownerId: number
-): Promise<Pick<Contact, 'id' | 'status'>[] | null> {
+): Promise<Prisma.ContactGetPayload<{
+  select: {
+    id: true,
+    status: true,
+    firstName: true,
+    lastName: true,
+    type: true,
+    bankAccountNum: true,
+    iban: true,
+    institution: { select: {abbr: true}}
+  }
+}>[] | null> {
   try {
     return await getPrismaClient().contact.findMany({
       where: {
@@ -58,7 +70,7 @@ export async function getAllContactsByOwnerId(
           select: {
             abbr: true
           }
-        },
+        }
       }
     })
   } catch (err: any) {
