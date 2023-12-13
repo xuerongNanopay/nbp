@@ -254,7 +254,6 @@ interface ContactData  {
   province: string,
   country: string,
   postalCode?: string,
-  relationshipId: number,
   phoneNumber?: string,
   relationshipId: number,
   transferMethod: string,
