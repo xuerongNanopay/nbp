@@ -2,32 +2,17 @@ import type {
   NextRequest
 } from 'next/server'
 
-import { setSession } from '@/lib/auth'
-import { SessionPayload } from '@/utils/cookieUtil'
-
-const dummySessionPayload: SessionPayload = {
-  loginId: 11111111111,
-  userId: 55555555555,
-  username: 'Xufdsafd Wu',
-  loginStatus: 'active',
-  thumbnail: 'ffffffffffffffffffffffffffffffffffffffffff',
-  userStatus: 'active',
-  isVerifyEmail: true,
-  isOnboarding: true,
-  role: ['ADMIN', "NBP_USER"]
-}
+import { SignInData } from '@/types/auth'
 
 //TODO: fecth from node backend.
 export async function POST(req: NextRequest) {
-  const signInData: ISignIn = await req.json()
+  const signInData: SignInData = await req.json()
 
   //TODO: load user from DB.
   const user = {
     loginId: 111,
     userId: 222
   }
-
-  await setSession(dummySessionPayload)
 
   console.log(signInData)
   return Response.json(user,{
@@ -45,7 +30,7 @@ export async function GET() {
     userId: 222
   }
 
-  await setSession(dummySessionPayload)
+  // await setSession(dummySessionPayload)
 
   return Response.json(user,{
       status: 200,

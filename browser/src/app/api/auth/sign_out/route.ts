@@ -1,7 +1,7 @@
-import { cleanSession } from "@/lib/auth"
+// import { cleanSession } from "@/lib/auth"
 
 async function logout() {
-  await cleanSession()
+  // await cleanSession()
   
   return Response.json({
     message: 'logout'

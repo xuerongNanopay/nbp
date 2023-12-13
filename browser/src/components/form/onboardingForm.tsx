@@ -12,49 +12,36 @@ import {
   Select, 
   SelectItem
 } from "@nextui-org/react"
-import type { OnboardingData } from "@/types/auth"
+import type { 
+  OnboardingData 
+} from "@/types/auth"
 
 import CARegion from "@/constants/ca-region"
 import IdentityType from "@/constants/IdentityType"
 import { OnboardingDataValidator } from "@/schema/validator"
+import { GetRegions } from "@/types/common"
 
-export default async function OnboardingForm() {
-  // const [regions, setRegions] = useState<Region|null>(null)
-  // const [countries, setCountries] = 
-  useEffect(() => {
-    const abortController = new AbortController()
-    const doFetch = async () => {
-      try {
+const initialValues: OnboardingData = {
+  firstName: '',
+  middleName: '',
+  lastName: '',
+  address1: '',
+  address2: '',
+  city: '',
+  province: '',
+  country: 'Canada',
+  postalCode: '',
+  phoneNumber: '',
+  dob: '',
+  pob: '',
+  nationality: '',
+  occupationId: 0,
+  identityType: '',
+  identityNumber: '',
+  interacEmail: ''
+}
 
-      } catch (err) {
-        console.log(err)
-      }
-    }
-    doFetch()
-    return () => {
-      abortController.abort();
-    };
-  }, [])
-
-  const initialValues: OnboardingData = {
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    address1: '',
-    address2: '',
-    city: '',
-    province: '',
-    country: 'Canada',
-    postalCode: '',
-    phoneNumber: '',
-    dob: '',
-    pob: '',
-    nationality: '',
-    occupationId: 0,
-    identityType: '',
-    identityNumber: '',
-    interacEmail: ''
-  }
+export default function OnboardingForm() {
 
   const onboardingHandler = ( e: OnboardingData ) => {
     console.log(e)
@@ -66,6 +53,26 @@ export default async function OnboardingForm() {
     validationSchema: OnboardingDataValidator,
     onSubmit: onboardingHandler
   })
+
+  const [regions, setRegions] = useState<GetRegions|null>(null)
+  // const [countries, setCountries] = 
+  useEffect(() => {
+    const abortController = new AbortController()
+    const doFetch = async () => {
+      try {
+        const response = await fetch(`/api/common/region?countryCode=CA`)
+        const responsePayload = await response.json()
+        const regions = responsePayload.data ?? []
+        setRegions(regions)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    doFetch()
+    return () => {
+      abortController.abort();
+    };
+  }, [formik.values.country])
 
   return (
     <div className="w-full max-w-4xl">
