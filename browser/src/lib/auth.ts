@@ -154,6 +154,30 @@ export async function verifyEmail(
   }
 }
 
+export async function refreshVerifyCode(
+  session: Session,
+) {
+  assertSession(session)
+
+  if ( session.login.status !== LoginStatus.AWAIT_VERIFY ) {
+    throw new AuthenticateError("Login is verified")
+  }
+
+  try {
+    const login = await getPrismaClient().login.update({
+      where: {
+        id: session.login.id
+      },
+      data: {
+        verifyCode: randSixDigits()
+      }
+    })
+    //TODO: send login.verifyCode to user email.
+  } catch(err: any ) {
+    throw new PrismaError(err.code, err.message)
+  }
+}
+
 //TODO: send email to user with url+oneTimeToken
 // Check your email.
 // export async function retrieveLogin(
