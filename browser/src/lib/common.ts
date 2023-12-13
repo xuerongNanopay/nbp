@@ -1,13 +1,24 @@
 import { getPrismaClient } from '@/utils/prisma'
-import { CountryStatus, Currency, CurrencyStatus, Institution, InstitutionStatus, Occupation, OccupationStatus, PersonalRelationship, PersonalRelationshipStatus, Region, RegionStatus } from '@prisma/client';
+import { 
+  CountryStatus, 
+  CurrencyStatus, 
+  InstitutionStatus, 
+  OccupationStatus, 
+  PersonalRelationshipStatus, 
+  RegionStatus 
+} from '@prisma/client';
 import type { 
-  GetAllCountries,
-  GetAllRegions
+  GetCountries,
+  GetRegions,
+  GetInstitutions,
+  GetPersonalRelationships,
+  GetOccupations,
+  GetCurrencies
 } from '@/types/common'
 
 export async function getRegionsByCountryCode(
   countryCode: string
-): Promise<GetAllRegions> {
+): Promise<GetRegions> {
   return await getPrismaClient().region.findMany({
     where: {
       country: countryCode ?? '',
@@ -23,7 +34,7 @@ export async function getRegionsByCountryCode(
 }
 
 export async function getCountries()
-: Promise<GetAllCountries>{
+: Promise<GetCountries>{
   return await getPrismaClient().country.findMany({
     where: {
       status: CountryStatus.ACTIVE
@@ -38,7 +49,7 @@ export async function getCountries()
 
 export async function getInstitutionsByCountryCode(
   countryCode: string
-) : Promise<Pick<Institution, 'id' | 'abbr' | 'country' | 'name'>[] | null>
+) : Promise<GetInstitutions>
 {
   return await getPrismaClient().institution.findMany({
     where: {
@@ -55,7 +66,7 @@ export async function getInstitutionsByCountryCode(
 }
 
 export async function getPersinoalRelationships()
-: Promise<Pick<PersonalRelationship, 'id' | 'type' | 'description'>[] | null> {
+: Promise<GetPersonalRelationships> {
   return await getPrismaClient().personalRelationship.findMany({
     where: {
       status: PersonalRelationshipStatus.ACTIVE
@@ -69,7 +80,7 @@ export async function getPersinoalRelationships()
 }
 
 export async function getOccupations()
-: Promise<Pick<Occupation, 'id' | 'type' | 'description'>[] | null> {
+: Promise<GetOccupations> {
   return await getPrismaClient().occupation.findMany({
     where: {
       status: OccupationStatus.ACTIVE
@@ -83,7 +94,7 @@ export async function getOccupations()
 }
 
 export async function getCurrencies()
-: Promise<Pick<Currency, 'id' | 'isoCode' | 'decimal' | 'name'>[] | null> {
+: Promise<GetCurrencies> {
   return  await getPrismaClient().currency.findMany({
     where: {
       status: CurrencyStatus.ACTIVE

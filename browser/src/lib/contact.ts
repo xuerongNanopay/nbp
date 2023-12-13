@@ -5,7 +5,7 @@ import {
   Contact
 } from "@prisma/client"
 
-export async function createContact(
+export async function postContact(
   
 ): Promise<Pick<Contact, 'id'> | null> {
   return null
