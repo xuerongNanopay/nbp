@@ -1,8 +1,15 @@
 import { getPrismaClient } from "@/utils/prisma"
 import { 
   ContactStatus, 
-  Prisma, 
+  Prisma,
+  Contact
 } from "@prisma/client"
+
+export async function createContact(
+  
+): Promise<Pick<Contact, 'id'> | null> {
+  return null
+}
 
 export async function getAllContactsByOwnerId(
   ownerId: number

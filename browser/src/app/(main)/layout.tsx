@@ -1,7 +1,6 @@
 import Nav from '@/components/layout/nav'
 import SideNav from '@/components/layout/sideNav'
 // import { UserProvider } from '@/hook/userProvider'
-import { fetchSession } from "@/lib/auth"
 import { permanentRedirect } from 'next/navigation'
 
 
@@ -10,8 +9,6 @@ export default async function MainLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = await fetchSession()
-  if (!session) permanentRedirect('/sign_in')
   
   return (
     // TODO: use nextAuth backEnd UI

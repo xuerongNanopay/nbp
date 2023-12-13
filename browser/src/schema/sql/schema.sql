@@ -93,7 +93,6 @@ create table contact(
     country varchar(4) not null references country(iso2Code),
     postCode varchar(64),
     phoneNumber varchar(64),
-    dob date not null,
 
     institutionId int not null references institution(id),
     bankAccountNum varchar(32) null,

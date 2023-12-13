@@ -301,7 +301,6 @@ model Contact {
   branchNum      String?
   iban           String?
 
-  dob                 DateTime
   relationshipToOwner String
 
   owner        User          @relation(fields: [ownerId], references: [id])

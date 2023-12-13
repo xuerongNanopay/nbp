@@ -2,7 +2,8 @@ import {
   EmailVerifyData,
   SignInData, 
   SignUpData,
-  OnboardingData
+  OnboardingData,
+  ContactData
 } from '@/type';
 import * as Yup from 'yup';
 import dayjs from "dayjs"
@@ -76,4 +77,23 @@ export const OnboardingDataValidator = Yup.object<OnboardingData>({
   identityType: Yup.string().trim().required('Required'),
   identityNumber: Yup.string().trim().required('Required'),
   interacEmail: Yup.string().email('Invalid email address').required('Required')
+})
+
+export const ContactValidator = Yup.object<ContactData>({
+  firstName: Yup.string().trim().required('Required'),
+  lastName: Yup.string().trim().required('Required'),
+  addressLine1: Yup.string().trim().required('Required'),
+  city: Yup.string().trim().required('Required'),
+  province: Yup.string().trim().required('Required'),
+  country: Yup.string().trim().required('Required'),
+  relationship: Yup.string().trim().required('Required'),
+  transferMethod: Yup.string().trim().required('Required'),
+  bankName: Yup.string().trim().when(['transferMethod'], {
+    is: (transferMethod: string) => transferMethod === 'bankAccount',
+    then:() => Yup.string().trim().required('Required')
+  }),
+  accountOrIban: Yup.string().trim().when(['transferMethod'], {
+    is: 'bankAccount',
+    then: () => Yup.string().trim().required('Required')
+  })
 })

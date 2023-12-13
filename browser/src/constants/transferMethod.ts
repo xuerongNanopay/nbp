@@ -1,11 +1,15 @@
+import { ContactType } from "@prisma/client"
+
 const TransferMethod = [
   {
-    id: 'bankAccount',
-    name: 'Bank Account'
+    id: ContactType.BANK_ACCOUNT,
+    name: 'Bank Account',
+    value: ContactType.BANK_ACCOUNT
   },
   {
-    id: 'cashPickup',
-    name: 'Cash Pickup'
+    id: ContactType.CASH_PICKUP,
+    name: 'Cash Pickup',
+    value: ContactType.CASH_PICKUP
   }
 ]
 export default TransferMethod

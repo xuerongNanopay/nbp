@@ -9,16 +9,19 @@ import {
   SelectItem
 } from "@nextui-org/react"
 
+import { ContactData } from "@/type"
 import PKRegion from "@/constants/pk-region"
 import PersonalRelationship from "@/constants/personal-relationship"
 import TransferMethod from "@/constants/transferMethod"
 import PKBank from "@/constants/pk-bank"
+import { ContactValidator } from "@/schema/validator"
+import { ContactType } from "@prisma/client"
 
 
 export default function ContactForm() {
   const [isCreating, setIsCreating] = useState<boolean>(false)
-  type NewContact = IContact & ICashPickup & IBankTransfer
-  const initialValues: NewContact = {
+
+  const initialValues: ContactData = {
     firstName: '',
     middleName: '',
     lastName: '',
@@ -28,7 +31,7 @@ export default function ContactForm() {
     province: '',
     country: 'Pakistan',
     postalCode: '',
-    relationship: '',
+    relationshipId: 0,
     phoneNumber: '',
     transferMethod: '',
     bankName: '',
@@ -36,7 +39,7 @@ export default function ContactForm() {
     accountOrIban: ''
   }
 
-  const createContactHandler = (e: NewContact) => { 
+  const createContactHandler = (e: ContactData) => { 
     console.log(e)
     // formik.resetForm()
     setIsCreating(true)
@@ -45,24 +48,7 @@ export default function ContactForm() {
 
   const formik = useFormik({
     initialValues,
-    validationSchema: Yup.object({
-      firstName: Yup.string().trim().required('Required'),
-      lastName: Yup.string().trim().required('Required'),
-      addressLine1: Yup.string().trim().required('Required'),
-      city: Yup.string().trim().required('Required'),
-      province: Yup.string().trim().required('Required'),
-      country: Yup.string().trim().required('Required'),
-      relationship: Yup.string().trim().required('Required'),
-      transferMethod: Yup.string().trim().required('Required'),
-      bankName: Yup.string().trim().when(['transferMethod'], {
-        is: (transferMethod: string) => transferMethod === 'bankAccount',
-        then:() => Yup.string().trim().required('Required')
-      }),
-      accountOrIban: Yup.string().trim().when(['transferMethod'], {
-        is: 'bankAccount',
-        then: () => Yup.string().trim().required('Required')
-      })
-    }),
+    validationSchema: ContactValidator,
     onSubmit: createContactHandler
   })
 
@@ -183,13 +169,13 @@ export default function ContactForm() {
           variant="bordered"
           selectionMode="single"
           // defaultSelectedKeys={[]}
-          selectedKeys={!formik.values.relationship ? [] : [formik.values.relationship]}
+          selectedKeys={!formik.values.relationshipId ? [] : [formik.values.relationshipId]}
           placeholder="Choose from personal relationship types"
           color="primary"
           size="sm"
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
-          errorMessage={formik.touched.relationship && formik.errors.relationship}
+          errorMessage={formik.touched.relationshipId && formik.errors.relationshipId}
         >
           {PersonalRelationship.map((relationship) => (
             <SelectItem key={relationship.id} value={relationship.id}>
@@ -224,14 +210,14 @@ export default function ContactForm() {
           errorMessage={formik.touched.transferMethod && formik.errors.transferMethod}
         >
           {TransferMethod.map((transferMethod) => (
-            <SelectItem key={transferMethod.id} value={transferMethod.id}>
+            <SelectItem key={transferMethod.id} value={transferMethod.value}>
               {transferMethod.name}
             </SelectItem>
           ))}
         </Select>
 
         {
-          formik.values.transferMethod === 'bankAccount' &&
+          formik.values.transferMethod === ContactType.BANK_ACCOUNT &&
           <>
             <Select
               id="bankName"
