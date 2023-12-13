@@ -1,15 +1,15 @@
 import { 
-  getCountries
+  getPersinoalRelationships
 } from "@/lib/common"
 
 export async function GET(request: Request) {
 
   try {
-    const countries = await getCountries()
+    const relstionships = await getPersinoalRelationships()
     return Response.json(
       {
         code: 200,
-        data: countries
+        data: relstionships
       },
       {
         status: 200
