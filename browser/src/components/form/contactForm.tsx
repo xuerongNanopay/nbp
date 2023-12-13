@@ -16,8 +16,7 @@ import PKBank from "@/constants/pk-bank"
 import { ContactValidator } from "@/schema/validator"
 import { ContactType } from "@prisma/client"
 
-
-export default function ContactForm() {
+export default async function ContactForm() {
   const [isCreating, setIsCreating] = useState<boolean>(false)
 
   const initialValues: ContactData = {
