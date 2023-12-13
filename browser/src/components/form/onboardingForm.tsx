@@ -10,7 +10,9 @@ import {
   Input,
   Button,
   Select, 
-  SelectItem
+  SelectItem,
+  Autocomplete, 
+  AutocompleteItem
 } from "@nextui-org/react"
 import type { 
   OnboardingData 
@@ -19,7 +21,7 @@ import type {
 import CARegion from "@/constants/ca-region"
 import IdentityType from "@/constants/IdentityType"
 import { OnboardingDataValidator } from "@/schema/validator"
-import { GetRegions } from "@/types/common"
+import { GetCountries, GetOccupations, GetRegions } from "@/types/common"
 
 const initialValues: OnboardingData = {
   firstName: '',
@@ -54,16 +56,21 @@ export default function OnboardingForm() {
     onSubmit: onboardingHandler
   })
 
-  const [regions, setRegions] = useState<GetRegions|null>(null)
-  // const [countries, setCountries] = 
+  const [regions, setRegions] = useState<GetRegions>([])
+  const [isRegionsLoading, setIsRegionsLoading] = useState(true)
+  const [nations, setNations] = useState<GetCountries>([])
+  const [occupations, setOccupations] = useState<GetOccupations>([])
+
   useEffect(() => {
     const abortController = new AbortController()
     const doFetch = async () => {
+      setIsRegionsLoading(true)
       try {
         const response = await fetch(`/api/common/region?countryCode=CA`)
         const responsePayload = await response.json()
         const regions = responsePayload.data ?? []
         setRegions(regions)
+        setIsRegionsLoading(false)
       } catch (err) {
         console.log(err)
       }
@@ -152,27 +159,30 @@ export default function OnboardingForm() {
             {...formik.getFieldProps('country')}
             errorMessage={formik.touched.country && formik.errors.country}
           />
-          <Select
+          <Autocomplete
             id="province"
             name="province"
             label="Province"
             variant="bordered"
-            selectionMode="single"
-            // defaultSelectedKeys={[]}
-            selectedKeys={!formik.values.province ? [] : [formik.values.province]}
+            allowsCustomValue={false}
             placeholder="please select province"
             color="primary"
             size="sm"
+            isLoading={isRegionsLoading}
+            isDisabled={isRegionsLoading}
             onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
+            selectedKey={formik.values.province}
+            onSelectionChange={(e) => {
+              formik.setFieldValue('province', e)
+            }}
             errorMessage={formik.touched.province && formik.errors.province}
           >
-            {CARegion.map((region) => (
-              <SelectItem key={region.id} value={region.id}>
+            {regions.map((region) => (
+              <AutocompleteItem key={region.isoCode} value={region.isoCode}>
                 {region.name}
-              </SelectItem>
+              </AutocompleteItem>
             ))}
-          </Select>
+          </Autocomplete>
           <Input
             id="postalCode"
             type="text" 

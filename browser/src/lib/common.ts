@@ -18,7 +18,7 @@ import type {
 
 export async function getRegionsByCountryCode(
   countryCode: string
-): Promise<GetRegions> {
+): Promise<GetRegions | null> {
   return await getPrismaClient().region.findMany({
     where: {
       country: countryCode ?? '',
@@ -28,13 +28,14 @@ export async function getRegionsByCountryCode(
       id: true,
       abbr: true,
       country: true,
-      name: true
+      name: true,
+      isoCode: true
     }
   })
 }
 
 export async function getCountries()
-: Promise<GetCountries>{
+: Promise<GetCountries | null>{
   return await getPrismaClient().country.findMany({
     where: {
       status: CountryStatus.ACTIVE
@@ -49,7 +50,7 @@ export async function getCountries()
 
 export async function getInstitutionsByCountryCode(
   countryCode: string
-) : Promise<GetInstitutions>
+) : Promise<GetInstitutions | null>
 {
   return await getPrismaClient().institution.findMany({
     where: {
@@ -66,7 +67,7 @@ export async function getInstitutionsByCountryCode(
 }
 
 export async function getPersinoalRelationships()
-: Promise<GetPersonalRelationships> {
+: Promise<GetPersonalRelationships | null> {
   return await getPrismaClient().personalRelationship.findMany({
     where: {
       status: PersonalRelationshipStatus.ACTIVE
@@ -80,7 +81,7 @@ export async function getPersinoalRelationships()
 }
 
 export async function getOccupations()
-: Promise<GetOccupations> {
+: Promise<GetOccupations | null> {
   return await getPrismaClient().occupation.findMany({
     where: {
       status: OccupationStatus.ACTIVE
@@ -94,7 +95,7 @@ export async function getOccupations()
 }
 
 export async function getCurrencies()
-: Promise<GetCurrencies> {
+: Promise<GetCurrencies | null> {
   return  await getPrismaClient().currency.findMany({
     where: {
       status: CurrencyStatus.ACTIVE
