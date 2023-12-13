@@ -105,7 +105,7 @@ export type CookieSessionStoreParam = {
 // Get from request and apply to response.
 // Handle encryption and decryption.
 // export class CookieSessionStore<S extends JWT = JWT> implements SessionStore<S> {
-  export class CookieSessionStore<S extends JWT = JWT>{
+export class CookieSessionStore<S extends JWT = JWT>{
 
   #params
   #cookieChunker

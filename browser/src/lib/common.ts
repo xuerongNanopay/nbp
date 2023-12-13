@@ -38,7 +38,7 @@ export async function getInstitutionsByCountryCode(
 {
   return await getPrismaClient().institution.findMany({
     where: {
-      country: countryCode,
+      country: countryCode ?? '',
       status: InstitutionStatus.ACTIVE
     },
     select: {

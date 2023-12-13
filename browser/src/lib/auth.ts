@@ -17,7 +17,7 @@ import { randSixDigits } from '@/utils/idUtil'
 import { 
   assertSession,
   validateData
-} from './utils'
+} from './guard'
 
 const Session_Project = {
   id: true,
