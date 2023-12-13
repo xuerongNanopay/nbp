@@ -10,6 +10,11 @@ export function assertUserSession(session: Session) {
   if (!session.user) throw new AuthenticateError("Please Login!")
 }
 
+//TODO: look up really user in db.
+export function assertUserSessionStrict(session: Session) {
+  throw new Error("TODO")
+}
+
 export async function validateData(data: any, validator: any) {
   try {
     await validator.validate(data, {strict: true})
