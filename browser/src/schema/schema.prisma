@@ -63,10 +63,10 @@ model User {
   dob         DateTime
   address1    String
   address2    String?
-  city String
+  city        String
   province    String
   country     String
-  postalCode    String
+  postalCode  String
   phoneNumber String
 
   pob         String
@@ -76,7 +76,7 @@ model User {
   avatarUrl    String?
 
   logins              Login[] // only support one way login
-  identification     Identification?
+  identification      Identification?
   accounts            Account[]
   contacts            Contact[]
   summaryTransactions SummaryTransaction[]
@@ -107,10 +107,10 @@ model Identification {
   status IdentificationStatus @default(ACTIVE)
   type   IdentificationType
 
-  value          String
+  value        String
   additionInfo String? @map("addition_info")
 
-  ownerId Int @unique
+  ownerId Int  @unique
   owner   User @relation(fields: [ownerId], references: [id])
 
   createdAt DateTime @default(now())
@@ -228,6 +228,7 @@ model Institution {
   abbr           String
   name           String
   institutionNum String
+  contacts       Contact[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -259,8 +260,8 @@ model Account {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  owner       User          @relation(fields: [ownerId], references: [id])
-  ownerId     Int
+  owner        User          @relation(fields: [ownerId], references: [id])
+  ownerId      Int
   transactions Transaction[]
 
   @@map("account")
@@ -294,11 +295,17 @@ model Contact {
   postCode    String
   phoneNumber String
 
+  institutionId  Int
+  institution    Institution @relation(fields: [institutionId], references: [id])
+  bankAccountNum String?
+  branchNum      String?
+  iban           String?
+
   dob                 DateTime
   relationshipToOwner String
 
-  owner       User          @relation(fields: [ownerId], references: [id])
-  ownerId     Int
+  owner        User          @relation(fields: [ownerId], references: [id])
+  ownerId      Int
   transactions Transaction[]
 
   createdAt DateTime @default(now())
@@ -400,10 +407,10 @@ model Transaction {
 
   quoteExpired DateTime
 
-  owner              User                @relation(fields: [ownerId], references: [id])
-  ownerId            Int
+  owner               User                @relation(fields: [ownerId], references: [id])
+  ownerId             Int
   feeDetails          FeeDetail[]
-  summaryTransaction SummaryTransaction?
+  summaryTransaction  SummaryTransaction?
   transfers           Transfer[]
   reverseTransactions ReverseTransaction?
 
