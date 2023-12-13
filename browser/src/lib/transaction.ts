@@ -10,7 +10,15 @@ import {
 
 export async function getAllAcountsByOwnerId(
   ownerId: number
-): Promise<Pick<Account, 'id' | 'status' | 'type' | 'isDefault' | 'email'>[] | null> {
+): Promise<Prisma.AccountGetPayload<{
+  select: {
+    id: true,
+    status: true,
+    type: true,
+    isDefault: true,
+    email: true
+  }
+}>[] | null> {
   try {
     return await getPrismaClient().account.findMany({
       where: {
