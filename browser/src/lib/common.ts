@@ -1,9 +1,13 @@
 import { getPrismaClient } from '@/utils/prisma'
-import { Country, CountryStatus, Currency, CurrencyStatus, Institution, InstitutionStatus, Occupation, OccupationStatus, PersonalRelationship, PersonalRelationshipStatus, Region, RegionStatus } from '@prisma/client';
+import { CountryStatus, Currency, CurrencyStatus, Institution, InstitutionStatus, Occupation, OccupationStatus, PersonalRelationship, PersonalRelationshipStatus, Region, RegionStatus } from '@prisma/client';
+import type { 
+  GetAllCountries,
+  GetAllRegions
+} from '@/types/common'
 
 export async function getRegionsByCountryCode(
   countryCode: string
-): Promise<Pick<Region, 'id' | 'abbr' | 'country' | 'name'>[] | null > {
+): Promise<GetAllRegions> {
   return await getPrismaClient().region.findMany({
     where: {
       country: countryCode ?? '',
@@ -19,7 +23,7 @@ export async function getRegionsByCountryCode(
 }
 
 export async function getCountries()
-: Promise<Pick<Country, 'id' | 'iso2Code' | 'name'>[] | null>{
+: Promise<GetAllCountries>{
   return await getPrismaClient().country.findMany({
     where: {
       status: CountryStatus.ACTIVE

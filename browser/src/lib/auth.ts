@@ -1,11 +1,10 @@
-import { 
+import type { 
   EmailVerifyData,
-  ForgetPasswordData,
+  OnboardingData,
   Session, 
   SignInData,
-  SignUpDate,
-  OnboardingData
-} from '@/type'
+  SignUpData,
+} from '@/types/auth'
 import { getPrismaClient } from '@/utils/prisma'
 import { 
   SignUpDataValidator,
@@ -94,7 +93,7 @@ export async function signIn(
 }
 
 export async function signUp(
-  signUpData: SignUpDate
+  signUpData: SignUpData
 ): Promise<Session | null>  {
   
   await validateData(signUpData, SignUpDataValidator)

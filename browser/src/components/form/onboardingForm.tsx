@@ -1,5 +1,9 @@
 'use client'
 
+import { 
+  useEffect,
+  useState
+} from "react"
 import { useFormik } from "formik"
 
 import {
@@ -8,14 +12,29 @@ import {
   Select, 
   SelectItem
 } from "@nextui-org/react"
-import type { OnboardingData } from '@/type'
+import type { OnboardingData } from "@/types/auth"
 
 import CARegion from "@/constants/ca-region"
 import IdentityType from "@/constants/IdentityType"
 import { OnboardingDataValidator } from "@/schema/validator"
 
+export default async function OnboardingForm() {
+  // const [regions, setRegions] = useState<Region|null>(null)
+  // const [countries, setCountries] = 
+  useEffect(() => {
+    const abortController = new AbortController()
+    const doFetch = async () => {
+      try {
 
-export default function OnboardingForm() {
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    doFetch()
+    return () => {
+      abortController.abort();
+    };
+  }, [])
 
   const initialValues: OnboardingData = {
     firstName: '',
@@ -31,7 +50,7 @@ export default function OnboardingForm() {
     dob: '',
     pob: '',
     nationality: '',
-    occupationId: -1,
+    occupationId: 0,
     identityType: '',
     identityNumber: '',
     interacEmail: ''

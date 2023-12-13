@@ -12,12 +12,6 @@ interface ISignIn {
   password: string
 }
 
-interface SignUpDate {
-  email: string,
-  password: string,
-  rePassword: string,
-}
-
 interface IEmailVerify {
   code: string
 }
@@ -197,67 +191,4 @@ type NotificationSummary = {
 type NotificationDetail = NotificationSummary & {
   from?: string
   content?: string
-}
-
-interface SignInData {
-  email: string
-  password: string
-}
-
-//TODO: use Pcik to filter out sensitive infos.
-interface Session extends JWT {
-  login: Pick<Login, 'id' | 'email', 'status'>,
-  user?: Pick<User, 'id', 'firstnName', 'lastName', 'avatarUrl', 'status', 'role'>
-}
-
-interface SignUpData {
-  email: string,
-  password: string,
-  rePassword: string,
-}
-
-interface EmailVerifyData {
-  code: string
-}
-
-interface ForgetPasswordData {
-  email: string
-}
-
-interface OnboardingData {
-  firstName: string,
-  middleName?: string,
-  lastName: string,
-  address1: string,
-  address2?: string,
-  city: string,
-  province: string,
-  country: string,
-  postalCode: string,
-  phoneNumber: string,
-  dob: string,
-  pob: string,
-  nationality: string,
-  occupationId: number,
-  identityType: string,
-  identityNumber: string
-  interacEmail: string
-}
-
-interface ContactData  {
-  firstName: string,
-  middleName?: string,
-  lastName: string,
-  addressLine1: string,
-  addressLine2?: string,
-  city: string,
-  province: string,
-  country: string,
-  postalCode?: string,
-  phoneNumber?: string,
-  relationshipId: number,
-  transferMethod: string,
-  bankName?: string,
-  branchNo?: string,
-  accountOrIban?: string
 }

@@ -1,10 +1,10 @@
 import { 
   EmailVerifyData,
   SignInData, 
-  SignUpData,
-  OnboardingData,
-  ContactData
-} from '@/type';
+  SignUpData
+} from "@/types/auth"
+import type { OnboardingData } from "@/types/auth"
+import type { ContactData} from "@/types/contact"
 import * as Yup from 'yup';
 import dayjs from "dayjs"
 import { parse, isDate } from "date-fns";
