@@ -6,7 +6,7 @@ export async function getRegionsByCountryCode(
 ): Promise<Pick<Region, 'id' | 'abbr' | 'country' | 'name'>[] | null > {
   return await getPrismaClient().region.findMany({
     where: {
-      country: countryCode,
+      country: countryCode ?? '',
       status: RegionStatus.ACTIVE
     },
     select: {
