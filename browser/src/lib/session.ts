@@ -1,12 +1,13 @@
-import { CookieSessionStore, SessionPayload } from '@/utils/cookieUtil'
+import { CookieSessionStore } from '@/utils/cookieUtil'
 import { cookies as nextCookies } from 'next/headers'
 import { DEFAULT_SESSION_AGE } from '@/utils/cookieUtil'
 import { JWTExpired } from "jose/errors"
+import type { Session } from '@/types/auth'
 
 const JWT_SECRET = process.env['JWT_SECRET']
 if ( ! JWT_SECRET ) process.exit(1)
 
-const cookieSessionStore = new CookieSessionStore<SessionPayload>({
+const cookieSessionStore = new CookieSessionStore<Session>({
   jwtParams: {
     maxAge: DEFAULT_SESSION_AGE,
     // maxAge: 0,

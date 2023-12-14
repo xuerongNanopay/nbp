@@ -14,7 +14,7 @@ import {
 import { AccountType, IdentificationType, Login, LoginStatus } from '@prisma/client'
 import { randSixDigits } from '@/utils/idUtil'
 import { 
-  assertSession,
+  asserSessionOrThrow,
   validateData
 } from './guard'
 
@@ -34,7 +34,7 @@ const Session_Project = {
   }
 }
 
-async function getSession(
+export async function reloadSession(
   loginId: number
 ) : Promise<Session | null> {
   const login = await getPrismaClient().login.findUnique({
@@ -51,7 +51,7 @@ async function getSession(
   }
 }
 
-async function getSessionOrThrow(
+export async function reloadSessionOrThrow(
   loginId: number
 ) : Promise<Session> {
   const login = await getPrismaClient().login.findUnique({
@@ -115,7 +115,7 @@ export async function signUp(
 
     //TODO: send email to user
 
-    return await getSessionOrThrow(login.id) 
+    return await reloadSessionOrThrow(login.id) 
   } catch (err: any) {
     throw new PrismaError(err.code, err.message)
   }
@@ -126,10 +126,10 @@ export async function verifyEmail(
   emailVerifyData: EmailVerifyData
 ): Promise<Session> {
 
-  assertSession(session)
+  asserSessionOrThrow(session)
   await validateData(emailVerifyData, EmailVerifyDataValidator)
 
-  const s = await getSession(session.login.id)
+  const s = await reloadSession(session.login.id)
 
   if (!s) throw new AuthenticateError("Please Login!")
 
@@ -153,7 +153,7 @@ export async function verifyEmail(
       },
       select: Session_Project
     })
-    return await getSessionOrThrow(ns.id) 
+    return await reloadSessionOrThrow(ns.id) 
   } catch (err: any) {
     throw new PrismaError(err.code, err.message)
   }
@@ -162,7 +162,7 @@ export async function verifyEmail(
 export async function refreshVerifyCode(
   session: Session,
 ) {
-  assertSession(session)
+  asserSessionOrThrow(session)
 
   if ( session.login.status !== LoginStatus.AWAIT_VERIFY ) {
     throw new AuthenticateError("Login is verified")
@@ -195,17 +195,7 @@ export async function refreshVerifyCode(
 export async function onboarding(
   session: Session,
   onboardingData: OnboardingData
-): Promise<Session> {
-  
-  assertSession(session)
-  await validateData(onboardingData, OnboardingDataValidator)
-
-  const s = await getSession(session.login.id)
-  if (!s) throw new AuthenticateError("Please Login!")
-
-  if ( s.user !== null ) {
-    throw new AuthenticateError("Duplicate Onboarding")
-  }
+): Promise<Session | null> {
 
   const d = OnboardingDataValidator.cast(onboardingData) as OnboardingData
   const idType = mapToIdentificationType(d.identityType)
@@ -241,12 +231,12 @@ export async function onboarding(
         },
         logins: {
           connect: {
-            id: s.login.id
+            id: session.login.id
           }
         }
       },
     })
-    return await getSessionOrThrow(ns.id) 
+    return await reloadSession(session.login.id) 
   } catch (err: any) {
     throw new PrismaError(err.code, err.message)
   }

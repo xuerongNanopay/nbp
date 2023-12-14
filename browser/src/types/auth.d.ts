@@ -1,3 +1,4 @@
+import type { JWT } from "@/utils/jwtUtil"
 export interface SignInData {
   email: string
   password: string

@@ -156,15 +156,3 @@ export class CookieSessionStore<S extends JWT = JWT>{
     })
   }
 }
-
-export interface SessionPayload extends JWT {
-  loginId: number,
-  userId: number,
-  username: string,
-  loginStatus: string,
-  thumbnail: string,
-  userStatus: string,
-  isVerifyEmail: boolean,
-  isOnboarding: boolean,
-  role: String
-}
