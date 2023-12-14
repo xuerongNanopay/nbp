@@ -43,10 +43,30 @@ const initialValues: OnboardingData = {
 }
 
 export default function OnboardingForm() {
+  const [isSubmit, setIsSubmit] = useState(false)
+  const onboardingHandler = async ( e: OnboardingData ) => {
+    //TODO: make to true after test done.
+    setIsSubmit(false)
+    try {
+      const response = await fetch('/api/nbp/profile',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(e)
+      })
+      const responsePayload = await response.json()
+      
+      if ( responsePayload.code === 401 ) {
+        //redirect to sign out
+        //TODO: fetch interceptro for 401 error.
+      }
 
-  const onboardingHandler = ( e: OnboardingData ) => {
-    console.log(e)
-    // console.log(OnboardingDataValidator.cast(e))
+
+    } catch (err) {
+      console.log('aaa')
+      console.log(err)
+    }
   }
 
   const formik = useFormik({
@@ -211,7 +231,6 @@ export default function OnboardingForm() {
             placeholder="please select"
             color="primary"
             size="sm"
-            autoComplete="off"
             isLoading={isRegionsLoading}
             isDisabled={isRegionsLoading}
             onBlur={formik.handleBlur}
@@ -219,7 +238,7 @@ export default function OnboardingForm() {
             onSelectionChange={(e) => {
               formik.setFieldValue('province', e)
             }}
-            errorMessage={formik.touched.province && formik.errors.province}
+            errorMessage={formik.errors.province}
           >
             {regions.map((region) => (
               <AutocompleteItem key={region.isoCode} value={region.isoCode}>
@@ -246,6 +265,7 @@ export default function OnboardingForm() {
           label="Phone Number"
           color="primary"
           size="sm"
+          placeholder="DDD-DDD-DDDD"
           autoComplete="off"
           {...formik.getFieldProps('phoneNumber')}
           errorMessage={formik.touched.phoneNumber && formik.errors.phoneNumber}
@@ -374,7 +394,7 @@ export default function OnboardingForm() {
             selectionMode="single"
             // defaultSelectedKeys={[]}
             selectedKeys={!formik.values.identityType ? [] : [formik.values.identityType]}
-            placeholder="please select Identity Type"
+            placeholder="please select"
             color="primary"
             size="sm"
             onBlur={formik.handleBlur}
@@ -415,6 +435,7 @@ export default function OnboardingForm() {
           color="primary"
           className="mt-2"
           size="md"
+          isLoading={isSubmit}
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Submit
