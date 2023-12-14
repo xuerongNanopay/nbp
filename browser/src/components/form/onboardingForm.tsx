@@ -18,7 +18,6 @@ import type {
   OnboardingData 
 } from "@/types/auth"
 
-import CARegion from "@/constants/ca-region"
 import IdentityType from "@/constants/IdentityType"
 import { OnboardingDataValidator } from "@/schema/validator"
 import { GetCountries, GetOccupations, GetRegions } from "@/types/common"
@@ -58,15 +57,17 @@ export default function OnboardingForm() {
 
   const [regions, setRegions] = useState<GetRegions>([])
   const [isRegionsLoading, setIsRegionsLoading] = useState(true)
-  const [nations, setNations] = useState<GetCountries>([])
+  const [countries, setCountries] = useState<GetCountries>([])
+  const [isCountriesLoading, setIsCountriesLoading] = useState(true)
   const [occupations, setOccupations] = useState<GetOccupations>([])
+  const [isOccupationsLoading, setIsOccupationsLoading] = useState(true)
 
   useEffect(() => {
     const abortController = new AbortController()
-    const doFetch = async () => {
+    const fetchRegions = async () => {
       setIsRegionsLoading(true)
       try {
-        const response = await fetch(`/api/common/region?countryCode=CA`)
+        const response = await fetch(`/api/common/region?countryCode=CA`, {signal: abortController.signal})
         const responsePayload = await response.json()
         const regions = responsePayload.data ?? []
         setRegions(regions)
@@ -75,11 +76,46 @@ export default function OnboardingForm() {
         console.log(err)
       }
     }
-    doFetch()
+    fetchRegions()
     return () => {
       abortController.abort();
-    };
-  }, [formik.values.country])
+    }
+  }, [])
+
+  useEffect(() => {
+    const abortController = new AbortController()
+    const fetchCountries = async () => {
+      setIsCountriesLoading(true)
+      try {
+        const response = await fetch('/api/common/country', {signal: abortController.signal})
+        const responsePayload = await response.json()
+        const countries = responsePayload.data ?? []
+
+        setCountries(countries)
+        setIsCountriesLoading(false)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    const fetchOccupations = async () => {
+      setIsOccupationsLoading(true)
+      try {
+        const response = await fetch('/api/common/occupation', {signal: abortController.signal})
+        const responsePayload = await response.json()
+        const occupations = responsePayload.data ?? []
+
+        setOccupations(occupations)
+        setIsOccupationsLoading(false)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchCountries()
+    fetchOccupations()
+    return () => {
+      abortController.abort();
+    }
+  }, [])
 
   return (
     <div className="w-full max-w-4xl">
@@ -92,6 +128,7 @@ export default function OnboardingForm() {
             variant="bordered" 
             label="FirstName"
             color="primary"
+            autoComplete="off"
             size="sm"
             {...formik.getFieldProps('firstName')}
             errorMessage={formik.touched.firstName && formik.errors.firstName}
@@ -102,6 +139,7 @@ export default function OnboardingForm() {
             variant="bordered" 
             label="MiddleName"
             color="primary"
+            autoComplete="off"
             size="sm"
             {...formik.getFieldProps('middleName')}
             errorMessage={formik.touched.middleName && formik.errors.middleName}
@@ -112,6 +150,7 @@ export default function OnboardingForm() {
             variant="bordered" 
             label="LastName"
             color="primary"
+            autoComplete="off"
             size="sm"
             {...formik.getFieldProps('lastName')}
             errorMessage={formik.touched.lastName && formik.errors.lastName}
@@ -124,6 +163,7 @@ export default function OnboardingForm() {
             variant="bordered" 
             label="Address Line 1"
             color="primary"
+            autoComplete="off"
             size="sm"
             {...formik.getFieldProps('address1')}
             errorMessage={formik.touched.address1 && formik.errors.address1}
@@ -134,6 +174,7 @@ export default function OnboardingForm() {
             variant="bordered" 
             label="Address Line 2"
             color="primary"
+            autoComplete="off"
             size="sm"
             {...formik.getFieldProps('address2')}
             errorMessage={formik.touched.address2 && formik.errors.address2}
@@ -144,6 +185,7 @@ export default function OnboardingForm() {
             variant="bordered" 
             label="City"
             color="primary"
+            autoComplete="off"
             size="sm"
             {...formik.getFieldProps('city')}
             errorMessage={formik.touched.city && formik.errors.city}
@@ -154,6 +196,7 @@ export default function OnboardingForm() {
             variant="bordered" 
             label="Country"
             color="primary"
+            autoComplete="off"
             size="sm"
             disabled
             {...formik.getFieldProps('country')}
@@ -165,9 +208,10 @@ export default function OnboardingForm() {
             label="Province"
             variant="bordered"
             allowsCustomValue={false}
-            placeholder="please select province"
+            placeholder="please select"
             color="primary"
             size="sm"
+            autoComplete="off"
             isLoading={isRegionsLoading}
             isDisabled={isRegionsLoading}
             onBlur={formik.handleBlur}
@@ -189,6 +233,7 @@ export default function OnboardingForm() {
             variant="bordered" 
             label="Postal Code"
             color="primary"
+            autoComplete="off"
             size="sm"
             {...formik.getFieldProps('postalCode')}
             errorMessage={formik.touched.postalCode && formik.errors.postalCode}
@@ -201,6 +246,7 @@ export default function OnboardingForm() {
           label="Phone Number"
           color="primary"
           size="sm"
+          autoComplete="off"
           {...formik.getFieldProps('phoneNumber')}
           errorMessage={formik.touched.phoneNumber && formik.errors.phoneNumber}
         />
@@ -213,10 +259,11 @@ export default function OnboardingForm() {
             placeholder="YYYY-MM-DD"
             color="primary"
             size="sm"
+            autoComplete="off"
             {...formik.getFieldProps('dob')}
             errorMessage={formik.touched.dob && formik.errors.dob}
           />
-          <Input
+          {/* <Input
             id="pob"
             type="text" 
             variant="bordered" 
@@ -225,8 +272,32 @@ export default function OnboardingForm() {
             size="sm"
             {...formik.getFieldProps('pob')}
             errorMessage={formik.touched.pob && formik.errors.pob}
-          />
-          <Input
+          /> */}
+          <Autocomplete
+            id="pob"
+            name="pob"
+            label="Place of Birth"
+            variant="bordered"
+            allowsCustomValue={false}
+            placeholder="please select"
+            color="primary"
+            size="sm"
+            isLoading={isCountriesLoading}
+            isDisabled={isCountriesLoading}
+            onBlur={formik.handleBlur}
+            selectedKey={formik.values.pob}
+            onSelectionChange={(e) => {
+              formik.setFieldValue('pob', e)
+            }}
+            errorMessage={formik.touched.pob && formik.errors.pob}
+          >
+            {countries.map((country) => (
+              <AutocompleteItem key={country.iso2Code} value={country.iso2Code}>
+                {country.name}
+              </AutocompleteItem>
+            ))}
+          </Autocomplete>
+          {/* <Input
             id="nationality"
             type="text" 
             variant="bordered" 
@@ -235,8 +306,32 @@ export default function OnboardingForm() {
             size="sm"
             {...formik.getFieldProps('nationality')}
             errorMessage={formik.touched.nationality && formik.errors.nationality}
-          />
-          <Input
+          /> */}
+          <Autocomplete
+            id="nationality"
+            name="nationality"
+            label="Nationality"
+            variant="bordered"
+            allowsCustomValue={false}
+            placeholder="please select"
+            color="primary"
+            size="sm"
+            isLoading={isRegionsLoading}
+            isDisabled={isRegionsLoading}
+            onBlur={formik.handleBlur}
+            selectedKey={formik.values.nationality}
+            onSelectionChange={(e) => {
+              formik.setFieldValue('nationality', e)
+            }}
+            errorMessage={formik.touched.nationality && formik.errors.nationality}
+          >
+            {countries.map((country) => (
+              <AutocompleteItem key={country.iso2Code} value={country.iso2Code}>
+                {country.name}
+              </AutocompleteItem>
+            ))}
+          </Autocomplete>
+          {/* <Input
             id="occupationId"
             type="text" 
             variant="bordered" 
@@ -245,7 +340,32 @@ export default function OnboardingForm() {
             size="sm"
             {...formik.getFieldProps('occupationId')}
             errorMessage={formik.touched.occupationId && formik.errors.occupationId}
-          />
+          /> */}
+          <Autocomplete
+            id="occupationId"
+            name="occupationId"
+            label="Occupation"
+            variant="bordered"
+            allowsCustomValue={false}
+            placeholder="please select"
+            color="primary"
+            size="sm"
+            isLoading={isOccupationsLoading}
+            isDisabled={isOccupationsLoading}
+            onBlur={formik.handleBlur}
+            selectedKey={formik.values.occupationId}
+            onSelectionChange={(e) => {
+              console.log(e)
+              formik.setFieldValue('occupationId', e)
+            }}
+            errorMessage={formik.touched.occupationId && formik.errors.occupationId}
+          >
+            {occupations.map((occupation) => (
+              <AutocompleteItem key={occupation.id} value={occupation.id}>
+                {occupation.type}
+              </AutocompleteItem>
+            ))}
+          </Autocomplete>
           <Select
             id="identityType"
             name="identityType"
@@ -286,6 +406,7 @@ export default function OnboardingForm() {
           placeholder="Please make sure you enable AUTO-DEPOSIT"
           color="primary"
           size="sm"
+          autoComplete="off"
           {...formik.getFieldProps('interacEmail')}
           errorMessage={formik.touched.interacEmail && formik.errors.interacEmail}
         />
