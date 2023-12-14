@@ -87,7 +87,7 @@ export default function OnboardingForm() {
     const fetchRegions = async () => {
       setIsRegionsLoading(true)
       try {
-        const response = await fetch(`/api/common/region?countryCode=CA`, {signal: abortController.signal})
+        const response = await fetch(`/api/nbp/common/region?countryCode=CA`, {signal: abortController.signal})
         const responsePayload = await response.json()
         const regions = responsePayload.data ?? []
         setRegions(regions)
@@ -107,7 +107,7 @@ export default function OnboardingForm() {
     const fetchCountries = async () => {
       setIsCountriesLoading(true)
       try {
-        const response = await fetch('/api/common/country', {signal: abortController.signal})
+        const response = await fetch('/api/nbp/common/country', {signal: abortController.signal})
         const responsePayload = await response.json()
         const countries = responsePayload.data ?? []
 
@@ -120,7 +120,7 @@ export default function OnboardingForm() {
     const fetchOccupations = async () => {
       setIsOccupationsLoading(true)
       try {
-        const response = await fetch('/api/common/occupation', {signal: abortController.signal})
+        const response = await fetch('/api/nbp/common/occupation', {signal: abortController.signal})
         const responsePayload = await response.json()
         const occupations = responsePayload.data ?? []
 
