@@ -49,7 +49,7 @@ export async function reloadSession(
     if ( !login ) return null;
 
     return {
-      login,
+      login: {...login, owner: undefined},
       user: login.owner
     }
     

@@ -42,6 +42,7 @@ export async function setSession(payload: Awaited<ReturnType<typeof cookieSessio
     //TODO: log
     return
   }
+
   await cookieSessionStore.cleanSession(nextCookies)
   await cookieSessionStore.applySession(nextCookies, payload)
 }
@@ -49,7 +50,7 @@ export async function setSession(payload: Awaited<ReturnType<typeof cookieSessio
 // Using in signOut
 export async function cleanSession() {
   await cookieSessionStore.cleanSession(nextCookies)
-  
+
   const payload = await fetchSession()
   if (!!payload) {
     await cookieSessionStore.applySession(nextCookies, payload, -1)

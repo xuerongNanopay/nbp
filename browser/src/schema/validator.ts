@@ -21,13 +21,14 @@ const formatCharacterValidationError = (str: string) => {
   return `Your password must have at least 1 ${str} character`;
 };
 
+//TODO: uncomment after onboarding success.
 export const SignUpDataValidator = Yup.object<SignUpData>({
   email: Yup.string().email('Invalid email address').required('Required'),
   password: Yup.string()
-              .min(8, "Password must have at least 8 characters")
-              .matches(/[0-9]/, formatCharacterValidationError("digit"))
-              .matches(/[a-z]/, formatCharacterValidationError("lowercase"))
-              .matches(/[A-Z]/, formatCharacterValidationError("uppercase")),
+              .min(8, "Password must have at least 8 characters"),
+              // .matches(/[0-9]/, formatCharacterValidationError("digit"))
+              // .matches(/[a-z]/, formatCharacterValidationError("lowercase"))
+              // .matches(/[A-Z]/, formatCharacterValidationError("uppercase")),
   rePassword: Yup.string().required("Please re-type your password").oneOf([Yup.ref("password")], "Passwords does not match")
   
 })

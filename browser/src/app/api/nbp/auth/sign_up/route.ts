@@ -21,11 +21,23 @@ export async function POST(req: Request) {
 
     const newSession = await reloadSession(login.id)
     if (!newSession) throw new InternalError()
-    setSession(newSession)
+    await setSession(newSession)
 
+    return Response.json({
+      code: 201,
+      data: {
+        login: newSession?.login,
+        user: newSession?.user
+      }
+    }, {
+      status: 201,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
   } catch (err: any) {
     console.error(session?.login?.id, err.toString())
-    cleanSession()
+    await cleanSession()
 
     const errorResponse = !err.errors ? {
       code: err.code,

@@ -57,14 +57,13 @@ export default function OnboardingForm() {
       })
       const responsePayload = await response.json()
       
-      if ( responsePayload.code === 401 ) {
+      if (responsePayload.code / 100 != 2) {
         //redirect to sign out
         //TODO: fetch interceptro for 401 error.
       }
 
 
     } catch (err) {
-      console.log('aaa')
       console.log(err)
     }
   }

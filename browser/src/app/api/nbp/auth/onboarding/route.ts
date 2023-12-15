@@ -28,9 +28,9 @@ export async function POST(req: Request) {
     const newSession = await reloadSession(session.login.id)
     if (!newSession) throw new InternalError()
 
-    setSession(newSession)
+    await setSession(newSession)
     return Response.json({
-      code: '201',
+      code: 201,
       data: {
         login: newSession?.login,
         user: newSession?.user
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
   } catch (err: any) {
     console.error(session?.login?.id, err.toString())
     //During onboarding if any error happen. clean session force user re-login.
-    cleanSession()
+    await cleanSession()
     
     const errorResponse = !err.errors ? {
       code: err.code,
