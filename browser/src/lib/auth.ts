@@ -6,12 +6,10 @@ import type {
   SignUpData,
 } from '@/types/auth'
 import { getPrismaClient } from '@/utils/prisma'
-import { 
-  SignUpDataValidator,
+import {
   EmailVerifyDataValidator,
-  OnboardingDataValidator
 } from '@/schema/validator'
-import { AccountType, IdentificationType, Login, LoginStatus } from '@prisma/client'
+import { AccountType, IdentificationType, Login, LoginStatus, User } from '@prisma/client'
 import { randSixDigits } from '@/utils/idUtil'
 import { 
   asserSessionOrThrow,
@@ -38,17 +36,26 @@ const Session_Project = {
 export async function reloadSession(
   loginId: number
 ) : Promise<Session | null> {
-  const login = await getPrismaClient().login.findUnique({
-    where: {
-      id: loginId    
-    },
-    select: Session_Project
-  })
-  if ( !login ) return null;
+  try {
+    const login = await getPrismaClient().login.findUnique({
+      where: {
+        id: loginId,
+        status: {
+          not: LoginStatus.DELETE
+        }
+      },
+      select: Session_Project
+    })
+    if ( !login ) return null;
 
-  return {
-    login,
-    user: login.owner
+    return {
+      login,
+      user: login.owner
+    }
+    
+  } catch (err: any) {
+    console.error("Prisma Error: ", err)
+    throw new InternalError()
   }
 }
 
@@ -57,7 +64,10 @@ export async function reloadSessionOrThrow(
 ) : Promise<Session> {
   const login = await getPrismaClient().login.findUnique({
     where: {
-      id: loginId    
+      id: loginId,
+      status: {
+        not: LoginStatus.DELETE
+      }
     },
     select: Session_Project
   })
@@ -181,11 +191,11 @@ export async function refreshVerifyCode(
 export async function onboarding(
   session: Session,
   data: OnboardingData
-): Promise<Session | null> {
+): Promise<User | null> {
 
   const idType = mapToIdentificationType(data.identityType)
   try {
-    const ns = await getPrismaClient().user.create({
+    return await getPrismaClient().user.create({
       data: {
         firstName: data.firstName,
         middleName: data.middleName,
@@ -219,9 +229,8 @@ export async function onboarding(
             id: session.login.id
           }
         }
-      },
+      }
     })
-    return await reloadSession(session.login.id) 
   } catch (err: any) {
     console.error("session", session, "Prisma Error: ", err)
     throw new InternalError()

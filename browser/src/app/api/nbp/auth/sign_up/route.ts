@@ -1,6 +1,7 @@
-import { assertSession } from "@/lib/guard";
+import { assertSession, castAndValidateData } from "@/lib/guard";
 import { fetchSession } from "@/lib/session";
 import { ForbiddenError } from "@/schema/error";
+import { SignUpDataValidator } from "@/schema/validator";
 import { SignUpData } from "@/types/auth";
 
 export async function POST(req: Request) {
@@ -11,6 +12,9 @@ export async function POST(req: Request) {
       throw new ForbiddenError("Please log out before create new user")
     }
 
+    const signUpPayload = await req.json()
+    const signUpData = await castAndValidateData(signUpPayload, SignUpDataValidator) as SignUpData
+    
 
   } catch (err: any) {
     console.error(session?.login?.id, err.toString())

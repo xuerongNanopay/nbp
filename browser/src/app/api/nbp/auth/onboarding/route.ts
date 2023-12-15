@@ -1,7 +1,7 @@
-import { onboarding, reloadSession } from "@/lib/auth";
+import { onboarding, reloadSession, reloadSessionOrThrow } from "@/lib/auth";
 import { assertSession, castAndValidateData } from "@/lib/guard";
-import { fetchSession, setSession } from "@/lib/session";
-import { ForbiddenError, UnauthenticateError } from "@/schema/error";
+import { cleanSession, fetchSession, setSession } from "@/lib/session";
+import { ForbiddenError, InternalError, UnauthenticateError } from "@/schema/error";
 import { OnboardingDataValidator } from "@/schema/validator";
 import type { OnboardingData } from "@/types/auth";
 import { LoginStatus } from "@prisma/client";
@@ -24,7 +24,9 @@ export async function POST(req: Request) {
     const onboardPayload = await req.json()
     const onboardData = await castAndValidateData(onboardPayload, OnboardingDataValidator) as OnboardingData
 
-    const newSession = await onboarding(s, onboardData)
+    await onboarding(s, onboardData)
+    const newSession = await reloadSession(session.login.id)
+    if (!newSession) throw new InternalError()
 
     setSession(newSession)
     return Response.json({
@@ -34,7 +36,7 @@ export async function POST(req: Request) {
         user: newSession?.user
       }
     }, {
-      status: 500,
+      status: 201,
       headers: {
         'Content-Type': 'application/json'
       }
@@ -42,6 +44,8 @@ export async function POST(req: Request) {
 
   } catch (err: any) {
     console.error(session?.login?.id, err.toString())
+    //During onboarding if any error happen. clean session force user re-login.
+    cleanSession()
     
     const errorResponse = !err.errors ? {
       code: err.code,
