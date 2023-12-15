@@ -48,7 +48,7 @@ export default function OnboardingForm() {
     //TODO: make to true after test done.
     setIsSubmit(false)
     try {
-      const response = await fetch('/api/nbp/auth/onboard',{
+      const response = await fetch('/api/nbp/auth/onboarding',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
