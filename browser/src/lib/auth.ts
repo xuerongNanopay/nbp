@@ -76,7 +76,7 @@ export async function signIn(
   }: SignInData
 ): Promise<Session> {
 
-  //TODO: Hash password.
+  //TODO: Hash passwordata.
   const login = await getPrismaClient().login.findUnique({
     where: {
       email,
@@ -180,38 +180,37 @@ export async function refreshVerifyCode(
 
 export async function onboarding(
   session: Session,
-  onboardingData: OnboardingData
+  data: OnboardingData
 ): Promise<Session | null> {
 
-  const d = OnboardingDataValidator.cast(onboardingData) as OnboardingData
-  const idType = mapToIdentificationType(d.identityType)
+  const idType = mapToIdentificationType(data.identityType)
   try {
     const ns = await getPrismaClient().user.create({
       data: {
-        firstName: d.firstName,
-        middleName: d.middleName,
-        lastName: d.lastName,
-        address1: d.address1,
-        address2: d.address2,
-        city: d.city,
-        province: d.province,
-        country: d.country,
-        postalCode: d.postalCode,
-        phoneNumber: d.phoneNumber,
-        dob: d.dob,
-        pob: d.pob,
-        nationality: d.nationality,
-        occupationId: d.occupationId,
+        firstName: data.firstName,
+        middleName: data.middleName,
+        lastName: data.lastName,
+        address1: data.address1,
+        address2: data.address2,
+        city: data.city,
+        province: data.province,
+        country: data.country,
+        postalCode: data.postalCode,
+        phoneNumber: data.phoneNumber,
+        dob: data.dob,
+        pob: data.pob,
+        nationality: data.nationality,
+        occupationId: data.occupationId,
         identification: {
           create: {
             type: idType,
-            value: d.identityNumber,
+            value: data.identityNumber,
           }
         },
         accounts: {
           create: {
             type: AccountType.INTERACT,
-            email: d.interacEmail,
+            email: data.interacEmail,
             isDefault: true
           }
         },
@@ -224,7 +223,7 @@ export async function onboarding(
     })
     return await reloadSession(session.login.id) 
   } catch (err: any) {
-    console.error("Prisma Error: ", err)
+    console.error("session", session, "Prisma Error: ", err)
     throw new InternalError()
   }
 }

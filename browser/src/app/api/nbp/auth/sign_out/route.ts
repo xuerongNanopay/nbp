@@ -1,6 +1,6 @@
 // import { cleanSession } from "@/lib/auth"
 
-async function logout() {
+async function POST() {
   // await cleanSession()
   
   return Response.json({
@@ -12,5 +12,3 @@ async function logout() {
     }
   });
 }
-
-export {logout as GET, logout as POST}

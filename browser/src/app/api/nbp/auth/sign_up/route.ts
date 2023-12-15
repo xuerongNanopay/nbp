@@ -4,14 +4,17 @@ import { ForbiddenError } from "@/schema/error";
 import { SignUpData } from "@/types/auth";
 
 export async function POST(req: Request) {
+  const session = await fetchSession()
+
   try {
-    const session = await fetchSession()
     if ( assertSession(session) ) {
       throw new ForbiddenError("Please log out before create new user")
     }
 
 
   } catch (err: any) {
+    console.error(session?.login?.id, err.toString())
+    
     const errorResponse = !err.errors ? {
       code: err.code,
       name: err.name,
@@ -29,6 +32,4 @@ export async function POST(req: Request) {
       }
     })
   }
-
-
 }
