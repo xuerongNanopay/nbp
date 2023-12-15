@@ -191,7 +191,6 @@ export async function refreshVerifyCode(
 
 // }
 
-//TODO: onboarding
 export async function onboarding(
   session: Session,
   onboardingData: OnboardingData

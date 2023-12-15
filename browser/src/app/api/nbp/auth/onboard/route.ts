@@ -1,14 +1,15 @@
 import { onboarding, reloadSession } from "@/lib/auth";
-import { assertSession } from "@/lib/guard";
+import { assertSession, castAndValidateData, validateData } from "@/lib/guard";
 import { fetchSession, setSession } from "@/lib/session";
+import { OnboardingDataValidator } from "@/schema/validator";
 import type { OnboardingData } from "@/types/auth";
 import { LoginStatus } from "@prisma/client";
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
   const onboadingPayload: OnboardingData = await req.json()
-  console.log(onboadingPayload)
+
   const session = await fetchSession()
-  // TODO: mut this guard to middle ware
+
   if ( session === null || !assertSession(session) ) {
     return Response.json({
       code: '401',
@@ -47,8 +48,26 @@ export async function POST(req: Request, res: Response) {
       })
     }
 
-    const payload = await req.json()
-    const newSession = await onboarding(s, payload)
+    const onboardPayload = await req.json()
+    let onboardData: OnboardingData
+
+    try {
+      onboardData = await castAndValidateData(onboardPayload, OnboardingDataValidator) as OnboardingData
+    } catch ( err: any ) {
+      return Response.json({
+        code: '400',
+        name: err.name,
+        message: err.message,
+        errors: err.errors
+      }, {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+    }
+
+    const newSession = await onboarding(s, onboardData)
 
     setSession(newSession)
     return Response.json({
@@ -56,6 +75,11 @@ export async function POST(req: Request, res: Response) {
       data: {
         login: newSession?.login,
         user: newSession?.user
+      }
+    }, {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json'
       }
     })
 

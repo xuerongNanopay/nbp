@@ -31,3 +31,14 @@ export async function validateData(data: any, validator: any) {
     throw new InvalidInputError(err.name, err.errors)
   }
 }
+
+export async function castAndValidateData(data: any, validator: any): Promise<any> {
+  try {
+    let ret = validator.cast(data)
+    await validator.validate(ret, {strict: true})
+    return ret
+  } catch (err: any) {
+    // ValidationError
+    throw new InvalidInputError(err.name, err.errors)
+  }
+}
