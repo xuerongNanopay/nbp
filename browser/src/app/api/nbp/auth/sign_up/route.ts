@@ -1,5 +1,6 @@
 import { assertSession } from "@/lib/guard";
 import { fetchSession } from "@/lib/session";
+import { ForbiddenError } from "@/schema/error";
 import { SignUpData } from "@/types/auth";
 
 export async function POST(req: Request) {
@@ -9,7 +10,7 @@ export async function POST(req: Request) {
       throw new ForbiddenError("Please log out before create new user")
     }
 
-    
+
   } catch (err: any) {
     const errorResponse = !err.errors ? {
       code: err.code,

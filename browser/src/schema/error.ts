@@ -12,11 +12,16 @@ abstract class NBPError implements Error {
   }
 
   toString(): string {
-    return JSON.stringify(this)
+    return JSON.stringify({
+      code: this.code,
+      name: this.name,
+      message: this.message,
+      errors: this.errors
+    })
   }
 }
 
-class BadRequestError extends NBPError {
+export class BadRequestError extends NBPError {
   constructor({name, message, errors}: {name: string, message: string, errors?: string[] | null | undefined}) {
     super({
       code: 400,
@@ -26,7 +31,7 @@ class BadRequestError extends NBPError {
     })
   }
 }
-class InvalidInputError extends BadRequestError {
+export class InvalidInputError extends BadRequestError {
   constructor(message: string, ...args:any) {
     super({
       name: 'InvalidInput',
@@ -37,7 +42,7 @@ class InvalidInputError extends BadRequestError {
 }
 
 
-class ResourceNoFoundError extends NBPError {
+export class ResourceNoFoundError extends NBPError {
   constructor(message: string) {
     super({
       code: 404,
@@ -47,7 +52,7 @@ class ResourceNoFoundError extends NBPError {
   }
 }
 
-class UnauthenticateError extends NBPError {
+export class UnauthenticateError extends NBPError {
   constructor(message: string) {
     super({
       code: 401,
@@ -57,7 +62,7 @@ class UnauthenticateError extends NBPError {
   }
 }
 
-class ForbiddenError extends NBPError {
+export class ForbiddenError extends NBPError {
   constructor(message: string) {
     super({
       code: 403,
@@ -67,7 +72,7 @@ class ForbiddenError extends NBPError {
   }
 }
 
-class InternalError extends NBPError {
+export class InternalError extends NBPError {
 
   constructor(...args:any) {
     super({

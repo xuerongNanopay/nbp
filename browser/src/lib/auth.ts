@@ -17,6 +17,7 @@ import {
   asserSessionOrThrow,
   validateData
 } from './guard'
+import { ForbiddenError, InternalError, InvalidInputError, ResourceNoFoundError, UnauthenticateError } from '@/schema/error'
 
 const Session_Project = {
   id: true,
@@ -84,7 +85,7 @@ export async function signIn(
     select: Session_Project
   })
 
-  if ( !login ) throw new AuthenticateError('Email or Password no found!')
+  if ( !login ) throw new UnauthenticateError('Email or Password no found!')
 
   return {
     login,
@@ -130,14 +131,14 @@ export async function verifyEmail(
 
   const s = await reloadSession(session.login.id)
 
-  if (!s) throw new AuthenticateError("Please Login!")
+  if (!s) throw new UnauthenticateError("Please Login!")
 
   if (s.login.status !== LoginStatus.AWAIT_VERIFY) {
     return s
   }
 
   if (s.login.verifyCode !== emailVerifyData.code) {
-    throw new AuthenticateError("Invalid Code")
+    throw new ForbiddenError("Invalid Code")
   }
 
   // Active Login

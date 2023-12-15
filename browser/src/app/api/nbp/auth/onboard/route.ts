@@ -1,6 +1,7 @@
 import { onboarding, reloadSession } from "@/lib/auth";
 import { assertSession, castAndValidateData } from "@/lib/guard";
 import { fetchSession, setSession } from "@/lib/session";
+import { ForbiddenError, UnauthenticateError } from "@/schema/error";
 import { OnboardingDataValidator } from "@/schema/validator";
 import type { OnboardingData } from "@/types/auth";
 import { LoginStatus } from "@prisma/client";

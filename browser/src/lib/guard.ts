@@ -1,3 +1,4 @@
+import { InvalidInputError, UnauthenticateError } from "@/schema/error";
 import type { Session } from "@/types/auth";
 import { getPrismaClient } from "@/utils/prisma";
 
