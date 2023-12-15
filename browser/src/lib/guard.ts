@@ -1,7 +1,7 @@
 import type { Session } from "@/types/auth";
 import { getPrismaClient } from "@/utils/prisma";
 
-export function assertSession(session: Session): boolean {
+export function assertSession(session: Session | null): boolean {
   if (!session) return false
   if (!session.login) return false
   return true
@@ -27,7 +27,6 @@ export async function validateData(data: any, validator: any) {
   try {
     await validator.validate(data, {strict: true})
   } catch (err: any) {
-    console.error("Wrong Input Format: " + data)
     throw new InvalidInputError('wrong input format', err.errors)
   }
 }
@@ -43,7 +42,6 @@ export async function castAndValidateData(data: any, validator: any): Promise<an
     await validator.validate(ret, {strict: true})
     return ret
   } catch (err: any) {
-    console.error("Wrong Input Format: " + data)
     throw new InvalidInputError('wrong input format', err.errors)
   }
 }

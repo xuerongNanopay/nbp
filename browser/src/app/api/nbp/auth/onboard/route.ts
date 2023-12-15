@@ -6,9 +6,9 @@ import type { OnboardingData } from "@/types/auth";
 import { LoginStatus } from "@prisma/client";
 
 export async function POST(req: Request) {
-  try {
-    const session = await fetchSession()
+  const session = await fetchSession()
 
+  try {
     if ( session === null || !assertSession(session) ) {
       throw new UnauthenticateError('Please login')
     }
@@ -40,6 +40,8 @@ export async function POST(req: Request) {
     })
 
   } catch (err: any) {
+    console.error(session?.login?.id, err.toString())
+    
     const errorResponse = !err.errors ? {
       code: err.code,
       name: err.name,

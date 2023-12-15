@@ -96,8 +96,6 @@ export async function signUp(
   signUpData: SignUpData
 ): Promise<Session | null>  {
   
-  await validateData(signUpData, SignUpDataValidator)
-
   const { email, password } = signUpData
 
   try {
@@ -117,7 +115,8 @@ export async function signUp(
 
     return await reloadSessionOrThrow(login.id) 
   } catch (err: any) {
-    throw new PrismaError(err.code, err.message)
+    console.error("Prisma Error: ", err)
+    throw new InternalError()
   }
 }
 
@@ -155,19 +154,14 @@ export async function verifyEmail(
     })
     return await reloadSessionOrThrow(ns.id) 
   } catch (err: any) {
-    throw new PrismaError(err.code, err.message)
+    console.error("Prisma Error: ", err)
+    throw new InternalError()
   }
 }
 
 export async function refreshVerifyCode(
   session: Session,
 ) {
-  asserSessionOrThrow(session)
-
-  if ( session.login.status !== LoginStatus.AWAIT_VERIFY ) {
-    throw new AuthenticateError("Login is verified")
-  }
-
   try {
     const login = await getPrismaClient().login.update({
       where: {
@@ -177,19 +171,11 @@ export async function refreshVerifyCode(
         verifyCode: randSixDigits()
       }
     })
-    //TODO: send login.verifyCode to user email.
   } catch(err: any ) {
-    throw new PrismaError(err.code, err.message)
+    console.error("Prisma Error: ", err)
+    throw new InternalError()
   }
 }
-
-//TODO: send email to user with url+oneTimeToken
-// Check your email.
-// export async function retrieveLogin(
-//   forgetPasswordDate: ForgetPasswordData
-// ) {
-
-// }
 
 export async function onboarding(
   session: Session,
@@ -237,7 +223,8 @@ export async function onboarding(
     })
     return await reloadSession(session.login.id) 
   } catch (err: any) {
-    throw new PrismaError(err.code, err.message)
+    console.error("Prisma Error: ", err)
+    throw new InternalError()
   }
 }
 

@@ -10,6 +10,10 @@ abstract class NBPError implements Error {
     this.message = message
     if ( !! errors ) this.errors = errors
   }
+
+  toString(): string {
+    return JSON.stringify(this)
+  }
 }
 
 class BadRequestError extends NBPError {
@@ -65,11 +69,11 @@ class ForbiddenError extends NBPError {
 
 class InternalError extends NBPError {
 
-  constructor(message: string) {
+  constructor(...args:any) {
     super({
       code: 500,
       name: 'Internal Server Error',
-      message
+      message: args[0] ?? 'Please try later again'
     })
   }
 }
