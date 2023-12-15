@@ -1,5 +1,5 @@
 'use client'
-import type { SignInData } from "@/type";
+import type { SignInData } from "@/types/auth";
 import { useState } from "react"
 import { useFormik } from "formik"
 import { SignInDataValidator } from "@/schema/validator";

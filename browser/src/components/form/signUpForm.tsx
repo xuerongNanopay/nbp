@@ -43,28 +43,6 @@ export default function SignUpForm() {
     }
   }
 
-  const onboardingHandler = async ( e: SignUpData ) => {
-    try {
-      setIsSubmit(true)
-      const response = await fetch('/api/nbp/auth/onboarding',{
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(e)
-      })
-      const responsePayload = await response.json()
-      
-      if (responsePayload.code / 100 != 2) {
-        alert(responsePayload)
-        setIsSubmit(false)
-      }
-      route('/verify_email', )
-    } catch (err) {
-      alert(err)
-      setIsSubmit(false)
-    }
-  }
   const formik = useFormik({
     initialValues,
     validationSchema: SignUpDataValidator,
