@@ -6,9 +6,7 @@ import type { OnboardingData } from "@/types/auth";
 import { LoginStatus } from "@prisma/client";
 
 export async function POST(req: Request) {
-
   try {
-    const onboadingPayload: OnboardingData = await req.json()
     const session = await fetchSession()
 
     if ( session === null || !assertSession(session) ) {
