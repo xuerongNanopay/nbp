@@ -14,24 +14,6 @@ export async function POST(req: NextRequest) {
     userId: 222
   }
 
-  console.log(signInData)
-  return Response.json(user,{
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-}
-
-export async function GET() {
-  //TODO: load user from DB.
-  const user = {
-    loginId: 111,
-    userId: 222
-  }
-
-  // await setSession(dummySessionPayload)
-
   return Response.json(user,{
       status: 200,
       headers: {

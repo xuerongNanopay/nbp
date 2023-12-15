@@ -6,8 +6,8 @@ export interface SignInData {
 
 //TODO: use Pcik to filter out sensitive infos.
 export interface Session extends JWT {
-  login: Pick<Login, 'id' | 'email', 'status'>,
-  user?: Pick<User, 'id', 'firstnName', 'lastName', 'avatarUrl', 'status', 'role'>
+  login: Pick<Login, 'id' | 'email' | 'status'>,
+  user?: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatarUrl' | 'status' | 'role'> | null
 }
 
 export interface SignUpData {

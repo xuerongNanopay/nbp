@@ -7,13 +7,16 @@ import {
   Button
 } from "@nextui-org/react"
 
-import { EmailVerifyData } from '@/type'
+import { EmailVerifyData } from '@/types/auth'
 import { EmailVerifyDataValidator } from "@/schema/validator"
 
 export default function EmailVerifyForm() {
   const initialValues: EmailVerifyData = {code: ''}
 
-  const emailVerifyFormHandle = (e: EmailVerifyData) => { console.log(e) }
+  const emailVerifyFormHandle = (e: EmailVerifyData) => { 
+
+  }
+
   const resendCodeHandler = () => { alert("TODO: send user new code") }
 
   const formik = useFormik({

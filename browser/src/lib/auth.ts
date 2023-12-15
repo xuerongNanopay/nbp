@@ -49,7 +49,7 @@ export async function reloadSession(
     if ( !login ) return null;
 
     return {
-      login: {...login, owner: undefined},
+      login: {...login},
       user: login.owner
     }
     
@@ -113,6 +113,7 @@ export async function signUp(
     const existlogin = await getPrismaClient().login.findUnique({
       where: {
         email: signUpData.email
+        //Check for delete?
       },
       select: {
         id: true
@@ -156,9 +157,9 @@ export async function verifyEmail(
     return s
   }
 
-  if (s.login.verifyCode !== emailVerifyData.code) {
-    throw new ForbiddenError("Invalid Code")
-  }
+  // if (s.login.verifyCode !== emailVerifyData.code) {
+  //   throw new ForbiddenError("Invalid Code")
+  // }
 
   // Active Login
   try {
