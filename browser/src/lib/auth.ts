@@ -15,7 +15,7 @@ import {
   asserSessionOrThrow,
   validateData
 } from './guard'
-import { ForbiddenError, InternalError, InvalidInputError, ResourceNoFoundError, UnauthenticateError } from '@/schema/error'
+import { BadRequestError, ForbiddenError, InternalError, InvalidInputError, NBPError, ResourceNoFoundError, UnauthenticateError } from '@/schema/error'
 
 const Session_Project = {
   id: true,
@@ -105,13 +105,23 @@ export async function signIn(
 
 export async function signUp(
   signUpData: SignUpData
-): Promise<Session | null>  {
+): Promise<Pick<Login, 'id'> | null>  {
   
   const { email, password } = signUpData
 
   try {
+    const existlogin = await getPrismaClient().login.findUnique({
+      where: {
+        email: signUpData.email
+      },
+      select: {
+        id: true
+      }
+    })
+    if (!!existlogin) throw new InvalidInputError('Email is already being used')
+
     //TODO: hash password
-    const login = await getPrismaClient().login.create({
+    return await getPrismaClient().login.create({
       data: {
         email,
         password,
@@ -122,10 +132,9 @@ export async function signUp(
       }
     })
 
-    //TODO: send email to user
-
-    return await reloadSessionOrThrow(login.id) 
   } catch (err: any) {
+    if ( err instanceof NBPError ) throw err
+
     console.error("Prisma Error: ", err)
     throw new InternalError()
   }

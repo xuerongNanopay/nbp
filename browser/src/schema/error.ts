@@ -1,4 +1,4 @@
-abstract class NBPError implements Error {
+export abstract class NBPError implements Error {
   code: number
   name: string
   message: string
@@ -25,7 +25,7 @@ export class BadRequestError extends NBPError {
   constructor({name, message, errors}: {name: string, message: string, errors?: string[] | null | undefined}) {
     super({
       code: 400,
-      name: 'InvalidInput',
+      name: name ?? 'InvalidInput',
       message,
       errors
     })

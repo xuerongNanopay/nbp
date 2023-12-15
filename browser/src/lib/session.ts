@@ -48,8 +48,10 @@ export async function setSession(payload: Awaited<ReturnType<typeof cookieSessio
 
 // Using in signOut
 export async function cleanSession() {
-  const payload = await fetchSession()
-  if (!payload) return
   await cookieSessionStore.cleanSession(nextCookies)
-  await cookieSessionStore.applySession(nextCookies, payload, -1)
+  
+  const payload = await fetchSession()
+  if (!!payload) {
+    await cookieSessionStore.applySession(nextCookies, payload, -1)
+  }
 }
