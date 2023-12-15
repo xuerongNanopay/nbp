@@ -8,8 +8,8 @@ export function assertSession(session: Session): boolean {
 }
 
 export function asserSessionOrThrow(session: Session) {
-  if (!session) throw new AuthenticateError("Please Login!")
-  if (!session.login) throw new AuthenticateError("Please Login!")
+  if (!session) throw new UnauthenticateError("Please Login!")
+  if (!session.login) throw new UnauthenticateError("Please Login!")
 }
 
 // export function assertUserSession(session: Session) {
@@ -27,18 +27,23 @@ export async function validateData(data: any, validator: any) {
   try {
     await validator.validate(data, {strict: true})
   } catch (err: any) {
-    // ValidationError
-    throw new InvalidInputError(err.name, err.errors)
+    console.error("Wrong Input Format: " + data)
+    throw new InvalidInputError('wrong input format', err.errors)
   }
 }
 
 export async function castAndValidateData(data: any, validator: any): Promise<any> {
+  let ret = validator.cast(data) 
+  if (!ret) {
+    console.error("Wrong Input Type: " + data)
+    throw new InvalidInputError("wrong input type")
+  }
+
   try {
-    let ret = validator.cast(data)
     await validator.validate(ret, {strict: true})
     return ret
   } catch (err: any) {
-    // ValidationError
-    throw new InvalidInputError(err.name, err.errors)
+    console.error("Wrong Input Format: " + data)
+    throw new InvalidInputError('wrong input format', err.errors)
   }
 }

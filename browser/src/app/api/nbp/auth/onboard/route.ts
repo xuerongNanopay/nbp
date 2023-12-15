@@ -1,71 +1,29 @@
 import { onboarding, reloadSession } from "@/lib/auth";
-import { assertSession, castAndValidateData, validateData } from "@/lib/guard";
+import { assertSession, castAndValidateData } from "@/lib/guard";
 import { fetchSession, setSession } from "@/lib/session";
 import { OnboardingDataValidator } from "@/schema/validator";
 import type { OnboardingData } from "@/types/auth";
 import { LoginStatus } from "@prisma/client";
 
 export async function POST(req: Request) {
-  const onboadingPayload: OnboardingData = await req.json()
-
-  const session = await fetchSession()
-
-  if ( session === null || !assertSession(session) ) {
-    return Response.json({
-      code: '401',
-      message: 'Unauthentication Error'
-    }, {
-      status: 401,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-  }
 
   try {
+    const onboadingPayload: OnboardingData = await req.json()
+    const session = await fetchSession()
+
+    if ( session === null || !assertSession(session) ) {
+      throw new UnauthenticateError('Please login')
+    }
+
     const s = await reloadSession(session.login.id)
     if ( !s || !s.login  || s.login.status !== LoginStatus.ACTIVE ) {
-      return Response.json({
-        code: '401',
-        message: 'Unauthorized: login is not active'
-      }, {
-        status: 401,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+      throw new ForbiddenError('Please Valid Email')
     }
 
-    if ( !!s.user ) {
-      return Response.json({
-        code: '403',
-        message: 'Forbidden: duplicated user'
-      }, {
-        status: 403,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-    }
+    if ( !!s.user ) throw new ForbiddenError('Duplicate User')
 
     const onboardPayload = await req.json()
-    let onboardData: OnboardingData
-
-    try {
-      onboardData = await castAndValidateData(onboardPayload, OnboardingDataValidator) as OnboardingData
-    } catch ( err: any ) {
-      return Response.json({
-        code: '400',
-        name: err.name,
-        message: err.message,
-        errors: err.errors
-      }, {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-    }
+    const onboardData = await castAndValidateData(onboardPayload, OnboardingDataValidator) as OnboardingData
 
     const newSession = await onboarding(s, onboardData)
 
@@ -83,13 +41,19 @@ export async function POST(req: Request) {
       }
     })
 
-  } catch (err) {
-    console.log(err)
-    return Response.json({
-      code: '500',
-      message: 'Internal Server Error'
-    }, {
-      status: 500,
+  } catch (err: any) {
+    const errorResponse = !err.errors ? {
+      code: err.code,
+      name: err.name,
+      message: err.message
+    } : {
+      code: err.code,
+      name: err.name,
+      message: err.message,
+      errors: err.errors
+    }
+    return Response.json(errorResponse, {
+      status: err.code ?? 500,
       headers: {
         'Content-Type': 'application/json'
       }
