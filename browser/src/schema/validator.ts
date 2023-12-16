@@ -5,7 +5,7 @@ import {
   SignInData, 
   SignUpData
 } from "@/types/auth"
-import type { OnboardingData } from "@/types/auth"
+import type { OnboardingData, UpdatePasswordData } from "@/types/auth"
 import type { ContactData} from "@/types/contact"
 import * as Yup from 'yup';
 import dayjs from "dayjs"
@@ -112,4 +112,15 @@ export const ChangePassowrdDataValidator = Yup.object<ChangePassowrdData>({
               .matches(/[a-z]/, formatCharacterValidationError("lowercase"))
               .matches(/[A-Z]/, formatCharacterValidationError("uppercase")),
   reNewPassword: Yup.string().required("Please re-type your password").oneOf([Yup.ref("newPassword")], "Passwords does not match")
+})
+
+export const UpdatePasswordDataValidator = Yup.object<UpdatePasswordData>({
+  originPassword: Yup.string().required('Required'),
+  newPassword: Yup.string()
+              .min(8, "Password must have at least 8 characters")
+              .matches(/[0-9]/, formatCharacterValidationError("digit"))
+              .matches(/[a-z]/, formatCharacterValidationError("lowercase"))
+              .matches(/[A-Z]/, formatCharacterValidationError("uppercase")),
+  reNewPassword: Yup.string().required("Please re-type your password").oneOf([Yup.ref("newPassword")], "Passwords does not match")
+  
 })
