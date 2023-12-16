@@ -1,15 +1,21 @@
 import Nav from '@/components/layout/nav'
 import SideNav from '@/components/layout/sideNav'
-// import { UserProvider } from '@/hook/userProvider'
-import { permanentRedirect } from 'next/navigation'
-
+import { fetchSession } from '@/lib/session'
+import { LoginStatus } from '@prisma/client'
+import { redirect } from 'next/navigation'
 
 export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  
+  const session = await fetchSession()
+  if(!session || !session.login) redirect('/nbp/sign_out')
+
+  if (session.login.status === LoginStatus.AWAIT_VERIFY) redirect('/nbp/verify_email')
+  if (session.user === null) redirect('/nbp/onboarding')
+
+
   return (
     // TODO: use nextAuth backEnd UI
     // <UserProvider value={111}>

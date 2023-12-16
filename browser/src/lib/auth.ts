@@ -96,7 +96,10 @@ export async function signIn(
   const login = await getPrismaClient().login.findUnique({
     where: {
       email,
-      password
+      password,
+      status: {
+        not: LoginStatus.DELETE
+      }
     },
     select: Session_Project
   })

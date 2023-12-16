@@ -8,7 +8,7 @@ export default function ForgetPassword() {
       <div className="w-full flex flex-col items-center">
         <ForgetPasswrodForm></ForgetPasswrodForm>
         <div className="flex justify-center mt-4">
-          <Link href="/sign_in">Back to Sign In</Link>
+          <Link href="/nbp/sign_in">Back to Sign In</Link>
         </div>
       </div>
     </div>

@@ -8,7 +8,7 @@ export default function SignUp() {
       <div className="w-full flex flex-col items-center">
         <SignUpForm></SignUpForm>
         <div className="flex justify-center mt-4">
-          <div>Aleady have an account? <Link href="/sign_in">Sign In</Link></div>
+          <div>Aleady have an account? <Link href="/nbp/sign_in">Sign In</Link></div>
         </div>
       </div>
     </div>

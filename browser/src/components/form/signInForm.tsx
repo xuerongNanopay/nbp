@@ -1,8 +1,9 @@
 'use client'
-import type { SignInData } from "@/types/auth";
+import type { SignInData } from "@/types/auth"
 import { useState } from "react"
 import { useFormik } from "formik"
-import { SignInDataValidator } from "@/schema/validator";
+import { useRouter } from 'next/navigation'
+import { SignInDataValidator } from "@/schema/validator"
 import {
   Input,
   Button,
@@ -13,19 +14,32 @@ import { EyeSlashFilledIcon } from "@/icons/EyeSlashFilledIcon"
 import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
 
 export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
+  const router = useRouter()
+  const [isSubmit, setIsSubmit] = useState(false)
   const [ isPasswordVisible, setIsPasswordVisible ] = useState(false)
   const initialValues: SignInData = {email: '', password: ''}
 
-  const signIn = async (e: SignInData) => { 
-    console.log(e)
-    const resp = await fetch('/api/signin', {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(e),
-    })
-    console.log(await resp.json())
+  const signIn = async (e: SignInData) => {
+    try {
+      setIsSubmit(true)
+      const response = await fetch('/api/nbp/auth/sign_in', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(e),
+      })
+      const responsePayload = await response.json()
+      if (responsePayload.code === 200) {
+        router.replace('/nbp/dashboard')
+      } else {
+        alert(responsePayload)
+        setIsSubmit(false)
+      }
+    } catch (err: any) {
+      alert(err)
+      setIsSubmit(false)
+    }
   }
 
   const formik = useFormik({
@@ -73,6 +87,7 @@ export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
         <Button 
           type="submit"
           color="primary"
+          isLoading={isSubmit}
           className={`${!forgetPWLink ? 'mt-4': ''}`}
           size="md"
           isDisabled={!(formik.isValid && formik.dirty)}
