@@ -15,7 +15,13 @@ import {
   asserSessionOrThrow,
   validateData
 } from './guard'
-import { BadRequestError, ForbiddenError, InternalError, InvalidInputError, NBPError, ResourceNoFoundError, UnauthenticateError } from '@/schema/error'
+import { 
+  InternalError, 
+  InvalidInputError, 
+  NBPError, 
+  ResourceNoFoundError, 
+  UnauthenticateError 
+} from '@/schema/error'
 
 const Session_Project = {
   id: true,
@@ -144,57 +150,49 @@ export async function signUp(
 export async function verifyEmail(
   session: Session,
   emailVerifyData: EmailVerifyData
-): Promise<Session> {
+): Promise<Login | null> {
 
-  asserSessionOrThrow(session)
-  await validateData(emailVerifyData, EmailVerifyDataValidator)
-
-  const s = await reloadSession(session.login.id)
-
-  if (!s) throw new UnauthenticateError("Please Login!")
-
-  if (s.login.status !== LoginStatus.AWAIT_VERIFY) {
-    return s
-  }
-
-  // if (s.login.verifyCode !== emailVerifyData.code) {
-  //   throw new ForbiddenError("Invalid Code")
-  // }
-
-  // Active Login
   try {
-    const ns = await getPrismaClient().login.update({
+    const login = await getPrismaClient().login.update({
       where: {
-        id: s.login.id
+        id: session.login.id,
+        verifyCode: emailVerifyData.code
       },
       data: {
         status: LoginStatus.ACTIVE,
         verifyCodeAt: new Date()
       },
-      select: Session_Project
     })
-    return await reloadSessionOrThrow(ns.id) 
+    return login
   } catch (err: any) {
-    console.error("Prisma Error: ", err)
-    throw new InternalError()
+    if ( err.code === 'P2025' ) {
+      throw new InvalidInputError('Invalid Code')
+    } else {
+      console.error("Prisma Error: ", err)
+      throw new InternalError()
+    }
   }
 }
 
 export async function refreshVerifyCode(
   session: Session,
-) {
+): Promise<Pick<Login, 'id' | 'email' | 'verifyCode'> | undefined> {
   try {
-    const login = await getPrismaClient().login.update({
+    return await getPrismaClient().login.update({
       where: {
         id: session.login.id
       },
       data: {
         verifyCode: randSixDigits()
+      },
+      select: {
+        id: true,
+        verifyCode: true,
+        email: true
       }
     })
   } catch(err: any ) {
     console.error("Prisma Error: ", err)
-    throw new InternalError()
   }
 }
 

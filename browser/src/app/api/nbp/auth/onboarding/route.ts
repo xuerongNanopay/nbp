@@ -10,10 +10,11 @@ export async function POST(req: Request) {
   const session = await fetchSession()
 
   try {
-    if ( session === null || !assertSession(session) ) {
+    if ( !session || !assertSession(session) ) {
       throw new UnauthenticateError('Please login')
     }
-
+    
+    //THINK: Using DB transaction?
     const s = await reloadSession(session.login.id)
     if ( !s || !s.login  || s.login.status !== LoginStatus.ACTIVE ) {
       throw new ForbiddenError('Please Valid Email')
@@ -44,8 +45,6 @@ export async function POST(req: Request) {
 
   } catch (err: any) {
     console.error(session?.login?.id, err.toString())
-    //During onboarding if any error happen. clean session force user re-login.
-    await cleanSession()
     
     const errorResponse = !err.errors ? {
       code: err.code,

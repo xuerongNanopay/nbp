@@ -1,5 +1,7 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+
 import { 
   useEffect,
   useState
@@ -43,6 +45,7 @@ const initialValues: OnboardingData = {
 }
 
 export default function OnboardingForm() {
+  const router = useRouter()
   const [isSubmit, setIsSubmit] = useState(false)
   const onboardingHandler = async ( e: OnboardingData ) => {
     //TODO: make to true after test done.
@@ -57,14 +60,18 @@ export default function OnboardingForm() {
       })
       const responsePayload = await response.json()
       
-      if (responsePayload.code / 100 != 2) {
+      if (responsePayload.code === 201 ) {
+        router.replace('/nbp/dashboard')
         //redirect to sign out
         //TODO: fetch interceptro for 401 error.
+      } else {
+        //TODO: redirect to dashboard. if message is duplicate user.
+        alert(responsePayload)
+        setIsSubmit(false)
       }
-
-
     } catch (err) {
-      console.log(err)
+      alert(err)
+      setIsSubmit(false)
     }
   }
 

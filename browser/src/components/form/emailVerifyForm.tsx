@@ -1,7 +1,8 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+import { useState } from "react"
 import { useFormik } from "formik"
-import * as Yup from 'yup'
 import {
   Input,
   Button
@@ -11,13 +12,54 @@ import { EmailVerifyData } from '@/types/auth'
 import { EmailVerifyDataValidator } from "@/schema/validator"
 
 export default function EmailVerifyForm() {
+  const router = useRouter()
+  const [isSubmit, setIsSubmit] = useState(false)
   const initialValues: EmailVerifyData = {code: ''}
 
-  const emailVerifyFormHandle = (e: EmailVerifyData) => { 
+  const emailVerifyFormHandle = async (e: EmailVerifyData) => { 
+    try {
+      setIsSubmit(true)
+      const response = await fetch('/api/nbp/auth/verify_email',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(e)
+      })
+      const responsePayload = await response.json()
 
+      if (responsePayload.code === 200) {
+        router.replace('/nbp/onboarding')
+      } else {
+        alert(responsePayload)
+        setIsSubmit(false)
+      }
+
+    } catch (err: any) {
+      alert(err)
+      setIsSubmit(false)
+    }
   }
 
-  const resendCodeHandler = () => { alert("TODO: send user new code") }
+  const resendCodeHandler = async () => { 
+    try {
+      setIsSubmit(true)
+      const response = await fetch('/api/nbp/auth/refresh_code')
+      const responsePayload = await response.json()
+
+      if (responsePayload.code === 200) {
+        alert('Please check your email: ' + responsePayload.data.email)
+        setIsSubmit(false)
+      } else {
+        alert(responsePayload)
+        setIsSubmit(false)
+      }
+
+    } catch (err: any) {
+      alert(err)
+      setIsSubmit(false)
+    }
+  }
 
   const formik = useFormik({
     initialValues,
@@ -46,6 +88,7 @@ export default function EmailVerifyForm() {
           color="primary"
           className="mt-2"
           size="md"
+          isLoading={isSubmit}
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Submit
@@ -54,6 +97,7 @@ export default function EmailVerifyForm() {
           type="button"
           color="primary"
           size="md"
+          isLoading={isSubmit}
           variant="light"
           onClick={_ => resendCodeHandler()}
         >

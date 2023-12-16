@@ -40,7 +40,7 @@ export const EmailVerifyDataValidator = Yup.object<EmailVerifyData>({
             .min(6, "wrong format")
             .max(6, "wrong format")
 })
-EmailVerifyDataValidator.cast
+
 export const OnboardingDataValidator = Yup.object<OnboardingData>({
   firstName: Yup.string().trim().required('Required'),
   lastName: Yup.string().trim().required('Required'),
