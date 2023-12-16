@@ -12,10 +12,10 @@ import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
 import { ChangePassowrdData } from "@/types/auth";
 import { ChangePassowrdDataValidator } from "@/schema/validator";
 
-export default function ChangePasswordForm({oneTimeToken}: {oneTimeToken: string}) {
+export default function ChangePasswordForm({email, oneTimeToken}: {email: string, oneTimeToken: string}) {
   const [ isNewPasswordVisible, setIsNewPasswordVisible ] = useState(false)
   const [ isReNewPasswordVisible, setIsReNewPasswordVisible ] = useState(false)
-  const initialValues: ChangePassowrdData = { oneTimeToken, newPassword: '', reNewPassword: ''}
+  const initialValues: ChangePassowrdData = { email, oneTimeToken, newPassword: '', reNewPassword: ''}
 
   const submitNewPassword = (e: ChangePassowrdData) => { console.log(e) }
   const formik = useFormik({
@@ -36,6 +36,7 @@ export default function ChangePasswordForm({oneTimeToken}: {oneTimeToken: string
           label="New Password"
           variant="bordered"
           color="primary"
+          autoComplete="off"
           type={isNewPasswordVisible ? "text" : "password"}
           endContent={
             <button className="focus:outline-none" type="button" onClick={() =>setIsNewPasswordVisible(pre => !pre)}>
@@ -57,6 +58,7 @@ export default function ChangePasswordForm({oneTimeToken}: {oneTimeToken: string
           variant="bordered"
           color="primary"
           size="sm"
+          autoComplete="off"
           type={isReNewPasswordVisible ? "text" : "password"}
           endContent={
             <button className="focus:outline-none" type="button" onClick={() =>setIsReNewPasswordVisible(pre => !pre)}>

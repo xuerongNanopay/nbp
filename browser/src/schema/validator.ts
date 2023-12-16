@@ -106,6 +106,7 @@ export const ForgetPasswordDataValidator = Yup.object<ForgetPasswordData>({
 })
 
 export const ChangePassowrdDataValidator = Yup.object<ChangePassowrdData>({
+  email: Yup.string().email('Invalid email address').required('Required'),
   oneTimeToken: Yup.string().required(),
   newPassword: Yup.string()
               .min(8, "Password must have at least 8 characters")
@@ -113,6 +114,11 @@ export const ChangePassowrdDataValidator = Yup.object<ChangePassowrdData>({
               .matches(/[a-z]/, formatCharacterValidationError("lowercase"))
               .matches(/[A-Z]/, formatCharacterValidationError("uppercase")),
   reNewPassword: Yup.string().required("Please re-type your password").oneOf([Yup.ref("newPassword")], "Passwords does not match")
+})
+
+export const ChangePasswordParamsValidator = Yup.object<Pick<ChangePassowrdData, 'email' | 'oneTimeToken'>>({
+  email: Yup.string().email('Invalid email address').required('Required'),
+  oneTimeToken: Yup.string().required(),
 })
 
 export const UpdatePasswordDataValidator = Yup.object<UpdatePasswordData>({

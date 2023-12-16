@@ -6,6 +6,7 @@ import { ForgetPasswordDataValidator } from "@/schema/validator";
 
 export async function POST(req: Request) {
   const session = await fetchSession()
+  const url = new URL(req.url)
 
   try {
     if ( !!session || assertSession(session) ) {
@@ -15,11 +16,16 @@ export async function POST(req: Request) {
     const forgetPassowrdPayload = await req.json()
     const forgetPassowrdData = await castAndValidateData(forgetPassowrdPayload, ForgetPasswordDataValidator)
 
-    const login = forgetPassword(forgetPassowrdData)
+    const login = await forgetPassword(forgetPassowrdData)
     if (!login) {
       //return success because we don't want to leak sensitive hint to the user.
     } else {
-      //TODO: send email to user
+      const {email, recoverToken} = login
+      url.pathname = '/nbp/change_password'
+      url.searchParams.set('email', email)
+      url.searchParams.set('oneTimeToken', recoverToken??'')
+      console.log("retrieve URL: ", url.toString())
+      //TODO: send email to user.
     }
 
     return Response.json({
