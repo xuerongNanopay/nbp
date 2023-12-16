@@ -16,14 +16,17 @@ export async function POST(req: Request) {
     const changePasswordPayload = await req.json()
     const changePasswordData = await castAndValidateData(changePasswordPayload, ChangePassowrdDataValidator) as ChangePassowrdData
 
-    const isSuccess = await changePassowrd(changePasswordData)
-    if ( ! isSuccess ) throw new InternalError()
+    const login = await changePassowrd(changePasswordData)
+    if (!login) throw new InternalError()
+
+    //TODO: log password change for security purpose
+    //TODO: send email to notify user.
 
     return Response.json({
       code: 200,
       data: {
         name: 'Success',
-        message: 'Change Password Success. Please login in',
+        message: 'Password Change Success. Please login in',
       }
     }, {
       status: 200,

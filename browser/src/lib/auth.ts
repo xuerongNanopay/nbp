@@ -13,6 +13,7 @@ import { randSixDigits } from '@/utils/idUtil'
 import { v4 as uuidv4 } from 'uuid'
 
 import { 
+  ForbiddenError,
   InternalError, 
   InvalidInputError, 
   NBPError, 
@@ -209,7 +210,6 @@ export async function forgetPassword(
 Pick<Login, 'id' | 'recoverToken' | 'recoverTokenExpireAt' | 'email'>
 | null> {
   try {
-    console.log('aaa')
     const login = await getPrismaClient().login.findUnique({
       where: {
         email: data.email,
@@ -256,10 +256,54 @@ Pick<Login, 'id' | 'recoverToken' | 'recoverTokenExpireAt' | 'email'>
 }
 
 export async function changePassowrd(
-  data: ChangePassowrdData
-): Promise<boolean> {
+  {email, oneTimeToken, newPassword}: ChangePassowrdData
+): Promise<Pick<Login, 'id'| 'email'> | null> {
+  try {
+    const login = await getPrismaClient().login.findUnique({
+      where: {
+        email,
+        status: {
+          not: LoginStatus.DELETE
+        }   
+      },
+      select: {
+        id: true,
+        email: true,
+        recoverToken: true,
+        recoverTokenExpireAt: true
+      }
+    })
+    if ( !login ) throw new ForbiddenError("Unable to update password")
+    if ( !login.recoverToken || 
+          login.recoverToken !== oneTimeToken ||
+          !login.recoverTokenExpireAt ||
+          login.recoverTokenExpireAt.getTime() > new Date().getTime()
+    ) {
+      throw new InvalidInputError("Token expired! please ask for new one")
+    }
 
-  return false
+    //TODO: hash password
+    return await getPrismaClient().login.update({
+      where: {
+        id: login.id
+      },
+      data: {
+        recoverToken: null,
+        recoverTokenExpireAt: null,
+        password: newPassword
+      },
+      select: {
+        id: true,
+        email: true
+      }
+    })
+
+  } catch (err: any) {
+    if ( err instanceof NBPError ) throw err
+
+    console.error("changePasswordData", {email, oneTimeToken}, "Prisma Error: ", err)
+    throw new InternalError()
+  }
 }
 
 export async function onboarding(

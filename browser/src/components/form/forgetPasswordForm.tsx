@@ -7,16 +7,13 @@ import {
 } from "@nextui-org/react";
 import { ForgetPasswordData } from "@/types/auth";
 import { ForgetPasswordDataValidator } from "@/schema/validator";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function ForgetPasswrodForm() {
-  const router = useRouter()
   const [isSubmit, setIsSubmit] = useState(false)
   const initialValues: ForgetPasswordData = {email: ''}
 
   const forgetPasswordHandle = async (e: ForgetPasswordData) => { 
-    //TODO: make to true after test done.
     setIsSubmit(false)
     try {
       const response = await fetch('/api/nbp/auth/forget_password',{

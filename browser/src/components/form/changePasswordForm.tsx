@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from "next/navigation";
 import { useState } from "react"
 import { useFormik } from "formik"
 import {
@@ -13,11 +14,37 @@ import { ChangePassowrdData } from "@/types/auth";
 import { ChangePassowrdDataValidator } from "@/schema/validator";
 
 export default function ChangePasswordForm({email, oneTimeToken}: {email: string, oneTimeToken: string}) {
+  const router = useRouter()
+  const [isSubmit, setIsSubmit] = useState(false)
   const [ isNewPasswordVisible, setIsNewPasswordVisible ] = useState(false)
   const [ isReNewPasswordVisible, setIsReNewPasswordVisible ] = useState(false)
   const initialValues: ChangePassowrdData = { email, oneTimeToken, newPassword: '', reNewPassword: ''}
 
-  const submitNewPassword = (e: ChangePassowrdData) => { console.log(e) }
+  const submitNewPassword = async (e: ChangePassowrdData) => { 
+    setIsSubmit(false)
+    try {
+      const response = await fetch('/api/nbp/auth/change_password',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(e)
+      })
+      const responsePayload = await response.json()
+      
+      if (responsePayload.code === 200 ) {
+        alert("Password Change Success. Please login in")
+        router.replace('/nbp/sign_in')
+      } else {
+        //TODO: redirect to dashboard. if message is duplicate user.
+        alert(responsePayload)
+        setIsSubmit(false)
+      }
+    } catch (err) {
+      alert(err)
+      setIsSubmit(false)
+    }
+  }
   const formik = useFormik({
     initialValues,
     validationSchema: ChangePassowrdDataValidator,
@@ -77,6 +104,7 @@ export default function ChangePasswordForm({email, oneTimeToken}: {email: string
           color="primary"
           className="mt-4"
           size="md"
+          isLoading={isSubmit}
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Change Password
