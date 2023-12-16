@@ -28,18 +28,20 @@ export default function UpdatePasswordForm() {
 
   return (
     // Investigating Found 2 elements with non-unique id
+    //TODO: type shift will create two input element with same key
+    // find why to resolve it.
     <div className="w-full max-w-sm">
       <h4 className="text-2xl font-bold mb-2 text-center">Update your password</h4>
       <h6 className="text-center mb-4">Create a new password for your account</h6>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Input
-          key="originPassword"
           id="originPassword"
           type={isOriginPasswordVisible ? "text" : "password"}
           variant="bordered" 
           label="Origin Password"
           color="primary"
           size="sm"
+          autoComplete="off"
           endContent={
             <button className="focus:outline-none" type="button" onClick={() =>setIsOriginPasswordVisible(pre => !pre)}>
               {isOriginPasswordVisible ? (
@@ -53,11 +55,11 @@ export default function UpdatePasswordForm() {
           errorMessage={formik.touched.originPassword && formik.errors.originPassword}
         />
         <Input
-          key="newPassword"
           id="newPassword"
           label="New Password"
           variant="bordered"
           color="primary"
+          autoComplete="off"
           type={isNewPasswordVisible ? "text" : "password"}
           endContent={
             <button className="focus:outline-none" type="button" onClick={() =>setIsNewPasswordVisible(pre => !pre)}>
@@ -73,12 +75,12 @@ export default function UpdatePasswordForm() {
           errorMessage={formik.touched.newPassword && formik.errors.newPassword}
         />
         <Input
-          key="reNewPassword"
           id="reNewPassword"
           label="Re-New Password"
           variant="bordered"
           color="primary"
           size="sm"
+          autoComplete="off"
           type={isReNewPasswordVisible ? "text" : "password"}
           endContent={
             <button className="focus:outline-none" type="button" onClick={() =>setIsReNewPasswordVisible(pre => !pre)}>

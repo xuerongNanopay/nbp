@@ -1,23 +1,25 @@
-const  menus: Menus = [
+import { Menu } from "@/types/theme"
+
+const menus: Menu[] = [
   {
     id: 'dashboard',
     name: 'Dashboard',
-    href: '/dashboard'
+    href: '/nbp/dashboard'
   },
   {
     id: 'sendMoney',
     name: 'Send Money',
-    href: '/transfer'
+    href: '/nbp/transfer'
   },
   {
     id: 'contacts',
     name: 'Contacts',
-    href: '/contacts'
+    href: '/nbp/contacts'
   },
   {
     id: 'transactions',
     name: 'Transactions',
-    href: '/transactions'
+    href: '/nbp/transactions'
   }
 ]
 export default menus

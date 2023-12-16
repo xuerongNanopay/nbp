@@ -1,8 +1,8 @@
 import { 
   Navbar,
-  NavbarBrand,
   NavbarContent,
-  Button
+  Button,
+  Link
 } from "@nextui-org/react"
 import { CloseIcon } from "@/icons/CloseIcon"
 import { PressEvent } from "@react-types/shared"
@@ -24,6 +24,8 @@ export default function IconHeaderWithLogout({className, closeHandler}: Props) {
           <Button 
             color="primary" 
             variant="ghost"
+            href="/nbp/sign_out"
+            as={Link}
             radius="full"
             className="absolute right-0 md:right-2 px-0"
             onPressEnd = {closeHandler}

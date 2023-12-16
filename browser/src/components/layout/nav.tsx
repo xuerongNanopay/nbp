@@ -22,6 +22,7 @@ import {
 
 import NextLink from "next/link";
 import menus from '@/constants/menu'
+import { Menu } from "@/types/theme"
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -79,16 +80,16 @@ export default function Nav() {
                 <p className="font-semibold">zoey@example.com</p>
               </DropdownItem>
               <DropdownItem textValue="profile" key="profile">
-                <Link href="/profile" className="text-slate-950 w-full">profile</Link>
+                <Link href="/nbp/profile" className="text-slate-950 w-full">profile</Link>
               </DropdownItem>
               <DropdownItem textValue="notifications" key="notifications">
-                <Link href="/notifications" className="text-slate-950 w-full">notifications</Link>
+                <Link href="/nbp/notifications" className="text-slate-950 w-full">notifications</Link>
               </DropdownItem>
               <DropdownItem textValue="about" key="about">
-                <Link href="/about" className="text-slate-950 w-full">about</Link>
+                <Link href="/nbp/about" className="text-slate-950 w-full">about</Link>
               </DropdownItem>
               <DropdownItem textValue= "logout" key="logout" color="danger" onPress={_ => alert("TODO: Logout")}>
-                <p>Log Out</p>
+                <Link href="/nbp/sign_out" className="text-slate-950 w-full">Log Out</Link>
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>

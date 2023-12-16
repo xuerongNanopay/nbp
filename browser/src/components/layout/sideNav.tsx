@@ -57,16 +57,16 @@ export default function SideNav() {
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
             <DropdownItem textValue="profile" key="profile">
-              <Link href="/profile" className="text-slate-950 w-full">profile</Link>
+              <Link href="/nbp/profile" className="text-slate-950 w-full">profile</Link>
             </DropdownItem>
             <DropdownItem textValue="notifications" key="notifications">
-              <Link href="/notifications" className="text-slate-950 w-full">notifications</Link>
+              <Link href="/nbp/notifications" className="text-slate-950 w-full">notifications</Link>
             </DropdownItem>
             <DropdownItem textValue="about" key="about">
-              <Link href="/about" className="text-slate-950 w-full">about</Link>
+              <Link href="/nbp/about" className="text-slate-950 w-full">about</Link>
             </DropdownItem>
-            <DropdownItem textValue= "logout" key="logout" color="danger" onPress={_ => alert("TODO: Logout")}>
-              <p>Log Out</p>
+            <DropdownItem textValue= "logout" key="logout" color="danger">
+              <Link href="/nbp/sign_out" className="text-slate-950 w-full">Log Out</Link>
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
