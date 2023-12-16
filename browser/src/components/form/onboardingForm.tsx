@@ -32,7 +32,7 @@ const initialValues: OnboardingData = {
   address2: '',
   city: '',
   province: '',
-  country: 'Canada',
+  country: 'CA',
   postalCode: '',
   phoneNumber: '',
   dob: '',
@@ -91,6 +91,9 @@ export default function OnboardingForm() {
   useEffect(() => {
     const abortController = new AbortController()
     const fetchRegions = async () => {
+      if (!formik.values.country) {
+        return
+      }
       setIsRegionsLoading(true)
       try {
         const response = await fetch(`/api/nbp/common/region?countryCode=CA`, {signal: abortController.signal})
@@ -106,7 +109,7 @@ export default function OnboardingForm() {
     return () => {
       abortController.abort();
     }
-  }, [])
+  }, [formik.values.country])
 
   useEffect(() => {
     const abortController = new AbortController()
@@ -226,8 +229,33 @@ export default function OnboardingForm() {
             size="sm"
             disabled
             {...formik.getFieldProps('country')}
+            value="Canada"
             errorMessage={formik.touched.country && formik.errors.country}
           />
+          {/* <Autocomplete
+            id="country"
+            name="country"
+            label="Province"
+            variant="bordered"
+            allowsCustomValue={false}
+            placeholder="please select"
+            color="primary"
+            size="sm"
+            isLoading={isRegionsLoading}
+            isDisabled={true}
+            onBlur={formik.handleBlur}
+            selectedKey={formik.values.country}
+            onSelectionChange={(e) => {
+              formik.setFieldValue('country', e)
+            }}
+            errorMessage={formik.errors.country}
+          >
+            {regions.map((region) => (
+              <AutocompleteItem key={region.isoCode} value={region.isoCode}>
+                {region.name}
+              </AutocompleteItem>
+            ))}
+          </Autocomplete> */}
           <Autocomplete
             id="province"
             name="province"
@@ -237,8 +265,8 @@ export default function OnboardingForm() {
             placeholder="please select"
             color="primary"
             size="sm"
-            isLoading={isRegionsLoading}
-            isDisabled={isRegionsLoading}
+            isLoading={isRegionsLoading && !!formik.values.country}
+            isDisabled={isRegionsLoading || !formik.values.country}
             onBlur={formik.handleBlur}
             selectedKey={formik.values.province}
             onSelectionChange={(e) => {

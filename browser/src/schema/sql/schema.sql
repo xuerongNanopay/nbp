@@ -34,7 +34,7 @@ create table user(
     address1 varchar(255),
     address2 varchar(255),
     city varchar(64),
-    province varchar(4) references region(isoCode),
+    province varchar(5) references region(isoCode),
     country varchar(4) references country(iso2Code),
     postalCode varchar(16),
     phoneNumber varchar(32),
