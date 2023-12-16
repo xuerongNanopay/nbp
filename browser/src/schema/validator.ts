@@ -27,10 +27,10 @@ const formatCharacterValidationError = (str: string) => {
 export const SignUpDataValidator = Yup.object<SignUpData>({
   email: Yup.string().email('Invalid email address').required('Required'),
   password: Yup.string()
-              .min(8, "Password must have at least 8 characters"),
-              // .matches(/[0-9]/, formatCharacterValidationError("digit"))
-              // .matches(/[a-z]/, formatCharacterValidationError("lowercase"))
-              // .matches(/[A-Z]/, formatCharacterValidationError("uppercase")),
+              .min(8, "Password must have at least 8 characters")
+              .matches(/[0-9]/, formatCharacterValidationError("digit"))
+              .matches(/[a-z]/, formatCharacterValidationError("lowercase"))
+              .matches(/[A-Z]/, formatCharacterValidationError("uppercase")),
   rePassword: Yup.string().required("Please re-type your password").oneOf([Yup.ref("password")], "Passwords does not match")
   
 })
@@ -106,6 +106,7 @@ export const ForgetPasswordDataValidator = Yup.object<ForgetPasswordData>({
 })
 
 export const ChangePassowrdDataValidator = Yup.object<ChangePassowrdData>({
+  oneTimeToken: Yup.string().required(),
   newPassword: Yup.string()
               .min(8, "Password must have at least 8 characters")
               .matches(/[0-9]/, formatCharacterValidationError("digit"))

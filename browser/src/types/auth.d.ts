@@ -48,6 +48,7 @@ export interface ForgetPasswordData {
 }
 
 export interface ChangePassowrdData {
+  oneTimeToken: string
   newPassword: string,
   reNewPassword: string
 }

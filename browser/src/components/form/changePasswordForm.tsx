@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useFormik } from "formik"
-import * as Yup from 'yup';
 import {
   Input,
   Button
@@ -13,10 +12,10 @@ import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
 import { ChangePassowrdData } from "@/types/auth";
 import { ChangePassowrdDataValidator } from "@/schema/validator";
 
-export default function UpdatePasswordForm() {
+export default function ChangePasswordForm({oneTimeToken}: {oneTimeToken: string}) {
   const [ isNewPasswordVisible, setIsNewPasswordVisible ] = useState(false)
   const [ isReNewPasswordVisible, setIsReNewPasswordVisible ] = useState(false)
-  const initialValues: ChangePassowrdData = { newPassword: '', reNewPassword: ''}
+  const initialValues: ChangePassowrdData = { oneTimeToken, newPassword: '', reNewPassword: ''}
 
   const submitNewPassword = (e: ChangePassowrdData) => { console.log(e) }
   const formik = useFormik({

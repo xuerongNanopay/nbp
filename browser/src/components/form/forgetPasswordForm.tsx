@@ -7,11 +7,17 @@ import {
 } from "@nextui-org/react";
 import { ForgetPasswordData } from "@/types/auth";
 import { ForgetPasswordDataValidator } from "@/schema/validator";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function ForgetPasswrodForm() {
+  const router = useRouter()
+  const [isSubmit, setIsSubmit] = useState(false)
   const initialValues: ForgetPasswordData = {email: ''}
 
-  const forgetPasswordHandle = (e: ForgetPasswordData) => { console.log(e) }
+  const forgetPasswordHandle = async (e: ForgetPasswordData) => { 
+    console.log(e) 
+  }
 
   const formik = useFormik({
     initialValues,
@@ -36,6 +42,7 @@ export default function ForgetPasswrodForm() {
         />
         <Button 
           type="submit"
+          isLoading={isSubmit}
           color="primary"
           className="mt-2"
           size="md"

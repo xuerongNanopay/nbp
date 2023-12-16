@@ -1,5 +1,7 @@
 import type { 
+  ChangePassowrdData,
   EmailVerifyData,
+  ForgetPasswordData,
   OnboardingData,
   Session, 
   SignInData,
@@ -191,6 +193,20 @@ export async function refreshVerifyCode(
   } catch(err: any ) {
     console.error("Prisma Error: ", err)
   }
+}
+
+export async function forgetPassword(
+  data: ForgetPasswordData
+): Promise<boolean> {
+
+  return false
+}
+
+export async function changePassowrd(
+  data: ChangePassowrdData
+): Promise<boolean> {
+
+  return false
 }
 
 export async function onboarding(
