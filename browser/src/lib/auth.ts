@@ -6,15 +6,9 @@ import type {
   SignUpData,
 } from '@/types/auth'
 import { getPrismaClient } from '@/utils/prisma'
-import {
-  EmailVerifyDataValidator,
-} from '@/schema/validator'
 import { AccountType, IdentificationType, Login, LoginStatus, User } from '@prisma/client'
 import { randSixDigits } from '@/utils/idUtil'
-import { 
-  asserSessionOrThrow,
-  validateData
-} from './guard'
+
 import { 
   InternalError, 
   InvalidInputError, 

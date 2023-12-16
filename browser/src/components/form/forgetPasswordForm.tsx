@@ -1,23 +1,21 @@
 'use client'
 
-import { useState } from "react"
 import { useFormik } from "formik"
-import * as Yup from 'yup';
 import {
   Input,
   Button
 } from "@nextui-org/react";
+import { ForgetPasswordData } from "@/types/auth";
+import { ForgetPasswordDataValidator } from "@/schema/validator";
 
 export default function ForgetPasswrodForm() {
-  const initialValues: IForgetPassword = {email: ''}
+  const initialValues: ForgetPasswordData = {email: ''}
 
-  const forgetPasswordHandle = (e: IForgetPassword) => { console.log(e) }
+  const forgetPasswordHandle = (e: ForgetPasswordData) => { console.log(e) }
 
   const formik = useFormik({
     initialValues,
-    validationSchema: Yup.object({
-      email: Yup.string().email('Invalid email address').required('Required'),
-    }),
+    validationSchema: ForgetPasswordDataValidator,
     onSubmit: forgetPasswordHandle
   })
 

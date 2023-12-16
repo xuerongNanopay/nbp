@@ -1,5 +1,7 @@
 import { 
+  ChangePassowrdData,
   EmailVerifyData,
+  ForgetPasswordData,
   SignInData, 
   SignUpData
 } from "@/types/auth"
@@ -80,7 +82,7 @@ export const OnboardingDataValidator = Yup.object<OnboardingData>({
   interacEmail: Yup.string().email('Invalid email address').required('Required')
 })
 
-export const ContactValidator = Yup.object<ContactData>({
+export const ContactDataValidator = Yup.object<ContactData>({
   firstName: Yup.string().trim().required('Required'),
   lastName: Yup.string().trim().required('Required'),
   addressLine1: Yup.string().trim().required('Required'),
@@ -97,4 +99,17 @@ export const ContactValidator = Yup.object<ContactData>({
     is: 'bankAccount',
     then: () => Yup.string().trim().required('Required')
   })
+})
+
+export const ForgetPasswordDataValidator = Yup.object<ForgetPasswordData>({
+  email: Yup.string().email('Invalid email address').required('Required'),
+})
+
+export const ChangePassowrdDataValidator = Yup.object<ChangePassowrdData>({
+  newPassword: Yup.string()
+              .min(8, "Password must have at least 8 characters")
+              .matches(/[0-9]/, formatCharacterValidationError("digit"))
+              .matches(/[a-z]/, formatCharacterValidationError("lowercase"))
+              .matches(/[A-Z]/, formatCharacterValidationError("uppercase")),
+  reNewPassword: Yup.string().required("Please re-type your password").oneOf([Yup.ref("newPassword")], "Passwords does not match")
 })

@@ -42,3 +42,18 @@ export interface OnboardingData {
   identityNumber: string
   interacEmail: string
 }
+
+export interface ForgetPasswordData {
+  email: string
+}
+
+export interface ChangePassowrdData {
+  newPassword: string,
+  reNewPassword: string
+}
+
+export interface UpdatePasswordData {
+  originPassword: string
+  newPassword: string,
+  reNewPassword: string
+}

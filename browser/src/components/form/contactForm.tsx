@@ -8,12 +8,12 @@ import {
   SelectItem
 } from "@nextui-org/react"
 
-import { ContactData } from "@/type"
+import { ContactData } from "@/types/contact"
 import PKRegion from "@/constants/pk-region"
 import PersonalRelationship from "@/constants/personal-relationship"
 import TransferMethod from "@/constants/transferMethod"
 import PKBank from "@/constants/pk-bank"
-import { ContactValidator } from "@/schema/validator"
+import { ContactDataValidator } from "@/schema/validator"
 import { ContactType } from "@prisma/client"
 
 export default async function ContactForm() {
@@ -46,7 +46,7 @@ export default async function ContactForm() {
 
   const formik = useFormik({
     initialValues,
-    validationSchema: ContactValidator,
+    validationSchema: ContactDataValidator,
     onSubmit: createContactHandler
   })
 

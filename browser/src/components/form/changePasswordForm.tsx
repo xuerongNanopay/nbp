@@ -10,48 +10,27 @@ import {
 
 import { EyeSlashFilledIcon } from "@/icons/EyeSlashFilledIcon"
 import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
-import { UpdatePasswordData } from "@/types/auth";
-import { UpdatePasswordDataValidator } from "@/schema/validator";
+import { ChangePassowrdData } from "@/types/auth";
+import { ChangePassowrdDataValidator } from "@/schema/validator";
 
 export default function UpdatePasswordForm() {
-  const [ isOriginPasswordVisible, setIsOriginPasswordVisible ] = useState(false)
   const [ isNewPasswordVisible, setIsNewPasswordVisible ] = useState(false)
   const [ isReNewPasswordVisible, setIsReNewPasswordVisible ] = useState(false)
-  const initialValues: UpdatePasswordData = {originPassword: '', newPassword: '', reNewPassword: ''}
+  const initialValues: ChangePassowrdData = { newPassword: '', reNewPassword: ''}
 
-  const submitNewPassword = (e: UpdatePasswordData) => { console.log(e) }
+  const submitNewPassword = (e: ChangePassowrdData) => { console.log(e) }
   const formik = useFormik({
     initialValues,
-    validationSchema: UpdatePasswordDataValidator,
+    validationSchema: ChangePassowrdDataValidator,
     onSubmit: submitNewPassword
   })
 
   return (
     // Investigating Found 2 elements with non-unique id
     <div className="w-full max-w-sm">
-      <h4 className="text-2xl font-bold mb-2 text-center">Update your password</h4>
+      <h4 className="text-2xl font-bold mb-2 text-center">Change your password</h4>
       <h6 className="text-center mb-4">Create a new password for your account</h6>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
-        <Input
-          key="originPassword"
-          id="originPassword"
-          type={isOriginPasswordVisible ? "text" : "password"}
-          variant="bordered" 
-          label="Origin Password"
-          color="primary"
-          size="sm"
-          endContent={
-            <button className="focus:outline-none" type="button" onClick={() =>setIsOriginPasswordVisible(pre => !pre)}>
-              {isOriginPasswordVisible ? (
-                <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-              ) : (
-                <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-              )}
-            </button>
-          }
-          {...formik.getFieldProps('originPassword')}
-          errorMessage={formik.touched.originPassword && formik.errors.originPassword}
-        />
         <Input
           key="newPassword"
           id="newPassword"
