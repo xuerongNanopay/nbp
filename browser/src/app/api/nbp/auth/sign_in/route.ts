@@ -12,13 +12,13 @@ import { signIn } from '@/lib/auth'
 //TODO: fecth from node backend.
 export async function POST(req: NextRequest) {
   const session = await fetchSession()
-
+  let signInPayload:any;
   try {
     if ( !!session || assertSession(session) ) {
       throw new ForbiddenError("Please log out before create new user")
     }
 
-    const signInPayload = await req.json()
+    signInPayload = await req.json()
     const signInData = await castAndValidateData(signInPayload, SignInDataValidator) as SignInData
     const newSession = await signIn(signInData)
     await setSession(newSession)
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     })
 
   } catch (err: any) {
-    console.error(session?.login?.id, err.toString())
+    console.error('sign_in', `email: ${signInPayload?.email}`, err.toString())
 
     const errorResponse = !err.errors ? {
       code: err.code,

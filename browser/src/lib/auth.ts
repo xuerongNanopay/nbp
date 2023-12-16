@@ -111,6 +111,8 @@ export async function signIn(
       user: login.owner
     }
   } catch(err: any ) {
+    if ( err instanceof NBPError ) throw err
+    
     console.error("Prisma Error: ", err)
     throw new InternalError()
   }

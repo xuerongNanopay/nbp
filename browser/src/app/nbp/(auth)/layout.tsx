@@ -1,3 +1,5 @@
+import { AlertProvider } from "@/hook/useAlert"
+
 export default function AuthLayout({
   children,
 }: {
@@ -12,7 +14,9 @@ export default function AuthLayout({
       <div 
         className="flex-auto"
       >
-        {children}
+        <AlertProvider>
+          {children}
+        </AlertProvider>
       </div>
     </div>
   )
