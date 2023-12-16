@@ -15,9 +15,13 @@ export async function POST(req: Request) {
     const forgetPassowrdPayload = await req.json()
     const forgetPassowrdData = await castAndValidateData(forgetPassowrdPayload, ForgetPasswordDataValidator)
 
-    const isSuccess = forgetPassword(forgetPassowrdData)
-    if ( ! isSuccess ) throw new InternalError()
-    
+    const login = forgetPassword(forgetPassowrdData)
+    if (!login) {
+      //return success because we don't want to leak sensitive hint to the user.
+    } else {
+      //TODO: send email to user
+    }
+
     return Response.json({
       code: 200,
       data: {

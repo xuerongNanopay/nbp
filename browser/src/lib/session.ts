@@ -3,9 +3,13 @@ import { cookies as nextCookies } from 'next/headers'
 import { DEFAULT_SESSION_AGE } from '@/utils/cookieUtil'
 import { JWTExpired } from "jose/errors"
 import type { Session } from '@/types/auth'
+import { JWT_SECRET } from '@/constants/env'
 
-const JWT_SECRET = process.env['JWT_SECRET']
-if ( ! JWT_SECRET ) process.exit(1)
+
+if ( ! JWT_SECRET ) {
+  console.error("JWT_SECRET does not provide")
+  process.exit(1)
+}
 
 const cookieSessionStore = new CookieSessionStore<Session>({
   jwtParams: {

@@ -16,7 +16,29 @@ export default function ForgetPasswrodForm() {
   const initialValues: ForgetPasswordData = {email: ''}
 
   const forgetPasswordHandle = async (e: ForgetPasswordData) => { 
-    console.log(e) 
+    //TODO: make to true after test done.
+    setIsSubmit(false)
+    try {
+      const response = await fetch('/api/nbp/auth/forget_password',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(e)
+      })
+      const responsePayload = await response.json()
+      
+      if (responsePayload.code === 200 ) {
+        alert("Please check your email")
+      } else {
+        //TODO: redirect to dashboard. if message is duplicate user.
+        alert(responsePayload)
+        setIsSubmit(false)
+      }
+    } catch (err) {
+      alert(err)
+      setIsSubmit(false)
+    }
   }
 
   const formik = useFormik({

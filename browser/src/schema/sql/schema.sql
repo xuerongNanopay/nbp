@@ -8,10 +8,11 @@ create table login(
     password varchar(255) not null,
     verifyCode varchar(8),
     verifyCodeAt timestamp null,
-#     verifyCodeAt timestamp null,
-    isEmailLoginVerified boolean default false,
     status enum('active', 'await_verify', 'suspend', 'delete') default 'await_verify',
+#     suspendType enum('none', 'max_passwd_attempts', 'max_recover_attempts', 'business') null,
 
+#     passwd_attempts int default 0,
+#     recover_attempts int default 0,
     recoverToken varchar(255) null,
     recoverTokenExpireAt timestamp null,
     lastLoginAt timestamp null,

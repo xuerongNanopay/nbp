@@ -10,6 +10,7 @@ import type {
 import { getPrismaClient } from '@/utils/prisma'
 import { AccountType, IdentificationType, Login, LoginStatus, User } from '@prisma/client'
 import { randSixDigits } from '@/utils/idUtil'
+import { v4 as uuidv4 } from 'uuid'
 
 import { 
   InternalError, 
@@ -18,6 +19,7 @@ import {
   ResourceNoFoundError, 
   UnauthenticateError 
 } from '@/schema/error'
+import { RECOVER_TOKEN_TIME_OUT_SEC } from '@/constants/env'
 
 const Session_Project = {
   id: true,
@@ -88,23 +90,28 @@ export async function signIn(
   }: SignInData
 ): Promise<Session> {
 
-  //TODO: Hash passwordata.
-  const login = await getPrismaClient().login.findUnique({
-    where: {
-      email,
-      password,
-      status: {
-        not: LoginStatus.DELETE
-      }
-    },
-    select: Session_Project
-  })
+  try {
+    //TODO: Hash passwordata.
+    const login = await getPrismaClient().login.findUnique({
+      where: {
+        email,
+        password,
+        status: {
+          not: LoginStatus.DELETE
+        }
+      },
+      select: Session_Project
+    })
 
-  if ( !login ) throw new UnauthenticateError('Email or Password no found!')
+    if ( !login ) throw new UnauthenticateError('Email or Password no found!')
 
-  return {
-    login,
-    user: login.owner
+    return {
+      login,
+      user: login.owner
+    }
+  } catch(err: any ) {
+    console.error("Prisma Error: ", err)
+    throw new InternalError()
   }
 }
 
@@ -192,14 +199,60 @@ export async function refreshVerifyCode(
     })
   } catch(err: any ) {
     console.error("Prisma Error: ", err)
+    throw new InternalError()
   }
 }
 
 export async function forgetPassword(
   data: ForgetPasswordData
-): Promise<boolean> {
+): Promise<
+Pick<Login, 'id' | 'recoverToken' | 'recoverTokenExpireAt' | 'email'>
+| null> {
+  try {
+    console.log('aaa')
+    const login = await getPrismaClient().login.findUnique({
+      where: {
+        email: data.email,
+        status: {
+          not: LoginStatus.DELETE
+        }
+      },
+      select: {
+        id: true,
+        recoverToken: true,
+        recoverTokenExpireAt: true,
+        email: true
+      }
+    })
+    if (!login) {
+      console.warn("Forget password request", "email no found", `email: ${data.email}`)
+      return null
+    }
+    if (!!login.recoverTokenExpireAt && login.recoverTokenExpireAt.getTime() > new Date().getTime()) {
+      console.warn("Forget password request", "recoverToken is still valid", `email: ${data.email}`)
+      return null
+    }
 
-  return false
+    return await getPrismaClient().login.update({
+      where: {
+        id: login.id
+      },
+      data: {
+        recoverToken: uuidv4(),
+        recoverTokenExpireAt: new Date(new Date().getTime() + RECOVER_TOKEN_TIME_OUT_SEC*1000)
+      },
+      select: {
+        id: true,
+        recoverToken: true,
+        recoverTokenExpireAt: true,
+        email: true
+      }
+    })
+
+  } catch(err: any ) {
+    console.error("Prisma Error: ", err)
+    throw new InternalError()
+  }
 }
 
 export async function changePassowrd(
