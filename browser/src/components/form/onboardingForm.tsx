@@ -23,6 +23,8 @@ import type {
 import IdentityType from "@/constants/IdentityType"
 import { OnboardingDataValidator } from "@/schema/validator"
 import { GetCountries, GetOccupations, GetRegions } from "@/types/common"
+import { useAlert } from "@/hook/useAlert"
+import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 const initialValues: OnboardingData = {
   firstName: '',
@@ -45,6 +47,7 @@ const initialValues: OnboardingData = {
 }
 
 export default function OnboardingForm() {
+  const alert = useAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isSubmit, setIsSubmit] = useState(false)
   const onboardingHandler = async ( e: OnboardingData ) => {
@@ -61,16 +64,17 @@ export default function OnboardingForm() {
       const responsePayload = await response.json()
       
       if (responsePayload.code === 201 ) {
+        alert.info('Onboard Success')
         router.replace('/nbp/dashboard')
         //redirect to sign out
         //TODO: fetch interceptro for 401 error.
       } else {
         //TODO: redirect to dashboard. if message is duplicate user.
-        alert(responsePayload)
+        alert.error(responsePayload.message)
         setIsSubmit(false)
       }
     } catch (err) {
-      alert(err)
+      alert.error(JSON.stringify(err))
       setIsSubmit(false)
     }
   }

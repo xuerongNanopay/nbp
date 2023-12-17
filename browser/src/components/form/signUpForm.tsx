@@ -11,8 +11,11 @@ import {
 
 import { EyeSlashFilledIcon } from "@/icons/EyeSlashFilledIcon"
 import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
+import { useAlert } from "@/hook/useAlert"
+import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 export default function SignUpForm() {
+  const alert = useAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isSubmit, setIsSubmit] = useState(false)
   const [ isPasswordVisible, setIsPasswordVisible ] = useState(false)

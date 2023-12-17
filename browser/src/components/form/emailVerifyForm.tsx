@@ -10,6 +10,8 @@ import {
 
 import { EmailVerifyData } from '@/types/auth'
 import { EmailVerifyDataValidator } from "@/schema/validator"
+import { useAlert } from "@/hook/useAlert"
+import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 export default function EmailVerifyForm() {
   const router = useRouter()
@@ -17,6 +19,7 @@ export default function EmailVerifyForm() {
   const initialValues: EmailVerifyData = {code: ''}
 
   const emailVerifyFormHandle = async (e: EmailVerifyData) => { 
+    const alert = useAlert() ?? CONSOLE_ALERT
     try {
       setIsSubmit(true)
       const response = await fetch('/api/nbp/auth/verify_email',{
@@ -31,12 +34,12 @@ export default function EmailVerifyForm() {
       if (responsePayload.code === 200) {
         router.replace('/nbp/onboarding')
       } else {
-        alert(responsePayload)
+        alert.error(responsePayload.message)
         setIsSubmit(false)
       }
 
     } catch (err: any) {
-      alert(err)
+      alert.error(JSON.stringify(err))
       setIsSubmit(false)
     }
   }

@@ -12,8 +12,11 @@ import { EyeSlashFilledIcon } from "@/icons/EyeSlashFilledIcon"
 import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
 import { ChangePassowrdData } from "@/types/auth";
 import { ChangePassowrdDataValidator } from "@/schema/validator";
+import { useAlert } from "@/hook/useAlert"
+import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 export default function ChangePasswordForm({email, oneTimeToken}: {email: string, oneTimeToken: string}) {
+  const alert = useAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isSubmit, setIsSubmit] = useState(false)
   const [ isNewPasswordVisible, setIsNewPasswordVisible ] = useState(false)
@@ -33,15 +36,15 @@ export default function ChangePasswordForm({email, oneTimeToken}: {email: string
       const responsePayload = await response.json()
       
       if (responsePayload.code === 200 ) {
-        alert("Password Change Success. Please login in")
+        alert.info("Password Change Success. Please login in")
         router.replace('/nbp/sign_in')
       } else {
         //TODO: redirect to dashboard. if message is duplicate user.
-        alert(responsePayload)
+        alert.error(responsePayload.message)
         setIsSubmit(false)
       }
     } catch (err) {
-      alert(err)
+      alert.error(JSON.stringify(err))
       setIsSubmit(false)
     }
   }

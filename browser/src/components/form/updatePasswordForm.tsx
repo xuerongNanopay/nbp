@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useFormik } from "formik"
-import * as Yup from 'yup';
 import {
   Input,
   Button
@@ -12,6 +11,7 @@ import { EyeSlashFilledIcon } from "@/icons/EyeSlashFilledIcon"
 import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
 import { UpdatePasswordData } from "@/types/auth";
 import { UpdatePasswordDataValidator } from "@/schema/validator";
+
 
 export default function UpdatePasswordForm() {
   const [ isOriginPasswordVisible, setIsOriginPasswordVisible ] = useState(false)

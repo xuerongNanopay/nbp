@@ -5,14 +5,12 @@ import {
   Link
 } from "@nextui-org/react"
 import { CloseIcon } from "@/icons/CloseIcon"
-import { PressEvent } from "@react-types/shared"
 
 type Props = {
-  className?: string,
-  closeHandler: (e: PressEvent) => void
+  className?: string
 }
 // TODO: using back url as 
-export default function IconHeaderWithLogout({className, closeHandler}: Props) {
+export default function IconHeaderWithLogout({className}: Props) {
   return (
     <Navbar
       className={`border-green-800 border-b-2 bg-white ${className}`}
@@ -28,7 +26,6 @@ export default function IconHeaderWithLogout({className, closeHandler}: Props) {
             as={Link}
             radius="full"
             className="absolute right-0 md:right-2 px-0"
-            onPressEnd = {closeHandler}
           >
             <CloseIcon/>
           </Button>

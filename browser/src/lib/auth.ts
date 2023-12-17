@@ -104,7 +104,7 @@ export async function signIn(
       select: Session_Project
     })
 
-    if ( !login ) throw new UnauthenticateError('Email or Password no found!')
+    if ( !login ) throw new UnauthenticateError('Email or Password failed!')
 
     return {
       login,
