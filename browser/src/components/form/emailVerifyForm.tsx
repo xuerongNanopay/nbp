@@ -52,15 +52,15 @@ export default function EmailVerifyForm() {
       const responsePayload = await response.json()
 
       if (responsePayload.code === 200) {
-        alert('Please check your email: ' + responsePayload.data.email)
+        alert.info('Please check your email: ' + responsePayload.data.email)
         setIsSubmit(false)
       } else {
-        alert(responsePayload)
+        alert.error(responsePayload)
         setIsSubmit(false)
       }
 
     } catch (err: any) {
-      alert(err)
+      alert.error(err)
       setIsSubmit(false)
     }
   }

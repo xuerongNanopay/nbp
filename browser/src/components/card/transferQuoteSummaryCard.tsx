@@ -1,3 +1,4 @@
+import { ITransferQuoteResult } from '@/type'
 import {
   Skeleton
 } from '@nextui-org/react'

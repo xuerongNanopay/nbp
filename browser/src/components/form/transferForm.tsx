@@ -11,6 +11,7 @@ import {
 } from "@nextui-org/react"
 
 import { ConfirmTransferModal } from '@/components/modal'
+import { IAccount, ITransferQuote, ITransferQuoteResult } from "@/type"
 
 // User have to select account first.
 // Retrieve Currency from Account.

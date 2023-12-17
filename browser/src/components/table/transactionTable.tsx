@@ -30,6 +30,7 @@ import { SendMoneyIcon } from '@/icons/SendMoneyIcon'
 import { SearchIcon } from '@/icons/SearchIcon'
 import { PlusIcon } from '@/icons/PlusIcon'
 import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
+import { NBPTransactionSummary } from '@/type';
 
 const statusOptions = [
   {name: "SUCCESS", uid: "complete"},

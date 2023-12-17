@@ -23,6 +23,7 @@ import {
 import { EyeIcon } from '@/icons/EyeIcon'
 
 import { formatRelativeDate } from '@/utils/dateUtil'
+import { NotificationSummary } from '@/type'
 
 type Props = {
   className?: string,

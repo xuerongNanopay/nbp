@@ -1,3 +1,5 @@
+import { IContactResult } from "@/type"
+
 const contacts: IContactResult[] = [
   {
     id: '1',

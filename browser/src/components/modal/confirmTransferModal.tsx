@@ -10,6 +10,7 @@ import {
 import NextUIProvider from '@/providers/NextUIProvider'
 
 import { TransferQuoteSummaryCard } from '../card'
+import { ITransferQuoteResult } from '@/type'
 
 type Props = {
   isOpen: boolean

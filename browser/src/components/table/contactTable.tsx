@@ -30,6 +30,7 @@ import { EyeIcon } from '@/icons/EyeIcon'
 import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
 import { DeleteIcon } from '@/icons/DeleteIcon'
 import { SendMoneyIcon } from '@/icons/SendMoneyIcon'
+import { NBPContactSummary } from '@/type';
 
 const statusOptions = [
   {name: "VERIFIED", id: "verified"},

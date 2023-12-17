@@ -8,6 +8,7 @@ import {
 } from "@nextui-org/react";
 
 import { TransferQuoteSummaryCard } from "../card";
+import { ITransferQuoteResult } from "@/type";
 
 type prop = {
   quoteId: string

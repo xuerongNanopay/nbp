@@ -1,4 +1,5 @@
 import { ContactTable, MobileContactTable } from "@/components/table"
+import { NBPContactSummary } from "@/type"
 
 export default async function Contacts() {
   const contact: NBPContactSummary = {

@@ -1,4 +1,5 @@
 import { NotificationTable } from "@/components/table/notificationTable"
+import { NotificationSummary } from "@/type"
 
 export default async function Notifications() {
   const notification: NotificationSummary = {

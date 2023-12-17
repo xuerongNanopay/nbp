@@ -13,6 +13,7 @@ import {
 } from '@/icons/RightArrow'
 
 import { formatRelativeDate } from '@/utils/dateUtil'
+import { NBPTransactionSummary } from '@/type'
 
 type Props = {
   maxContent?: number,

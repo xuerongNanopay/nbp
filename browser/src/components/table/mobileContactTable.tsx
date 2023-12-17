@@ -28,6 +28,7 @@ import { SearchIcon } from '@/icons/SearchIcon'
 import { PlusIcon } from '@/icons/PlusIcon'
 import { EyeIcon } from '@/icons/EyeIcon'
 import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
+import { NBPContactSummary } from '@/type';
 
 const statusOptions = [
   {name: "VERIFIED", id: "verified"},

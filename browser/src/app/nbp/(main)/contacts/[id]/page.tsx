@@ -7,6 +7,7 @@ import {
   Breadcrumbs, 
   BreadcrumbItem
 } from '@nextui-org/react'
+import { NBPContactDetail } from '@/type'
 
 
 export default async function Contact({ params: {id} }: { params: { id: string } }) {

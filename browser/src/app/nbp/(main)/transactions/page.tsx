@@ -1,4 +1,5 @@
 import { MobileTransactionTable, TransactionTable } from '@/components/table'
+import { NBPTransactionSummary } from '@/type'
 
 export default async function Transactions() {
 

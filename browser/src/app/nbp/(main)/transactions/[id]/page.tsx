@@ -7,6 +7,7 @@ import {
   Breadcrumbs,
   BreadcrumbItem
 } from '@nextui-org/react'
+import { NBPTransactionDetail } from '@/type'
 
 export default async function Transaction({ params: {id} }: { params: { id: string } }) {
   const transactionId = parseInt(id)
