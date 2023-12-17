@@ -34,14 +34,15 @@ export default function SignUpForm() {
       const responsePayload = await response.json()
 
       if (responsePayload.code === 201) {
+        alert.info("Sign Up success")
         router.replace('/nbp/verify_email')
       } else {
-        alert(responsePayload)
+        alert.error(responsePayload.message)
         setIsSubmit(false)
       }
 
     } catch (err) {
-      alert(err)
+      alert.error(JSON.stringify(err))
       setIsSubmit(false)
     }
   }

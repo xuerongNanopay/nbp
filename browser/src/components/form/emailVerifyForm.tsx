@@ -32,6 +32,7 @@ export default function EmailVerifyForm() {
       const responsePayload = await response.json()
 
       if (responsePayload.code === 200) {
+        alert.info("Email Verified Success")
         router.replace('/nbp/onboarding')
       } else {
         alert.error(responsePayload.message)
