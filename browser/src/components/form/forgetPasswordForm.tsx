@@ -8,8 +8,12 @@ import {
 import { ForgetPasswordData } from "@/types/auth";
 import { ForgetPasswordDataValidator } from "@/schema/validator";
 import { useState } from "react";
+import { useAlert } from "@/hook/useAlert"
+import { CONSOLE_ALERT } from "@/utils/alertUtil"
+
 
 export default function ForgetPasswrodForm() {
+  const alert = useAlert() ?? CONSOLE_ALERT
   const [isSubmit, setIsSubmit] = useState(false)
   const initialValues: ForgetPasswordData = {email: ''}
 
@@ -26,14 +30,14 @@ export default function ForgetPasswrodForm() {
       const responsePayload = await response.json()
       
       if (responsePayload.code === 200 ) {
-        alert("Please check your email")
+        alert.info("Please check your email")
       } else {
         //TODO: redirect to dashboard. if message is duplicate user.
-        alert(responsePayload)
+        alert.error(responsePayload.message)
         setIsSubmit(false)
       }
     } catch (err) {
-      alert(err)
+      alert.error(JSON.stringify(err))
       setIsSubmit(false)
     }
   }

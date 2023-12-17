@@ -1,44 +1,6 @@
 import { Login, User } from "@prisma/client"
 import { JWT } from "./utils/jwtUtil"
 
-interface ISignUp {
-  email: string,
-  password: string,
-  rePassword: string,
-}
-
-interface ISignIn {
-  email: string
-  password: string
-}
-
-interface IEmailVerify {
-  code: string
-}
-
-interface IForgetPassword {
-  email: string
-}
-
-interface IUserOnboarding {
-  firstName: string,
-  middleName?: string,
-  lastName: string,
-  addressLine1: string,
-  addressLine2?: string,
-  city: string,
-  province: string,
-  country: string,
-  postalCode: string,
-  phoneNumber: string,
-  dob: string,
-  pob: string,
-  nationality: string,
-  occupation: string,
-  identityType: string,
-  identityNumber: string
-  etransfer: string
-}
 
 interface ITransfer {
 

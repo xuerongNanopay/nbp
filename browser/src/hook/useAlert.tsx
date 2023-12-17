@@ -2,6 +2,7 @@
 
 import { LogLevel } from '@/constants/log'
 import { ErrorIcon } from '@/icons/ErrorIcon'
+import { ExclamationIcon } from '@/icons/ExclamationIcon'
 import type { AlertFunc } from '@/types/log'
 
 import { 
@@ -19,6 +20,16 @@ type AlertMSG = {
 
 const AlertContext = createContext<AlertFunc | null>(null)
 
+const LogLevelIcon = ({className, level}: {className: string, level: LogLevel}) => {
+  switch(level) {
+    case LogLevel.ERROR:
+      return <ErrorIcon className={className}></ErrorIcon>
+    case LogLevel.INFO:
+      return <ExclamationIcon className={className}></ExclamationIcon>
+    default:
+      return <ErrorIcon className={className}></ErrorIcon>
+  }
+}
 const AlertCard = ({msg, level, id}: AlertMSG) => {
   return (
     // {/* TODO: why tailwind is not work in this case */}
@@ -34,7 +45,7 @@ const AlertCard = ({msg, level, id}: AlertMSG) => {
       className="fixed flex px-2 border-1 border-green-600 rounded-md"
     >
       {/* TODO: change icon base on Loglevel */}
-      <ErrorIcon className="me-2 flex-none self-center overflow-clip"></ErrorIcon>
+      <LogLevelIcon className="me-2 flex-none self-center overflow-clip" level={level}/>
       <p
         style={{
           // height: '72px',
