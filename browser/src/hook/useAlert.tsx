@@ -95,8 +95,6 @@ export function AlertProvider({
     }
   }, [alerts])
 
-  console.log(alerts)
-
   return (
     <>
       {
