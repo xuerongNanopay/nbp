@@ -30,6 +30,8 @@ const LogLevelIcon = ({className, level}: {className: string, level: LogLevel}) 
       return <ErrorIcon className={className}></ErrorIcon>
   }
 }
+
+//TODO: investigate better to abstract it.
 const AlertCard = ({msg, level}: AlertMSG) => {
   return (
     // {/* TODO: why tailwind is not work in this case */}
@@ -89,7 +91,7 @@ export function AlertProvider({
     if (!alerts || alerts.length===0) return
     const timer = setTimeout(() => {
       _setAlerts([])
-    }, 5*1000)
+    }, 4*1000)
     return () => {
       clearTimeout(timer)
     }
