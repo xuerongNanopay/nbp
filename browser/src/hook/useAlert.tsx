@@ -1,6 +1,8 @@
 'use client'
 
-import type { AlertFunc, LogLevel } from '@/types/log'
+import { LogLevel } from '@/constants/log'
+import type { AlertFunc } from '@/types/log'
+
 import { 
   createContext, 
   useContext,
