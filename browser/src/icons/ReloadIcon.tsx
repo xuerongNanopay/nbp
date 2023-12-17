@@ -1,3 +1,5 @@
+import { IconSvgProps } from "@/type";
+
 export const ReloadIcon = (props: IconSvgProps) => {
   return (
     <svg 

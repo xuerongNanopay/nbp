@@ -11,13 +11,13 @@ export default function AuthLayout({
         className="bg-nbp-background max-md:h-32 flex-initial w-full md:w-5/12 lg:w-7/12 xl:w-8/12"
       >
       </div>
-      <div 
-        className="flex-auto"
-      >
-        <AlertProvider>
+      <AlertProvider>
+        <div 
+          className="flex-auto"
+        >
           {children}
-        </AlertProvider>
-      </div>
+        </div>
+      </AlertProvider>
     </div>
   )
 }

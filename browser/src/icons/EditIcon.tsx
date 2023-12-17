@@ -1,3 +1,5 @@
+import { IconSvgProps } from "@/type";
+
 export const EditIcon = (props: IconSvgProps) => (
   <svg
     aria-hidden="true"

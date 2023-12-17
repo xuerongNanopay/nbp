@@ -1,3 +1,5 @@
+import { IconSvgProps } from "@/type";
+
 export const SearchIcon = (props: IconSvgProps) => (
   <svg
     aria-hidden="true"

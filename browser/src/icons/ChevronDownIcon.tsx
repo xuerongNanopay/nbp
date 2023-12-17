@@ -1,3 +1,5 @@
+import { IconSvgProps } from "@/type";
+
 export const ChevronDownIcon = ({strokeWidth = 1.5, ...otherProps}: IconSvgProps) => (
   <svg
     aria-hidden="true"

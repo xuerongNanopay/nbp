@@ -1,3 +1,5 @@
+import { IconSvgProps } from "@/type";
+
 export const EyeSlashFilledIcon = (props: IconSvgProps) => (
   <svg
     aria-hidden="true"

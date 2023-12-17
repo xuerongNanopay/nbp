@@ -36,11 +36,11 @@ export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
       if (responsePayload.code === 200) {
         router.replace('/nbp/dashboard')
       } else {
-        alert.warming(responsePayload)
+        alert.error(responsePayload.message)
         setIsSubmit(false)
       }
     } catch (err: any) {
-      alert.error(err)
+      alert.error(JSON.stringify(err))
       setIsSubmit(false)
     }
   }

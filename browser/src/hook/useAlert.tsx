@@ -1,6 +1,7 @@
 'use client'
 
 import { LogLevel } from '@/constants/log'
+import { ErrorIcon } from '@/icons/ErrorIcon'
 import type { AlertFunc } from '@/types/log'
 
 import { 
@@ -12,10 +13,46 @@ import {
 
 type AlertMSG = {
   level: LogLevel,
-  msg: string
+  msg: string,
+  id: number
 }
 
 const AlertContext = createContext<AlertFunc | null>(null)
+
+const AlertCard = ({msg, level, id}: AlertMSG) => {
+  return (
+    // {/* TODO: why tailwind is not work in this case */}
+    <div
+      style={{
+        top: '20px',
+        right: '15px',
+        width: '300px',
+        height: '72px',
+        overflowY: 'auto',
+        backgroundColor: '#C3E2C2'
+      }}
+      className="fixed flex px-2 border-1 border-green-600 rounded-md"
+    >
+      {/* TODO: change icon base on Loglevel */}
+      <ErrorIcon className="me-2 flex-none self-center overflow-clip"></ErrorIcon>
+      <p
+        style={{
+          // height: '72px',
+          // overflowY: 'auto',
+        }}
+        className="font-semibold self-center"
+      >
+        {msg}
+      </p>
+      {/* <p className="font-semibold">Email or Password Fail</p> */}
+    </div>
+  )
+}
+
+let key = 0
+function getKey() {
+  return key++;
+}
 
 export function AlertProvider({
   children
@@ -23,21 +60,40 @@ export function AlertProvider({
   children: React.ReactNode
 }): React.JSX.Element {
 
-  const [alerts, setAlerts] = useState<AlertMSG[]>([])
-  console.log(alerts)
-  const alertFunc: AlertFunc = {
-    warming: (msg: string) => {setAlerts(pre => ([...pre, {level: LogLevel.WARMING, msg}]))},
-    error: (msg: string) => {setAlerts(pre => ([...pre, {level: LogLevel.ERROR, msg}]))},
-    info: (msg: string) => {setAlerts(pre => ([...pre, {level: LogLevel.INFO, msg}]))},
-    alert: (logLevel: LogLevel, msg: string) => {
-      setAlerts(pre => ([...pre, {level: logLevel, msg}]))
-    }
+  const [alerts, _setAlerts] = useState<AlertMSG[]>([])
+
+  const setAlerts = (logLevel: LogLevel, msg: string) => {
+    _setAlerts(pre => ([...pre, {level: logLevel, msg, id: getKey()}]))
   }
-  
+
+  const alertFunc: AlertFunc = {
+    warming: (msg: string) => {setAlerts(LogLevel.WARMING, msg)},
+    error: (msg: string) => {setAlerts(LogLevel.ERROR, msg)},
+    info: (msg: string) => {setAlerts(LogLevel.INFO, msg)},
+    alert: setAlerts
+  }
+
+  useEffect(() => {
+    if (!alerts || alerts.length===0) return
+    const timer = setTimeout(() => {
+      _setAlerts([])
+    }, 5*1000)
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [alerts])
+
   return (
-    <AlertContext.Provider value={alertFunc}>
-      {children}
-    </AlertContext.Provider>
+    <>
+      {
+        alerts.map((alert) => {
+          return (<AlertCard key={alert.id} {...alert}/>)
+        })
+      }
+      <AlertContext.Provider value={alertFunc}>
+        {children}
+      </AlertContext.Provider>
+    </>
   )
 }
 

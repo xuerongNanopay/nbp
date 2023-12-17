@@ -1,3 +1,5 @@
+import { IconSvgProps } from "@/type";
+
 export function SendMoneyIcon(props: IconSvgProps) {
   return (
     <svg viewBox="0 0 24.25 24.24" version="1.1" fillRule="nonzero" xmlns="http://www.w3.org/2000/svg" width="1em" height="1rem" {...props}>

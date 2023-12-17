@@ -1,3 +1,5 @@
+import { IconSvgProps } from "@/type";
+
 export const CloseIcon = () => {
   return (
     <svg 
