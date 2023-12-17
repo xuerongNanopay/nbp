@@ -5,6 +5,9 @@ import type { NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   // console.log(request.url)
   // console.log(request.headers)
+  const url = new URL(request.url)
+  console.log(url)
+  // if (url.pathname.startsWith(""))
   const response = NextResponse.next()
   // return response
 }

@@ -27,8 +27,9 @@ const cookieSessionStore = new CookieSessionStore<Session>({
 
 //If the session is expire or valid, then return null
 export async function fetchSession(): ReturnType<typeof cookieSessionStore.loadSession> {
+  const cookieData = nextCookies().getAll()
   try {
-    let sessionPayload = await cookieSessionStore.loadSession(nextCookies().getAll())
+    let sessionPayload = await cookieSessionStore.loadSession(cookieData)
     if ( sessionPayload == null ) return null
 
     return sessionPayload
