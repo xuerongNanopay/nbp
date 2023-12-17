@@ -1,28 +1,28 @@
 import { LogLevel } from "@/constants/log";
 import type { AlertFunc } from "@/types/log";
 
-const consoleAlert = (logLevel: LogLevel, msg: string) => {
+const consoleAlert = (logLevel: LogLevel, ...args: any) => {
   switch(logLevel) {
     case LogLevel.INFO:
-      console.log(msg)
+      console.log(...args)
       break
     case LogLevel.WARMING:
-      console.warn(msg)
+      console.warn(...args)
       break
     case LogLevel.ERROR:
-      console.log(msg)
+      console.log(...args)
   }
 }
 
 export const CONSOLE_ALERT: AlertFunc = {
-  warming: (msg: string) => {
-    consoleAlert(LogLevel.WARMING, msg)
+  warming: (...args: any) => {
+    consoleAlert(LogLevel.WARMING, ...args)
   },
-  error: (msg: string) => {
-    consoleAlert(LogLevel.ERROR, msg)
+  error: (...args: any) => {
+    consoleAlert(LogLevel.ERROR, ...args)
   },
-  info: (msg: string) => {
-    consoleAlert(LogLevel.INFO, msg)
+  info: (...args: any) => {
+    consoleAlert(LogLevel.INFO, ...args)
   },
   alert: consoleAlert
 }
