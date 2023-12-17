@@ -30,7 +30,7 @@ const LogLevelIcon = ({className, level}: {className: string, level: LogLevel}) 
       return <ErrorIcon className={className}></ErrorIcon>
   }
 }
-const AlertCard = ({msg, level, id}: AlertMSG) => {
+const AlertCard = ({msg, level}: AlertMSG) => {
   return (
     // {/* TODO: why tailwind is not work in this case */}
     <div

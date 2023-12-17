@@ -34,6 +34,7 @@ export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
       })
       const responsePayload = await response.json()
       if (responsePayload.code === 200) {
+        alert.info("Sign in success")
         router.replace('/nbp/dashboard')
       } else {
         alert.error(responsePayload.message)
