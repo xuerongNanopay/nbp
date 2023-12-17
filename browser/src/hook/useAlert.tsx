@@ -40,6 +40,7 @@ const AlertCard = ({msg, level}: AlertMSG) => {
         width: '300px',
         height: '72px',
         overflowY: 'auto',
+        zIndex: 100000,
         backgroundColor: '#C3E2C2'
       }}
       className="fixed flex px-2 border-1 border-green-600 rounded-md"
@@ -93,6 +94,8 @@ export function AlertProvider({
       clearTimeout(timer)
     }
   }, [alerts])
+
+  console.log(alerts)
 
   return (
     <>

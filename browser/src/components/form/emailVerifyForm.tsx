@@ -14,12 +14,12 @@ import { useAlert } from "@/hook/useAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 export default function EmailVerifyForm() {
+  const alert = useAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isSubmit, setIsSubmit] = useState(false)
   const initialValues: EmailVerifyData = {code: ''}
 
   const emailVerifyFormHandle = async (e: EmailVerifyData) => { 
-    const alert = useAlert() ?? CONSOLE_ALERT
     try {
       setIsSubmit(true)
       const response = await fetch('/api/nbp/auth/verify_email',{
