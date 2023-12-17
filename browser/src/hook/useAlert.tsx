@@ -1,12 +1,16 @@
 'use client'
 
-import { createContext, useContext } from 'react'
+import type { AlertFunc, LogLevel } from '@/types/log'
+import { 
+  createContext, 
+  useContext,
+  useState,
+  useEffect
+} from 'react'
 
-type AlertFunc = {
-  warming: (msg: string) => void,
-  error: (msg: string) => void,
-  info: (msg: string) => void,
-  alert: (logLevel: string, msg: string) => void
+type AlertMSG = {
+  level: LogLevel,
+  msg: string
 }
 
 const AlertContext = createContext<AlertFunc | null>(null)
@@ -17,11 +21,15 @@ export function AlertProvider({
   children: React.ReactNode
 }): React.JSX.Element {
 
+  const [alerts, setAlerts] = useState<AlertMSG[]>([])
+  console.log(alerts)
   const alertFunc: AlertFunc = {
-    warming: (msg: string) => {console.log(msg)},
-    error: (msg: string) => {console.log(msg)},
-    info: (msg: string) => {console.log(msg)},
-    alert: (logLevel: string, msg: string) => {}
+    warming: (msg: string) => {setAlerts(pre => ([...pre, {level: LogLevel.WARMING, msg}]))},
+    error: (msg: string) => {setAlerts(pre => ([...pre, {level: LogLevel.ERROR, msg}]))},
+    info: (msg: string) => {setAlerts(pre => ([...pre, {level: LogLevel.INFO, msg}]))},
+    alert: (logLevel: LogLevel, msg: string) => {
+      setAlerts(pre => ([...pre, {level: logLevel, msg}]))
+    }
   }
   
   return (

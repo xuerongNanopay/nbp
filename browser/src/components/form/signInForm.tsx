@@ -12,8 +12,11 @@ import {
 
 import { EyeSlashFilledIcon } from "@/icons/EyeSlashFilledIcon"
 import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
+import { useAlert } from "@/hook/useAlert"
+import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
+  const alert = useAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isSubmit, setIsSubmit] = useState(false)
   const [ isPasswordVisible, setIsPasswordVisible ] = useState(false)
@@ -33,11 +36,11 @@ export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
       if (responsePayload.code === 200) {
         router.replace('/nbp/dashboard')
       } else {
-        alert(responsePayload)
+        alert.warming(responsePayload)
         setIsSubmit(false)
       }
     } catch (err: any) {
-      alert(err)
+      alert.error(err)
       setIsSubmit(false)
     }
   }
