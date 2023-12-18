@@ -104,7 +104,7 @@ create table contact(
     address1 varchar(255) not null,
     address2 varchar(255),
     province varchar(8) not null,
-    country varchar(4) not null,
+    country char(2) not null,
     postCode varchar(64),
     phoneNumber varchar(64),
 
@@ -112,7 +112,7 @@ create table contact(
     bankAccountNum varchar(32) null,
     branchNum varchar(32) null,
     iban varchar(32) null,
-
+    currency char(3) not null,
 
     ownerId bigint unsigned not null,
     relationshipToOwner bigint unsigned not null,
@@ -122,6 +122,7 @@ create table contact(
 
     foreign key (province) references region(isoCode),
     foreign key (country) references country(iso2Code),
+    foreign key (currency) references currency(isoCode),
     foreign key (institutionId) references institution(id),
     foreign key (ownerId) references user(id),
     foreign key (relationshipToOwner) references personal_relationship(id)

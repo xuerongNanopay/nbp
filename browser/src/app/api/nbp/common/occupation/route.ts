@@ -1,10 +1,17 @@
+import { formatSession } from "@/constants/log"
 import { 
   getOccupations
 } from "@/lib/common"
+import { assertSession } from "@/lib/guard"
+import { fetchSession } from "@/lib/session"
+import { UnauthenticateError } from "@/schema/error"
 
 export async function GET() {
+  const session = await fetchSession()
 
   try {
+    if (!assertSession(session)) throw new UnauthenticateError("Please Login")
+
     const occupations = await getOccupations()
     return Response.json(
       {
@@ -15,16 +22,24 @@ export async function GET() {
         status: 200
       }
     )
-  } catch ( err ) {
-    console.log(err)
-    return Response.json(
-      {
-        code: 500,
-        message: 'Internal Error'
-      },
-      {
-        status: 500
+  } catch (err: any) {
+    console.error(formatSession(session), "occupation-GET: ", err.toString())
+
+    const errorResponse = !err.errors ? {
+      code: err.code,
+      name: err.name,
+      message: err.message
+    } : {
+      code: err.code,
+      name: err.name,
+      message: err.message,
+      errors: err.errors
+    }
+    return Response.json(errorResponse, {
+      status: err.code ?? 500,
+      headers: {
+        'Content-Type': 'application/json'
       }
-    )
+    })
   }
 }

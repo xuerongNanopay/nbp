@@ -15,27 +15,28 @@ import TransferMethod from "@/constants/transferMethod"
 import PKBank from "@/constants/pk-bank"
 import { ContactDataValidator } from "@/schema/validator"
 import { ContactType } from "@prisma/client"
+import { GetRegions } from "@/types/common"
 
-export default async function ContactForm() {
+const initialValues: ContactData = {
+  firstName: '',
+  middleName: '',
+  lastName: '',
+  addressLine1: '',
+  addressLine2: '',
+  city: '',
+  province: '',
+  country: 'PK',
+  postalCode: '',
+  relationshipId: 0,
+  phoneNumber: '',
+  transferMethod: '',
+  bankName: '',
+  branchNo: '',
+  accountOrIban: ''
+}
+
+export default function ContactForm() {
   const [isCreating, setIsCreating] = useState<boolean>(false)
-
-  const initialValues: ContactData = {
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    province: '',
-    country: 'Pakistan',
-    postalCode: '',
-    relationshipId: 0,
-    phoneNumber: '',
-    transferMethod: '',
-    bankName: '',
-    branchNo: '',
-    accountOrIban: ''
-  }
 
   const createContactHandler = (e: ContactData) => { 
     console.log(e)
@@ -49,6 +50,9 @@ export default async function ContactForm() {
     validationSchema: ContactDataValidator,
     onSubmit: createContactHandler
   })
+
+  const [regions, setRegions] = useState<GetRegions>([])
+  const [isRegionsLoading, setIsRegionsLoading] = useState(true)
 
   return (
     <div className="w-full max-w-4xl">

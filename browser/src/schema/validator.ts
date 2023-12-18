@@ -84,6 +84,7 @@ export const OnboardingDataValidator = Yup.object<OnboardingData>({
 
 export const ContactDataValidator = Yup.object<ContactData>({
   firstName: Yup.string().trim().required('Required'),
+  middleName: Yup.string().optional(),
   lastName: Yup.string().trim().required('Required'),
   addressLine1: Yup.string().trim().required('Required'),
   city: Yup.string().trim().required('Required'),
