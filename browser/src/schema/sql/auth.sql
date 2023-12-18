@@ -1,12 +1,12 @@
 create table login(
     id serial primary key,
-    ownerId int null references user(id),
+    ownerId bigint unsigned null,
     # login_type enum('email', 'username', 'sms') default 'email',
 
     # field for email login
     email varchar(255) unique not null,
     password varchar(255) not null,
-    verifyCode varchar(8),
+    verifyCode varchar(8) null,
     verifyCodeAt timestamp null,
     status enum('active', 'await_verify', 'suspend', 'delete') default 'await_verify',
 #     suspendType enum('none', 'max_passwd_attempts', 'max_recover_attempts', 'business') null,
@@ -20,7 +20,9 @@ create table login(
 #     lastLogin timestamp,
 
     createdAt timestamp default current_timestamp,
-    updatedAt timestamp default current_timestamp on update current_timestamp
+    updatedAt timestamp default current_timestamp on update current_timestamp,
+
+    foreign key (ownerId) references user(id)
 );
 
 create table user(
@@ -29,55 +31,66 @@ create table user(
     role enum('admin', 'nbp_client') default 'nbp_client',
 
     firstName varchar(255) not null,
-    middleName varchar(255),
+    middleName varchar(255) null,
     lastName varchar(255) not null,
     dob date not null,
-    address1 varchar(255),
-    address2 varchar(255),
-    city varchar(64),
-    province varchar(5) references region(isoCode),
-    country varchar(4) references country(iso2Code),
-    postalCode varchar(16),
-    phoneNumber varchar(32),
+    address1 varchar(255) not null,
+    address2 varchar(255) null,
+    city varchar(64) not null,
+    province varchar(5) not null ,
+    country varchar(4) not null,
+    postalCode varchar(16) not null,
+    phoneNumber varchar(32) not null,
 
-    pob varchar(4) references country(iso2Code),
-    nationality varchar(4) references country(iso2Code),
+    pob varchar(4) not null,
+    nationality varchar(4) not null,
 
-    occupationId int references occupation(id),
-    avatarUrl varchar(255),
+    occupationId bigint unsigned not null,
+    avatarUrl varchar(255) null,
 #     primaryAddress int, # reference to userAddress.
 #     primaryPhone int, # reference to userPhone
 
     createdAt timestamp default current_timestamp,
-    updatedAt timestamp default current_timestamp on update current_timestamp
+    updatedAt timestamp default current_timestamp on update current_timestamp,
+
+    foreign key (province) references region(isoCode),
+    foreign key (country) references country(iso2Code),
+    foreign key (pob) references country(iso2Code),
+    foreign key (nationality) references country(iso2Code),
+    foreign key (occupationId) references occupation(id)
+
 );
 
 create table identification(
     id serial primary key,
     status enum('active', 'suspend', 'await_verify', 'delete') default 'active',
-    type enum('password', 'driver_license', 'identification') not null,
+    type enum('password', 'driver_license', 'provincial_id', 'national_id') not null,
 
     value varchar(64) not null,
     addition_info varchar(128) null,
 
-    ownerId int not null references user(id),
+    ownerId bigint unsigned not null,
 
     createdAt timestamp default current_timestamp,
-    updatedAt timestamp default current_timestamp on update current_timestamp
+    updatedAt timestamp default current_timestamp on update current_timestamp,
+
+    foreign key (ownerId) references user(id)
 );
 
 create table account (
     id serial primary key,
-    status enum('active', 'await_verify', 'suspend', 'delete') default 'await_verify',
+    status enum('active', 'await_verify', 'invalid', 'suspend', 'delete') default 'await_verify',
     type enum('interac', 'bank_account') not null,
 
     email varchar(255) null,
     isDefault boolean default false,
 
-    ownerId int not null references user(id),
+    ownerId bigint unsigned not null,
 
     createdAt timestamp default current_timestamp,
-    updatedAt timestamp default current_timestamp on update current_timestamp
+    updatedAt timestamp default current_timestamp on update current_timestamp,
+
+    foreign key (ownerId) references user(id)
 );
 
 create table contact(
