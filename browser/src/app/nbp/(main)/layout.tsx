@@ -20,7 +20,7 @@ export default async function MainLayout({
     // <UserProvider value={111}>
       <main>
         <div className="lg:hidden sticky top-0 z-50">
-          <Nav/>
+          <Nav session={session}/>
         </div>
         <div className="max-w-[1024px] mx-auto lg:hidden">
           <div className="pt-4 px-2 mb-4">
@@ -29,7 +29,7 @@ export default async function MainLayout({
         </div>
         <div className="max-lg:hidden">
           <div className="w-60 min-h-screen h-screen fixed border border-sky-800 z-50">
-            <SideNav></SideNav>
+            <SideNav session={session}></SideNav>
           </div>
           <div className="flex">
             <div className="flex-none min-h-screen w-60">

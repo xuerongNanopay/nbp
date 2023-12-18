@@ -17,8 +17,9 @@ import {
 } from 'next/navigation'
 
 import menus from '@/constants/menu'
+import { Session } from '@/types/auth'
 
-export default function SideNav() {
+export default function SideNav({session}: {session: Session}) {
   const curPath = usePathname()
   return (
     <div className="h-full flex flex-col">
@@ -44,8 +45,8 @@ export default function SideNav() {
           <DropdownTrigger>
             {/* <Badge content="5" color="default"> */}
               <User
-                name="Xuerong Wu"
-                description="zoey@example.com"
+                name={`${session.user?.firstName} ${session.user?.lastName}`}
+                description={session.login.email}
                 avatarProps={{
                   as: "button",
                   className: "transition-transform",

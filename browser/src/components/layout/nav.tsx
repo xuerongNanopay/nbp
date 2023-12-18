@@ -23,8 +23,9 @@ import {
 import NextLink from "next/link";
 import menus from '@/constants/menu'
 import { Menu } from "@/types/theme"
+import { Session } from "@/types/auth"
 
-export default function Nav() {
+export default function Nav({session}: {session: Session}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const curPath = usePathname()
   return (
@@ -70,14 +71,14 @@ export default function Nav() {
                 as="button"
                 className="transition-transform"
                 color="primary"
-                name="Jason Hughes"
+                name={`${session.user?.firstName}`}
                 size="md"
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem textValue= "user" key="user" className="h-14 gap-2">
                 <p className="font-semibold">Signed in as</p>
-                <p className="font-semibold">zoey@example.com</p>
+                <p className="font-semibold">{session.login.email}</p>
               </DropdownItem>
               <DropdownItem textValue="profile" key="profile">
                 <Link href="/nbp/profile" className="text-slate-950 w-full">profile</Link>
