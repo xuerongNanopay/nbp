@@ -84,7 +84,7 @@ const StatusCell = ({status}: NBPContactSummary) => {
 const ActionsCell = (contact: NBPContactSummary) => {
   return (
     <div className="relative flex items-center gap-2">
-      <Link href={`/contacts/${contact.id}`}>
+      <Link href={`/nbp/contacts/${contact.id}`}>
         <Tooltip content="Details">
           <span 
             className="text-lg text-default-400 cursor-pointer active:opacity-50"
@@ -213,7 +213,7 @@ export default function ContactTable({className, contacts}: {className?: string,
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" href="/createContact" as={Link} endContent={<PlusIcon />}>
+            <Button color="primary" href="/nbp/contacts/create" as={Link} endContent={<PlusIcon />}>
               New Contact
             </Button>
           </div>
