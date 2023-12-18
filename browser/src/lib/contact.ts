@@ -1,4 +1,5 @@
 import { InternalError } from "@/schema/error"
+\import { Session } from "@/types/auth"
 import { GetContacts, GetUniqueContact } from "@/types/common"
 import { getPrismaClient } from "@/utils/prisma"
 import { 
@@ -7,13 +8,13 @@ import {
 } from "@prisma/client"
 
 export async function createContact(
-  
+  session: Session
 ): Promise<Pick<Contact, 'id'> | null> {
   return null
 }
 
 export async function getAllContactsByOwnerId(
-  ownerId: number
+  session: Session
 ): Promise<GetContacts | null> {
   try {
     return await getPrismaClient().contact.findMany({
@@ -22,7 +23,7 @@ export async function getAllContactsByOwnerId(
           not: ContactStatus.DELETE
         },
         owner: {
-          id: ownerId
+          id: session.user?.id
         }
       },
       select: {
@@ -41,14 +42,14 @@ export async function getAllContactsByOwnerId(
       }
     })
   } catch (err: any) {
-    console.error('owerId', ownerId,'getAllContactsByOwnerId', err)
+    console.error('session: ', session, 'getAllContactsByOwnerId: ', err)
     throw new InternalError()
   }
 }
 
 export async function getContactDetailByOwnerId(
   contactId: number,
-  ownerId: number
+  session: Session
 ) : Promise<GetUniqueContact | null> {
   try {
     return await getPrismaClient().contact.findUnique({
@@ -58,7 +59,7 @@ export async function getContactDetailByOwnerId(
           not: ContactStatus.DELETE
         },
         owner: {
-          id: ownerId
+          id: session.user?.id
         }
       },
       select: {
@@ -94,7 +95,7 @@ export async function getContactDetailByOwnerId(
       }
     })
   } catch (err: any) {
-    console.error('owerId', ownerId, 'contactId', contactId,'getAllContactsByOwnerId', err)
+    console.error('session: ', session, 'contactId: ', contactId,'getAllContactsByOwnerId: ', err)
     throw new InternalError()
   }
 }

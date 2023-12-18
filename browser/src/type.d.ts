@@ -1,6 +1,7 @@
 import { Login, User } from "@prisma/client"
 import { JWT } from "./utils/jwtUtil"
 
+export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
 interface ITransfer {
 
