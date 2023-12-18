@@ -1,18 +1,35 @@
 import { formatSession } from "@/constants/log"
-import { InternalError } from "@/schema/error"
+import { BadRequestError, InternalError, InvalidInputError } from "@/schema/error"
 import { Session } from "@/types/auth"
 import { GetContacts, GetUniqueContact } from "@/types/common"
+import { ContactData } from "@/types/contact"
 import { getPrismaClient } from "@/utils/prisma"
 import { 
   ContactStatus, 
-  Contact
+  Contact,
+  ContactType
 } from "@prisma/client"
 
 export async function createContact(
-  session: Session
+  session: Session,
+  contactData: ContactData
 ): Promise<Pick<Contact, 'id'> | null> {
   
   return null
+}
+
+//Using third party API to verify contact
+//Throw error if any error occurs.
+export async function preVerifyContact(
+  session: Session,
+  contactData: ContactData
+) {
+  console.log("TODO: using third Party to varify account")
+
+  if ( contactData.transferMethod !== ContactType.BANK_ACCOUNT ) return
+  
+  //TODO: call API...
+  throw new BadRequestError({name: 'Third Party Fail', message: 'Unable to verify the account with Third Party'})
 }
 
 export async function getAllContactsByOwnerId(
@@ -99,5 +116,16 @@ export async function getContactDetailByOwnerId(
   } catch (err: any) {
     console.error(formatSession(session), 'contactId: ', contactId,'getAllContactsByOwnerId: ', err)
     throw new InternalError()
+  }
+}
+
+function mapToTransferMethod(transferMethod: string) {
+  switch(transferMethod) {
+    case ContactType.BANK_ACCOUNT:
+      return ContactType.BANK_ACCOUNT
+    case ContactType.CASH_PICKUP:
+      return ContactType.CASH_PICKUP
+    default:
+      throw new InvalidInputError("Contact Creationg error", [`Invalid transferMethod: ${transferMethod}`])
   }
 }

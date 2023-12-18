@@ -368,6 +368,6 @@ function mapToIdentificationType(identityType: string) {
     case IdentificationType.PROVINCAL_ID:
       return IdentificationType.PROVINCAL_ID
     default:
-      throw new InvalidInputError("Onboarding Error", ["Invalid Identification Type"])
+      throw new InvalidInputError("Onboarding Error", [`Invalid Identification Type: ${identityType}`])
   }
 }

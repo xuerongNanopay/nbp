@@ -36,7 +36,7 @@ export class InvalidInputError extends BadRequestError {
     super({
       name: 'InvalidInput',
       message,
-      errors: args[0]
+      errors: args
     })
   }
 }
