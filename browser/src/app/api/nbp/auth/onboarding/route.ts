@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     })
 
   } catch (err: any) {
-    console.error(session?.login?.id, err.toString())
+    console.error("session: ", JSON.stringify(session), "onboarding-POST", err.toString())
     
     const errorResponse = !err.errors ? {
       code: err.code,

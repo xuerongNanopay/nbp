@@ -1,10 +1,18 @@
 import { InvalidInputError, UnauthenticateError } from "@/schema/error";
 import type { Session } from "@/types/auth";
 import { getPrismaClient } from "@/utils/prisma";
+import { UserStatus } from "@prisma/client";
 
 export function assertSession(session: Session | null): boolean {
   if (!session) return false
   if (!session.login) return false
+  return true
+}
+
+export function assertActiveUser(session: Session | null): boolean {
+  if (!assertSession(session)) return false
+  if (!session?.user) return false
+  if (session.user.status !== UserStatus.ACTIVE) return false
   return true
 }
 

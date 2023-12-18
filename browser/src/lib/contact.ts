@@ -1,5 +1,5 @@
 import { InternalError } from "@/schema/error"
-\import { Session } from "@/types/auth"
+import { Session } from "@/types/auth"
 import { GetContacts, GetUniqueContact } from "@/types/common"
 import { getPrismaClient } from "@/utils/prisma"
 import { 

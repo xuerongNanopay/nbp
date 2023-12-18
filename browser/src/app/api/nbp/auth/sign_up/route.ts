@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       }
     })
   } catch (err: any) {
-    console.error(session?.login?.id, err.toString())
+    console.error("session: ", JSON.stringify(session), "sign_up-POST", err.toString())
     await cleanSession()
 
     const errorResponse = !err.errors ? {

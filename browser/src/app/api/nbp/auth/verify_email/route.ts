@@ -5,7 +5,7 @@ import {
   fetchSession, 
   setSession
 } from "@/lib/session";
-import { BadRequestError, ForbiddenError, InternalError, InvalidInputError, UnauthenticateError } from "@/schema/error";
+import { ForbiddenError, InvalidInputError, UnauthenticateError } from "@/schema/error";
 import { EmailVerifyDataValidator } from "@/schema/validator";
 import { EmailVerifyData } from "@/types/auth";
 import { LoginStatus } from "@prisma/client";
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       }
     })
   } catch (err: any) {
-    console.error(session?.login?.id, err.toString())
+    console.error("session: ", JSON.stringify(session), "verify_email-POST", err.toString())
 
     const errorResponse = !err.errors ? {
       code: err.code,

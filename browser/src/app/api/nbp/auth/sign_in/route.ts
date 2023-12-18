@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     })
 
   } catch (err: any) {
-    console.error('sign_in', `email: ${signInPayload?.email}`, err.toString())
+    console.error("session: ", JSON.stringify(session), "sign_in-POST", err.toString())
 
     const errorResponse = !err.errors ? {
       code: err.code,
