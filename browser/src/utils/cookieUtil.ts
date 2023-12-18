@@ -7,7 +7,6 @@ import { JWT } from './jwtUtil'
 export const MAX_COOKIE_SIZE = 4096
 export const PRESERVED_SIZE = 256
 export const CHUNK_SIZE = MAX_COOKIE_SIZE - PRESERVED_SIZE
-export const DEFAULT_SESSION_AGE = 24 * 60 * 60
 
 export interface CookieOption {
   name: string

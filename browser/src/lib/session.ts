@@ -1,9 +1,8 @@
 import { CookieSessionStore } from '@/utils/cookieUtil'
 import { cookies as nextCookies } from 'next/headers'
-import { DEFAULT_SESSION_AGE } from '@/utils/cookieUtil'
 import { JWTExpired } from "jose/errors"
 import type { Session } from '@/types/auth'
-import { JWT_SECRET } from '@/constants/env'
+import { JWT_SECRET, SESSION_AGE } from '@/constants/env'
 
 
 if ( ! JWT_SECRET ) {
@@ -13,14 +12,14 @@ if ( ! JWT_SECRET ) {
 
 const cookieSessionStore = new CookieSessionStore<Session>({
   jwtParams: {
-    maxAge: DEFAULT_SESSION_AGE,
+    maxAge: SESSION_AGE,
     // maxAge: 0,
     secret: JWT_SECRET
   },
   cookieParams: {
     name: 'NANO_ID',
     options: {
-      maxAge: DEFAULT_SESSION_AGE,
+      maxAge: SESSION_AGE,
     }
   }
 })
