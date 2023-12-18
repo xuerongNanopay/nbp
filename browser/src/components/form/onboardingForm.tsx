@@ -65,12 +65,13 @@ export default function OnboardingForm() {
       
       if (responsePayload.code === 201 ) {
         alert.info('Onboard Success')
-        router.replace('/nbp/dashboard')
+        router.refresh()
         //redirect to sign out
         //TODO: fetch interceptro for 401 error.
       } else {
         //TODO: redirect to dashboard. if message is duplicate user.
         alert.error(responsePayload.message)
+        console.log(responsePayload.message)
         setIsSubmit(false)
       }
     } catch (err) {
@@ -113,7 +114,7 @@ export default function OnboardingForm() {
     return () => {
       abortController.abort();
     }
-  }, [formik.values.country])
+  }, [])
 
   useEffect(() => {
     const abortController = new AbortController()

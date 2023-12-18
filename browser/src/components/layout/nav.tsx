@@ -88,7 +88,7 @@ export default function Nav() {
               <DropdownItem textValue="about" key="about">
                 <Link href="/nbp/about" className="text-slate-950 w-full">about</Link>
               </DropdownItem>
-              <DropdownItem textValue= "logout" key="logout" color="danger" onPress={_ => alert("TODO: Logout")}>
+              <DropdownItem textValue= "logout" key="logout" color="danger">
                 <Link href="/nbp/sign_out" className="text-slate-950 w-full">Log Out</Link>
               </DropdownItem>
             </DropdownMenu>

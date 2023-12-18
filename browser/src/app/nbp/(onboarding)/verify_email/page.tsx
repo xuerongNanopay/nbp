@@ -6,7 +6,7 @@ import { LoginStatus } from "@prisma/client"
 export default async function VerifyEmail() {
 
   const session = await fetchSession()
-  if ( !session || !session.login ) redirect('/nbp/sign_in')
+  if ( !session || !session.login ) redirect('/nbp/sign_out')
   if ( session.login.status !== LoginStatus.AWAIT_VERIFY ) {
     redirect('/nbp/onboarding')
   }

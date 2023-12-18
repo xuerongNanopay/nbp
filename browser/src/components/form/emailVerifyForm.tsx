@@ -33,7 +33,7 @@ export default function EmailVerifyForm() {
 
       if (responsePayload.code === 200) {
         alert.info("Email Verified Success")
-        router.replace('/nbp/onboarding')
+        router.refresh()
       } else {
         alert.error(responsePayload.message)
         setIsSubmit(false)

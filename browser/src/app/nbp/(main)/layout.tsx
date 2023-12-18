@@ -15,7 +15,6 @@ export default async function MainLayout({
   if (session.login.status === LoginStatus.AWAIT_VERIFY) redirect('/nbp/verify_email')
   if (session.user === null) redirect('/nbp/onboarding')
 
-
   return (
     // TODO: use nextAuth backEnd UI
     // <UserProvider value={111}>
