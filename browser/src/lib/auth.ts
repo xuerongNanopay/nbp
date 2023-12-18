@@ -21,6 +21,7 @@ import {
   UnauthenticateError 
 } from '@/schema/error'
 import { RECOVER_TOKEN_TIME_OUT_SEC } from '@/constants/env'
+import { formatSession } from '@/constants/log'
 
 const Session_Project = {
   id: true,
@@ -59,7 +60,7 @@ export async function reloadSession(
     }
     
   } catch (err: any) {
-    console.error("Prisma Error: ", err)
+    console.error("loginId: ", loginId, "reloadSession: ", err)
     throw new InternalError()
   }
 }
@@ -113,7 +114,7 @@ export async function signIn(
   } catch(err: any ) {
     if ( err instanceof NBPError ) throw err
     
-    console.error("Prisma Error: ", err)
+    console.error("email: ", email, "signIn: ", err)
     throw new InternalError()
   }
 }
@@ -151,7 +152,7 @@ export async function signUp(
   } catch (err: any) {
     if ( err instanceof NBPError ) throw err
 
-    console.error("Prisma Error: ", err)
+    console.error("signUpData: ", JSON.stringify(signUpData), "signUp: ", err)
     throw new InternalError()
   }
 }
@@ -177,7 +178,7 @@ export async function verifyEmail(
     if ( err.code === 'P2025' ) {
       throw new InvalidInputError('Invalid Code')
     } else {
-      console.error("Prisma Error: ", err)
+      console.error("session: ", formatSession(session), "verifyEmail: ", err)
       throw new InternalError()
     }
   }
@@ -201,7 +202,7 @@ export async function refreshVerifyCode(
       }
     })
   } catch(err: any ) {
-    console.error("Prisma Error: ", err)
+    console.error("session: ", formatSession(session), "refreshVerifyCode: ", err)
     throw new InternalError()
   }
 }
@@ -252,7 +253,7 @@ Pick<Login, 'id' | 'recoverToken' | 'recoverTokenExpireAt' | 'email'>
     })
 
   } catch(err: any ) {
-    console.error("Prisma Error: ", err)
+    console.error("forgetPasswordData: ", JSON.stringify(data), "forgetPassword: ", err)
     throw new InternalError()
   }
 }
@@ -303,7 +304,7 @@ export async function changePassowrd(
   } catch (err: any) {
     if ( err instanceof NBPError ) throw err
 
-    console.error("changePasswordData", {email, oneTimeToken}, "Prisma Error: ", err)
+    console.error("changePasswordData", JSON.stringify({email, oneTimeToken}), "changePassowrd: ", err)
     throw new InternalError()
   }
 }
@@ -352,7 +353,7 @@ export async function onboarding(
       }
     })
   } catch (err: any) {
-    console.error("session", session, "Prisma Error: ", err)
+    console.error("session", session, "onboarding: ", err)
     throw new InternalError()
   }
 }

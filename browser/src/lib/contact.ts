@@ -14,9 +14,19 @@ export async function createContact(
   session: Session,
   contactData: ContactData
 ): Promise<Pick<Contact, 'id'> | null> {
-  
-  return null
+  const transferMethod = mapToTransferMethod(contactData.transferMethod)
+
+  try {
+
+  } catch (err: any) {
+
+  }
+
 }
+
+export async function deleteContact(
+
+){}
 
 //Using third party API to verify contact
 //Throw error if any error occurs.
