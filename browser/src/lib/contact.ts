@@ -1,11 +1,12 @@
+import { InternalError } from "@/schema/error"
+import { GetContacts, GetUniqueContact } from "@/types/common"
 import { getPrismaClient } from "@/utils/prisma"
 import { 
   ContactStatus, 
-  Prisma,
   Contact
 } from "@prisma/client"
 
-export async function postContact(
+export async function createContact(
   
 ): Promise<Pick<Contact, 'id'> | null> {
   return null
@@ -13,18 +14,7 @@ export async function postContact(
 
 export async function getAllContactsByOwnerId(
   ownerId: number
-): Promise<Prisma.ContactGetPayload<{
-  select: {
-    id: true,
-    status: true,
-    firstName: true,
-    lastName: true,
-    type: true,
-    bankAccountNum: true,
-    iban: true,
-    institution: { select: {abbr: true}}
-  }
-}>[] | null> {
+): Promise<GetContacts | null> {
   try {
     return await getPrismaClient().contact.findMany({
       where: {
@@ -51,48 +41,17 @@ export async function getAllContactsByOwnerId(
       }
     })
   } catch (err: any) {
-    throw new PrismaError(err.code, err.message)
+    console.error('owerId', ownerId,'getAllContactsByOwnerId', err)
+    throw new InternalError()
   }
 }
 
 export async function getContactDetailByOwnerId(
   contactId: number,
   ownerId: number
-) : Promise<Prisma.ContactGetPayload<{
-  select: {
-    id: true,
-    status: true,
-    firstName: true,
-    middleName: true,
-    lastName: true,
-    address1: true,
-    address2: true,
-    province: true,
-    country: true,
-    postCode: true,
-    phoneNumber: true,
-    bankAccountNum: true,
-    branchNum: true,
-    relationshipToOwner: true,
-    iban: true,
-    createdAt: true,
-    owner: {
-      select: {
-        id: true,
-      }
-    },
-    institution: { 
-      select: {
-        name: true,
-        institutionNum: true,
-        country: true,
-        abbr: true
-      }
-    }
-  }
-}>[] | null> {
+) : Promise<GetUniqueContact | null> {
   try {
-    return await getPrismaClient().contact.findMany({
+    return await getPrismaClient().contact.findUnique({
       where: {
         id: contactId,
         status: {
@@ -135,6 +94,7 @@ export async function getContactDetailByOwnerId(
       }
     })
   } catch (err: any) {
-    throw new PrismaError(err.code, err.message)
+    console.error('owerId', ownerId, 'contactId', contactId,'getAllContactsByOwnerId', err)
+    throw new InternalError()
   }
 }

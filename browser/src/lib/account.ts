@@ -1,20 +1,13 @@
+import { InternalError } from "@/schema/error"
+import { GetAccounts } from "@/types/common"
 import { getPrismaClient } from "@/utils/prisma"
 import { 
   AccountStatus, 
-  Prisma, 
 } from "@prisma/client"
 
 export async function getAllAcountsByOwnerId(
   ownerId: number
-): Promise<Prisma.AccountGetPayload<{
-  select: {
-    id: true,
-    status: true,
-    type: true,
-    isDefault: true,
-    email: true
-  }
-}>[] | null> {
+): Promise<GetAccounts | null> {
   try {
     return await getPrismaClient().account.findMany({
       where: {
@@ -34,6 +27,7 @@ export async function getAllAcountsByOwnerId(
       }
     })
   } catch (err: any) {
-    throw new PrismaError(err.code, err.message)
+    console.error('owerId', ownerId,'getAllAcountsByOwnerId', err)
+    throw new InternalError()
   }
 }
