@@ -1,22 +1,5 @@
-export interface FetchMeta {
-  queries: Record<String, String>
-  date: Date
-}
+import type { FetchMany, FetchUnique } from "./common"
 
-export interface FetchManyMeta extends FetchMeta {
-  totalCount: number,
-  fetchCount: number
-}
-
-export interface FetchUnique<T> {
-  meta: FetchMeta,
-  data: T
-}
-
-export interface FetchMany<T> {
-  meta: FetchManyMeta,
-  data: T
-}
 
 export interface HttpResponse {
   code: number,
@@ -24,6 +7,7 @@ export interface HttpResponse {
 }
 
 export interface HttpModify<T extends FetchUnique<T>>  {
+  type: 'create'
   data: T
 }
 
