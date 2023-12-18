@@ -18,7 +18,7 @@ import TransferMethod from "@/constants/transferMethod"
 import PKBank from "@/constants/pk-bank"
 import { ContactDataValidator } from "@/schema/validator"
 import { ContactType } from "@prisma/client"
-import { GetRegions } from "@/types/common"
+import { GetPersonalRelationships, GetRegions } from "@/types/common"
 
 const initialValues: ContactData = {
   firstName: '',
@@ -44,7 +44,7 @@ export default function ContactForm() {
   const createContactHandler = (e: ContactData) => { 
     console.log(e)
     // formik.resetForm()
-    setIsCreating(true)
+    // setIsCreating(true)
     //TODO: navigating to contact/id
   }
 
@@ -56,6 +56,8 @@ export default function ContactForm() {
 
   const [regions, setRegions] = useState<GetRegions>([])
   const [isRegionsLoading, setIsRegionsLoading] = useState(true)
+  const [relationships, setRelationships] = useState<GetPersonalRelationships>([])
+  const [isRelationshipsLoading, setIsRelationshipsLoading] = useState(true)
 
   useEffect(() => {
     const abortController = new AbortController()
@@ -74,7 +76,22 @@ export default function ContactForm() {
         console.log(err)
       }
     }
+    const fetchRelationShips = async () => {
+      setIsRelationshipsLoading(true)
+
+      try {
+        const response = await fetch(`/api/nbp/common/personal_relationship`, {signal: abortController.signal})
+        const responsePayload = await response.json()
+        const relationships = responsePayload.data ?? []
+        setRelationships(relationships)
+        setIsRelationshipsLoading(false)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
     fetchRegions()
+    fetchRelationShips()
     return () => {
       abortController.abort();
     }
@@ -162,19 +179,19 @@ export default function ContactForm() {
           />
           <Select
             id="province"
-            name="province"
             label="Province"
             variant="bordered"
             isLoading={isRegionsLoading}
-            // disabled={!isRegionsLoading}
+            disabled={!isRegionsLoading}
             selectionMode="single"
             // defaultSelectedKeys={[]}
             selectedKeys={!formik.values.province ? [] : [formik.values.province]}
-            placeholder="please select province"
+            placeholder="please select"
             color="primary"
             size="sm"
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
+            // onBlur={formik.handleBlur}
+            // onChange={formik.handleChange}
+            {...formik.getFieldProps('province')}
             errorMessage={formik.touched.province && formik.errors.province}
           >
             {regions.map((region) => (
@@ -195,23 +212,23 @@ export default function ContactForm() {
           />
         </div>
         <Select
-          id="relationship"
-          name="relationship"
+          id="relationshipId"
           label="Relationship to Contact"
           variant="bordered"
           selectionMode="single"
           // defaultSelectedKeys={[]}
+          isLoading={isRelationshipsLoading}
+          disabled={!isRelationshipsLoading}
           selectedKeys={!formik.values.relationshipId ? [] : [formik.values.relationshipId]}
-          placeholder="Choose from personal relationship types"
+          placeholder="please select"
           color="primary"
           size="sm"
-          onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
+          {...formik.getFieldProps('relationshipId')}
           errorMessage={formik.touched.relationshipId && formik.errors.relationshipId}
         >
-          {PersonalRelationship.map((relationship) => (
+          {relationships.map((relationship) => (
             <SelectItem key={relationship.id} value={relationship.id}>
-              {relationship.id}
+              {relationship.type}
             </SelectItem>
           ))}
         </Select>
