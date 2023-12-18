@@ -1,5 +1,8 @@
 'use client'
-import { useState } from "react"
+import { 
+  useState,
+  useEffect
+} from "react"
 import { useFormik } from "formik"
 import {
   Input,
@@ -53,6 +56,29 @@ export default function ContactForm() {
 
   const [regions, setRegions] = useState<GetRegions>([])
   const [isRegionsLoading, setIsRegionsLoading] = useState(true)
+
+  useEffect(() => {
+    const abortController = new AbortController()
+    const fetchRegions = async () => {
+      if (!formik.values.country) {
+        return
+      }
+      setIsRegionsLoading(true)
+      try {
+        const response = await fetch(`/api/nbp/common/region?countryCode=PK`, {signal: abortController.signal})
+        const responsePayload = await response.json()
+        const regions = responsePayload.data ?? []
+        setRegions(regions)
+        setIsRegionsLoading(false)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchRegions()
+    return () => {
+      abortController.abort();
+    }
+  }, [])
 
   return (
     <div className="w-full max-w-4xl">
@@ -130,6 +156,8 @@ export default function ContactForm() {
             size="sm"
             disabled
             {...formik.getFieldProps('country')}
+            // TODO: not a best option. Refactor
+            value="Pakistan"
             errorMessage={formik.touched.country && formik.errors.country}
           />
           <Select
@@ -137,6 +165,8 @@ export default function ContactForm() {
             name="province"
             label="Province"
             variant="bordered"
+            isLoading={isRegionsLoading}
+            // disabled={!isRegionsLoading}
             selectionMode="single"
             // defaultSelectedKeys={[]}
             selectedKeys={!formik.values.province ? [] : [formik.values.province]}
@@ -147,8 +177,8 @@ export default function ContactForm() {
             onChange={formik.handleChange}
             errorMessage={formik.touched.province && formik.errors.province}
           >
-            {PKRegion.map((region) => (
-              <SelectItem key={region.id} value={region.id}>
+            {regions.map((region) => (
+              <SelectItem key={region.isoCode} value={region.isoCode}>
                 {region.name}
               </SelectItem>
             ))}

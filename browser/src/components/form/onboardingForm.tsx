@@ -234,6 +234,7 @@ export default function OnboardingForm() {
             size="sm"
             disabled
             {...formik.getFieldProps('country')}
+            //TODO: not a best option. Refactor
             value="Canada"
             errorMessage={formik.touched.country && formik.errors.country}
           />
