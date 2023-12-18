@@ -1,3 +1,4 @@
+import { formatSession } from "@/constants/log";
 import { refreshVerifyCode } from "@/lib/auth";
 import { assertSession } from "@/lib/guard";
 import { fetchSession } from "@/lib/session";
@@ -27,7 +28,7 @@ export async function GET() {
       }
     })
   } catch (err: any) {
-    console.error("session: ", JSON.stringify(session), "refresh_code-GET", err.toString())
+    console.error(formatSession(session), "refresh_code-GET: ", err.toString())
 
     const errorResponse = !err.errors ? {
       code: err.code,

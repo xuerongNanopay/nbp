@@ -1,3 +1,4 @@
+import { formatSession } from "@/constants/log";
 import { reloadSession, signUp } from "@/lib/auth";
 import { assertSession, castAndValidateData } from "@/lib/guard";
 import { cleanSession, fetchSession, setSession } from "@/lib/session";
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
       }
     })
   } catch (err: any) {
-    console.error("session: ", JSON.stringify(session), "sign_up-POST", err.toString())
+    console.error(formatSession(session), "sign_up-POST: ", err.toString())
     await cleanSession()
 
     const errorResponse = !err.errors ? {

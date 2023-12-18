@@ -1,3 +1,4 @@
+import { formatSession } from "@/constants/log";
 import { changePassowrd } from "@/lib/auth";
 import { assertSession, castAndValidateData } from "@/lib/guard";
 import { fetchSession } from "@/lib/session";
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
       }
     })
   } catch (err: any) {
-    console.error("session: ", JSON.stringify(session), "change_password-POST", err.toString())
+    console.error(formatSession(session), "change_password-POST: ", err.toString())
     
     const errorResponse = !err.errors ? {
       code: err.code,

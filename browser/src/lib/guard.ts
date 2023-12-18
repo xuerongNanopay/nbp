@@ -16,6 +16,13 @@ export function assertActiveUser(session: Session | null): boolean {
   return true
 }
 
+export function assertNotDeleteUser(session: Session | null): boolean {
+  if (!assertSession(session)) return false
+  if (!session?.user) return false
+  if (session.user.status == UserStatus.DELETE) return false
+  return true
+}
+
 export function asserSessionOrThrow(session: Session) {
   if (!session) throw new UnauthenticateError("Please Login!")
   if (!session.login) throw new UnauthenticateError("Please Login!")

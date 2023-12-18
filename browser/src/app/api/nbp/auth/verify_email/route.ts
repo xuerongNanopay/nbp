@@ -1,3 +1,4 @@
+import { formatSession } from "@/constants/log";
 import { reloadSession, verifyEmail } from "@/lib/auth";
 import { assertSession, castAndValidateData } from "@/lib/guard";
 import { 
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
       }
     })
   } catch (err: any) {
-    console.error("session: ", JSON.stringify(session), "verify_email-POST", err.toString())
+    console.error(formatSession(session), "verify_email-POST: ", err.toString())
 
     const errorResponse = !err.errors ? {
       code: err.code,

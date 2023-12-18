@@ -1,3 +1,4 @@
+import { formatSession } from "@/constants/log"
 import { InternalError } from "@/schema/error"
 import { Session } from "@/types/auth"
 import { GetContacts, GetUniqueContact } from "@/types/common"
@@ -43,7 +44,7 @@ export async function getAllContactsByOwnerId(
       }
     })
   } catch (err: any) {
-    console.error('session: ', session, 'getAllContactsByOwnerId: ', err)
+    console.error(formatSession(session), 'getAllContactsByOwnerId: ', err)
     throw new InternalError()
   }
 }
@@ -96,7 +97,7 @@ export async function getContactDetailByOwnerId(
       }
     })
   } catch (err: any) {
-    console.error('session: ', session, 'contactId: ', contactId,'getAllContactsByOwnerId: ', err)
+    console.error(formatSession(session), 'contactId: ', contactId,'getAllContactsByOwnerId: ', err)
     throw new InternalError()
   }
 }

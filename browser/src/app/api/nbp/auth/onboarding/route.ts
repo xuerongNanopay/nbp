@@ -1,3 +1,4 @@
+import { formatSession } from "@/constants/log";
 import { onboarding, reloadSession, reloadSessionOrThrow } from "@/lib/auth";
 import { assertSession, castAndValidateData } from "@/lib/guard";
 import { cleanSession, fetchSession, setSession } from "@/lib/session";
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
     })
 
   } catch (err: any) {
-    console.error("session: ", JSON.stringify(session), "onboarding-POST", err.toString())
+    console.error(formatSession(session), "onboarding-POST: ", err.toString())
     
     const errorResponse = !err.errors ? {
       code: err.code,
