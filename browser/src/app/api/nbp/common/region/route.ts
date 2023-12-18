@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   try {
     if (!assertSession(session)) throw new UnauthenticateError("Please Login")
 
-    const regions = await getRegionsByCountryCode(countryCode)
+    const regions = !countryCode ? [] : await getRegionsByCountryCode(countryCode)
     return Response.json(
       {
         code: 200,
