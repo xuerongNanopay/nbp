@@ -38,6 +38,7 @@ export default function ForgetPasswrodForm() {
       }
     } catch (err) {
       alert.error(JSON.stringify(err))
+      console.error(err)
       setIsSubmit(false)
     }
   }

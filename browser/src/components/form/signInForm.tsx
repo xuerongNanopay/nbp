@@ -42,6 +42,7 @@ export default function SignInForm({forgetPWLink}: {forgetPWLink?: string}) {
       }
     } catch (err: any) {
       alert.error(JSON.stringify(err))
+      console.error(err)
       setIsSubmit(false)
     }
   }

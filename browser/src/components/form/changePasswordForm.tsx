@@ -45,6 +45,7 @@ export default function ChangePasswordForm({email, oneTimeToken}: {email: string
       }
     } catch (err) {
       alert.error(JSON.stringify(err))
+      console.error(err)
       setIsSubmit(false)
     }
   }

@@ -43,6 +43,7 @@ export default function SignUpForm() {
 
     } catch (err) {
       alert.error(JSON.stringify(err))
+      console.error(err)
       setIsSubmit(false)
     }
   }
