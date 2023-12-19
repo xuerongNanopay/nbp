@@ -1,12 +1,12 @@
-import { LogLevel } from "@/constants/log";
 import type { AlertFunc } from "@/types/log";
+import { LogLevel } from "./logUtil";
 
 const consoleAlert = (logLevel: LogLevel, ...args: any) => {
   switch(logLevel) {
     case LogLevel.INFO:
       console.log(...args)
       break
-    case LogLevel.WARMING:
+    case LogLevel.WARM:
       console.warn(...args)
       break
     case LogLevel.ERROR:
@@ -16,7 +16,7 @@ const consoleAlert = (logLevel: LogLevel, ...args: any) => {
 
 export const CONSOLE_ALERT: AlertFunc = {
   warming: (...args: any) => {
-    consoleAlert(LogLevel.WARMING, ...args)
+    consoleAlert(LogLevel.WARM, ...args)
   },
   error: (...args: any) => {
     consoleAlert(LogLevel.ERROR, ...args)

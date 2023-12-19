@@ -1,8 +1,8 @@
-import { formatSession } from "@/constants/log";
-import { getContactDetailByOwnerId } from "@/lib/contact";
-import { assertActiveUser } from "@/lib/guard";
-import { fetchSession } from "@/lib/session";
-import { InvalidInputError, ResourceNoFoundError, UnauthenticateError } from "@/schema/error";
+import { getContactDetailByOwnerId } from "@/lib/contact"
+import { assertActiveUser } from "@/lib/guard"
+import { fetchSession } from "@/lib/session"
+import { InvalidInputError, ResourceNoFoundError, UnauthenticateError } from "@/schema/error"
+import { formatSession } from "@/utils/logUtil"
 
 export async function GET(
   _: Request,
