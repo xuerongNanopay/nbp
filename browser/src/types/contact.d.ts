@@ -11,7 +11,7 @@ export interface ContactData  {
   phoneNumber?: string,
   relationshipId: number,
   transferMethod: string,
-  bankName?: string,
+  institutionId?: number,
   branchNo?: string,
   accountOrIban?: string
 }

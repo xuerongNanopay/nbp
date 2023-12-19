@@ -10,6 +10,7 @@ import type { ContactData} from "@/types/contact"
 import * as Yup from 'yup';
 import dayjs from "dayjs"
 import { parse, isDate } from "date-fns";
+import { ContactType } from "@prisma/client";
 
 const eighteen_years_age = dayjs().subtract(18, 'year').format('YYYY-MM-DD')
 const hundred_years_age = dayjs().subtract(100, 'year').format('YYYY-MM-DD')
@@ -76,7 +77,7 @@ export const OnboardingDataValidator = Yup.object<OnboardingData>({
             .min(hundred_years_age, "You must be at less 100 years old to register"),
   pob: Yup.string().trim().required('Required'),
   nationality: Yup.string().trim().required('Required'),
-  occupationId: Yup.number().required('Required'),
+  occupationId: Yup.number().integer().required('Required'),
   identityType: Yup.string().trim().required('Required'),
   identityNumber: Yup.string().trim().required('Required'),
   interacEmail: Yup.string().email('Invalid email address').required('Required')
@@ -92,12 +93,12 @@ export const ContactDataValidator = Yup.object<ContactData>({
   country: Yup.string().trim().required('Required'),
   relationshipId: Yup.number().required('Required'),
   transferMethod: Yup.string().trim().required('Required'),
-  bankName: Yup.string().trim().when(['transferMethod'], {
-    is: (transferMethod: string) => transferMethod === 'bankAccount',
-    then:() => Yup.string().trim().required('Required')
+  institutionId: Yup.number().integer().when(['transferMethod'], {
+    is: (transferMethod: string) => transferMethod === ContactType.BANK_ACCOUNT,
+    then:() => Yup.number().integer().required('Required')
   }),
   accountOrIban: Yup.string().trim().when(['transferMethod'], {
-    is: 'bankAccount',
+    is: (transferMethod: string) => transferMethod === ContactType.BANK_ACCOUNT,
     then: () => Yup.string().trim().required('Required')
   })
 })

@@ -12,43 +12,26 @@ import {
 } from "@nextui-org/react"
 
 import { ContactData } from "@/types/contact"
-import PKRegion from "@/constants/pk-region"
-import PersonalRelationship from "@/constants/personal-relationship"
 import TransferMethod from "@/constants/transferMethod"
-import PKBank from "@/constants/pk-bank"
 import { ContactDataValidator } from "@/schema/validator"
 import { ContactType } from "@prisma/client"
-import { GetPersonalRelationships, GetRegions } from "@/types/common"
+import { GetInstitutions, GetPersonalRelationships, GetRegions } from "@/types/common"
 
-const initialValues: ContactData = {
-  firstName: '',
-  middleName: '',
-  lastName: '',
-  addressLine1: '',
-  addressLine2: '',
-  city: '',
-  province: '',
+const initialValues: Partial<ContactData> = {
   country: 'PK',
-  postalCode: '',
-  relationshipId: 0,
-  phoneNumber: '',
-  transferMethod: '',
-  bankName: '',
-  branchNo: '',
-  accountOrIban: ''
 }
 
 export default function ContactForm() {
-  const [isCreating, setIsCreating] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-  const createContactHandler = (e: ContactData) => { 
+  const createContactHandler = (e: Partial<ContactData>) => { 
     console.log(e)
     // formik.resetForm()
     // setIsCreating(true)
     //TODO: navigating to contact/id
   }
 
-  const formik = useFormik({
+  const formik = useFormik<Partial<ContactData>>({
     initialValues,
     validationSchema: ContactDataValidator,
     onSubmit: createContactHandler
@@ -58,6 +41,8 @@ export default function ContactForm() {
   const [isRegionsLoading, setIsRegionsLoading] = useState(true)
   const [relationships, setRelationships] = useState<GetPersonalRelationships>([])
   const [isRelationshipsLoading, setIsRelationshipsLoading] = useState(true)
+  const [institutions, setInstitutions] = useState<GetInstitutions>([])
+  const [isInstitutionsLoading, setIsInstitutionsLoading] = useState(true)
 
   useEffect(() => {
     const abortController = new AbortController()
@@ -90,8 +75,22 @@ export default function ContactForm() {
       }
     }
 
+    const fetchInstitutions = async () => {
+      setIsInstitutionsLoading(true)
+      try {
+        const response = await fetch(`/api/nbp/common/institution?countryCode=PK`, {signal: abortController.signal})
+        const responsePayload = await response.json()
+        const institutions = responsePayload.data ?? []
+        setInstitutions(institutions)
+        setIsInstitutionsLoading(false)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
     fetchRegions()
     fetchRelationShips()
+    fetchInstitutions()
     return () => {
       abortController.abort();
     }
@@ -181,17 +180,17 @@ export default function ContactForm() {
             id="province"
             label="Province"
             variant="bordered"
+            name="province"
             isLoading={isRegionsLoading}
-            disabled={!isRegionsLoading}
             selectionMode="single"
             // defaultSelectedKeys={[]}
             selectedKeys={!formik.values.province ? [] : [formik.values.province]}
             placeholder="please select"
             color="primary"
             size="sm"
-            // onBlur={formik.handleBlur}
-            // onChange={formik.handleChange}
-            {...formik.getFieldProps('province')}
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+            // {...formik.getFieldProps('province')}
             errorMessage={formik.touched.province && formik.errors.province}
           >
             {regions.map((region) => (
@@ -214,16 +213,17 @@ export default function ContactForm() {
         <Select
           id="relationshipId"
           label="Relationship to Contact"
+          name="relationshipId"
           variant="bordered"
           selectionMode="single"
           // defaultSelectedKeys={[]}
           isLoading={isRelationshipsLoading}
-          disabled={!isRelationshipsLoading}
           selectedKeys={!formik.values.relationshipId ? [] : [formik.values.relationshipId]}
           placeholder="please select"
           color="primary"
           size="sm"
-          {...formik.getFieldProps('relationshipId')}
+          onBlur={formik.handleBlur}
+          onChange={formik.handleChange}
           errorMessage={formik.touched.relationshipId && formik.errors.relationshipId}
         >
           {relationships.map((relationship) => (
@@ -269,23 +269,22 @@ export default function ContactForm() {
           formik.values.transferMethod === ContactType.BANK_ACCOUNT &&
           <>
             <Select
-              id="bankName"
-              name="bankName"
+              id="institutionId"
               label="Bank Name"
               variant="bordered"
               selectionMode="single"
               // defaultSelectedKeys={[]}
-              selectedKeys={!formik.values.bankName ? [] : [formik.values.bankName]}
+              isLoading={isInstitutionsLoading}
+              selectedKeys={!formik.values.institutionId ? [] : [formik.values.institutionId]}
               placeholder="Select Transfer Method"
               color="primary"
               size="sm"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              errorMessage={formik.touched.bankName && formik.errors.bankName}
+              {...formik.getFieldProps('institutionId')}
+              errorMessage={formik.touched.institutionId && formik.errors.institutionId}
             >
-              {PKBank.map((bank) => (
-                <SelectItem key={bank.id} value={bank.id}>
-                  {bank.name}
+              {institutions.map((institution) => (
+                <SelectItem key={institution.id} value={institution.id}>
+                  {institution.name}
                 </SelectItem>
               ))}
             </Select>
@@ -307,7 +306,7 @@ export default function ContactForm() {
           color="primary"
           className="mt-6"
           size="md"
-          isLoading={isCreating}
+          isLoading={isSubmitting}
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Submit
