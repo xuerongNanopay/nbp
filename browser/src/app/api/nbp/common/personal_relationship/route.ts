@@ -1,4 +1,4 @@
-import { formatSession } from "@/constants/log"
+import { LOGGER, formatSession } from '@/utils/logUtil'
 import { 
   getPersinoalRelationships
 } from "@/lib/common"
@@ -10,9 +10,9 @@ export async function GET() {
   const session = await fetchSession()
 
   try {
-    if (!assertSession(session)) throw new UnauthenticateError("Please Login")
+    if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
 
-    const relstionships = await getPersinoalRelationships()
+    const relstionships = await getPersinoalRelationships(session)
     return Response.json(
       {
         code: 200,
@@ -23,7 +23,7 @@ export async function GET() {
       }
     )
   } catch (err: any) {
-    console.error(formatSession(session), "personal_relationship-GET: ", err.toString())
+    LOGGER.error(`${formatSession(session)}`, "API: personal_relationship-GET", err)
 
     const errorResponse = !err.errors ? {
       code: err.code,

@@ -8,7 +8,7 @@ import { assertSession, castAndValidateData } from '@/lib/guard'
 import { ForbiddenError } from '@/schema/error'
 import { SignInDataValidator } from '@/schema/validator'
 import { signIn } from '@/lib/auth'
-import { formatSession } from '@/constants/log'
+import { LOGGER, formatSession } from '@/utils/logUtil'
 
 //TODO: fecth from node backend.
 export async function POST(req: NextRequest) {
@@ -35,7 +35,8 @@ export async function POST(req: NextRequest) {
     })
 
   } catch (err: any) {
-    console.error(formatSession(session), "sign_in-POST: ", err.toString())
+    LOGGER.error(`${formatSession(session)}`, "API: sign_in-POST", err)
+
 
     const errorResponse = !err.errors ? {
       code: err.code,

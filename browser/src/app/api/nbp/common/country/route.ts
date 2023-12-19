@@ -1,4 +1,4 @@
-import { formatSession } from "@/constants/log"
+import { LOGGER, formatSession } from '@/utils/logUtil'
 import { 
   getCountries
 } from "@/lib/common"
@@ -10,9 +10,9 @@ export async function GET() {
   const session = await fetchSession()
 
   try {
-    if (!assertSession(session)) throw new UnauthenticateError("Please Login")
+    if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
 
-    const countries = await getCountries()
+    const countries = await getCountries(session)
     return Response.json(
       {
         code: 200,
@@ -23,7 +23,7 @@ export async function GET() {
       }
     )
   } catch (err: any) {
-    console.error(formatSession(session), "country-GET: ", err.toString())
+    LOGGER.error(`${formatSession(session)}`, "API: country-GET", err)
 
     const errorResponse = !err.errors ? {
       code: err.code,

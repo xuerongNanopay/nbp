@@ -1,12 +1,14 @@
 import { InternalError } from "@/schema/error"
+import { Session } from "@/types/auth"
 import { GetAccounts } from "@/types/common"
+import { LOGGER, formatSession } from "@/utils/logUtil"
 import { getPrismaClient } from "@/utils/prisma"
 import { 
   AccountStatus, 
 } from "@prisma/client"
 
 export async function getAllAcountsByOwnerId(
-  ownerId: number
+  session: Session
 ): Promise<GetAccounts | null> {
   try {
     return await getPrismaClient().account.findMany({
@@ -15,7 +17,7 @@ export async function getAllAcountsByOwnerId(
           not: AccountStatus.DELETE
         },
         owner: {
-          id: ownerId
+          id: session.user?.id
         }
       },
       select: {
@@ -27,7 +29,7 @@ export async function getAllAcountsByOwnerId(
       }
     })
   } catch (err: any) {
-    console.error('owerId', ownerId,'getAllAcountsByOwnerId', err)
+    LOGGER.error(`${formatSession(session)}`, 'Method: getAllAcountsByOwnerId', err)
     throw new InternalError()
   }
 }

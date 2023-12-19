@@ -1,7 +1,17 @@
 import { LOG_LEVEL } from '@/constants/env';
+import { Session } from '@/types/auth';
 import winston, { addColors } from 'winston'
 const { combine, timestamp, printf, colorize, align, label } = winston.format;
 
+
+export enum LogLevel {
+  WARM = 'WARM',
+  ERROR = 'ERROR',
+  INFO = 'INFO',
+  DEBUG = 'DEBUG',
+  TRACE = 'TRACE',
+  FATAL = 'FATAL'
+}
 
 const logLevels = {
   fatal: 0,
@@ -89,3 +99,8 @@ class Logger {
 }
 
 export const LOGGER = new Logger(wistonLogger)
+
+export function formatSession(session: Session | null): string {
+  if (!session) return "Session: EMPTY"
+  return `Session: {login: ${!session.login ? 'EMPTY' : session.login.id}, user: ${!session.user ? 'EMPTY' : session.user.id}}`
+}

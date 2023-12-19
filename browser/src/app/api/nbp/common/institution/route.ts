@@ -1,4 +1,4 @@
-import { formatSession } from "@/constants/log"
+import { LOGGER, formatSession } from '@/utils/logUtil'
 import { getInstitutionsByCountryCode } from "@/lib/common"
 import { assertSession } from "@/lib/guard"
 import { fetchSession } from "@/lib/session"
@@ -10,9 +10,9 @@ export async function GET(request: Request) {
   const session = await fetchSession()
 
   try {
-    if (!assertSession(session)) throw new UnauthenticateError("Please Login")
+    if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
 
-    const institutions = !countryCode ? [] : await getInstitutionsByCountryCode(countryCode)
+    const institutions = !countryCode ? [] : await getInstitutionsByCountryCode(session, countryCode)
     return Response.json(
       {
         code: 200,
@@ -23,7 +23,7 @@ export async function GET(request: Request) {
       }
     )
   } catch (err: any) {
-    console.error(formatSession(session), "institution-GET: ", err.toString())
+    LOGGER.error(`${formatSession(session)}`, "API: institution-GET", err)
 
     const errorResponse = !err.errors ? {
       code: err.code,

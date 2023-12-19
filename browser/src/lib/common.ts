@@ -15,96 +15,145 @@ import type {
   GetOccupations,
   GetCurrencies
 } from '@/types/common'
+import { LOGGER, formatSession } from '@/utils/logUtil';
+import { InternalError } from '@/schema/error';
+import { Session } from '@/types/auth';
 
 export async function getRegionsByCountryCode(
+  session: Session,
   countryCode: string
 ): Promise<GetRegions | null> {
-  return await getPrismaClient().region.findMany({
-    where: {
-      country: countryCode ?? '',
-      status: RegionStatus.ACTIVE
-    },
-    select: {
-      id: true,
-      abbr: true,
-      country: true,
-      name: true,
-      isoCode: true
-    }
-  })
+  try {
+    return await getPrismaClient().region.findMany({
+      where: {
+        country: countryCode ?? '',
+        status: RegionStatus.ACTIVE
+      },
+      select: {
+        id: true,
+        abbr: true,
+        country: true,
+        name: true,
+        isoCode: true
+      }
+    })
+  } catch (err: any) {
+    LOGGER.error(`${formatSession(session)}`, "method: getRegionsByCountryCode", err)
+
+    throw new InternalError()
+  }
 }
 
-export async function getCountries()
+export async function getCountries(
+  session: Session
+)
 : Promise<GetCountries | null>{
-  return await getPrismaClient().country.findMany({
-    where: {
-      status: CountryStatus.ACTIVE
-    },
-    select: {
-      id: true,
-      iso2Code: true,
-      name: true
-    }
-  })
+  try {
+    return await getPrismaClient().country.findMany({
+      where: {
+        status: CountryStatus.ACTIVE
+      },
+      select: {
+        id: true,
+        iso2Code: true,
+        name: true
+      }
+    })
+  } catch (err: any) {
+    LOGGER.error(`${formatSession(session)}`, "method: getCountries", err)
+
+    throw new InternalError()
+  }
 }
 
 export async function getInstitutionsByCountryCode(
+  session: Session,
   countryCode: string
 ) : Promise<GetInstitutions | null>
 {
-  return await getPrismaClient().institution.findMany({
-    where: {
-      country: countryCode ?? '',
-      status: InstitutionStatus.ACTIVE
-    },
-    select: {
-      id: true,
-      abbr: true,
-      country: true,
-      name: true
-    }
-  })
+  try {
+    return await getPrismaClient().institution.findMany({
+      where: {
+        country: countryCode ?? '',
+        status: InstitutionStatus.ACTIVE
+      },
+      select: {
+        id: true,
+        abbr: true,
+        country: true,
+        name: true
+      }
+    })
+  } catch (err: any) {
+    LOGGER.error(`${formatSession(session)}`, "method: getInstitutionsByCountryCode", err)
+
+    throw new InternalError()
+  }
 }
 
-export async function getPersinoalRelationships()
+export async function getPersinoalRelationships(
+  session: Session
+)
 : Promise<GetPersonalRelationships | null> {
-  return await getPrismaClient().personalRelationship.findMany({
-    where: {
-      status: PersonalRelationshipStatus.ACTIVE
-    },
-    select: {
-      id: true,
-      type: true,
-      description: true
-    }
-  })
+  try {
+    return await getPrismaClient().personalRelationship.findMany({
+      where: {
+        status: PersonalRelationshipStatus.ACTIVE
+      },
+      select: {
+        id: true,
+        type: true,
+        description: true
+      }
+    })
+  } catch (err: any) {
+    LOGGER.error(`${formatSession(session)}`, "method: getPersinoalRelationships", err)
+
+    throw new InternalError()
+  }
 }
 
-export async function getOccupations()
+export async function getOccupations(
+  session: Session
+)
 : Promise<GetOccupations | null> {
-  return await getPrismaClient().occupation.findMany({
-    where: {
-      status: OccupationStatus.ACTIVE
-    },
-    select: {
-      id: true,
-      type: true,
-      description: true
-    }
-  })
+  try {
+    return await getPrismaClient().occupation.findMany({
+      where: {
+        status: OccupationStatus.ACTIVE
+      },
+      select: {
+        id: true,
+        type: true,
+        description: true
+      }
+    })
+  } catch (err: any) {
+    LOGGER.error(`${formatSession(session)}`, "method: getOccupations", err)
+
+    throw new InternalError()
+  }
 }
 
-export async function getCurrencies()
+export async function getCurrencies(
+  session: Session
+)
 : Promise<GetCurrencies | null> {
-  return  await getPrismaClient().currency.findMany({
-    where: {
-      status: CurrencyStatus.ACTIVE
-    },
-    select: {
-      id: true,
-      isoCode: true,
-      decimal: true,
-      name: true
-    }
-  })
+  try {
+    return  await getPrismaClient().currency.findMany({
+      where: {
+        status: CurrencyStatus.ACTIVE
+      },
+      select: {
+        id: true,
+        isoCode: true,
+        decimal: true,
+        name: true
+      }
+    })
+  } catch (err: any) {
+    LOGGER.error(`${formatSession(session)}`, "method: getCurrencies", err)
+
+    throw new InternalError()
+  }
 }

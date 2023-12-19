@@ -1,11 +1,11 @@
-import { formatSession } from "@/constants/log";
-import { onboarding, reloadSession, reloadSessionOrThrow } from "@/lib/auth";
-import { assertSession, castAndValidateData } from "@/lib/guard";
-import { cleanSession, fetchSession, setSession } from "@/lib/session";
-import { ForbiddenError, InternalError, UnauthenticateError } from "@/schema/error";
-import { OnboardingDataValidator } from "@/schema/validator";
-import type { OnboardingData } from "@/types/auth";
-import { LoginStatus } from "@prisma/client";
+import { LOGGER, formatSession } from '@/utils/logUtil'
+import { onboarding, reloadSession, reloadSessionOrThrow } from "@/lib/auth"
+import { assertSession, castAndValidateData } from "@/lib/guard"
+import { cleanSession, fetchSession, setSession } from "@/lib/session"
+import { ForbiddenError, InternalError, UnauthenticateError } from "@/schema/error"
+import { OnboardingDataValidator } from "@/schema/validator"
+import type { OnboardingData } from "@/types/auth"
+import { LoginStatus } from "@prisma/client"
 
 export async function POST(req: Request) {
   const session = await fetchSession()
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     })
 
   } catch (err: any) {
-    console.error(formatSession(session), "onboarding-POST: ", err.toString())
+    LOGGER.error(`${formatSession(session)}`, "API: onboarding-POST", err)
     
     const errorResponse = !err.errors ? {
       code: err.code,

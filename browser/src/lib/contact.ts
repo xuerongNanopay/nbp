@@ -1,8 +1,9 @@
-import { formatSession } from "@/constants/log"
+import { formatSession } from '@/utils/logUtil'
 import { BadRequestError, InternalError, InvalidInputError } from "@/schema/error"
 import { Session } from "@/types/auth"
 import { GetContacts, GetUniqueContact } from "@/types/common"
 import { ContactData, ContactDeleteData } from "@/types/contact"
+import { LOGGER } from "@/utils/logUtil"
 import { getPrismaClient } from "@/utils/prisma"
 import { 
   ContactStatus, 
@@ -19,6 +20,7 @@ export async function createContact(
   try {
     return null
   } catch (err: any) {
+    LOGGER.error(`${formatSession(session)}`, 'method: createContact', )
     console.error("session", session, "onboarding: ", err)
     throw new InternalError()
   }
@@ -75,7 +77,8 @@ export async function getAllContactsByOwnerId(
       }
     })
   } catch (err: any) {
-    console.error(formatSession(session), 'getAllContactsByOwnerId: ', err)
+    LOGGER.error(`${formatSession(session)}`, "method: getAllContactsByOwnerId", err)
+
     throw new InternalError()
   }
 }
@@ -128,7 +131,7 @@ export async function getContactDetailByOwnerId(
       }
     })
   } catch (err: any) {
-    console.error(formatSession(session), 'contactId: ', contactId,'getAllContactsByOwnerId: ', err)
+    LOGGER.error(`${formatSession(session)}`, "method: getContactDetailByOwnerId", err)
     throw new InternalError()
   }
 }

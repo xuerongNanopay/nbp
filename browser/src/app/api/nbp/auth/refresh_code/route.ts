@@ -1,9 +1,9 @@
-import { formatSession } from "@/constants/log";
-import { refreshVerifyCode } from "@/lib/auth";
-import { assertSession } from "@/lib/guard";
-import { fetchSession } from "@/lib/session";
-import { ForbiddenError, InternalError, UnauthenticateError } from "@/schema/error";
-import { LoginStatus } from "@prisma/client";
+import { LOGGER, formatSession } from '@/utils/logUtil'
+import { refreshVerifyCode } from "@/lib/auth"
+import { assertSession } from "@/lib/guard"
+import { fetchSession } from "@/lib/session"
+import { ForbiddenError, InternalError, UnauthenticateError } from "@/schema/error"
+import { LoginStatus } from "@prisma/client"
 
 export async function GET() {
   const session = await fetchSession()
@@ -28,7 +28,7 @@ export async function GET() {
       }
     })
   } catch (err: any) {
-    console.error(formatSession(session), "refresh_code-GET: ", err.toString())
+    LOGGER.error(`${formatSession(session)}`, "API: refresh_code-GET", err)
 
     const errorResponse = !err.errors ? {
       code: err.code,

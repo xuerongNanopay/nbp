@@ -1,4 +1,4 @@
-import { cleanSession } from "@/lib/session";
+import { cleanSession } from "@/lib/session"
 
 async function signOut() {
   await cleanSession()

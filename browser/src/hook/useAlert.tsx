@@ -1,6 +1,6 @@
 'use client'
 
-import { LogLevel } from '@/constants/log'
+import { LogLevel } from '@/utils/logUtil'
 import { ErrorIcon } from '@/icons/ErrorIcon'
 import { ExclamationIcon } from '@/icons/ExclamationIcon'
 import type { AlertFunc } from '@/types/log'
@@ -81,7 +81,7 @@ export function AlertProvider({
   }
 
   const alertFunc: AlertFunc = {
-    warming: (msg: string) => {setAlerts(LogLevel.WARMING, msg)},
+    warming: (msg: string) => {setAlerts(LogLevel.WARM, msg)},
     error: (msg: string) => {setAlerts(LogLevel.ERROR, msg)},
     info: (msg: string) => {setAlerts(LogLevel.INFO, msg)},
     alert: setAlerts

@@ -1,9 +1,9 @@
-import { formatSession } from "@/constants/log";
-import { forgetPassword } from "@/lib/auth";
-import { assertSession, castAndValidateData } from "@/lib/guard";
-import { fetchSession } from "@/lib/session";
-import { ForbiddenError, InternalError } from "@/schema/error";
-import { ForgetPasswordDataValidator } from "@/schema/validator";
+import { LOGGER, formatSession } from '@/utils/logUtil'
+import { forgetPassword } from "@/lib/auth"
+import { assertSession, castAndValidateData } from "@/lib/guard"
+import { fetchSession } from "@/lib/session"
+import { ForbiddenError, InternalError } from "@/schema/error"
+import { ForgetPasswordDataValidator } from "@/schema/validator"
 
 export async function POST(req: Request) {
   const session = await fetchSession()
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       }
     })
   } catch (err: any) {
-    console.error(formatSession(session), "forget_password-POST: ", err.toString())
+    LOGGER.error(`${formatSession(session)}`, "API: forget_password-POST", err)
     
     const errorResponse = !err.errors ? {
       code: err.code,

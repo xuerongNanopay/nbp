@@ -1,15 +1,14 @@
-import { formatSession } from "@/constants/log";
-import { reloadSession, verifyEmail } from "@/lib/auth";
-import { assertSession, castAndValidateData } from "@/lib/guard";
+import { LOGGER, formatSession } from '@/utils/logUtil'
+import { reloadSession, verifyEmail } from "@/lib/auth"
+import { assertSession, castAndValidateData } from "@/lib/guard"
 import { 
-  cleanSession, 
   fetchSession, 
   setSession
-} from "@/lib/session";
-import { ForbiddenError, InvalidInputError, UnauthenticateError } from "@/schema/error";
-import { EmailVerifyDataValidator } from "@/schema/validator";
-import { EmailVerifyData } from "@/types/auth";
-import { LoginStatus } from "@prisma/client";
+} from "@/lib/session"
+import { ForbiddenError, InvalidInputError, UnauthenticateError } from "@/schema/error"
+import { EmailVerifyDataValidator } from "@/schema/validator"
+import { EmailVerifyData } from "@/types/auth"
+import { LoginStatus } from "@prisma/client"
 
 export async function POST(req: Request) {
   const session = await fetchSession()
@@ -41,7 +40,7 @@ export async function POST(req: Request) {
       }
     })
   } catch (err: any) {
-    console.error(formatSession(session), "verify_email-POST: ", err.toString())
+    LOGGER.error(`${formatSession(session)}`, "API: verify_email-POST", err)
 
     const errorResponse = !err.errors ? {
       code: err.code,

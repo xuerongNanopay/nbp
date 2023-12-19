@@ -1,4 +1,4 @@
-import { formatSession } from "@/constants/log";
+import { LOGGER, formatSession } from '@/utils/logUtil'
 import { getAllContactsByOwnerId } from "@/lib/contact";
 import { assertNotDeleteUser } from "@/lib/guard";
 import { fetchSession } from "@/lib/session";
@@ -22,7 +22,7 @@ export async function GET() {
     )
 
   } catch (err: any) {
-    console.error(formatSession(session), "contact-GET: ", err.toString())
+    LOGGER.error(`${formatSession(session)}`, "API: contact-GET", err)
     
     const errorResponse = !err.errors ? {
       code: err.code,

@@ -21,7 +21,7 @@ import {
   UnauthenticateError 
 } from '@/schema/error'
 import { RECOVER_TOKEN_TIME_OUT_SEC } from '@/constants/env'
-import { formatSession } from '@/constants/log'
+import { LOGGER, formatSession } from '@/utils/logUtil'
 
 const Session_Project = {
   id: true,
@@ -60,7 +60,7 @@ export async function reloadSession(
     }
     
   } catch (err: any) {
-    console.error("loginId: ", loginId, "reloadSession: ", err)
+    LOGGER.error(`loginId: ${loginId}`, "method: reloadSession", err)
     throw new InternalError()
   }
 }
@@ -114,7 +114,7 @@ export async function signIn(
   } catch(err: any ) {
     if ( err instanceof NBPError ) throw err
     
-    console.error("email: ", email, "signIn: ", err)
+    LOGGER.error(`email: ${email}`, "method: signIn", err)
     throw new InternalError()
   }
 }
@@ -152,7 +152,7 @@ export async function signUp(
   } catch (err: any) {
     if ( err instanceof NBPError ) throw err
 
-    console.error("signUpData: ", JSON.stringify(signUpData), "signUp: ", err)
+    LOGGER.error(`signUpData: ${JSON.stringify(signUpData)}` + 'method: signUp', err)
     throw new InternalError()
   }
 }
@@ -178,7 +178,7 @@ export async function verifyEmail(
     if ( err.code === 'P2025' ) {
       throw new InvalidInputError('Invalid Code')
     } else {
-      console.error("session: ", formatSession(session), "verifyEmail: ", err)
+      LOGGER.error(`${formatSession(session)}`, "method: verifyEmail", err)
       throw new InternalError()
     }
   }
@@ -202,7 +202,8 @@ export async function refreshVerifyCode(
       }
     })
   } catch(err: any ) {
-    console.error("session: ", formatSession(session), "refreshVerifyCode: ", err)
+    LOGGER.error(`${formatSession(session)}`, "method: refreshVerifyCode", err)
+
     throw new InternalError()
   }
 }
@@ -253,7 +254,8 @@ Pick<Login, 'id' | 'recoverToken' | 'recoverTokenExpireAt' | 'email'>
     })
 
   } catch(err: any ) {
-    console.error("forgetPasswordData: ", JSON.stringify(data), "forgetPassword: ", err)
+    LOGGER.error(`forgetPasswordData: ${JSON.stringify(data)}`, "method: forgetPassword", err)
+
     throw new InternalError()
   }
 }
@@ -304,7 +306,7 @@ export async function changePassowrd(
   } catch (err: any) {
     if ( err instanceof NBPError ) throw err
 
-    console.error("changePasswordData", JSON.stringify({email, oneTimeToken}), "changePassowrd: ", err)
+    console.error(`changePasswordData: ${JSON.stringify({email, oneTimeToken})}`,  "method: changePassowrd", err)
     throw new InternalError()
   }
 }
@@ -354,7 +356,7 @@ export async function onboarding(
       }
     })
   } catch (err: any) {
-    console.error("session", session, "onboarding: ", err)
+    LOGGER.error(`${formatSession(session)}`, "method: onboarding", err)
     throw new InternalError()
   }
 }

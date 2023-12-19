@@ -1,10 +1,10 @@
-import { formatSession } from "@/constants/log";
+import { LOGGER, formatSession } from '@/utils/logUtil'
 import { reloadSession, signUp } from "@/lib/auth";
-import { assertSession, castAndValidateData } from "@/lib/guard";
-import { cleanSession, fetchSession, setSession } from "@/lib/session";
-import { ForbiddenError, InternalError } from "@/schema/error";
-import { SignUpDataValidator } from "@/schema/validator";
-import { SignUpData } from "@/types/auth";
+import { assertSession, castAndValidateData } from "@/lib/guard"
+import { cleanSession, fetchSession, setSession } from "@/lib/session"
+import { ForbiddenError, InternalError } from "@/schema/error"
+import { SignUpDataValidator } from "@/schema/validator"
+import { SignUpData } from "@/types/auth"
 
 export async function POST(req: Request) {
   const session = await fetchSession()
@@ -37,7 +37,8 @@ export async function POST(req: Request) {
       }
     })
   } catch (err: any) {
-    console.error(formatSession(session), "sign_up-POST: ", err.toString())
+    LOGGER.error(`${formatSession(session)}`, "API: sign_up-POST", err)
+
     await cleanSession()
 
     const errorResponse = !err.errors ? {
