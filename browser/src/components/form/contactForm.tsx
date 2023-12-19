@@ -19,6 +19,20 @@ import { GetInstitutions, GetPersonalRelationships, GetRegions } from "@/types/c
 
 const initialValues: Partial<ContactData> = {
   country: 'PK',
+  firstName: '',
+  middleName: '',
+  lastName: '',
+  addressLine1: '',
+  addressLine2: '',
+  city: '',
+  province: '',
+  postalCode: '',
+  phoneNumber: '',
+  relationshipId: 0,
+  transferMethod: '',
+  institutionId: 0,
+  branchNo: '',
+  accountOrIban: ''
 }
 
 export default function ContactForm() {

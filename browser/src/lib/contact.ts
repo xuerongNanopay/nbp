@@ -10,19 +10,19 @@ import {
   ContactType
 } from "@prisma/client"
 
-export async function createContact(
-  session: Session,
-  contactData: ContactData
-): Promise<Pick<Contact, 'id'> | null> {
-  const transferMethod = mapToTransferMethod(contactData.transferMethod)
+// export async function createContact(
+//   session: Session,
+//   contactData: ContactData
+// ): Promise<Pick<Contact, 'id'> | null> {
+//   const transferMethod = mapToTransferMethod(contactData.transferMethod)
 
-  try {
-    return null
-  } catch (err: any) {
+//   try {
+//     return null
+//   } catch (err: any) {
 
-  }
+//   }
 
-}
+// }
 
 export async function deleteContact(
 

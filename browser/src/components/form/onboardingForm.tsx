@@ -50,9 +50,8 @@ export default function OnboardingForm() {
   const alert = useAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isSubmit, setIsSubmit] = useState(false)
-  const onboardingHandler = async ( e: OnboardingData ) => {
-    //TODO: make to true after test done.
-    setIsSubmit(false)
+  const onboardingHandler = async (e: Partial<OnboardingData>) => {
+    setIsSubmit(true)
     try {
       const response = await fetch('/api/nbp/auth/onboarding',{
         method: 'POST',
@@ -71,7 +70,6 @@ export default function OnboardingForm() {
       } else {
         //TODO: redirect to dashboard. if message is duplicate user.
         alert.error(responsePayload.message)
-        console.log(responsePayload.message)
         setIsSubmit(false)
       }
     } catch (err) {
@@ -80,7 +78,7 @@ export default function OnboardingForm() {
     }
   }
 
-  const formik = useFormik({
+  const formik = useFormik<Partial<OnboardingData> >({
     initialValues,
     validationSchema: OnboardingDataValidator,
     onSubmit: onboardingHandler
@@ -415,7 +413,6 @@ export default function OnboardingForm() {
             onBlur={formik.handleBlur}
             selectedKey={formik.values.occupationId}
             onSelectionChange={(e) => {
-              console.log(e)
               formik.setFieldValue('occupationId', e)
             }}
             errorMessage={formik.touched.occupationId && formik.errors.occupationId}
