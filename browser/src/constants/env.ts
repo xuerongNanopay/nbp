@@ -6,6 +6,9 @@ export const JWT_SECRET = assertENVString('JWT_SECRET')
 const DEFAULT_SESSION_AGE = 24 * 60 * 60
 export const SESSION_AGE = assertENVNumber('SESSION_AGE', DEFAULT_SESSION_AGE)
 
+const DEFAULT_LOG_LEVEL = 'info'
+export const LOG_LEVEL = assertENVString('LOG_LEVEL', DEFAULT_LOG_LEVEL)
+
 function assertENVNumber(key: string, DEFAULT?: number): number {
   const value = process.env[key]
 

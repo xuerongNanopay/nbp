@@ -1,6 +1,7 @@
 import Nav from '@/components/layout/nav'
 import SideNav from '@/components/layout/sideNav'
 import { fetchSession } from '@/lib/session'
+import { LOGGER } from '@/utils/logUtil'
 import { LoginStatus } from '@prisma/client'
 import { redirect } from 'next/navigation'
 
@@ -9,6 +10,12 @@ export default async function MainLayout({
 }: {
   children: React.ReactNode
 }) {
+  LOGGER.info('info')
+  LOGGER.error('error')
+  LOGGER.warn('warn')
+  LOGGER.debug('debug')
+  LOGGER.trace('trace')
+  LOGGER.fatal('fatal')
   const session = await fetchSession()
   if(!session || !session.login) redirect('/nbp/sign_out')
 
