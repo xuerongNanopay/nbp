@@ -342,6 +342,7 @@ export async function onboarding(
           create: {
             type: AccountType.INTERACT,
             email: data.interacEmail,
+            currency: 'CAD',
             isDefault: true
           }
         },
