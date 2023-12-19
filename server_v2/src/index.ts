@@ -1,5 +1,5 @@
 // Run boot to initial dependency
-import './boot/index.js'
+import './boot/index'
 
 import express from 'express'
 
