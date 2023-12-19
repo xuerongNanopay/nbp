@@ -105,7 +105,7 @@ export default function OnboardingForm() {
         setRegions(regions)
         setIsRegionsLoading(false)
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
     fetchRegions()
@@ -126,7 +126,7 @@ export default function OnboardingForm() {
         setCountries(countries)
         setIsCountriesLoading(false)
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
     const fetchOccupations = async () => {
@@ -139,7 +139,7 @@ export default function OnboardingForm() {
         setOccupations(occupations)
         setIsOccupationsLoading(false)
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
     fetchCountries()

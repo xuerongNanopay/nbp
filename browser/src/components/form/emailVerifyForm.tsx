@@ -41,6 +41,7 @@ export default function EmailVerifyForm() {
 
     } catch (err: any) {
       alert.error(JSON.stringify(err))
+      console.error(err)
       setIsSubmit(false)
     }
   }
@@ -60,7 +61,8 @@ export default function EmailVerifyForm() {
       }
 
     } catch (err: any) {
-      alert.error(err)
+      alert.error(JSON.stringify(err))
+      console.error(err)
       setIsSubmit(false)
     }
   }

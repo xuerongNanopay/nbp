@@ -72,7 +72,7 @@ export default function ContactForm() {
         setRegions(regions)
         setIsRegionsLoading(false)
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
     const fetchRelationShips = async () => {
@@ -85,7 +85,7 @@ export default function ContactForm() {
         setRelationships(relationships)
         setIsRelationshipsLoading(false)
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
 
@@ -98,7 +98,7 @@ export default function ContactForm() {
         setInstitutions(institutions)
         setIsInstitutionsLoading(false)
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
 
