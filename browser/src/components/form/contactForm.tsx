@@ -38,7 +38,7 @@ const initialValues: Partial<ContactData> = {
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-  const createContactHandler = (e: Partial<ContactData>) => { 
+  const createContact = (e: Partial<ContactData>) => { 
     console.log(e)
     // formik.resetForm()
     // setIsCreating(true)
@@ -48,7 +48,7 @@ export default function ContactForm() {
   const formik = useFormik<Partial<ContactData>>({
     initialValues,
     validationSchema: ContactDataValidator,
-    onSubmit: createContactHandler
+    onSubmit: createContact
   })
 
   const [regions, setRegions] = useState<GetRegions>([])

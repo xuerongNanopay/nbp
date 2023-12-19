@@ -2,7 +2,7 @@ import { formatSession } from "@/constants/log"
 import { BadRequestError, InternalError, InvalidInputError } from "@/schema/error"
 import { Session } from "@/types/auth"
 import { GetContacts, GetUniqueContact } from "@/types/common"
-import { ContactData } from "@/types/contact"
+import { ContactData, ContactDeleteData } from "@/types/contact"
 import { getPrismaClient } from "@/utils/prisma"
 import { 
   ContactStatus, 
@@ -10,23 +10,27 @@ import {
   ContactType
 } from "@prisma/client"
 
-// export async function createContact(
-//   session: Session,
-//   contactData: ContactData
-// ): Promise<Pick<Contact, 'id'> | null> {
-//   const transferMethod = mapToTransferMethod(contactData.transferMethod)
+export async function createContact(
+  session: Session,
+  contactData: ContactData
+): Promise<Pick<Contact, 'id'> | null> {
+  const transferMethod = mapToTransferMethod(contactData.transferMethod)
 
-//   try {
-//     return null
-//   } catch (err: any) {
+  try {
+    return null
+  } catch (err: any) {
+    console.error("session", session, "onboarding: ", err)
+    throw new InternalError()
+  }
 
-//   }
-
-// }
+}
 
 export async function deleteContact(
-
-){}
+  session: Session,
+  contactDeleteData: ContactDeleteData
+): Promise<Contact | null> {
+  return null
+}
 
 //Using third party API to verify contact
 //Throw error if any error occurs.

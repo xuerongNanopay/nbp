@@ -15,3 +15,7 @@ export interface ContactData  {
   branchNo?: string,
   accountOrIban?: string
 }
+
+export interface ContactDeleteData {
+  id: number
+}
