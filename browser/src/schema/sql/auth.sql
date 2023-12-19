@@ -86,11 +86,13 @@ create table account (
     isDefault boolean default false,
 
     ownerId bigint unsigned not null,
+    currency char(3) not null,
 
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp,
 
-    foreign key (ownerId) references user(id)
+    foreign key (ownerId) references user(id),
+    foreign key (currency) references currency(isoCode)
 );
 
 create table contact(

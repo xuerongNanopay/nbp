@@ -256,6 +256,7 @@ model Account {
 
   email     String
   isDefault Boolean @default(false)
+  currency  String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -300,6 +301,7 @@ model Contact {
   bankAccountNum String?
   branchNum      String?
   iban           String?
+  currency       String
 
   relationshipToOwner String
 
