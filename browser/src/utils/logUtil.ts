@@ -52,32 +52,39 @@ class Logger {
     this.#logger = logger
   }
 
-  info(...args: any) {
+  info(...args: any[]) {
     this.#log('info', ...args)
   }
 
-  error(...args: any) {
+  error(...args: any[]) {
     this.#log('error', ...args)
   }
 
-  warn(...args: any) {
+  warn(...args: any[]) {
     this.#log('warn', ...args)
   }
 
-  debug(...args: any) {
+  debug(...args: any[]) {
     this.#log('debug', ...args)
   }
 
-  trace(...args: any) {
+  trace(...args: any[]) {
     this.#log('trace', ...args)
   }
 
-  fatal(...args: any) {
+  fatal(...args: any[]) {
     this.#log('fatal', ...args)
   }
 
-  #log(level: string, ...args: any) {
-    this.#logger.log(level, args[0])
+  #log(level: string, ...args: any[]) {
+    const logMsg = args.map((cur) => {
+      if (cur instanceof Object) return JSON.stringify(cur)
+      if (cur instanceof Array) return JSON.stringify(cur)
+      return ''+cur
+    }).join(', ')
+
+    // args.
+    this.#logger.log(level, logMsg)
   }
 }
 
