@@ -17,7 +17,7 @@ export async function createContact(
   const transferMethod = mapToTransferMethod(contactData.transferMethod)
 
   try {
-
+    return null
   } catch (err: any) {
 
   }

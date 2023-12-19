@@ -1,10 +1,12 @@
 // Run boot to initial dependency
-import './boot/index'
+import '@/boot'
 
 import express from 'express'
+import { HTTP_PORT } from './constant/env.js'
+
+const PORT = HTTP_PORT
 
 let counter = 0
-const PORT = process.env['HTTP_PORT'] || 3000
 const app = express()
 
 console.log("PORT: " + PORT)
