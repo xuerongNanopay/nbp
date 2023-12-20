@@ -10,6 +10,7 @@ import {
   Contact,
   ContactType
 } from "@prisma/client"
+import { isIBAN } from '@/utils/bankUtil'
 
 export async function createContact(
   session: Session,
@@ -18,15 +19,40 @@ export async function createContact(
   const transferMethod = mapToTransferMethod(contactData.transferMethod)
 
   try {
-    return await getPrismaClient().contact.create({
-      data: {
-        firstName: contactData.firstName,
-        middleName: contactData.middleName,
-        lastName: contactData.lastName,
-        address1: contactData.addressLine1,
-        address2: contactData.addressLine2,
-        
+    let data: any = {
+      firstName: contactData.firstName,
+      middleName: contactData.middleName,
+      lastName: contactData.lastName,
+      address1: contactData.addressLine1,
+      address2: contactData.addressLine2,
+      city: contactData.city,
+      country: contactData.country,
+      postCode: contactData.postalCode,
+      province: contactData.province,
+      phoneNumber: contactData.phoneNumber,
+      type: transferMethod,
+      ownerId: session.user?.id,
+      relationshipId: contactData.relationshipId,
+      currency: 'PKR'
+    }
+    if (transferMethod === ContactType.BANK_ACCOUNT) {
+      if (isIBAN(contactData.accountOrIban!)) {
+        data = {
+          ...data,
+          institutionId: contactData.institutionId,
+          iban: contactData.accountOrIban,
+        }
+      } else {
+        data = {
+          ...data,
+          institutionId: contactData.institutionId,
+          bankAccountNum: contactData.accountOrIban,
+        }
       }
+    }
+
+    return await getPrismaClient().contact.create({
+      data
     })
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, 'method: createContact', err)
@@ -121,7 +147,11 @@ export async function getContactDetailByOwnerId(
         phoneNumber: true,
         bankAccountNum: true,
         branchNum: true,
-        relationshipToOwner: true,
+        relationship: {
+          select: {
+            type: true
+          }
+        },
         iban: true,
         createdAt: true,
         owner: {

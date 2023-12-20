@@ -70,7 +70,11 @@ export type GetUniqueContact = Prisma.ContactGetPayload<{
     phoneNumber: true,
     bankAccountNum: true,
     branchNum: true,
-    relationshipToOwner: true,
+    relationship: {
+      select: {
+        type: true
+      }
+    },
     iban: true,
     createdAt: true,
     owner: {

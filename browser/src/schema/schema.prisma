@@ -131,8 +131,10 @@ model PersonalRelationship {
   type        String
   description String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  contacts   Contact[]
 
   @@map("personal_relationship")
 }
@@ -283,7 +285,7 @@ enum ContactType {
 
 model Contact {
   id     Int           @id @default(autoincrement())
-  status ContactStatus @default(ACTIVE)
+  status ContactStatus @default(AWAIT_VERIFY)
   type   ContactType
 
   firstName   String
@@ -294,17 +296,18 @@ model Contact {
   province    String
   city        String
   country     String
-  postCode    String
-  phoneNumber String
+  postCode    String?
+  phoneNumber String?
 
-  institutionId  Int
-  institution    Institution @relation(fields: [institutionId], references: [id])
+  institutionId  Int?
+  institution    Institution? @relation(fields: [institutionId], references: [id])
   bankAccountNum String?
   branchNum      String?
   iban           String?
   currency       String
 
-  relationshipToOwner String
+  relationshipId Int?
+  relationship   PersonalRelationship? @relation(fields: [relationshipId], references: [id])
 
   owner        User          @relation(fields: [ownerId], references: [id])
   ownerId      Int
