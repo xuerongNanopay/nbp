@@ -1,13 +1,16 @@
 import { formatSession } from '@/utils/logUtil'
 import { BadRequestError, InternalError, InvalidInputError } from "@/schema/error"
 import { Session } from "@/types/auth"
-import { GetContacts, GetUniqueContact } from "@/types/common"
-import { ContactData, ContactDeleteData } from "@/types/contact"
+import type { 
+  ContactData, 
+  ContactDeleteData,
+  GetContacts,
+  UniqueContact
+ } from "@/types/contact"
 import { LOGGER } from "@/utils/logUtil"
 import { getPrismaClient } from "@/utils/prisma"
 import { 
   ContactStatus, 
-  Contact,
   ContactType
 } from "@prisma/client"
 import { isIBAN } from '@/utils/bankUtil'
@@ -15,7 +18,7 @@ import { isIBAN } from '@/utils/bankUtil'
 export async function createContact(
   session: Session,
   contactData: ContactData
-): Promise<Contact | null> {
+): Promise<UniqueContact | null> {
   const transferMethod = mapToTransferMethod(contactData.transferMethod)
 
   try {
@@ -31,7 +34,7 @@ export async function createContact(
       province: contactData.province,
       phoneNumber: contactData.phoneNumber,
       type: transferMethod,
-      ownerId: session.user?.id,
+      ownerId: session.user!.id,
       relationshipId: contactData.relationshipId,
       currency: 'PKR'
     }
@@ -52,7 +55,8 @@ export async function createContact(
     }
 
     return await getPrismaClient().contact.create({
-      data
+      data,
+      select: UniqueContactSelect
     })
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, 'method: createContact', err)
@@ -64,8 +68,23 @@ export async function createContact(
 export async function deleteContact(
   session: Session,
   contactDeleteData: ContactDeleteData
-): Promise<Contact | null> {
-  return null
+): Promise<UniqueContact | null> {
+  try {
+    return await getPrismaClient().contact.update({
+      where: {
+        id: contactDeleteData.id,
+        owner: session.user!.id
+      },
+      data: {
+        deletedAt: new Date(),
+        status: ContactStatus.DELETE
+      },
+      select: UniqueContactSelect
+    })
+  } catch (err: any) {
+    LOGGER.error(`${formatSession(session)}`, "method: deleteContact", err)
+    throw new InternalError()
+  }
 }
 
 //Using third party API to verify contact
@@ -92,23 +111,10 @@ export async function getAllContactsByOwnerId(
           not: ContactStatus.DELETE
         },
         owner: {
-          id: session.user?.id
+          id: session.user!.id
         }
       },
-      select: {
-        id: true,
-        status: true,
-        firstName: true,
-        lastName: true,
-        type: true,
-        bankAccountNum: true,
-        iban: true,
-        institution: {
-          select: {
-            abbr: true
-          }
-        }
-      }
+      select: GetContactsSelect
     })
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, "method: getAllContactsByOwnerId", err)
@@ -120,7 +126,7 @@ export async function getAllContactsByOwnerId(
 export async function getContactDetailByOwnerId(
   contactId: number,
   session: Session
-) : Promise<GetUniqueContact | null> {
+) : Promise<UniqueContact | null> {
   try {
     return await getPrismaClient().contact.findUnique({
       where: {
@@ -129,44 +135,10 @@ export async function getContactDetailByOwnerId(
           not: ContactStatus.DELETE
         },
         owner: {
-          id: session.user?.id
+          id: session.user!.id
         }
       },
-      select: {
-        id: true,
-        status: true,
-        firstName: true,
-        middleName: true,
-        lastName: true,
-        address1: true,
-        address2: true,
-        province: true,
-        country: true,
-        postCode: true,
-        phoneNumber: true,
-        bankAccountNum: true,
-        branchNum: true,
-        relationship: {
-          select: {
-            type: true
-          }
-        },
-        iban: true,
-        createdAt: true,
-        owner: {
-          select: {
-            id: true
-          }
-        },
-        institution: {
-          select: {
-            name: true,
-            institutionNum: true,
-            country: true,
-            abbr: true
-          }
-        }
-      }
+      select: UniqueContactSelect
     })
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, "method: getContactDetailByOwnerId", err)
@@ -182,5 +154,56 @@ function mapToTransferMethod(transferMethod: string) {
       return ContactType.CASH_PICKUP
     default:
       throw new InvalidInputError("Contact Creationg error", [`Invalid transferMethod: ${transferMethod}`])
+  }
+}
+
+const UniqueContactSelect = {
+  id: true,
+  status: true,
+  firstName: true,
+  middleName: true,
+  lastName: true,
+  address1: true,
+  address2: true,
+  province: true,
+  country: true,
+  postCode: true,
+  phoneNumber: true,
+  bankAccountNum: true,
+  branchNum: true,
+  relationship: {
+    select: {
+      type: true
+    }
+  },
+  iban: true,
+  createdAt: true,
+  owner: {
+    select: {
+      id: true
+    }
+  },
+  institution: {
+    select: {
+      name: true,
+      institutionNum: true,
+      country: true,
+      abbr: true
+    }
+  }
+}
+
+const GetContactsSelect = {
+  id: true,
+  status: true,
+  firstName: true,
+  lastName: true,
+  type: true,
+  bankAccountNum: true,
+  iban: true,
+  institution: {
+    select: {
+      abbr: true
+    }
   }
 }

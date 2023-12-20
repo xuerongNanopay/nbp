@@ -313,6 +313,7 @@ model Contact {
   ownerId      Int
   transactions Transaction[]
 
+  deletedAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -102,6 +102,7 @@ create table contact(
     ownerId bigint unsigned not null,
     relationshipId bigint unsigned not null,
 
+    deletedAt timestamp null,
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp,
 
@@ -140,7 +141,6 @@ create table summary_transaction(
 
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp
-
 );
 
 create table fee_detail(
