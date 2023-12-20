@@ -11,14 +11,14 @@ export abstract class NBPError implements Error {
     if ( !! errors ) this.errors = errors
   }
 
-  toString(): string {
-    return JSON.stringify({
-      code: this.code,
-      name: this.name,
-      message: this.message,
-      errors: this.errors
-    })
-  }
+  // toString(): string {
+  //   return JSON.stringify({
+  //     code: this.code,
+  //     name: this.name,
+  //     message: this.message,
+  //     errors: this.errors
+  //   })
+  // }
 }
 
 export class BadRequestError extends NBPError {
