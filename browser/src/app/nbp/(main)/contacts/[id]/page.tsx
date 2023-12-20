@@ -34,7 +34,7 @@ export default async function Contact({ params: {id} }: { params: { id: string }
   return (
     <div className="px-2 sm:px-2 py-2 sm:py-4 max-w-4xl mx-auto">
       <Breadcrumbs className="mb-4" color="primary">
-        <BreadcrumbItem href='/contacts'>contacts</BreadcrumbItem>
+        <BreadcrumbItem href='/nbp/contacts'>contacts</BreadcrumbItem>
         <BreadcrumbItem href='#'>{contact.id}</BreadcrumbItem>
       </Breadcrumbs>
       <h1 className="font-semibold text-ellipsis  text-2xl sm:font-bold sm:text-3xl mb-6">

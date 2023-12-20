@@ -4,6 +4,7 @@ import {
   useEffect
 } from "react"
 import { useFormik } from "formik"
+import { useRouter } from 'next/navigation'
 import {
   Input,
   Button,
@@ -46,10 +47,12 @@ const initialValues: Partial<ContactData> = {
 const ConfirmModal = (
   {
     isOpen,
-    onOpenChange
+    onOpenChange,
+    onConfirmSubmit
   }: {
     isOpen: boolean,
     onOpenChange: () => void,
+    onConfirmSubmit: () => void,
   }
 ) => {
   return (
@@ -69,7 +72,10 @@ const ConfirmModal = (
                   <Button color="danger" variant="light" onPress={onClose}>
                     Cancel
                   </Button>
-                  <Button className="font-bold bg-[#0E793C] text-[#ffffff]" onPress={onClose}>
+                  <Button className="font-bold bg-[#0E793C] text-[#ffffff]" onPress={() => {
+                    onClose()
+                    onConfirmSubmit()
+                  }}>
                     SAVE
                   </Button>
                 </ModalFooter>
@@ -84,14 +90,17 @@ const ConfirmModal = (
 
 export default function ContactForm() {
   const alert = useAlert() ?? CONSOLE_ALERT
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const router = useRouter()
   const [isSubmit, setIsSubmit] = useState<boolean>(false)
+  const {isOpen, onOpen, onOpenChange} = useDisclosure({onChange(isOpen) {
+    if (isOpen === false) setIsSubmit(false)
+  },})
 
   const createContact = async (e: Partial<ContactData>) => { 
     setIsSubmit(true)
 
     try {
-      const response = await fetch("/api/nbp/user/contact/create", {
+      const response = await fetch("/api/nbp/user/contact/pre_verify", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -99,12 +108,11 @@ export default function ContactForm() {
         body: JSON.stringify(e)
       })
       const responsePayload = await response.json()
-      console.log('aaa')
-
-
+      console.log(responsePayload)
       if (responsePayload.code >> 7 === 1 ) {
-        //TODO: continue to add account
+        await submitContact()
       } else {
+        console.log(responsePayload)
         //TODO: not hard code string.
         if ( responsePayload.name === 'Third Party Verify' ) {
           onOpen()
@@ -118,9 +126,6 @@ export default function ContactForm() {
       alert.error(JSON.stringify(err))
       setIsSubmit(false)
     }
-    // formik.resetForm()
-    // setIsCreating(true)
-    //TODO: navigating to contact/id
   }
 
   const formik = useFormik<Partial<ContactData>>({
@@ -128,6 +133,33 @@ export default function ContactForm() {
     validationSchema: ContactDataValidator,
     onSubmit: createContact
   })
+
+  async function submitContact() {
+    setIsSubmit(true)
+    try {
+      const response = await fetch("/api/nbp/user/contact/create", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formik.values)
+      })
+
+      const responsePayload = await response.json()
+
+      if (responsePayload.code >> 7 === 1) {
+        alert.info("Contact create successfully!")
+        router.replace(`/nbp/contacts/${responsePayload.data.id}`)
+      } else {
+        alert.error(responsePayload.message)
+        setIsSubmit(false)
+      }
+    } catch (err) {
+      console.log(err)
+      alert.error(JSON.stringify(err))
+      setIsSubmit(false)
+    }
+  }
 
   const [regions, setRegions] = useState<GetRegions>([])
   const [isRegionsLoading, setIsRegionsLoading] = useState(true)
@@ -404,7 +436,7 @@ export default function ContactForm() {
           Submit
         </Button>
       </form>
-      <ConfirmModal isOpen={isOpen} onOpenChange={onOpenChange}/>
+      <ConfirmModal isOpen={isOpen} onOpenChange={onOpenChange} onConfirmSubmit={submitContact}/>
     </div>
   )
 }

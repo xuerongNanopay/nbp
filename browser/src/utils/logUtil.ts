@@ -1,5 +1,6 @@
 import { LOG_LEVEL } from '@/constants/env';
 import { Session } from '@/types/auth';
+import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 import winston, { addColors } from 'winston'
 const { combine, timestamp, printf, colorize, align, label } = winston.format;
 
@@ -76,9 +77,10 @@ class Logger {
   
   #log(level: string, ...args: any[]) {
     const logMsg = args.map((cur) => {
-      if (cur instanceof Object) return cur.toString ? cur.toString() : JSON.stringify(cur)
+      if (cur instanceof Error ) return cur.toString ? cur.toString() : JSON.stringify(cur)
+      if (cur instanceof Object) return JSON.stringify(cur)
       if (cur instanceof Array) return cur.toString ? cur.toString() : JSON.stringify(cur)
-      return cur.toString ? cur.toString() : JSON.stringify(cur)
+      return JSON.stringify(cur)
     }).join(', ')
 
     // args.

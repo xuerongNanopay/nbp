@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     const newContact = await preVerifyContact(session, contactData)
     return Response.json({
       code: 200,
-      message: 'Create Successfully',
+      message: 'Verify contact successfully',
       data: newContact
     }, {
       status: 200,
