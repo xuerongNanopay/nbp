@@ -8,7 +8,13 @@ import {
   Input,
   Button,
   Select, 
-  SelectItem
+  SelectItem,
+  Modal,
+  useDisclosure,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from "@nextui-org/react"
 
 import { ContactData } from "@/types/contact"
@@ -16,6 +22,8 @@ import TransferMethod from "@/constants/transferMethod"
 import { ContactDataValidator } from "@/schema/validator"
 import { ContactType } from "@prisma/client"
 import { GetInstitutions, GetPersonalRelationships, GetRegions } from "@/types/common"
+import { useAlert } from "@/hook/useAlert"
+import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 const initialValues: Partial<ContactData> = {
   country: 'PK',
@@ -35,11 +43,81 @@ const initialValues: Partial<ContactData> = {
   accountOrIban: ''
 }
 
-export default function ContactForm() {
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+const ConfirmModal = (
+  {
+    isOpen,
+    onOpenChange
+  }: {
+    isOpen: boolean,
+    onOpenChange: () => void,
+  }
+) => {
+  return (
+    <>
+        <Modal placement="center" hideCloseButton isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
+        <ModalContent>
+          {
+            (onClose) => (
+              <>
+                <ModalHeader><p className="text-orange-400">Warming</p></ModalHeader>
+                <ModalBody>
+                  <p>We can't verify your account info with NBP</p>
+                  <p className="text-slate-600">If you are guarantee that the contact you added is corrent</p>
+                  <p className="text-slate-600">Please click SAVE button</p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Cancel
+                  </Button>
+                  <Button className="font-bold bg-[#0E793C] text-[#ffffff]" onPress={onClose}>
+                    SAVE
+                  </Button>
+                </ModalFooter>
+              </>
+            )
+          }
+        </ModalContent>
+      </Modal>
+    </>
+  )
+}
 
-  const createContact = (e: Partial<ContactData>) => { 
-    console.log(e)
+export default function ContactForm() {
+  const alert = useAlert() ?? CONSOLE_ALERT
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const [isSubmit, setIsSubmit] = useState<boolean>(false)
+
+  const createContact = async (e: Partial<ContactData>) => { 
+    setIsSubmit(true)
+
+    try {
+      const response = await fetch("/api/nbp/user/contact/create", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(e)
+      })
+      const responsePayload = await response.json()
+      console.log('aaa')
+
+
+      if (responsePayload.code >> 7 === 1 ) {
+        //TODO: continue to add account
+      } else {
+        //TODO: not hard code string.
+        if ( responsePayload.name === 'Third Party Verify' ) {
+          onOpen()
+        } else {
+          alert.error(responsePayload.message)
+          setIsSubmit(false)
+        }
+      }
+    } catch (err) {
+      console.log(err)
+      alert.error(JSON.stringify(err))
+      setIsSubmit(false)
+    }
     // formik.resetForm()
     // setIsCreating(true)
     //TODO: navigating to contact/id
@@ -320,12 +398,13 @@ export default function ContactForm() {
           color="primary"
           className="mt-6"
           size="md"
-          isLoading={isSubmitting}
+          isLoading={isSubmit}
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Submit
         </Button>
       </form>
+      <ConfirmModal isOpen={isOpen} onOpenChange={onOpenChange}/>
     </div>
   )
 }

@@ -21,8 +21,6 @@ addColors({
   trace: 'white',
 })
 
-const colorizer = winston.format.colorize()
-
 const wistonLogger = winston.createLogger({
   levels: logLevels,
   transports: [
@@ -75,12 +73,12 @@ class Logger {
   fatal(...args: any[]) {
     this.#log('fatal', ...args)
   }
-
+  
   #log(level: string, ...args: any[]) {
     const logMsg = args.map((cur) => {
-      if (cur instanceof Object) return JSON.stringify(cur)
-      if (cur instanceof Array) return JSON.stringify(cur)
-      return ''+cur
+      if (cur instanceof Object) return cur.toString ? cur.toString() : JSON.stringify(cur)
+      if (cur instanceof Array) return cur.toString ? cur.toString() : JSON.stringify(cur)
+      return cur.toString ? cur.toString() : JSON.stringify(cur)
     }).join(', ')
 
     // args.

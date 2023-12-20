@@ -100,7 +100,7 @@ create table contact(
     currency char(3) not null,
 
     ownerId bigint unsigned not null,
-    relationshipToOwner bigint unsigned not null,
+    relationshipId bigint unsigned not null,
 
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp,
@@ -110,7 +110,7 @@ create table contact(
     foreign key (currency) references currency(isoCode),
     foreign key (institutionId) references institution(id),
     foreign key (ownerId) references user(id),
-    foreign key (relationshipToOwner) references personal_relationship(id)
+    foreign key (relationshipId) references personal_relationship(id)
 );
 
 create table summary_transaction(

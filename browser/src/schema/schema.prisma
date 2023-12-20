@@ -285,7 +285,7 @@ enum ContactType {
 
 model Contact {
   id     Int           @id @default(autoincrement())
-  status ContactStatus @default(AWAIT_VERIFY)
+  status ContactStatus @default(ACTIVE)
   type   ContactType
 
   firstName   String

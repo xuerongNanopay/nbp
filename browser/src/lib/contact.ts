@@ -56,7 +56,6 @@ export async function createContact(
     })
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, 'method: createContact', err)
-    console.error("session", session, "onboarding: ", err)
     throw new InternalError()
   }
 
