@@ -17,7 +17,7 @@ export default async function MainLayout({
 
   return (
     // TODO: use nextAuth backEnd UI
-    // <UserProvider value={111}>
+    // <SessionProvider session={session}>
       <main>
         <div className="lg:hidden sticky top-0 z-50">
           <Nav session={session}/>
@@ -44,6 +44,6 @@ export default async function MainLayout({
           </div>
         </div>
       </main>
-    // </UserProvider>
+    // </SessionProvider>
   )
 }
