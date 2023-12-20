@@ -1,0 +1,532 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+//status enum('active', 'awaitVerify', 'suspend', 'delete') default 'awaitEmailConfirm',
+enum LoginStatus {
+  ACTIVE       @map("active")
+  AWAIT_VERIFY @map("await_verify")
+  SUSPEND      @map("suspend")
+  DELETE       @map("delete")
+}
+
+model Login {
+  id     Int         @id @default(autoincrement())
+  status LoginStatus @default(AWAIT_VERIFY)
+
+  email        String    @unique
+  password     String
+  verifyCode   String?
+  verifyCodeAt DateTime?
+
+  recoverToken         String?
+  recoverTokenExpireAt DateTime?
+  lastLoginAt          DateTime?
+
+  owner   User? @relation(fields: [ownerId], references: [id])
+  ownerId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("login")
+}
+
+enum UserStatus {
+  ACTIVE       @map("active")
+  AWAIT_VERIFY @map("await_verify")
+  SUSPEND      @map("suspend")
+  DELETE       @map("delete")
+}
+
+enum UserRole {
+  ADMIN      @map("admin")
+  NBP_CLIENT @map("nbp_client")
+}
+
+model User {
+  id     Int        @id @default(autoincrement())
+  status UserStatus @default(ACTIVE)
+  role   UserRole   @default(NBP_CLIENT)
+
+  firstName   String
+  middleName  String?
+  lastName    String
+  dob         DateTime
+  address1    String
+  address2    String?
+  city        String
+  province    String
+  country     String
+  postalCode  String
+  phoneNumber String
+
+  pob         String
+  nationality String
+
+  occupationId Int
+  avatarUrl    String?
+
+  logins              Login[] // only support one way login
+  identification      Identification?
+  accounts            Account[]
+  contacts            Contact[]
+  summaryTransactions SummaryTransaction[]
+  transactions        Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user")
+}
+
+enum IdentificationStatus {
+  ACTIVE       @map("active")
+  AWAIT_VERIFY @map("await_verify")
+  SUSPEND      @map("suspend")
+  DELETE       @map("delete")
+}
+
+enum IdentificationType {
+  PASSWORD       @map("password")
+  DRIVER_LICENSE @map("driver_license")
+  PROVINCAL_ID   @map("provincial_id")
+  NATIONAL_ID    @map("national_id")
+}
+
+model Identification {
+  id     Int                  @id @default(autoincrement())
+  status IdentificationStatus @default(ACTIVE)
+  type   IdentificationType
+
+  value        String
+  additionInfo String? @map("addition_info")
+
+  ownerId Int  @unique
+  owner   User @relation(fields: [ownerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("identification")
+}
+
+enum PersonalRelationshipStatus {
+  ACTIVE  @map("active")
+  DISABLE @map("disable")
+}
+
+model PersonalRelationship {
+  id     Int                        @id @default(autoincrement())
+  status PersonalRelationshipStatus @default(ACTIVE)
+
+  type        String
+  description String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  contacts   Contact[]
+
+  @@map("personal_relationship")
+}
+
+enum OccupationStatus {
+  ACTIVE  @map("active")
+  DISABLE @map("disable")
+}
+
+model Occupation {
+  id     Int              @id @default(autoincrement())
+  status OccupationStatus @default(ACTIVE)
+
+  type        String
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("occupation")
+}
+
+enum CurrencyStatus {
+  ACTIVE  @map("active")
+  DISABLE @map("disable")
+}
+
+model Currency {
+  id     Int            @id @default(autoincrement())
+  status CurrencyStatus @default(ACTIVE)
+
+  isoCode String @unique
+  numCode String @unique
+  decimal Int
+  name    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("currency")
+}
+
+enum CountryStatus {
+  ACTIVE  @map("active")
+  DISABLE @map("disable")
+}
+
+model Country {
+  id     Int           @id @default(autoincrement())
+  status CountryStatus @default(ACTIVE)
+
+  iso2Code String @unique
+  iso3Code String @unique
+  numCode  String @unique
+  name     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("country")
+}
+
+enum RegionStatus {
+  ACTIVE  @map("active")
+  DISABLE @map("disable")
+}
+
+model Region {
+  id     Int          @id @default(autoincrement())
+  status RegionStatus @default(ACTIVE)
+
+  isoCode String @unique
+  name    String
+  abbr    String
+  country String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("region")
+}
+
+enum InstitutionStatus {
+  ACTIVE  @map("active")
+  DISABLE @map("disable")
+}
+
+model Institution {
+  id     Int               @id @default(autoincrement())
+  status InstitutionStatus @default(ACTIVE)
+
+  country        String
+  abbr           String
+  name           String
+  institutionNum String
+  contacts       Contact[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("institution")
+}
+
+enum AccountStatus {
+  ACTIVE       @map("active")
+  AWAIT_VERIFY @map("await_verify")
+  SUSPEND      @map("suspend")
+  DELETE       @map("delete")
+  INVALID      @map("invalid")
+}
+
+enum AccountType {
+  INTERACT     @map("interac")
+  BANK_ACCOUNT @map("bank_account")
+}
+
+model Account {
+  id     Int           @id @default(autoincrement())
+  status AccountStatus @default(AWAIT_VERIFY)
+  type   AccountType
+
+  email     String
+  isDefault Boolean @default(false)
+  currency  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner        User          @relation(fields: [ownerId], references: [id])
+  ownerId      Int
+  transactions Transaction[]
+
+  @@map("account")
+}
+
+enum ContactStatus {
+  ACTIVE       @map("active")
+  AWAIT_VERIFY @map("await_verify")
+  SUSPEND      @map("suspend")
+  DELETE       @map("delete")
+  INVALID      @map("invalid")
+}
+
+enum ContactType {
+  CASH_PICKUP  @map("cash_pickup")
+  BANK_ACCOUNT @map("bank_account")
+}
+
+model Contact {
+  id     Int           @id @default(autoincrement())
+  status ContactStatus @default(AWAIT_VERIFY)
+  type   ContactType
+
+  firstName   String
+  middleName  String?
+  lastName    String
+  address1    String
+  address2    String?
+  province    String
+  city        String
+  country     String
+  postCode    String?
+  phoneNumber String?
+
+  institutionId  Int?
+  institution    Institution? @relation(fields: [institutionId], references: [id])
+  bankAccountNum String?
+  branchNum      String?
+  iban           String?
+  currency       String
+
+  relationshipId Int?
+  relationship   PersonalRelationship? @relation(fields: [relationshipId], references: [id])
+
+  owner        User          @relation(fields: [ownerId], references: [id])
+  ownerId      Int
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contact")
+}
+
+enum SummaryTransactionStatus {
+  INITIAL             @map("initial")
+  WAITING_FOR_PAYMENT @map("waiting_for_payment")
+  PROCESS             @map("process")
+  COMPLETE            @map("complete")
+  REJECTED            @map("rejected")
+  CANCEL              @map("cancel")
+  REFUND_IN_PROGRESS  @map("refund_in_progress")
+  REFUNDED            @map("refunded")
+}
+
+model SummaryTransaction {
+  id Int @id @default(autoincrement())
+
+  sourceAccountId      Int
+  destinationContactId Int
+
+  sourceAmount   Int
+  sourceCurrency String
+
+  destinationAmount   Int
+  destinationCurrency String
+
+  fee         Int
+  feeCurrency String
+
+  debitAmount   Int
+  debitCurrency String
+
+  errorMessage String?
+
+  nbpReference  String
+  ownerId       Int
+  owner         User        @relation(fields: [ownerId], references: [id])
+  transactionId Int         @unique
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("summary_transaction")
+}
+
+enum FeeType {
+  BASIC @map("basic")
+}
+
+model FeeDetail {
+  id   Int     @id @default(autoincrement())
+  type FeeType @default(BASIC)
+
+  description String
+  amount      Int
+  currency    String
+
+  ownerId       Int
+  transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("fee_detail")
+}
+
+enum TransactionStatus {
+  QUOTE   @map("quote")
+  CONFIRM @map("confirm")
+}
+
+model Transaction {
+  id     Int               @id @default(autoincrement())
+  status TransactionStatus @default(QUOTE)
+
+  sourceAccountId Int
+  sourceAccount   Account @relation(fields: [sourceAccountId], references: [id])
+
+  destinationContactId Int
+  desticationContact   Contact @relation(fields: [destinationContactId], references: [id])
+
+  sourceAmount   Int
+  sourceCurrency String
+
+  destinationAmount   Int
+  destinationCurrency String
+
+  fromIp       String?
+  nbpReference String?
+
+  curTransferId Int?
+
+  quoteExpired DateTime
+
+  owner               User                @relation(fields: [ownerId], references: [id])
+  ownerId             Int
+  feeDetails          FeeDetail[]
+  summaryTransaction  SummaryTransaction?
+  transfers           Transfer[]
+  reverseTransactions ReverseTransaction?
+
+  // TransferLog TransferLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("transaction")
+}
+
+enum TransferStatus {
+  START   @map("start")
+  WAIT    @map("wait")
+  SUCCESS @map("success")
+  FAIL    @map("failed")
+  RETRY   @map("retry")
+  CANCEL  @map("cancel")
+}
+
+model Transfer {
+  id     Int            @id @default(autoincrement())
+  status TransferStatus @default(START)
+
+  name         String
+  retryAttempt Int    @default(0)
+
+  ownerId       Int
+  transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  preTransferId Int?
+  nexTransferId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("transfer")
+}
+
+model ReverseTransaction {
+  id Int @id @default(autoincrement())
+
+  ownerId             Int
+  originTransaction   Transaction       @relation(fields: [originTransactionId], references: [id])
+  originTransactionId Int               @unique
+  curTransferId       Int?
+  transfer            ReverseTransfer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reverse_transaction")
+}
+
+model ReverseTransfer {
+  id     Int            @id @default(autoincrement())
+  status TransferStatus @default(START)
+
+  name         String
+  retryAttempt Int    @default(0)
+
+  ownerId              Int
+  reverseTransactionId Int
+  reverseTransaction   ReverseTransaction @relation(fields: [reverseTransactionId], references: [id])
+  preTransferId        Int?
+  nexTransferId        Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reverse_transfer")
+}
+
+// create table api_log (
+//     id serial primary key,
+//     ownerId int not null references user(id),
+//     transferId int null references transfer(id),
+//     externalReference varchar(255) null,
+//     provider varchar(255) not null,
+//     apiName varchar(255) not null,
+//     requestPayload TEXT null,
+//     responsePayload TEXT null,
+//     httpResponseCode int null,
+//     errorMessage TEXT null,
+//     createdAt timestamp default current_timestamp,
+//     updatedAt timestamp default current_timestamp on update current_timestamp
+// );
+
+// create table notification(
+//     id serial primary key,
+//     ownerId int not null references user(id),
+//     level enum('info', 'warming', 'error', 'debug') default 'info',
+//     subject varchar(250) null,
+//     content varchar(250) null,
+//     status enum('read', 'unread') default 'unread',
+//     createdAt timestamp default current_timestamp,
+//     updatedAt timestamp default current_timestamp on update current_timestamp
+// );
+
+// create table transfer_log(
+//     id serial primary key,
+//     ownerId int not null references user(id),
+//     transferId int not null references transfer(id),
+//     preTransferId  int null references transfer(id),
+
+//     status enum('start', 'wait', 'success', 'fail', 'retry', 'cancel', 'end') not null,
+//     severity enum('info', 'warming', 'error', 'debug') not null default 'info',
+
+//     subject varchar(255) not null,
+//     description TEXT,
+
+//     createdAt timestamp default current_timestamp,
+//     updatedAt timestamp default current_timestamp on update current_timestamp
+// );

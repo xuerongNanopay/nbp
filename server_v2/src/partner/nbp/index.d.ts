@@ -3,6 +3,12 @@ interface NBPOptions {
   agencyCode: number
   username: string
   password: string
+  authenticate
+}
+
+interface HTTPResponse<T extends NBPResponse> {
+  httpCode: number
+  data: T
 }
 
 interface NBPResponse {
@@ -10,18 +16,13 @@ interface NBPResponse {
   ResponseMessage: string
 }
 
-interface _Authenticate extends NBPResponse {
-  Token: string
-  Token_Expiry: Date
+interface BankList extends NBPResponse {
+  banklist: BankListItem[]
 }
 
 interface BankListItem {
   BankName: string
   BankAbbr: string
-}
-
-interface BankList extends NBPResponse {
-  banklist: BankListItem[]
 }
 
 interface AccountEnquiry extends NBPResponse {
@@ -33,9 +34,17 @@ interface AccountEnquiry extends NBPResponse {
   BankName?: string
 }
 
-interface HTTPResponse<T extends NBPResponse> {
-  httpCode: number
-  data: T
+interface LoadRemittance extends NBPResponse {
+  Global_Id: string
+  Currency: string
+  Amount: string
+  //TODO: move to subclass
+  Pmt_Mode: string
+  Remitter_Name: string
+  Remitter_Address: string
+  Remitter_Email?: string
+  Remitter_Contact?: string
+  Remitter_Id_Type: "PASSPORT_NO" | "IQAMA_NO" | "DRIVING_LICENSE" | "OTHER"
 }
 
 interface NBPRequest {
