@@ -19,7 +19,7 @@ export function assertActiveUser(session: Session | null): boolean {
 export function assertNotDeleteUser(session: Session | null): boolean {
   if (!assertSession(session)) return false
   if (!session?.user) return false
-  if (session.user.status == UserStatus.DELETE) return false
+  if (session.user.status === UserStatus.DELETE) return false
   return true
 }
 

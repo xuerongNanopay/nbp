@@ -1,7 +1,7 @@
 import { LOGGER, formatSession } from '@/utils/logUtil'
 import { onboarding, reloadSession, reloadSessionOrThrow } from "@/lib/auth"
 import { assertSession, castAndValidateData } from "@/lib/guard"
-import { cleanSession, fetchSession, setSession } from "@/lib/session"
+import { fetchSession, setSession } from "@/lib/session"
 import { ForbiddenError, InternalError, UnauthenticateError } from "@/schema/error"
 import { OnboardingDataValidator } from "@/schema/validator"
 import type { OnboardingData } from "@/types/auth"

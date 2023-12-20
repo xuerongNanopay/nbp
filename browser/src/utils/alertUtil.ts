@@ -1,5 +1,14 @@
-import type { AlertFunc } from "@/types/log";
-import { LogLevel } from "./logUtil";
+import type { AlertFunc } from "@/types/log"
+
+export enum LogLevel {
+  WARM = 'WARM',
+  ERROR = 'ERROR',
+  INFO = 'INFO',
+  DEBUG = 'DEBUG',
+  TRACE = 'TRACE',
+  FATAL = 'FATAL'
+}
+
 
 const consoleAlert = (logLevel: LogLevel, ...args: any) => {
   switch(logLevel) {

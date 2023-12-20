@@ -14,13 +14,22 @@ import {
 export async function createContact(
   session: Session,
   contactData: ContactData
-): Promise<Pick<Contact, 'id'> | null> {
+): Promise<Contact | null> {
   const transferMethod = mapToTransferMethod(contactData.transferMethod)
 
   try {
-    return null
+    return await getPrismaClient().contact.create({
+      data: {
+        firstName: contactData.firstName,
+        middleName: contactData.middleName,
+        lastName: contactData.lastName,
+        address1: contactData.addressLine1,
+        address2: contactData.addressLine2,
+        
+      }
+    })
   } catch (err: any) {
-    LOGGER.error(`${formatSession(session)}`, 'method: createContact', )
+    LOGGER.error(`${formatSession(session)}`, 'method: createContact', err)
     console.error("session", session, "onboarding: ", err)
     throw new InternalError()
   }

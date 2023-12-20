@@ -3,16 +3,6 @@ import { Session } from '@/types/auth';
 import winston, { addColors } from 'winston'
 const { combine, timestamp, printf, colorize, align, label } = winston.format;
 
-
-export enum LogLevel {
-  WARM = 'WARM',
-  ERROR = 'ERROR',
-  INFO = 'INFO',
-  DEBUG = 'DEBUG',
-  TRACE = 'TRACE',
-  FATAL = 'FATAL'
-}
-
 const logLevels = {
   fatal: 0,
   error: 1,

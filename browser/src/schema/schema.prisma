@@ -292,6 +292,7 @@ model Contact {
   address1    String
   address2    String?
   province    String
+  city        String
   country     String
   postCode    String
   phoneNumber String

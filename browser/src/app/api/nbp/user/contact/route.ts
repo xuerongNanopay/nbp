@@ -22,7 +22,7 @@ export async function GET() {
     )
 
   } catch (err: any) {
-    LOGGER.error(`${formatSession(session)}`, "API: contact-GET", err)
+    LOGGER.error(formatSession(session), "API: contact-GET", err)
     
     const errorResponse = !err.errors ? {
       code: err.code,

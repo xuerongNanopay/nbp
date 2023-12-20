@@ -1,6 +1,6 @@
 'use client'
 
-import { LogLevel } from '@/utils/logUtil'
+import { LogLevel } from '@/utils/alertUtil'
 import { ErrorIcon } from '@/icons/ErrorIcon'
 import { ExclamationIcon } from '@/icons/ExclamationIcon'
 import type { AlertFunc } from '@/types/log'
