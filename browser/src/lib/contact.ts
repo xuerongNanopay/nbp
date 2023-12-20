@@ -80,7 +80,7 @@ export async function preVerifyContact(
   if ( contactData.transferMethod !== ContactType.BANK_ACCOUNT ) return
   
   //TODO: call API...
-  throw new BadRequestError({name: 'Third Party Fail', message: 'Unable to verify the account with Third Party'})
+  throw new BadRequestError({name: 'Third Party Verify', message: 'Unable to verify the account with Third Party'})
 }
 
 export async function getAllContactsByOwnerId(
