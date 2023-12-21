@@ -21,16 +21,18 @@ export default async function Contact({ params: {id} }: { params: { id: string }
 
   return (
     <div className="px-2 sm:px-2 py-2 sm:py-4 max-w-4xl mx-auto">
-      <Breadcrumbs className="mt-4" color="danger">
-        <BreadcrumbItem href='/nbp/contacts' color="danger"><Link>contacts</Link></BreadcrumbItem>
+      {/* TODO: invesitgate why not show */}
+      {/* <Breadcrumbs className="mt-4" color="danger">
+        <BreadcrumbItem href='/nbp/contacts' as={Link} className="text-red-800">Contacts</BreadcrumbItem>
         <BreadcrumbItem href='#'>{contact.id}</BreadcrumbItem>
-      </Breadcrumbs>
+      </Breadcrumbs> */}
+      <h4 className='mb-2'><Link href="/nbp/contacts">Contacts {' > .'} </Link></h4>
       <h1 className="font-semibold text-ellipsis  text-2xl sm:font-bold sm:text-3xl mb-6">
         {contact.firstName + '  ' + contact.lastName}
       </h1>
       <div className="mb-4">
         {/* Use link for deletion */}
-        <Button variant="ghost" color="danger">DELETE</Button>
+        <Button variant="ghost" color="danger" as={Link} href={`/nbp/contacts/${id}/delete`}>DELETE</Button>
       </div>
       <div className="grid grid-cols-1 gap-2 p-2 sm:p-4 border border-slate-400 rounded-md">
         <div>
