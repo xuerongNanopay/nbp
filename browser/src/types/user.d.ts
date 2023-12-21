@@ -33,19 +33,9 @@ export type User = Prisma.UserGetPayload<{
         value: true
       }
     },
-
     occupation: {
       select: {
         type: true
-      }
-    },
-
-    institution: {
-      select: {
-        name: true,
-        institutionNum: true,
-        country: true,
-        abbr: true
       }
     }
   }
