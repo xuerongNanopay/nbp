@@ -7,13 +7,6 @@ interface ITransfer {
 
 }
 
-interface IAccount {
-  id: string,
-  type: string,
-  name: string,
-  currency: string
-}
-
 interface ITransferQuote {
   sourceAccountId: string,
   destinationAccountId: string,
@@ -117,24 +110,6 @@ type NBPTransactionDetail = NBPTransactionSummary & {
   fee: string
   receiveAccountSummary: string
   sendAccountSummary: string
-}
-
-type NBPContactSummary = {
-  id: string,
-  firstName: string,
-  lastName: string,
-  created: date,
-  status: 'suspend' | 'verified' | 'pending' 
-  type: 'cashPickUp' | 'bankAccount'
-  accountSummary: string
-}
-
-type NBPContactDetail = NBPContactSummary & {
-  relationshipToOwner: string,
-  address: string,
-  bankName: string,
-  accountNumberOrIban: string,
-  phoneNumber: string
 }
 
 type ForgetPassword = {

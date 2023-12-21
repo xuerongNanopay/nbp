@@ -30,24 +30,28 @@ import { EyeIcon } from '@/icons/EyeIcon'
 import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
 import { DeleteIcon } from '@/icons/DeleteIcon'
 import { SendMoneyIcon } from '@/icons/SendMoneyIcon'
-import { NBPContactSummary } from '@/type';
+import { GetContactItem, GetContacts } from '@/types/contact';
+import { ContactStatus, ContactType } from '@prisma/client';
 
 const statusOptions = [
-  {name: "VERIFIED", id: "verified"},
-  {name: "FAILED", id: "failed"},
-  {name: "PENDING", id: 'pending'}
+  {name: ContactStatus.ACTIVE, id: ContactStatus.ACTIVE},
+  {name: ContactStatus.AWAIT_VERIFY, id: ContactStatus.AWAIT_VERIFY},
+  {name: ContactStatus.INVALID, id: ContactStatus.INVALID},
+  {name: ContactStatus.SUSPEND, id: ContactStatus.SUSPEND}
 ]
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
-  verified: "success",
-  failed: "danger",
-  pending: "secondary"
+  [ContactStatus.ACTIVE]: "success",
+  [ContactStatus.AWAIT_VERIFY]: "secondary",
+  [ContactStatus.INVALID]: "danger",
+  [ContactStatus.SUSPEND]: "warning"
 }
 
 const statusTextMap: Record<string, string>  = {
-  verified: "VERIFIED",
-  failed: "FAILED",
-  pending: "PENDING"
+  [ContactStatus.ACTIVE]: ContactStatus.ACTIVE,
+  [ContactStatus.AWAIT_VERIFY]: ContactStatus.AWAIT_VERIFY,
+  [ContactStatus.INVALID]: ContactStatus.INVALID,
+  [ContactStatus.SUSPEND]: ContactStatus.SUSPEND
 }
 
 const columns = [
@@ -57,7 +61,7 @@ const columns = [
   { name: 'Actions', id: 'actions' }
 ]
 
-const NameCell = (contact: NBPContactSummary) => {
+const NameCell = (contact: GetContactItem) => {
   return (
     <div className="flex flex-col">
       <p className="text-bold text-sm capitalize">{`${contact.firstName} ${contact.lastName}`}</p>
@@ -65,15 +69,25 @@ const NameCell = (contact: NBPContactSummary) => {
   )
 }
 
-const AccountCell = (contact: NBPContactSummary) => {
+const AccountCell = (contact: GetContactItem) => {
   return (
     <>
-      <p>{contact.accountSummary}</p>
+      {
+        contact.type === ContactType.CASH_PICKUP ?
+        <p>NBP(<span className="text-slate-500">Cash Pickup</span>)</p> :
+        <p>{contact.institution?.abbr}(
+          {
+            !!contact.iban ? 
+              <span className="text-slate-500">{contact.iban}</span> :
+              <span className="text-slate-500">{contact.bankAccountNum}</span>
+          }
+        )</p>
+      }
     </>
   )
 }
 
-const StatusCell = ({status}: NBPContactSummary) => {
+const StatusCell = ({status}: GetContactItem) => {
   return (
     <Chip className="capitalize" color={statusColorMap[status]} size="sm" variant="flat">
       {statusTextMap[status]}
@@ -81,7 +95,7 @@ const StatusCell = ({status}: NBPContactSummary) => {
   )
 }
 
-const ActionsCell = (contact: NBPContactSummary) => {
+const ActionsCell = (contact: GetContactItem) => {
   return (
     <div className="relative flex items-center gap-2">
       <Link href={`/nbp/contacts/${contact.id}`}>
@@ -97,13 +111,13 @@ const ActionsCell = (contact: NBPContactSummary) => {
   )
 }
 
-export default function ContactTable({className, contacts}: {className?: string, contacts: NBPContactSummary[]}) {
+export default function ContactTable({className, contacts}: {className?: string, contacts: GetContacts}) {
   const [searchValue, setSearchValue] = React.useState('');
   const [page, setPage] = React.useState(1)
   const [rowsPerPage, setRowsPerPage] = React.useState(14)
   const [statusFilter, setStatusFilter] = React.useState<Selection>('all')
 
-  const renderCell = React.useCallback((contact: NBPContactSummary, columnKey: React.Key) => {
+  const renderCell = React.useCallback((contact: GetContactItem, columnKey: React.Key) => {
     switch(columnKey) {
       case "name":
         return (

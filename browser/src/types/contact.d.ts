@@ -22,7 +22,7 @@ export interface ContactDeleteData {
   id: number
 }
 
-export type GetContacts = Prisma.ContactGetPayload<{
+export type GetContactItem = Prisma.ContactGetPayload<{
   select: {
     id: true,
     status: true,
@@ -33,7 +33,8 @@ export type GetContacts = Prisma.ContactGetPayload<{
     iban: true,
     institution: { select: {abbr: true}}
   }
-}>[]
+}>
+export type GetContacts = GetContactItem[]
 
 export type UniqueContact = Prisma.ContactGetPayload<{
   select: {
