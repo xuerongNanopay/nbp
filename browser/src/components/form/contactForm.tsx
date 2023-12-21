@@ -108,11 +108,9 @@ export default function ContactForm() {
         body: JSON.stringify(e)
       })
       const responsePayload = await response.json()
-      console.log(responsePayload)
       if (responsePayload.code >> 7 === 1 ) {
         await submitContact()
       } else {
-        console.log(responsePayload)
         //TODO: not hard code string.
         if ( responsePayload.name === 'Third Party Verify' ) {
           onOpen()
@@ -122,7 +120,6 @@ export default function ContactForm() {
         }
       }
     } catch (err) {
-      console.log(err)
       alert.error(JSON.stringify(err))
       setIsSubmit(false)
     }

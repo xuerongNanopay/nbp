@@ -93,6 +93,7 @@ export const ContactDataValidator = Yup.object<ContactData>({
   countryCode: Yup.string().trim().required('Required'),
   relationshipId: Yup.number().required('Required'),
   transferMethod: Yup.string().trim().required('Required'),
+  phoneNumber: Yup.string().matches(/^[0-9]+$/, "Should only contain digits"),
   institutionId: Yup.number().integer().when(['transferMethod'], {
     is: (transferMethod: string) => transferMethod === ContactType.BANK_ACCOUNT,
     then:() => Yup.number().integer().required('Required')
