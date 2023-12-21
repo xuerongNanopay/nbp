@@ -27,14 +27,14 @@ import { useAlert } from "@/hook/useAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 const initialValues: Partial<ContactData> = {
-  country: 'PK',
+  countryCode: 'PK',
   firstName: '',
   middleName: '',
   lastName: '',
   addressLine1: '',
   addressLine2: '',
   city: '',
-  province: '',
+  provinceCode: '',
   postalCode: '',
   phoneNumber: '',
   relationshipId: 0,
@@ -171,7 +171,7 @@ export default function ContactForm() {
   useEffect(() => {
     const abortController = new AbortController()
     const fetchRegions = async () => {
-      if (!formik.values.country) {
+      if (!formik.values.countryCode) {
         return
       }
       setIsRegionsLoading(true)
@@ -295,10 +295,10 @@ export default function ContactForm() {
             color="primary"
             size="sm"
             disabled
-            {...formik.getFieldProps('country')}
+            {...formik.getFieldProps('countryCode')}
             // TODO: not a best option. Refactor
             value="Pakistan"
-            errorMessage={formik.touched.country && formik.errors.country}
+            errorMessage={formik.touched.countryCode && formik.errors.countryCode}
           />
           <Select
             id="province"
@@ -308,14 +308,14 @@ export default function ContactForm() {
             isLoading={isRegionsLoading}
             selectionMode="single"
             // defaultSelectedKeys={[]}
-            selectedKeys={!formik.values.province ? [] : [formik.values.province]}
+            selectedKeys={!formik.values.provinceCode ? [] : [formik.values.provinceCode]}
             placeholder="please select"
             color="primary"
             size="sm"
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
-            // {...formik.getFieldProps('province')}
-            errorMessage={formik.touched.province && formik.errors.province}
+            // {...formik.getFieldProps('provinceCode')}
+            errorMessage={formik.touched.provinceCode && formik.errors.provinceCode}
           >
             {regions.map((region) => (
               <SelectItem key={region.isoCode} value={region.isoCode}>

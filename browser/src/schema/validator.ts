@@ -49,8 +49,8 @@ export const OnboardingDataValidator = Yup.object<OnboardingData>({
   lastName: Yup.string().trim().required('Required'),
   address1: Yup.string().trim().required('Required'),
   city: Yup.string().trim().required('Required'),
-  province: Yup.string().trim().required('Required'),
-  country: Yup.string().trim().required('Required'),
+  provinceCode: Yup.string().trim().required('Required'),
+  countryCode: Yup.string().trim().required('Required'),
   postalCode: Yup.string()
                   .trim()
                   .required('Required')
@@ -89,8 +89,8 @@ export const ContactDataValidator = Yup.object<ContactData>({
   lastName: Yup.string().trim().required('Required'),
   addressLine1: Yup.string().trim().required('Required'),
   city: Yup.string().trim().required('Required'),
-  province: Yup.string().trim().required('Required'),
-  country: Yup.string().trim().required('Required'),
+  provinceCode: Yup.string().trim().required('Required'),
+  countryCode: Yup.string().trim().required('Required'),
   relationshipId: Yup.number().required('Required'),
   transferMethod: Yup.string().trim().required('Required'),
   institutionId: Yup.number().integer().when(['transferMethod'], {

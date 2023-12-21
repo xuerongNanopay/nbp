@@ -37,8 +37,8 @@ create table user(
     address1 varchar(255) not null,
     address2 varchar(255) null,
     city varchar(64) not null,
-    province varchar(5) not null ,
-    country varchar(4) not null,
+    provinceCode char(5) not null,
+    countryCode char(2) not null,
     postalCode varchar(16) not null,
     phoneNumber varchar(32) not null,
 
@@ -53,8 +53,8 @@ create table user(
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp,
 
-    foreign key (province) references region(isoCode),
-    foreign key (country) references country(iso2Code),
+    foreign key (provinceCode) references region(isoCode),
+    foreign key (countryCode) references country(iso2Code),
     foreign key (pob) references country(iso2Code),
     foreign key (nationality) references country(iso2Code),
     foreign key (occupationId) references occupation(id)
@@ -79,7 +79,7 @@ create table identification(
 
 create table contact(
     id serial primary key,
-    status enum('active', 'pending', 'invalid', 'delete') default 'pending',
+    status enum('active', 'await_verify', 'suspend', 'delete', 'invalid') default 'await_verify',
     type enum('cash_pickup', 'bank_account') not null,
 
     firstName varchar(255) not null,
@@ -88,12 +88,12 @@ create table contact(
     address1 varchar(255) not null,
     address2 varchar(255),
     city varchar(128) not null,
-    province varchar(8) not null,
-    country char(2) not null,
+    provinceCode char(5) not null,
+    countryCode char(2) not null,
     postCode varchar(64),
     phoneNumber varchar(64),
 
-    institutionId bigint unsigned not null,
+    institutionId bigint unsigned null,
     bankAccountNum varchar(32) null,
     branchNum varchar(32) null,
     iban varchar(32) null,
@@ -106,8 +106,8 @@ create table contact(
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp,
 
-    foreign key (province) references region(isoCode),
-    foreign key (country) references country(iso2Code),
+    foreign key (provinceCode) references region(isoCode),
+    foreign key (countryCode) references country(iso2Code),
     foreign key (currency) references currency(isoCode),
     foreign key (institutionId) references institution(id),
     foreign key (ownerId) references user(id),

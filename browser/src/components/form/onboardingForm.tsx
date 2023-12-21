@@ -33,8 +33,8 @@ const initialValues: OnboardingData = {
   address1: '',
   address2: '',
   city: '',
-  province: '',
-  country: 'CA',
+  provinceCode: '',
+  countryCode: 'CA',
   postalCode: '',
   phoneNumber: '',
   dob: '',
@@ -94,7 +94,7 @@ export default function OnboardingForm() {
   useEffect(() => {
     const abortController = new AbortController()
     const fetchRegions = async () => {
-      if (!formik.values.country) {
+      if (!formik.values.countryCode) {
         return
       }
       setIsRegionsLoading(true)
@@ -231,10 +231,10 @@ export default function OnboardingForm() {
             autoComplete="off"
             size="sm"
             disabled
-            {...formik.getFieldProps('country')}
+            {...formik.getFieldProps('countryCode')}
             //TODO: not a best option. Refactor
             value="Canada"
-            errorMessage={formik.touched.country && formik.errors.country}
+            errorMessage={formik.touched.countryCode && formik.errors.countryCode}
           />
           {/* <Autocomplete
             id="country"
@@ -269,14 +269,14 @@ export default function OnboardingForm() {
             placeholder="please select"
             color="primary"
             size="sm"
-            isLoading={isRegionsLoading && !!formik.values.country}
-            isDisabled={isRegionsLoading || !formik.values.country}
+            isLoading={isRegionsLoading && !!formik.values.countryCode}
+            isDisabled={isRegionsLoading || !formik.values.countryCode}
             onBlur={formik.handleBlur}
-            selectedKey={formik.values.province}
+            selectedKey={formik.values.provinceCode}
             onSelectionChange={(e) => {
-              formik.setFieldValue('province', e)
+              formik.setFieldValue('provinceCode', e)
             }}
-            errorMessage={formik.errors.province}
+            errorMessage={formik.errors.provinceCode}
           >
             {regions.map((region) => (
               <AutocompleteItem key={region.isoCode} value={region.isoCode}>

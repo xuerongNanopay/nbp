@@ -318,6 +318,7 @@ export async function onboarding(
 
   const idType = mapToIdentificationType(data.identityType)
   try {
+    console.log(data)
     return await getPrismaClient().user.create({
       data: {
         firstName: data.firstName,
@@ -326,8 +327,8 @@ export async function onboarding(
         address1: data.address1,
         address2: data.address2,
         city: data.city,
-        province: data.province,
-        country: data.country,
+        provinceCode: data.provinceCode,
+        countryCode: data.countryCode,
         postalCode: data.postalCode,
         phoneNumber: data.phoneNumber,
         dob: data.dob,

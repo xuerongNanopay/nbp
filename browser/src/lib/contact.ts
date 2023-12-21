@@ -14,6 +14,7 @@ import {
   ContactType
 } from "@prisma/client"
 import { isIBAN } from '@/utils/bankUtil'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 
 export async function createContact(
   session: Session,
@@ -31,12 +32,12 @@ export async function createContact(
       city: contactData.city,
       country: contactData.country,
       postCode: contactData.postalCode,
-      province: contactData.province,
       phoneNumber: contactData.phoneNumber,
       type: transferMethod,
       ownerId: session.user!.id,
       relationshipId: contactData.relationshipId,
-      currency: 'PKR'
+      currency: 'PKR',
+      regionCode: contactData.province
     }
     if (transferMethod === ContactType.BANK_ACCOUNT) {
       if (isIBAN(contactData.accountOrIban!)) {
@@ -141,6 +142,10 @@ export async function getContactDetailByOwnerId(
       select: UniqueContactSelect
     })
   } catch (err: any) {
+    if ( err instanceof PrismaClientKnownRequestError && err.code === 'P2021'  ) {
+      LOGGER.warn(`${formatSession(session)}`, "method: getContactDetailByOwnerId", `Contact no found with id \`${contactId}\``)
+      return null
+    }
     LOGGER.error(`${formatSession(session)}`, "method: getContactDetailByOwnerId", err)
     throw new InternalError()
   }
@@ -165,7 +170,7 @@ const UniqueContactSelect = {
   lastName: true,
   address1: true,
   address2: true,
-  province: true,
+  city: true,
   country: true,
   postCode: true,
   phoneNumber: true,
@@ -174,6 +179,11 @@ const UniqueContactSelect = {
   relationship: {
     select: {
       type: true
+    }
+  },
+  province: {
+    select: {
+      name: true
     }
   },
   iban: true,

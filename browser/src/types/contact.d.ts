@@ -1,3 +1,5 @@
+import type { Prisma } from '@prisma/client'
+
 export interface ContactData  {
   firstName: string,
   middleName?: string,
@@ -5,8 +7,8 @@ export interface ContactData  {
   addressLine1: string,
   addressLine2?: string,
   city: string,
-  province: string,
-  country: string,
+  provinceCode: string,
+  countryCode: string,
   postalCode?: string,
   phoneNumber?: string,
   relationshipId: number,
@@ -42,8 +44,13 @@ export type UniqueContact = Prisma.ContactGetPayload<{
     lastName: true,
     address1: true,
     address2: true,
-    province: true,
+    province: {
+      select: {
+        name: true
+      }
+    },
     country: true,
+    city: true,
     postCode: true,
     phoneNumber: true,
     bankAccountNum: true,
