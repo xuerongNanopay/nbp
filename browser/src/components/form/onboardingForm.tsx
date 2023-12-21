@@ -262,7 +262,7 @@ export default function OnboardingForm() {
           </Autocomplete> */}
           <Autocomplete
             id="province"
-            name="province"
+            name="provinceCode"
             label="Province"
             variant="bordered"
             allowsCustomValue={false}

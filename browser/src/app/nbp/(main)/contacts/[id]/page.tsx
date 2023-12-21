@@ -3,11 +3,13 @@ import { notFound, redirect } from 'next/navigation'
 import {
   Button,
   Breadcrumbs, 
-  BreadcrumbItem
+  BreadcrumbItem,
+  Link
 } from '@nextui-org/react'
 import { getContactDetailByOwnerId } from '@/lib/contact'
 import { fetchSession } from '@/lib/session'
 import { UniqueContact } from '@/types/contact'
+import { ContactStatus, ContactType } from '@prisma/client'
 
 export default async function Contact({ params: {id} }: { params: { id: string } }) {
   const contactId = parseInt(id)
@@ -19,8 +21,8 @@ export default async function Contact({ params: {id} }: { params: { id: string }
 
   return (
     <div className="px-2 sm:px-2 py-2 sm:py-4 max-w-4xl mx-auto">
-      <Breadcrumbs className="mb-4" color="primary">
-        <BreadcrumbItem href='/nbp/contacts'>contacts</BreadcrumbItem>
+      <Breadcrumbs className="mt-4" color="danger">
+        <BreadcrumbItem href='/nbp/contacts' color="danger"><Link>contacts</Link></BreadcrumbItem>
         <BreadcrumbItem href='#'>{contact.id}</BreadcrumbItem>
       </Breadcrumbs>
       <h1 className="font-semibold text-ellipsis  text-2xl sm:font-bold sm:text-3xl mb-6">
@@ -51,19 +53,38 @@ export default async function Contact({ params: {id} }: { params: { id: string }
           <h6 className="font-semibold">Phone Number</h6>
           <p className="text-sm text-slate-600">{contact.phoneNumber}</p>
         </div>
-        <div>
-          <h6 className="font-semibold">Bank Name</h6>
-          <p className="text-sm text-slate-600">{contact.bankName}</p>
-        </div>
-        <div>
-          <h6 className="font-semibold">Account Number or IBAN</h6>
-          <p className="text-sm text-slate-600">{contact.accountNumberOrIban}</p>
-        </div>
+        {
+          contact.type === ContactType.CASH_PICKUP ?
+          <div>
+            <h6 className="font-semibold">Transfer Method</h6>
+            <p className="text-sm text-slate-600">Cash Pickup In National Bank of Paskitan</p>
+          </div> :
+          <>
+            <div>
+              <h6 className="font-semibold">Bank Name</h6>
+              <p className="text-sm text-slate-600">{contact.institution!.name}</p>
+            </div>
+            {
+              !!contact.bankAccountNum &&             
+              <div>
+                <h6 className="font-semibold">Account Number</h6>
+                <p className="text-sm text-slate-600">{contact.bankAccountNum}</p>
+              </div>
+            }
+            {
+              !!contact.iban &&             
+              <div>
+                <h6 className="font-semibold">Account Number</h6>
+                <p className="text-sm text-slate-600">{contact.iban}</p>
+              </div>
+            }
+          </>
+        }
       </div>
     </div>
   )
 }
 
 function formatAddress(contact: UniqueContact): string {
-  return `${contact.address1}${!contact.address2 ? '' : ', ' + contact.address2}${!contact.city ? '' : ', ' + contact.city}${!contact.province.name ? '' : ', ' + contact.province.name}${!contact.country ? '' : ', ' + contact.country}${!contact.postCode ? '' : ', ' + contact.postCode}`
+  return `${contact.address1}${!contact.address2 ? '' : ', ' + contact.address2}${!contact.city ? '' : ', ' + contact.city}${!contact.province.name ? '' : ', ' + contact.province.name}${!contact.country.name ? '' : ', ' + contact.country.name}${!contact.postCode ? '' : ', ' + contact.postCode}`
 }

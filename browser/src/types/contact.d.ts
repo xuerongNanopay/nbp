@@ -44,12 +44,19 @@ export type UniqueContact = Prisma.ContactGetPayload<{
     lastName: true,
     address1: true,
     address2: true,
+    type: true,
     province: {
       select: {
-        name: true
+        name: true,
+        isoCode: true
       }
     },
-    country: true,
+    country: {
+      select: {
+        name: true,
+        iso2Code: true
+      }
+    },
     city: true,
     postCode: true,
     phoneNumber: true,

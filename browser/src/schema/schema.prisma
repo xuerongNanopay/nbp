@@ -64,7 +64,7 @@ model User {
   address1     String
   address2     String?
   city         String
-  provinceCode String @db.Char(5)
+  provinceCode String   @db.Char(5)
   province     Region   @relation(fields: [provinceCode], references: [isoCode])
   countryCode  String   @db.Char(2)
   country      Country  @relation(fields: [countryCode], references: [iso2Code])
@@ -235,7 +235,7 @@ model Institution {
   country        String
   abbr           String
   name           String
-  institutionNum String
+  institutionNum String?
   contacts       Contact[]
 
   createdAt DateTime @default(now())

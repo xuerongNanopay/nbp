@@ -304,7 +304,7 @@ export default function ContactForm() {
             id="province"
             label="Province"
             variant="bordered"
-            name="province"
+            name="provinceCode"
             isLoading={isRegionsLoading}
             selectionMode="single"
             // defaultSelectedKeys={[]}

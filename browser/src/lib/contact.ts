@@ -30,14 +30,14 @@ export async function createContact(
       address1: contactData.addressLine1,
       address2: contactData.addressLine2,
       city: contactData.city,
-      country: contactData.country,
+      countryCode: contactData.countryCode,
       postCode: contactData.postalCode,
       phoneNumber: contactData.phoneNumber,
       type: transferMethod,
       ownerId: session.user!.id,
       relationshipId: contactData.relationshipId,
       currency: 'PKR',
-      regionCode: contactData.province
+      provinceCode: contactData.provinceCode
     }
     if (transferMethod === ContactType.BANK_ACCOUNT) {
       if (isIBAN(contactData.accountOrIban!)) {
@@ -165,13 +165,19 @@ function mapToTransferMethod(transferMethod: string) {
 const UniqueContactSelect = {
   id: true,
   status: true,
+  type: true,
   firstName: true,
   middleName: true,
   lastName: true,
   address1: true,
   address2: true,
   city: true,
-  country: true,
+  country: {
+    select: {
+      name: true,
+      iso2Code: true
+    }
+  },
   postCode: true,
   phoneNumber: true,
   bankAccountNum: true,
@@ -183,7 +189,8 @@ const UniqueContactSelect = {
   },
   province: {
     select: {
-      name: true
+      name: true,
+      isoCode: true
     }
   },
   iban: true,
