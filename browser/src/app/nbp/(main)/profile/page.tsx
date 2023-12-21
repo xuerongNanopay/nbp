@@ -1,4 +1,3 @@
-import { UpdatePasswordForm } from "@/components/form"
 import { fetchSession } from "@/lib/session"
 import { UserDetail } from "./userDetail"
 import { getUserDetail } from "@/lib/user"

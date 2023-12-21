@@ -1,5 +1,6 @@
 import type { 
   ChangePassowrdData,
+  EditPasswordData,
   EmailVerifyData,
   ForgetPasswordData,
   OnboardingData,
@@ -309,6 +310,13 @@ export async function changePassowrd(
     console.error(`changePasswordData: ${JSON.stringify({email, oneTimeToken})}`,  "method: changePassowrd", err)
     throw new InternalError()
   }
+}
+
+export async function editPassword(
+  session: Session,
+  editPasswordData: EditPasswordData
+) : Promise<Pick<Login, 'id'| 'email'> | null> {
+
 }
 
 export async function onboarding(

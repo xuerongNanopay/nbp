@@ -5,7 +5,7 @@ import {
   SignInData, 
   SignUpData
 } from "@/types/auth"
-import type { OnboardingData, UpdatePasswordData } from "@/types/auth"
+import type { OnboardingData, EditPasswordData } from "@/types/auth"
 import type { ContactData} from "@/types/contact"
 import * as Yup from 'yup';
 import dayjs from "dayjs"
@@ -124,7 +124,7 @@ export const ChangePasswordParamsValidator = Yup.object<Pick<ChangePassowrdData,
   oneTimeToken: Yup.string().required(),
 })
 
-export const UpdatePasswordDataValidator = Yup.object<UpdatePasswordData>({
+export const UpdatePasswordDataValidator = Yup.object<EditPasswordData>({
   originPassword: Yup.string().required('Required'),
   newPassword: Yup.string()
               .min(8, "Password must have at least 8 characters")

@@ -54,7 +54,7 @@ export interface ChangePassowrdData {
   reNewPassword: string
 }
 
-export interface UpdatePasswordData {
+export interface EditPasswordData {
   originPassword: string
   newPassword: string,
   reNewPassword: string

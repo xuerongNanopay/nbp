@@ -9,17 +9,17 @@ import {
 
 import { EyeSlashFilledIcon } from "@/icons/EyeSlashFilledIcon"
 import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
-import { UpdatePasswordData } from "@/types/auth";
+import { EditPasswordData } from "@/types/auth";
 import { UpdatePasswordDataValidator } from "@/schema/validator";
 
 
-export default function UpdatePasswordForm() {
+export default function EditPasswordForm() {
   const [ isOriginPasswordVisible, setIsOriginPasswordVisible ] = useState(false)
   const [ isNewPasswordVisible, setIsNewPasswordVisible ] = useState(false)
   const [ isReNewPasswordVisible, setIsReNewPasswordVisible ] = useState(false)
-  const initialValues: UpdatePasswordData = {originPassword: '', newPassword: '', reNewPassword: ''}
+  const initialValues: EditPasswordData = {originPassword: '', newPassword: '', reNewPassword: ''}
 
-  const submitNewPassword = (e: UpdatePasswordData) => { console.log(e) }
+  const submitNewPassword = (e: EditPasswordData) => { console.log(e) }
   const formik = useFormik({
     initialValues,
     validationSchema: UpdatePasswordDataValidator,
@@ -27,15 +27,13 @@ export default function UpdatePasswordForm() {
   })
 
   return (
-    // Investigating Found 2 elements with non-unique id
-    //TODO: type shift will create two input element with same key
-    // find why to resolve it.
-    <div className="w-full max-w-sm">
+    <div className="w-full">
       <h4 className="text-2xl font-bold mb-2 text-center">Update your password</h4>
       <h6 className="text-center mb-4">Create a new password for your account</h6>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Input
           id="originPassword"
+          //TODO: Using this going to cause the input render twice. Find a good way to resolve.
           type={isOriginPasswordVisible ? "text" : "password"}
           variant="bordered" 
           label="Origin Password"

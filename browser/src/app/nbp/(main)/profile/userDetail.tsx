@@ -66,8 +66,8 @@ export function UserDetail(
               </Button>
             </DropdownTrigger>
             <DropdownMenu>
-              <DropdownItem className="sm:hidden">Edit</DropdownItem>
-              <DropdownItem>Change Password</DropdownItem>
+              <DropdownItem className="sm:hidde">Edit</DropdownItem>
+              <DropdownItem key="change_password" href="/nbp/profile/change_password">Change Password</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>
