@@ -4,8 +4,8 @@ import {
   NavbarBrand,
   NavbarContent
 } from "@nextui-org/react"
-
 export default function NotFound() {
+
   return (
     <>
       <Navbar
@@ -20,7 +20,7 @@ export default function NotFound() {
       </Navbar>
       <div>
         <h4>404 Not Found</h4>
-        <Link href="/">Back to Main</Link>
+        <Link href="/nbp/dashboard">Back to DashBoard</Link>
       </div>
     </>
   )
