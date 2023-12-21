@@ -10,7 +10,7 @@ const IdentityType = [
     "name": "Provincial ID Card"
   },
   {
-    "id": IdentificationType.PASSWORD,
+    "id": IdentificationType.PASSPORT,
     "name": "Passport"
   }
 ]

@@ -13,7 +13,8 @@ import type {
   GetInstitutions,
   GetPersonalRelationships,
   GetOccupations,
-  GetCurrencies
+  GetCurrencies,
+  GetCountryDetail
 } from '@/types/common'
 import { LOGGER, formatSession } from '@/utils/logUtil';
 import { InternalError } from '@/schema/error';
@@ -65,6 +66,30 @@ export async function getCountries(
     throw new InternalError()
   }
 }
+
+export async function getCountryByISO2Code(
+  session: Session,
+  isoCode: string,
+) : Promise<GetCountryDetail | null>  {
+  try {
+    return await getPrismaClient().country.findUnique({
+      where: {
+        status: CountryStatus.ACTIVE,
+        iso2Code: isoCode
+      },
+      select: {
+        id: true,
+        iso2Code: true,
+        iso3Code: true,
+        name: true,
+        numCode: true
+      }
+    })
+  } catch (err: any) {
+    LOGGER.error(`${formatSession(session)}`, "method: getCountryByISO2Code", err)
+    throw new InternalError()
+  }
+}  
 
 export async function getInstitutionsByCountryCode(
   session: Session,

@@ -1,6 +1,6 @@
 import type { Prisma } from '@prisma/client'
 
-export type User = Prisma.UserGetPayload<{
+export type UserDetail = Prisma.UserGetPayload<{
   select: {
     id: true,
     status: true,
@@ -22,7 +22,7 @@ export type User = Prisma.UserGetPayload<{
         iso2Code: true
       }
     },
-    postCode: true,
+    postalCode: true,
     dob: true,
     phoneNumber: true,
     pob: true,

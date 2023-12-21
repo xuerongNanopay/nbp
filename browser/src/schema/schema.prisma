@@ -78,7 +78,7 @@ model User {
   occupation   Occupation @relation(fields: [occupationId], references: [id])
   avatarUrl    String?
 
-  logins              Login[] // only support one way login
+  logins              Login[]
   identification      Identification?
   accounts            Account[]
   contacts            Contact[]
@@ -99,7 +99,7 @@ enum IdentificationStatus {
 }
 
 enum IdentificationType {
-  PASSWORD       @map("password")
+  PASSPORT       @map("passport")
   DRIVER_LICENSE @map("driver_license")
   PROVINCAL_ID   @map("provincial_id")
   NATIONAL_ID    @map("national_id")

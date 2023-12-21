@@ -25,6 +25,16 @@ export interface FetchMany<T> {
   data: T
 }
 
+export type GetCountryDetail = Prisma.CountryGetPayload<{
+  select: {
+    id: true,
+    iso2Code: true,
+    iso3Code: true,
+    name: true,
+    numCode: true
+  }
+}>
+
 export type GetCountries = Pick<Country, 'id' | 'iso2Code' | 'name'>[]
 export type GetRegions = Pick<Region, 'id' | 'abbr' | 'country' | 'isoCode' | 'name'>[] 
 export type GetInstitutions = Pick<Institution, 'id' | 'abbr' | 'country' | 'name'>[]

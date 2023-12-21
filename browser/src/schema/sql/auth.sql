@@ -1,6 +1,6 @@
 create table login(
     id serial primary key,
-    ownerId bigint unsigned null,
+    ownerId bigint unsigned unique null,
     # login_type enum('email', 'username', 'sms') default 'email',
 
     # field for email login
@@ -64,7 +64,7 @@ create table user(
 create table identification(
     id serial primary key,
     status enum('active', 'suspend', 'await_verify', 'delete') default 'active',
-    type enum('password', 'driver_license', 'provincial_id', 'national_id') not null,
+    type enum('passport', 'driver_license', 'provincial_id', 'national_id') not null,
 
     value varchar(64) not null,
     addition_info varchar(128) null,

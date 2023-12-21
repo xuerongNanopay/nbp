@@ -11,9 +11,9 @@ export default async function Profile() {
   if (!user) return notFound()
 
   return (
-    <div className="flex justify-center">
-      {/* <UpdatePasswordForm/> */}
-      <UserDetail user={user}/>
+    <div className="max-w-[760px] mx-auto">
+      <h2 className="mx-2 text-2xl max-sm:text-xl font-semibold mb-4">{session?.user?.firstName}</h2>
+      <UserDetail session={session!} user={user}/>
     </div>
   )
 }

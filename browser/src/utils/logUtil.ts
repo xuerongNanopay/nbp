@@ -91,6 +91,6 @@ class Logger {
 export const LOGGER = new Logger(wistonLogger)
 
 export function formatSession(session: Session | null): string {
-  if (!session) return "Session: EMPTY"
-  return `Session: {login: ${!session.login ? 'EMPTY' : session.login.id}, user: ${!session.user ? 'EMPTY' : session.user.id}}`
+  if (!session) return "loginId: EMPTY, userId: EMPTY"
+  return `loginId: ${!session.login ? 'EMPTY' : session.login.id}, userId: ${!session.user ? 'EMPTY' : session.user.id}`
 }
