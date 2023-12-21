@@ -368,8 +368,8 @@ function mapToIdentificationType(identityType: string) {
       return IdentificationType.DRIVER_LICENSE
     case IdentificationType.NATIONAL_ID:
       return IdentificationType.NATIONAL_ID
-    case IdentificationType.PASSWORD:
-      return IdentificationType.PASSWORD
+    case IdentificationType.PASSPORT:
+      return IdentificationType.PASSPORT
     case IdentificationType.PROVINCAL_ID:
       return IdentificationType.PROVINCAL_ID
     default:

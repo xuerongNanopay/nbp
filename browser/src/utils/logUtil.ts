@@ -80,7 +80,7 @@ class Logger {
       if (cur instanceof Error ) return cur.toString ? cur.toString() : JSON.stringify(cur)
       if (cur instanceof Object) return JSON.stringify(cur)
       if (cur instanceof Array) return cur.toString ? cur.toString() : JSON.stringify(cur)
-      return JSON.stringify(cur)
+      return cur
     }).join(', ')
 
     // args.

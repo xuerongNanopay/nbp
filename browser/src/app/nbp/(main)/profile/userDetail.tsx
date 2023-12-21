@@ -108,6 +108,15 @@ export function UserDetail(
         <div className={`grid grid-cols-2 max-sm:grid-cols-1 gap-2`}>
           <PropertyView name='Occupation:' value={`${user.occupation.type}`}/>
         </div>
+        {
+          !!user.accounts && user.accounts.length > 0 &&
+          <>
+            <Divider></Divider>
+            <div className={`grid grid-cols-2 max-sm:grid-cols-1 gap-2`}>
+              <PropertyView name='Interac Email:' value={`${user.accounts[0].email}`}/>
+            </div>
+          </>
+        }
       </CardBody>
     </Card>
   )

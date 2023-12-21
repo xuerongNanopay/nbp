@@ -3,7 +3,7 @@ import { Session } from "@/types/auth"
 import { UserDetail } from "@/types/user"
 import { LOGGER, formatSession } from "@/utils/logUtil"
 import { getPrismaClient } from "@/utils/prisma"
-import { UserStatus } from "@prisma/client"
+import { AccountStatus, AccountType, UserStatus } from "@prisma/client"
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import { getCountryByISO2Code } from "./common"
 
@@ -83,6 +83,17 @@ const UserDetailProject = {
   occupation: {
     select: {
       type: true
+    }
+  },
+  accounts: {
+    where: {
+      // type: AccountType.INTERACT,
+      status: {
+        not: AccountStatus.DELETE
+      }
+    },
+    select: {
+      email: true
     }
   }
 }

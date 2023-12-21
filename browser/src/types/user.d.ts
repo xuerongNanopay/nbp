@@ -37,6 +37,11 @@ export type UserDetail = Prisma.UserGetPayload<{
       select: {
         type: true
       }
+    },
+    accounts: {
+      select: {
+        email: true
+      }
     }
   }
 }>
