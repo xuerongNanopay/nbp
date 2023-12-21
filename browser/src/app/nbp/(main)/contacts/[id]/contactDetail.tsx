@@ -1,15 +1,24 @@
 'use client'
-import type { UniqueContact } from "@/types/contact";
-
+import type { UniqueContact } from "@/types/contact"
+import { useRouter } from 'next/navigation'
+import { useState } from "react"
 import {
   Button,
   Breadcrumbs, 
   BreadcrumbItem,
   Link,
   ChipProps,
-  Chip
+  Chip,
+  Modal,
+  useDisclosure,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from '@nextui-org/react'
 import { ContactStatus, ContactType } from '@prisma/client'
+import { useAlert } from "@/hook/useAlert"
+import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
   [ContactStatus.ACTIVE]: "success",
@@ -25,7 +34,77 @@ const statusTextMap: Record<string, string>  = {
   [ContactStatus.SUSPEND]: ContactStatus.SUSPEND
 }
 
+const ConfirmModal = (
+  {
+    isOpen,
+    onOpenChange,
+    deleteContact
+  }: {
+    isOpen: boolean,
+    onOpenChange: () => void,
+    deleteContact: () => void,
+  }
+) => {
+  return (
+    <>
+        <Modal placement="center" hideCloseButton isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
+        <ModalContent>
+          {
+            (onClose) => (
+              <>
+                <ModalHeader><p className="text-orange-400 font-bold">Warming</p></ModalHeader>
+                <ModalBody>
+                  <p className="font-semibold">Do you want to delete the contact?</p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Cancel
+                  </Button>
+                  <Button className="font-bold bg-[#0E793C] text-[#ffffff]" onPress={() => {
+                    onClose()
+                    deleteContact()
+                  }}>
+                    YES
+                  </Button>
+                </ModalFooter>
+              </>
+            )
+          }
+        </ModalContent>
+      </Modal>
+    </>
+  )
+}
+
 export function ContactDetail({contact}: {contact: UniqueContact}) {
+  const alert = useAlert() ?? CONSOLE_ALERT
+  const router = useRouter()
+  const [isDelete, setIsDelete] = useState<boolean>(false)
+  const {isOpen, onOpen, onOpenChange} = useDisclosure({onChange(isOpen) {
+    if (isOpen === false) setIsDelete(false)
+  },})
+  const deleteContact = async () => {
+    setIsDelete(true)
+    try {
+      const response = await fetch(`/api/nbp/user/contact/${contact.id}`, {
+        method: 'DELETE',
+      })
+      const responsePayload = await response.json()
+      console.log(responsePayload)
+      if (responsePayload.code >> 7 === 1 ) {
+        alert.info(responsePayload.message)
+        router.replace(`/nbp/contacts`)
+      } else {
+        alert.error(responsePayload.message)
+        setIsDelete(false)
+      }
+    } catch (err) {
+      console.log(err)
+      alert.error(JSON.stringify(err))
+      setIsDelete(false)
+    }
+  }
+
   return (
     <div className="px-2 sm:px-2 py-2 sm:py-4 max-w-4xl mx-auto">
       {/* TODO: invesitgate why not show */}
@@ -39,7 +118,7 @@ export function ContactDetail({contact}: {contact: UniqueContact}) {
       </h1>
       <div className="mb-4">
         {/* Use link for deletion */}
-        <Button variant="ghost" color="danger" as={Link} href={`/nbp/contacts/${contact.id}/delete`}>DELETE</Button>
+        <Button variant="ghost" color="danger" onClick={onOpen}>DELETE</Button>
       </div>
       <div className="grid grid-cols-1 gap-2 p-2 sm:p-4 border border-slate-400 rounded-md">
         <div>
@@ -103,6 +182,7 @@ export function ContactDetail({contact}: {contact: UniqueContact}) {
           </>
         }
       </div>
+      <ConfirmModal isOpen={isOpen} onOpenChange={onOpenChange} deleteContact={deleteContact}/>
     </div>
   )
 }

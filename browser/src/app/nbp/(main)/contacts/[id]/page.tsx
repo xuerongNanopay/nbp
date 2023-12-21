@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { getContactDetailByOwnerId } from '@/lib/contact'
 import { fetchSession } from '@/lib/session'
 import { ContactDetail } from './contactDetail'
+import { AlertProvider } from '@/hook/useAlert'
 
 export default async function Contact({ params: {id} }: { params: { id: string } }) {
   const contactId = parseInt(id)
@@ -13,6 +14,8 @@ export default async function Contact({ params: {id} }: { params: { id: string }
   if ( contact === null ) redirect('/nbp/contacts')
 
   return (
-    <ContactDetail contact={contact}/>
+    <AlertProvider>
+      <ContactDetail contact={contact}/>
+    </AlertProvider>
   )
 }

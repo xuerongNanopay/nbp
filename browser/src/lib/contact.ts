@@ -68,13 +68,15 @@ export async function createContact(
 
 export async function deleteContact(
   session: Session,
-  contactDeleteData: ContactDeleteData
+  contactId: number
 ): Promise<UniqueContact | null> {
   try {
     return await getPrismaClient().contact.update({
       where: {
-        id: contactDeleteData.id,
-        owner: session.user!.id
+        id: contactId,
+        owner: {
+          id: session.user!.id
+        }
       },
       data: {
         deletedAt: new Date(),
