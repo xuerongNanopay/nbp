@@ -207,7 +207,7 @@ export default function ContactTable({className, contacts}: {className?: string,
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" href="/createContact" as={Link} endContent={<PlusIcon />}>
+            <Button color="primary" href="/nbp/contacts/create" as={Link} endContent={<PlusIcon />}>
               New Contact
             </Button>
           </div>

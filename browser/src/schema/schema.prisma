@@ -75,6 +75,7 @@ model User {
   nationality String
 
   occupationId Int
+  occupation   Occupation @relation(fields: [occupationId], references: [id])
   avatarUrl    String?
 
   logins              Login[] // only support one way login
@@ -152,6 +153,7 @@ model Occupation {
 
   type        String
   description String?
+  users       User[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
