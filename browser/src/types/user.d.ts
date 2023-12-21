@@ -1,6 +1,6 @@
 import type { Prisma } from '@prisma/client'
 
-export type UniqueContact = Prisma.UserGetPayload<{
+export type User = Prisma.UserGetPayload<{
   select: {
     id: true,
     status: true,
@@ -27,14 +27,20 @@ export type UniqueContact = Prisma.UserGetPayload<{
     phoneNumber: true,
     pob: true,
     nationality: true,
+    identification: {
+      select: {
+        type: true,
+        value: true
+      }
+    },
 
     occupation: {
       select: {
         type: true
       }
-    }
+    },
 
-    institution: { 
+    institution: {
       select: {
         name: true,
         institutionNum: true,
