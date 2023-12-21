@@ -5,9 +5,25 @@ import {
   Button,
   Breadcrumbs, 
   BreadcrumbItem,
-  Link
+  Link,
+  ChipProps,
+  Chip
 } from '@nextui-org/react'
-import { ContactType } from '@prisma/client'
+import { ContactStatus, ContactType } from '@prisma/client'
+
+const statusColorMap: Record<string, ChipProps["color"]>  = {
+  [ContactStatus.ACTIVE]: "success",
+  [ContactStatus.AWAIT_VERIFY]: "secondary",
+  [ContactStatus.INVALID]: "danger",
+  [ContactStatus.SUSPEND]: "warning"
+}
+
+const statusTextMap: Record<string, string>  = {
+  [ContactStatus.ACTIVE]: ContactStatus.ACTIVE,
+  [ContactStatus.AWAIT_VERIFY]: ContactStatus.AWAIT_VERIFY,
+  [ContactStatus.INVALID]: ContactStatus.INVALID,
+  [ContactStatus.SUSPEND]: ContactStatus.SUSPEND
+}
 
 export function ContactDetail({contact}: {contact: UniqueContact}) {
   return (
@@ -30,9 +46,22 @@ export function ContactDetail({contact}: {contact: UniqueContact}) {
           <h6 className="font-semibold">First Name</h6>
           <p className="text-sm text-slate-600">{contact.firstName}</p>
         </div>
+        {
+          !!contact.middleName &&             
+            <div>
+              <h6 className="font-semibold">Middle Name</h6>
+              <p className="text-sm text-slate-600">{contact.middleName}</p>
+            </div>
+        }
         <div>
           <h6 className="font-semibold">Last Name</h6>
           <p className="text-sm text-slate-600">{contact.lastName}</p>
+        </div>
+        <div>
+          <h6 className="font-semibold">Status</h6>
+          <Chip className="capitalize" color={statusColorMap[contact.status]} size="sm" variant="flat">
+            {statusTextMap[contact.status]}
+          </Chip>
         </div>
         <div>
           <h6 className="font-semibold">Relationship</h6>
