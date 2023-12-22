@@ -84,6 +84,7 @@ model User {
   contacts            Contact[]
   summaryTransactions SummaryTransaction[]
   transactions        Transaction[]
+  notifications       Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -269,8 +270,8 @@ model Account {
   currency  String
 
   deletedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   owner        User          @relation(fields: [ownerId], references: [id])
   ownerId      Int
@@ -499,6 +500,35 @@ model ReverseTransfer {
   updatedAt DateTime @updatedAt
 
   @@map("reverse_transfer")
+}
+
+enum NotificationStatus {
+  READ    @map("read")
+  UN_READ @map("un_read")
+}
+
+enum NotificationLevel {
+  INFO  @map("info")
+  WARM  @map("warm")
+  ERROR @map("error")
+}
+
+model Notification {
+  id     Int                @id @default(autoincrement())
+  status NotificationStatus @default(UN_READ)
+  level  NotificationLevel  @default(INFO)
+
+  subject String
+  content String
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id])
+
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("notification")
 }
 
 // create table api_log (
