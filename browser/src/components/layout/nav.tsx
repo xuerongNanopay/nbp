@@ -28,12 +28,14 @@ import { Session } from "@/types/auth"
 export default function Nav({session}: {session: Session}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const curPath = usePathname()
+  console.log('INTESTIGATE: NAV TOGGLE mess up in build mode', isMenuOpen)
   return (
     <>
       <Navbar
         className="bg-white border-b-2 border-green-800"
         isBordered
         isMenuOpen={isMenuOpen}
+        isMenuDefaultOpen={false}
         onMenuOpenChange={setIsMenuOpen}
       >
         <NavbarContent justify="start">
@@ -53,7 +55,7 @@ export default function Nav({session}: {session: Session}) {
                         href={menu.href}
                         size="lg"
                         as={NextLink}
-                        onPressEnd={() => {setIsMenuOpen(false)}}
+                         onPressStart={() => {setIsMenuOpen(false)}}
                       >
                         {menu.name}
                       </Link>

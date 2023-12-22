@@ -64,7 +64,7 @@ const ConfirmModal = (
               <>
                 <ModalHeader><p className="text-orange-400">Warming</p></ModalHeader>
                 <ModalBody>
-                  <p>We can't verify your account info with NBP</p>
+                  <p>We can&apos;t verify your account info with NBP</p>
                   <p className="text-slate-600">If you are guarantee that the contact you added is corrent</p>
                   <p className="text-slate-600">Please click SAVE button</p>
                 </ModalBody>

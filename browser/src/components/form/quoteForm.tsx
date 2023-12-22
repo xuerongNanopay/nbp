@@ -9,8 +9,8 @@ import {
   Select, 
   SelectItem
 } from "@nextui-org/react";
-import { IAccount, ITransferQuote } from "@/type";
-
+import { ITransferQuote } from "@/type";
+type IAccount = any
 type prop  = {
   sourceAccount: IAccount[]
   destinationAccount: IAccount[]
