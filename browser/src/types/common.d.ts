@@ -4,27 +4,6 @@ import type {
   Region 
 } from '@prisma/client'
 
-export interface FetchMeta {
-  queries: Record<String, String>
-  date: Date
-}
-
-export interface FetchManyMeta extends FetchMeta {
-  totalCount: number,
-  fetchCount: number,
-  cursor: number?
-}
-
-export interface FetchUnique<T> {
-  meta: FetchMeta,
-  data: T
-}
-
-export interface FetchMany<T> {
-  meta: FetchManyMeta,
-  data: T
-}
-
 export type GetCountryDetail = Prisma.CountryGetPayload<{
   select: {
     id: true,
