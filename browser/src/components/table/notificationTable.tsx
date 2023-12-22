@@ -1,5 +1,7 @@
 "use client"
 
+import useSWR from 'swr'
+
 import { 
   useCallback, 
   useMemo,
@@ -57,7 +59,7 @@ const CreatedCell = ({created, status}: NotificationSummary) => {
 }
 
 // TODO: Pagination
-export function NotificationTable({className, notifications}: Props): React.JSX.Element {
+export function NotificationTable(): React.JSX.Element {
 
   const [page, setPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(15)
