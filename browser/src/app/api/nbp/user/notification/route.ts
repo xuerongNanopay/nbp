@@ -31,7 +31,12 @@ export async function GET(request: Request) {
       message: 'Success',
       payload: manyNotifications
     }
-
+    return Response.json(
+      result,
+      {
+        status: 200
+      }
+    )
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, "API: notification-GET", err)
 

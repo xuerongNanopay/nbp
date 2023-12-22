@@ -26,7 +26,10 @@ export async function GET(
         data: contact
       },
       {
-        status: 200
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
     )
 
@@ -75,7 +78,10 @@ export async function DELETE(
         data: contact
       },
       {
-        status: 200
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
     )
   } catch(err: any) {

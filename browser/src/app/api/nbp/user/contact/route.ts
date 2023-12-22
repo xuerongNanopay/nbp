@@ -18,7 +18,10 @@ export async function GET() {
         data: contacts
       },
       {
-        status: 200
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
     )
 
