@@ -11,6 +11,7 @@ import * as Yup from 'yup';
 import dayjs from "dayjs"
 import { parse, isDate } from "date-fns";
 import { ContactType } from "@prisma/client";
+import { EditInteracData } from "@/types/account";
 
 const eighteen_years_age = dayjs().subtract(18, 'year').format('YYYY-MM-DD')
 const hundred_years_age = dayjs().subtract(100, 'year').format('YYYY-MM-DD')
@@ -133,4 +134,8 @@ export const EditPasswordDataValidator = Yup.object<EditPasswordData>({
               .matches(/[A-Z]/, formatCharacterValidationError("uppercase")),
   reNewPassword: Yup.string().required("Please re-type your password").oneOf([Yup.ref("newPassword")], "Passwords does not match")
   
+})
+
+export const EditInteracDataValidator = Yup.object<EditInteracData>({
+  newEmail: Yup.string().email('Invalid email address').required('Required')
 })

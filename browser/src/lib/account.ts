@@ -1,4 +1,5 @@
 import { InternalError } from "@/schema/error"
+import { EditInteracData } from "@/types/account"
 import { Session } from "@/types/auth"
 import { GetAccounts } from "@/types/common"
 import { LOGGER, formatSession } from "@/utils/logUtil"
@@ -30,6 +31,22 @@ export async function getAllAcountsByOwnerId(
     })
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, 'Method: getAllAcountsByOwnerId', err)
+    throw new InternalError()
+  }
+}
+
+export async function updateInteracAccountEmail(
+  session: Session,
+  editInteracData: EditInteracData
+): Promise<GetAccount> {
+  try {
+    const account = await getPrismaClient().account.findUnique({
+      select: {
+        
+      }
+    })
+  } catch (err: any) {
+    LOGGER.error(`${formatSession(session)}`, 'Method: updateInteracAccountEmail', err)
     throw new InternalError()
   }
 }

@@ -1,4 +1,4 @@
-import { EditPasswordForm } from "@/components/form"
+import { EditInteracForm } from "@/components/form"
 import { fetchSession } from "@/lib/session"
 import { getUserDetail } from "@/lib/user"
 import { notFound } from "next/navigation"
@@ -12,7 +12,7 @@ export default async function EditInterac() {
   return (
     <div className="max-w-sm w-full mx-auto">
       <AlertProvider>
-        <EditPasswordForm/>
+        <EditInteracForm/>
       </AlertProvider>
     </div>
   )

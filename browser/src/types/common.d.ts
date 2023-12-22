@@ -42,7 +42,7 @@ export type GetPersonalRelationships = Pick<PersonalRelationship, 'id' | 'type' 
 export type GetOccupations = Pick<Occupation, 'id' | 'type' | 'description'>[]
 export type GetCurrencies = Pick<Currency, 'id' | 'isoCode' | 'decimal' | 'name'>[]
 
-export type GetAccounts = Prisma.AccountGetPayload<{
+export type GetAccount = Prisma.AccountGetPayload<{
   select: {
     id: true,
     status: true,
@@ -50,4 +50,5 @@ export type GetAccounts = Prisma.AccountGetPayload<{
     isDefault: true,
     email: true
   }
-}>[]
+}>
+export type GetAccounts = GetAccount[]

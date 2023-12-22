@@ -114,6 +114,25 @@ create table contact(
     foreign key (relationshipId) references personal_relationship(id)
 );
 
+create table account (
+    id serial primary key,
+    status enum('active', 'await_verify', 'invalid', 'suspend', 'delete') default 'await_verify',
+    type enum('interac', 'bank_account') not null,
+
+    email varchar(255) null,
+    isDefault boolean default false,
+
+    ownerId bigint unsigned not null,
+    currency char(3) not null,
+
+    deletedAt timestamp null,
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp,
+
+    foreign key (ownerId) references user(id),
+    foreign key (currency) references currency(isoCode)
+);
+
 create table summary_transaction(
     id serial primary key,
     status enum('initial','waiting_for_payment', 'process', 'complete', 'rejected', 'refund_in_progress', 'cancel') default 'initial',
