@@ -329,6 +329,7 @@ export async function editPassword(
         password: newPassword
       }
     })
+    LOGGER.info(`${formatSession(session)}`, "method: editPassword", 'Change new password')
     return login
   } catch (err: any) {
     if ( err instanceof PrismaClientKnownRequestError && err.code === 'P2025'  ) {

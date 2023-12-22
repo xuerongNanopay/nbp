@@ -22,7 +22,7 @@ export default function EditInteracForm() {
   const editInteracEmail = async (e: EditInteracData) => {
     setIsSubmit(true)
     try {
-      const response = await fetch('/api/nbp/user/profile/edit_password',{
+      const response = await fetch('/api/nbp/user/profile/edit_interac_email',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ export default function EditInteracForm() {
       })
       const responsePayload = await response.json()
       if (responsePayload.code >> 7 === 1 ) {
-        alert.info('Password Updated')
+        alert.info(responsePayload.message)
         router.replace('/nbp/profile')
       } else {
         alert.error(responsePayload.message)
