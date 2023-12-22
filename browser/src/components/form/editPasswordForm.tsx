@@ -1,5 +1,5 @@
 'use client'
-
+import { useRouter } from 'next/navigation'
 import { useState } from "react"
 import { useFormik } from "formik"
 import {
@@ -9,21 +9,49 @@ import {
 
 import { EyeSlashFilledIcon } from "@/icons/EyeSlashFilledIcon"
 import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
-import { EditPasswordData } from "@/types/auth";
-import { UpdatePasswordDataValidator } from "@/schema/validator";
+import { EditPasswordData } from "@/types/auth"
+import { EditPasswordDataValidator } from "@/schema/validator"
+import { useAlert } from "@/hook/useAlert"
+import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 
 export default function EditPasswordForm() {
+  const alert = useAlert() ?? CONSOLE_ALERT
+  const router = useRouter()
+  const [ isSubmit, setIsSubmit ] = useState(false)
   const [ isOriginPasswordVisible, setIsOriginPasswordVisible ] = useState(false)
   const [ isNewPasswordVisible, setIsNewPasswordVisible ] = useState(false)
   const [ isReNewPasswordVisible, setIsReNewPasswordVisible ] = useState(false)
   const initialValues: EditPasswordData = {originPassword: '', newPassword: '', reNewPassword: ''}
 
-  const submitNewPassword = (e: EditPasswordData) => { console.log(e) }
+  const editPassowrd = async (e: EditPasswordData) => {
+    setIsSubmit(true)
+    try {
+      const response = await fetch('/api/nbp/user/profile/edit_password',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(e)
+      })
+      const responsePayload = await response.json()
+      if (responsePayload.code >> 7 === 1 ) {
+        alert.info('Password Updated')
+        router.replace('/nbp/profile')
+      } else {
+        alert.error(responsePayload.message)
+        setIsSubmit(false)
+      }
+    } catch (err) {
+      alert.error(JSON.stringify(err))
+      setIsSubmit(false)
+    }
+  }
+
   const formik = useFormik({
     initialValues,
-    validationSchema: UpdatePasswordDataValidator,
-    onSubmit: submitNewPassword
+    validationSchema: EditPasswordDataValidator,
+    onSubmit: editPassowrd
   })
 
   return (
@@ -97,6 +125,7 @@ export default function EditPasswordForm() {
           color="primary"
           className="mt-4"
           size="md"
+          isLoading={isSubmit}
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Change Password

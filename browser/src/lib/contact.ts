@@ -1,5 +1,5 @@
 import { formatSession } from '@/utils/logUtil'
-import { BadRequestError, InternalError, InvalidInputError } from "@/schema/error"
+import { BadRequestError, InternalError, InvalidInputError, ResourceNoFoundError } from "@/schema/error"
 import { Session } from "@/types/auth"
 import type { 
   ContactData, 
@@ -146,7 +146,7 @@ export async function getContactDetailByOwnerId(
   } catch (err: any) {
     if ( err instanceof PrismaClientKnownRequestError && err.code === 'P2021'  ) {
       LOGGER.warn(`${formatSession(session)}`, "method: getContactDetailByOwnerId", `Contact no found with id \`${contactId}\``)
-      return null
+      throw new ResourceNoFoundError("Contact no Found")
     }
     LOGGER.error(`${formatSession(session)}`, "method: getContactDetailByOwnerId", err)
     throw new InternalError()

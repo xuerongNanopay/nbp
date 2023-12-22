@@ -2,6 +2,7 @@ import { EditPasswordForm } from "@/components/form"
 import { fetchSession } from "@/lib/session"
 import { getUserDetail } from "@/lib/user"
 import { notFound } from "next/navigation"
+import { AlertProvider } from "@/hook/useAlert"
 
 export default async function EditPassword() {
   const session = await fetchSession()
@@ -10,7 +11,9 @@ export default async function EditPassword() {
 
   return (
     <div className="max-w-sm w-full mx-auto">
-      <EditPasswordForm/>
+      <AlertProvider>
+        <EditPasswordForm/>
+      </AlertProvider>
     </div>
   )
 }

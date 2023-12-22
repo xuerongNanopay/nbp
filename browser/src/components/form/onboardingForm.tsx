@@ -62,7 +62,7 @@ export default function OnboardingForm() {
       })
       const responsePayload = await response.json()
       
-      if (responsePayload.code === 201 ) {
+      if (responsePayload.code >> 7 === 1 ) {
         alert.info('Onboard Success')
         router.refresh()
         //redirect to sign out

@@ -23,6 +23,7 @@ import {
 } from '@/schema/error'
 import { RECOVER_TOKEN_TIME_OUT_SEC } from '@/constants/env'
 import { LOGGER, formatSession } from '@/utils/logUtil'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 
 const Session_Project = {
   id: true,
@@ -314,9 +315,29 @@ export async function changePassowrd(
 
 export async function editPassword(
   session: Session,
-  editPasswordData: EditPasswordData
-) : Promise<Pick<Login, 'id'| 'email'> | null> {
-
+  {originPassword, newPassword}: EditPasswordData
+) : Promise<Pick<Login, 'id'| 'email'>> {
+  try {
+    //TODO: hash password.
+    const login = await getPrismaClient().login.update({
+      where: {
+        id: session.login.id,
+        status: LoginStatus.ACTIVE,
+        password: originPassword
+      },
+      data: {
+        password: newPassword
+      }
+    })
+    return login
+  } catch (err: any) {
+    if ( err instanceof PrismaClientKnownRequestError && err.code === 'P2025'  ) {
+      LOGGER.warn(`${formatSession(session)}`, "method: editPassword", 'Original passwrod no match')
+      throw new InvalidInputError("Incorrect Password")
+    }
+    LOGGER.error(`${formatSession(session)}`, "method: editPassword", err)
+    throw new InternalError()
+  }
 }
 
 export async function onboarding(

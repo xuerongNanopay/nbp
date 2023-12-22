@@ -1,6 +1,5 @@
 import { InvalidInputError, UnauthenticateError } from "@/schema/error";
 import type { Session } from "@/types/auth";
-import { getPrismaClient } from "@/utils/prisma";
 import { UserStatus } from "@prisma/client";
 
 export function assertSession(session: Session | null): boolean {
@@ -49,10 +48,7 @@ export async function validateData(data: any, validator: any) {
 
 export async function castAndValidateData(data: any, validator: any): Promise<any> {
   let ret = validator.cast(data) 
-  if (!ret) {
-    console.error("Wrong Input Type: " + data)
-    throw new InvalidInputError("wrong input type")
-  }
+  if (!ret) throw new InvalidInputError('wrong input format')
 
   try {
     await validator.validate(ret, {strict: true})

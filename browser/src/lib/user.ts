@@ -1,4 +1,4 @@
-import { InternalError, NBPError } from "@/schema/error"
+import { InternalError, NBPError, ResourceNoFoundError } from "@/schema/error"
 import { Session } from "@/types/auth"
 import { UserDetail } from "@/types/user"
 import { LOGGER, formatSession } from "@/utils/logUtil"
@@ -36,7 +36,7 @@ export async function getUserDetail(
   } catch (err: any) {
     if ( err instanceof PrismaClientKnownRequestError && err.code === 'P2021'  ) {
       LOGGER.warn(`${formatSession(session)}`, "method: getUserDetail", `User no found with id \`${session.user?.id}\``)
-      return null
+      throw new ResourceNoFoundError('Password not Match')
     }
     if ( err instanceof NBPError ) throw err
     LOGGER.error(`${formatSession(session)}`, "method: getUserDetail", err)

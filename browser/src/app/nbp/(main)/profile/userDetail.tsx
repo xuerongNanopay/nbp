@@ -58,16 +58,17 @@ export function UserDetail(
           }}
         />
         <div className="flex items-center">
-          <Button as={Link} variant="ghost" color="primary" className="max-sm:hidden me-2">Edit</Button>
+          {/* <Button as={Link} variant="ghost" color="primary" className="max-sm:hidden me-2">Edit</Button> */}
           <Dropdown>
             <DropdownTrigger>
               <Button isIconOnly size="sm" variant="light">
                 <VerticalDotsIcon className="text-default-300" />
               </Button>
             </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownItem className="sm:hidde">Edit</DropdownItem>
-              <DropdownItem key="change_password" href="/nbp/profile/change_password">Change Password</DropdownItem>
+            <DropdownMenu aria-label="edit_option">
+              {/* <DropdownItem aria-label="edit" key="edit">Edit</DropdownItem> */}
+              <DropdownItem key="edit_password" href="/nbp/profile/edit_password">Change Password</DropdownItem>
+              <DropdownItem key="close_account" color="danger" href="/nbp/profile/edit_password">Close Account</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>
@@ -75,11 +76,11 @@ export function UserDetail(
       <Divider/>
       <CardBody className="grid-cols-1 gap-2">
         <div className={`grid ${!!user.middleName ? 'grid-cols-3': 'grid-cols-2'} max-sm:grid-cols-1 gap-2`}>
-          <PropertyView name='FirstName:' value={user.firstName}/>
+          <PropertyView name='First Name:' value={user.firstName}/>
           {
-            !!user.middleName && <PropertyView name='MiddleName:' value={user.middleName}/>
+            !!user.middleName && <PropertyView name='Middle Name:' value={user.middleName}/>
           }
-          <PropertyView name='LastName:' value={user.lastName}/>
+          <PropertyView name='Last Name:' value={user.lastName}/>
         </div>
         <Divider></Divider>
         <div className={`grid grid-cols-2 max-sm:grid-cols-1 gap-2`}>
@@ -90,8 +91,8 @@ export function UserDetail(
           <PropertyView name='City:' value={user.city}/>
           <PropertyView name='Province:' value={user.province.name}/>
           <PropertyView name='Country:' value={user.country.name}/>
-          <PropertyView name='PostalCode: ' value={user.postalCode}/>
-          <PropertyView name='PhoneNumber:' value={`${user.phoneNumber}`}/>
+          <PropertyView name='Postal Code: ' value={user.postalCode}/>
+          <PropertyView name='Phone Number:' value={`${user.phoneNumber}`}/>
         </div>
         <Divider></Divider>
         <div className={`grid grid-cols-2 max-sm:grid-cols-1 gap-2`}>
@@ -102,7 +103,7 @@ export function UserDetail(
         <Divider></Divider>
         <div className={`grid grid-cols-2 max-sm:grid-cols-1 gap-2`}>
           <PropertyView name='ID Type:' value={`${ID_TEXT_MAP[user.identification!.type]}`}/>
-          <PropertyView name='Nationality:' value={`${user.identification?.value}`}/>
+          <PropertyView name='Number:' value={`${user.identification?.value}`}/>
         </div>
         <Divider></Divider>
         <div className={`grid grid-cols-2 max-sm:grid-cols-1 gap-2`}>
@@ -112,8 +113,9 @@ export function UserDetail(
           !!user.accounts && user.accounts.length > 0 &&
           <>
             <Divider></Divider>
-            <div className={`grid grid-cols-2 max-sm:grid-cols-1 gap-2`}>
+            <div className="flex justify-between items-center">
               <PropertyView name='Interac Email:' value={`${user.accounts[0].email}`}/>
+              <Button as={Link} href="/nbp/profile/edit_interac" variant="ghost" color="primary">Change</Button>
             </div>
           </>
         }

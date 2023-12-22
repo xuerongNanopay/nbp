@@ -124,7 +124,7 @@ export const ChangePasswordParamsValidator = Yup.object<Pick<ChangePassowrdData,
   oneTimeToken: Yup.string().required(),
 })
 
-export const UpdatePasswordDataValidator = Yup.object<EditPasswordData>({
+export const EditPasswordDataValidator = Yup.object<EditPasswordData>({
   originPassword: Yup.string().required('Required'),
   newPassword: Yup.string()
               .min(8, "Password must have at least 8 characters")

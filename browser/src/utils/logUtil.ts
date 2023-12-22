@@ -77,7 +77,7 @@ class Logger {
   
   #log(level: string, ...args: any[]) {
     const logMsg = args.map((cur) => {
-      if (cur instanceof Error ) return cur.toString ? cur.toString() : JSON.stringify(cur)
+      if (cur instanceof Error ) return `\n--name: ${cur.name}, \n\n--message: ${cur.message}${!!cur.code ? ', \n\n--code: ' + cur.code : ''}${!!cur.cause ? ', \n\n--cause: ' + cur.cause : ''}${!!cur.stack ? ', \n\n--stack: ' + cur.stack : ''}`
       if (cur instanceof Object) return JSON.stringify(cur)
       if (cur instanceof Array) return cur.toString ? cur.toString() : JSON.stringify(cur)
       return cur
