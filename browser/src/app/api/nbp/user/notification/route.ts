@@ -1,5 +1,7 @@
+import { assertSession } from '@/lib/guard'
 import { fetchSession } from '@/lib/session'
-import { LOGGER } from '@/utils/logUtil'
+import { UnauthenticateError } from '@/schema/error'
+import { LOGGER, formatSession } from '@/utils/logUtil'
 
 export async function GET(request: Request) {
   const session = await fetchSession()
@@ -8,6 +10,8 @@ export async function GET(request: Request) {
   const sizeStr = searchParams.get('size')
 
   try {
+    if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
+
     let from = 0
     let size = 40
     if ( !!fromStr && !isNaN(parseInt(fromStr)) ) {
@@ -15,6 +19,8 @@ export async function GET(request: Request) {
       if (!!sizeStr && !isNaN(parseInt(sizeStr)) && parseInt(sizeStr) <= 80)
       size = parseInt(sizeStr)
     }
+
+    
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, "API: notification-GET", err)
 
