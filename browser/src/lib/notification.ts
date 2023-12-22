@@ -1,5 +1,6 @@
 import { NOTIFICATION_PAGINATION_AGE } from "@/constants/env"
 import { InternalError } from "@/schema/error"
+import { Many } from "@/types/http"
 import { GetNotification, GetNotifications } from "@/types/notification"
 import { LOGGER } from "@/utils/logUtil"
 import { getPrismaClient } from "@/utils/prisma"
@@ -81,7 +82,7 @@ export async function markNotificationRead(userId: number, ...noticeIds: number[
   }
 }
 
-export async function getAllNotifyByOwnerId({
+export async function getManyNotifyByOwnerId({
   userId,
   from,
   size
@@ -89,15 +90,16 @@ export async function getAllNotifyByOwnerId({
   userId: number,
   from: number,
   size: number
-}): Promise<GetNotifications> {
+}): Promise<Many<GetNotification>> {
   try {
-    return getPrismaClient().notification.findMany({
-      where: {
-        ownerId: userId,
-        createdAt: {
-          gte: new Date(new Date().getTime() - NOTIFICATION_PAGINATION_AGE)
-        }
-      },
+    const where = {
+      ownerId: userId,
+      createdAt: {
+        gte: new Date(new Date().getTime() - NOTIFICATION_PAGINATION_AGE)
+      }
+    }
+    const notifications = getPrismaClient().notification.findMany({
+      where,
       orderBy: {
         createdAt: 'desc'
       },
@@ -112,6 +114,26 @@ export async function getAllNotifyByOwnerId({
         createdAt: true
       }
     })
+    const count = getPrismaClient().notification.count({
+      where
+    })
+
+    const rets = await Promise.all([count, notifications])
+
+    return {
+      meta: {
+        query: {
+          from,
+          size,
+          orderBy: {
+            createdAt: 'desc'
+          }
+        },
+        timestamp: new Date(),
+        count: rets[0],
+      },
+      data: rets[1]
+    }
   } catch (err) {
     LOGGER.error(`userId: \`${userId}\``, 'Method: getAllNotifyByOwnerId', err)
     throw new InternalError()

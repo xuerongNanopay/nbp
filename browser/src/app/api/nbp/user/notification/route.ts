@@ -1,6 +1,9 @@
 import { assertSession } from '@/lib/guard'
+import { getManyNotifyByOwnerId } from '@/lib/notification'
 import { fetchSession } from '@/lib/session'
 import { UnauthenticateError } from '@/schema/error'
+import { HttpERROR, HttpGET } from '@/types/http'
+import { GetNotification, GetNotifications } from '@/types/notification'
 import { LOGGER, formatSession } from '@/utils/logUtil'
 
 export async function GET(request: Request) {
@@ -12,6 +15,7 @@ export async function GET(request: Request) {
   try {
     if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
 
+    // assign default value.
     let from = 0
     let size = 40
     if ( !!fromStr && !isNaN(parseInt(fromStr)) ) {
@@ -20,11 +24,18 @@ export async function GET(request: Request) {
       size = parseInt(sizeStr)
     }
 
-    
+    const manyNotifications = await getManyNotifyByOwnerId({userId: session.user!.id, from, size})
+
+    const result :HttpGET<GetNotifications> = {
+      code: 200,
+      message: 'Success',
+      payload: manyNotifications
+    }
+
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, "API: notification-GET", err)
 
-    const errorResponse = !err.errors ? {
+    const errorResponse: HttpERROR = !err.errors ? {
       code: err.code,
       name: err.name,
       message: err.message
