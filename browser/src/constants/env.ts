@@ -9,6 +9,8 @@ export const SESSION_AGE = assertENVNumber('SESSION_AGE', DEFAULT_SESSION_AGE)
 const DEFAULT_LOG_LEVEL = 'info'
 export const LOG_LEVEL = assertENVString('LOG_LEVEL', DEFAULT_LOG_LEVEL)
 
+export const NOTIFICATION_PAGINATION_AGE = 180 * 24 * 60 * 60 // 90 days
+
 function assertENVNumber(key: string, DEFAULT?: number): number {
   const value = process.env[key]
 
