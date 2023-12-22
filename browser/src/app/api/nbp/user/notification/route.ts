@@ -1,9 +1,10 @@
 import { assertSession } from '@/lib/guard'
-import { getManyNotifyByOwnerId } from '@/lib/notification'
+import { getManyNotifyByOwnerId, notifyInfo } from '@/lib/notification'
 import { fetchSession } from '@/lib/session'
 import { UnauthenticateError } from '@/schema/error'
 import { HttpERROR, HttpGET } from '@/types/http'
-import { GetNotification, GetNotifications } from '@/types/notification'
+import { GetNotifications } from '@/types/notification'
+import { randSixDigits } from '@/utils/idUtil'
 import { LOGGER, formatSession } from '@/utils/logUtil'
 
 export async function GET(request: Request) {
@@ -11,6 +12,10 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const fromStr = searchParams.get('from')
   const sizeStr = searchParams.get('size')
+
+  // for (let _ in Array(100).fill(0)) {
+  //   notifyInfo(session!.user!.id, randSixDigits(), randSixDigits())
+  // }
 
   try {
     if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")

@@ -12,6 +12,7 @@ import dayjs from "dayjs"
 import { parse, isDate } from "date-fns";
 import { ContactType } from "@prisma/client";
 import { EditInteracData } from "@/types/account";
+import { NotificationReadMarkData } from "@/types/notification";
 
 const eighteen_years_age = dayjs().subtract(18, 'year').format('YYYY-MM-DD')
 const hundred_years_age = dayjs().subtract(100, 'year').format('YYYY-MM-DD')
@@ -138,4 +139,8 @@ export const EditPasswordDataValidator = Yup.object<EditPasswordData>({
 
 export const EditInteracDataValidator = Yup.object<EditInteracData>({
   newEmail: Yup.string().email('Invalid email address').required('Required')
+})
+
+export const NotificationReadMarkDataValidator = Yup.object<NotificationReadMarkData>({
+  ids: Yup.array().of(Yup.number().required()).min(1, "At least one notification").required()
 })

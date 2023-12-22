@@ -12,3 +12,7 @@ export type GetNotification = Prisma.NotificationGetPayload<{
 }>
 
 export type GetNotifications = GetNotification[]
+
+export type NotificationReadMarkData = {
+  ids: number[]
+}

@@ -1,6 +1,6 @@
 import { NOTIFICATION_PAGINATION_AGE } from "@/constants/env"
-import { InternalError } from "@/schema/error"
-import { Many } from "@/types/http"
+import { InternalError, ResourceNoFoundError } from "@/schema/error"
+import { Many, Single } from "@/types/http"
 import { GetNotification, GetNotifications } from "@/types/notification"
 import { LOGGER } from "@/utils/logUtil"
 import { getPrismaClient } from "@/utils/prisma"
@@ -45,7 +45,7 @@ export async function notify({
   content: string
 }) : Promise<Notification> {
   try {
-    return getPrismaClient().notification.create({
+    const notification =  await getPrismaClient().notification.create({
       data: {
         ownerId: userId,
         level,
@@ -53,15 +53,20 @@ export async function notify({
         content
       }
     })
+    LOGGER.debug(`userId: \`${userId}\``, 'Method: notify', `create notification: \`${notification.id}\``)
+    return notification
   } catch (err) {
     LOGGER.error(`userId: \`${userId}\``, 'Method: notify', err)
     throw new InternalError()
   }
 }
 
-export async function markNotificationRead(userId: number, ...noticeIds: number[]) {
+export async function markNotificationRead(
+  userId: number, 
+  ...noticeIds: number[]
+) : Promise<Many<number>> {
   try {
-    return getPrismaClient().notification.updateMany({
+    const batch = await getPrismaClient().notification.updateMany({
       where: {
         ownerId: userId,
         status: {
@@ -76,6 +81,14 @@ export async function markNotificationRead(userId: number, ...noticeIds: number[
         readAt: new Date()
       }
     })
+    LOGGER.info(`userId: \`${userId}\``, 'Method: markNotificationRead', `total update: \`${batch.count}\``, `ids: \`${noticeIds}\``)
+    return {
+      meta: {
+        count: batch.count,
+        timestamp: new Date()
+      },
+      many: noticeIds
+    }
   } catch (err) {
     LOGGER.error(`userId: \`${userId}\``, 'Method: markNotificationRead', err)
     throw new InternalError()
@@ -142,9 +155,9 @@ export async function getManyNotifyByOwnerId({
 
 export async function getNotifyDetailByOwnerId
 (userId: number, notificationId: number):
-Promise<GetNotification | null>{
+Promise<Single<GetNotification>>{
   try {
-    return getPrismaClient().notification.findUnique({
+    const nodification = await getPrismaClient().notification.findUnique({
       where: {
         ownerId: userId,
         id: notificationId
@@ -158,6 +171,17 @@ Promise<GetNotification | null>{
         createdAt: true
       }
     })
+    if ( !nodification ) throw new ResourceNoFoundError("notification no found")
+
+    return {
+      meta: {
+        query: {
+          id: notificationId,
+        },
+        timestamp: new Date()
+      },
+      single: nodification
+    }
   } catch (err) {
     LOGGER.error(`userId: \`${userId}\``, 'Method: getNotifyDetailByOwnerId', err)
     throw new InternalError()

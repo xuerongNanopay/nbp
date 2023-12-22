@@ -11,7 +11,7 @@ export interface ManyMeta extends Meta {
 }
 
 // T extends Array<any> ? never : T
-export interface Single<T> extends Meta {
+export interface Single<T> {
   meta: Meta
   single: T
 }
