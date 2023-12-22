@@ -132,7 +132,7 @@ export async function getManyNotifyByOwnerId({
         timestamp: new Date(),
         count: rets[0],
       },
-      data: rets[1]
+      many: rets[1]
     }
   } catch (err) {
     LOGGER.error(`userId: \`${userId}\``, 'Method: getAllNotifyByOwnerId', err)

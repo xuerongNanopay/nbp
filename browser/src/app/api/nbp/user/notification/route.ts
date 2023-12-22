@@ -31,6 +31,7 @@ export async function GET(request: Request) {
       message: 'Success',
       payload: manyNotifications
     }
+
     return Response.json(
       result,
       {
