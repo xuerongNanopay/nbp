@@ -1,7 +1,7 @@
 import { createContact } from '@/lib/contact'
-import { assertActiveUser, castAndValidateData } from '@/lib/guard'
+import { assertActiveUser, assertSession, castAndValidateData } from '@/lib/guard'
 import { fetchSession } from '@/lib/session'
-import { UnauthenticateError } from '@/schema/error'
+import { ForbiddenError, UnauthenticateError } from '@/schema/error'
 import { ContactDataValidator } from '@/schema/validator'
 import { ContactData } from '@/types/contact'
 import { LOGGER, formatSession } from '@/utils/logUtil'
@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
   const session = await fetchSession()
 
   try {
-    if (!session || !assertActiveUser(session)) throw new UnauthenticateError("Inactive User")
+    if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
+    if (!assertActiveUser(session)) throw new ForbiddenError("Inactive User")
 
     const contactPayload = await req.json()
     const contactData = await castAndValidateData(contactPayload, ContactDataValidator) as ContactData

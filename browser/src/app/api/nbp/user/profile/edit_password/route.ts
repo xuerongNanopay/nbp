@@ -1,7 +1,7 @@
 import { editPassword } from '@/lib/auth'
-import { assertNotDeleteUser, castAndValidateData } from '@/lib/guard'
+import { assertNotDeleteUser, assertSession, castAndValidateData } from '@/lib/guard'
 import { fetchSession } from '@/lib/session'
-import { UnauthenticateError } from '@/schema/error'
+import { ForbiddenError, UnauthenticateError } from '@/schema/error'
 import { EditPasswordDataValidator } from '@/schema/validator'
 import { EditPasswordData } from '@/types/auth'
 import { LOGGER, formatSession } from '@/utils/logUtil'
@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
   const session = await fetchSession()
 
   try {
-    if (!session || !assertNotDeleteUser(session)) throw new UnauthenticateError("Inactive User")
+    if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
+    if (!assertNotDeleteUser(session)) throw new ForbiddenError("Inactive User")
 
     const editPasswordPayload = await req.json()
     const editPasswordData = await castAndValidateData(editPasswordPayload, EditPasswordDataValidator) as EditPasswordData

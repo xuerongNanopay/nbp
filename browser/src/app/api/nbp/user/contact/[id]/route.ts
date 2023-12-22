@@ -1,7 +1,7 @@
 import { deleteContact, getContactDetailByOwnerId } from "@/lib/contact"
-import { assertActiveUser } from "@/lib/guard"
+import { assertActiveUser, assertSession } from "@/lib/guard"
 import { fetchSession } from "@/lib/session"
-import { InvalidInputError, ResourceNoFoundError, UnauthenticateError } from "@/schema/error"
+import { ForbiddenError, InvalidInputError, ResourceNoFoundError, UnauthenticateError } from "@/schema/error"
 import { LOGGER, formatSession } from "@/utils/logUtil"
 import { NextRequest } from "next/server"
 
@@ -11,7 +11,8 @@ export async function GET(
 ) {
   const session = await fetchSession()
   try {
-    if (!session || !assertActiveUser(session)) throw new UnauthenticateError("Inactive User")
+    if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
+    if (!assertActiveUser(session)) throw new ForbiddenError("Inactive User")
 
     const contactId = parseInt(id)
     if ( isNaN(contactId) ) throw new InvalidInputError("Invalid Contact Id")
@@ -55,11 +56,11 @@ export async function DELETE(
   _: NextRequest,
   { params: {id} }: { params: { id: string } }
 ) {
-  console.log('delete ' + id)
   const session = await fetchSession()
 
   try {
-    if (!session || !assertActiveUser(session)) throw new UnauthenticateError("Inactive User")
+    if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
+    if (!assertActiveUser(session)) throw new ForbiddenError("Inactive User")
     const contactId = parseInt(id)
     if ( isNaN(contactId) ) throw new InvalidInputError("Invalid Contact Id")
 

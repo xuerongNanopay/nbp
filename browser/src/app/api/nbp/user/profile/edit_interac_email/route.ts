@@ -1,7 +1,7 @@
 import { updateInteracAccountEmail } from '@/lib/account'
-import { assertActiveUser, castAndValidateData } from '@/lib/guard'
+import { assertActiveUser, assertSession, castAndValidateData } from '@/lib/guard'
 import { fetchSession } from '@/lib/session'
-import { UnauthenticateError } from '@/schema/error'
+import { ForbiddenError, UnauthenticateError } from '@/schema/error'
 import { EditInteracDataValidator } from '@/schema/validator'
 import { EditInteracData } from '@/types/account'
 import { LOGGER, formatSession } from '@/utils/logUtil'
@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
   const session = await fetchSession()
 
   try {
-    if (!session || !assertActiveUser(session)) throw new UnauthenticateError("Inactive User")
+    if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
+    if (!assertActiveUser(session)) throw new ForbiddenError("Inactive User")
 
     const editInteracPayload = await req.json()
     const editInteracData = await castAndValidateData(editInteracPayload, EditInteracDataValidator) as EditInteracData

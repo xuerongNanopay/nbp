@@ -1,13 +1,14 @@
 import { LOGGER, formatSession } from '@/utils/logUtil'
 import { getAllContactsByOwnerId } from "@/lib/contact";
-import { assertNotDeleteUser } from "@/lib/guard";
+import { assertNotDeleteUser, assertSession } from "@/lib/guard";
 import { fetchSession } from "@/lib/session";
-import { UnauthenticateError } from "@/schema/error";
+import { ForbiddenError, UnauthenticateError } from "@/schema/error";
 
 export async function GET() {
   const session = await fetchSession()
   try {
-    if (!session || !assertNotDeleteUser(session)) throw new UnauthenticateError("Inactive User")
+    if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
+    if (!assertNotDeleteUser(session)) throw new ForbiddenError("Inactive User")
 
     const contacts = await getAllContactsByOwnerId(session)
 
