@@ -132,7 +132,8 @@ export const EditPasswordDataValidator = Yup.object<EditPasswordData>({
               .min(8, "Password must have at least 8 characters")
               .matches(/[0-9]/, formatCharacterValidationError("digit"))
               .matches(/[a-z]/, formatCharacterValidationError("lowercase"))
-              .matches(/[A-Z]/, formatCharacterValidationError("uppercase")),
+              .matches(/[A-Z]/, formatCharacterValidationError("uppercase"))
+              .required('Required'),
   reNewPassword: Yup.string().required("Please re-type your password").oneOf([Yup.ref("newPassword")], "Passwords does not match")
   
 })
