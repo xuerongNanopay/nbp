@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   const sizeStr = searchParams.get('size')
 
   // for (let _ in Array(100).fill(0)) {
-  //   notifyInfo(session!.user!.id, randSixDigits(), randSixDigits())
+  //   notifyInfo(session!.user!.id, "create account: " + randSixDigits(), "account create aaa: " + Array(50).fill(randSixDigits()).join(" "))
   // }
 
   try {

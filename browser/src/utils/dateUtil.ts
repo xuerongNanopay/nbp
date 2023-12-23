@@ -32,3 +32,7 @@ export function formatRelativeDate(date: Date|string|number) {
     return Math.floor(diff / year) + " years ago";
   }
 }
+
+export function formatDate(date: Date) {
+  
+}

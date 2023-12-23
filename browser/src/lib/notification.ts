@@ -1,4 +1,4 @@
-import { NOTIFICATION_PAGINATION_AGE } from "@/constants/env"
+import { NOTIFICATION_PAGINATION_AGE_SEC } from "@/constants/env"
 import { InternalError, ResourceNoFoundError } from "@/schema/error"
 import { Many, Single } from "@/types/http"
 import { GetNotification, GetNotifications } from "@/types/notification"
@@ -108,7 +108,7 @@ export async function getManyNotifyByOwnerId({
     const where = {
       ownerId: userId,
       createdAt: {
-        gte: new Date(new Date().getTime() - NOTIFICATION_PAGINATION_AGE)
+        gte: new Date(new Date().getTime() - NOTIFICATION_PAGINATION_AGE_SEC * 1000)
       }
     }
     const notifications = getPrismaClient().notification.findMany({
