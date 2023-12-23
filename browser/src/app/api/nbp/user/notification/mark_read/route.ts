@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       message: err.message,
       errors: err.errors
     }
+
     return Response.json(errorResponse, {
       status: err.code ?? 500,
       headers: {

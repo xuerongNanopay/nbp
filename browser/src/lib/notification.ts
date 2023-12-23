@@ -114,7 +114,8 @@ export async function getManyNotifyByOwnerId({
     const notifications = getPrismaClient().notification.findMany({
       where,
       orderBy: {
-        createdAt: 'desc'
+        // createdAt: 'desc'
+        id: 'desc'
       },
       skip: from,
       take: size,
@@ -139,7 +140,8 @@ export async function getManyNotifyByOwnerId({
           from,
           size,
           orderBy: {
-            createdAt: 'desc'
+            // createdAt: 'desc'
+            id: 'desc'
           }
         },
         timestamp: new Date(),

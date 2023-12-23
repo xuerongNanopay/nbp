@@ -143,5 +143,5 @@ export const EditInteracDataValidator = Yup.object<EditInteracData>({
 })
 
 export const NotificationReadMarkDataValidator = Yup.object<NotificationReadMarkData>({
-  ids: Yup.array().of(Yup.number().required()).min(1, "At least one notification").required()
+  ids: Yup.array().of(Yup.number().integer()).min(1, "At least one notification").required()
 })

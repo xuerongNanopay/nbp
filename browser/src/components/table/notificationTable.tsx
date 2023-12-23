@@ -27,11 +27,6 @@ import {
   useDisclosure
 } from '@nextui-org/react'
 
-import {
-  ReloadIcon
-} from '@/icons/ReloadIcon'
-import { EyeIcon } from '@/icons/EyeIcon'
-
 import { formatRelativeDate } from '@/utils/dateUtil'
 import type { GetNotification, GetNotifications } from '@/types/notification'
 import { NotificationStatus, NotificationLevel, UserStatus } from '@prisma/client'
@@ -94,6 +89,7 @@ const CreatedCell = ({createdAt, status}: GetNotification) => {
 }
 
 const AllCell = ({notification}: {notification: GetNotification}) => {
+  // console.log('Akk', notification.status)
   return (
     <>
       <p className={`${notification.status === NotificationStatus.UN_READ ? 'font-bold' : ''}`}>{notification.subject}</p>
@@ -111,14 +107,14 @@ const fetcher = (url: string) => fetch(url).then(async (res) => {
 export function NotificationTable(): React.JSX.Element {
   const {isOpen, onOpen, onOpenChange} = useDisclosure()
   const [showNotification, setShowNotification] = useState<GetNotification>({id: 0, subject: "", content: "", createdAt: new Date(), level: NotificationLevel.INFO, status: NotificationStatus.READ})
-  const [reads, setReads] = useState([])
+  const [reads, setReads] = useState<number[]>([])
   const [page, setPage] = useState(1)
   const [notifications, setNotifications] = useState<GetNotifications>([])
   // Ticket to prevent pages reset to zero when data is empty.
   const [_pages, _setPages] = useState(1)
   const rowsPerPage = 15
-
-  const {data, isLoading} = useSWR(`/api/nbp/user/notification?from=${page-1}&size=${rowsPerPage}`, fetcher, {
+  // const reads = []
+  const {data, isLoading} = useSWR(`/api/nbp/user/notification?from=${(page-1)*rowsPerPage}&size=${rowsPerPage}`, fetcher, {
     revalidateOnFocus: false,
     // keepPreviousData: true
   })
@@ -139,11 +135,40 @@ export function NotificationTable(): React.JSX.Element {
     }
   }, [data])
 
+  // useEffect(() => {
+  //   if (reads.length > 0) {
+  //     // I don't care if it is successful or not. Since it is not important
+  //     const mark_reads = reads
+  //     console.log('aavv')
+  //     setReads([])
+  //     fetch('/api/nbp/user/notification/mark_read', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify({ids: mark_reads})
+  //     }).catch(err => {console.error(err)}) 
+  //   }
+  //   return () => {
+  //     console.log('ffff clean')
+  //   }
+  // }, [page])
+
   const onRowClick = (key: React.Key) => {
     if (!data) return
     const idx = data.many.findIndex((n) => n.id == key)
     if (idx < 0) return
+    if (notifications[idx].status !== NotificationStatus.READ) {
+      fetch('/api/nbp/user/notification/mark_read', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ids: [notifications[idx].id]})
+      }).catch(err => {console.error(err)}) 
+    }
     notifications[idx].status = NotificationStatus.READ
+    reads.push(notifications[idx].id)
     setNotifications([...notifications.slice(0, idx), {...notifications[idx], status: NotificationStatus.READ}, ...notifications.slice(idx+1)])
     setShowNotification(notifications[idx])
     onOpen()
@@ -213,7 +238,6 @@ export function NotificationTable(): React.JSX.Element {
       >
         <TableHeader columns={COLUMES}>
           {(column) => {
-          // console.log(COLUME_MAP[column.id].css)
             return (
               <TableColumn className={`${COLUME_MAP[column.id as keyof typeof COLUME_MAP].headerCss}`} key={column.id}>
                 {COLUME_MAP[column.id as keyof typeof COLUME_MAP].name}
