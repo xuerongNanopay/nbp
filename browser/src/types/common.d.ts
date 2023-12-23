@@ -20,14 +20,3 @@ export type GetInstitutions = Pick<Institution, 'id' | 'abbr' | 'country' | 'nam
 export type GetPersonalRelationships = Pick<PersonalRelationship, 'id' | 'type' | 'description'>[]
 export type GetOccupations = Pick<Occupation, 'id' | 'type' | 'description'>[]
 export type GetCurrencies = Pick<Currency, 'id' | 'isoCode' | 'decimal' | 'name'>[]
-
-export type GetAccount = Prisma.AccountGetPayload<{
-  select: {
-    id: true,
-    status: true,
-    type: true,
-    isDefault: true,
-    email: true
-  }
-}>
-export type GetAccounts = GetAccount[]

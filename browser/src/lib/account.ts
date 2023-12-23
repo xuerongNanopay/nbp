@@ -1,12 +1,13 @@
 import { InternalError } from "@/schema/error"
-import { EditInteracData } from "@/types/account"
+import { EditInteracData, GetInteracAccount } from "@/types/account"
 import { Session } from "@/types/auth"
-import { GetAccounts, GetAccount } from "@/types/common"
+import { GetAccounts, GetAccount, GetInteracAccounts } from "@/types/account"
 import { LOGGER, formatSession } from "@/utils/logUtil"
 import { getPrismaClient } from "@/utils/prisma"
 import { 
   AccountStatus, AccountType, 
 } from "@prisma/client"
+import { Many } from "@/types/http"
 
 export async function getAllAcountsByOwnerId(
   session: Session
@@ -31,6 +32,42 @@ export async function getAllAcountsByOwnerId(
     })
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, 'Method: getAllAcountsByOwnerId', err)
+    throw new InternalError()
+  }
+}
+
+export async function getActiveInteracAccountsById(
+  session: Session
+): Promise<Many<GetInteracAccount>> {
+  try {
+    const accounts = await getPrismaClient().account.findMany({
+      where: {
+        type: AccountType.INTERACT,
+        status: {
+          not: AccountStatus.DELETE
+        },
+        owner: {
+          id: session.user!.id
+        }
+      },
+      select: {
+        id: true,
+        status: true,
+        
+        type: true,
+        email: true
+      }
+    })
+
+    return {
+      meta: {
+        count: accounts.length,
+        timestamp: new Date()
+      },
+      many: accounts
+    }
+  } catch (err: any) {
+    LOGGER.error(`${formatSession(session)}`, 'Method: getActiveInteracAccountsById', err)
     throw new InternalError()
   }
 }
