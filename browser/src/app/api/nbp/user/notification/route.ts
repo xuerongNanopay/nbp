@@ -16,6 +16,7 @@ export async function GET(request: Request) {
   console.log(`from: ${fromStr}, to: ${sizeStr}`)
 
   // for (let _ in Array(100).fill(0)) {
+
   //   notifyInfo(session!.user!.id, "create account: " + randSixDigits(), "account create aaa: " + Array(50).fill(randSixDigits()).join(" "))
   // }
 
