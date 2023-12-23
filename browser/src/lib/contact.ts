@@ -4,8 +4,9 @@ import { Session } from "@/types/auth"
 import type { 
   ContactData, 
   ContactDeleteData,
+  GetContact,
   GetContacts,
-  UniqueContact
+  Contact
  } from "@/types/contact"
 import { LOGGER } from "@/utils/logUtil"
 import { getPrismaClient } from "@/utils/prisma"
@@ -15,11 +16,12 @@ import {
 } from "@prisma/client"
 import { isIBAN } from '@/utils/bankUtil'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { Many } from '@/types/http'
 
 export async function createContact(
   session: Session,
   contactData: ContactData
-): Promise<UniqueContact | null> {
+): Promise<Contact> {
   const transferMethod = mapToTransferMethod(contactData.transferMethod)
 
   try {
@@ -57,7 +59,7 @@ export async function createContact(
 
     return await getPrismaClient().contact.create({
       data,
-      select: UniqueContactSelect
+      select: ContactSelect
     })
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, 'method: createContact', err)
@@ -69,7 +71,7 @@ export async function createContact(
 export async function deleteContact(
   session: Session,
   contactId: number
-): Promise<UniqueContact | null> {
+): Promise<Contact> {
   try {
     return await getPrismaClient().contact.update({
       where: {
@@ -82,7 +84,7 @@ export async function deleteContact(
         deletedAt: new Date(),
         status: ContactStatus.DELETE
       },
-      select: UniqueContactSelect
+      select: ContactSelect
     })
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, "method: deleteContact", err)
@@ -117,7 +119,7 @@ export async function getAllContactsByOwnerId(
           id: session.user!.id
         }
       },
-      select: GetContactsSelect
+      select: GetContactSelect
     })
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, "method: getAllContactsByOwnerId", err)
@@ -129,7 +131,7 @@ export async function getAllContactsByOwnerId(
 export async function getContactDetailByOwnerId(
   contactId: number,
   session: Session
-) : Promise<UniqueContact | null> {
+) : Promise<Contact | null> {
   try {
     return await getPrismaClient().contact.findUnique({
       where: {
@@ -141,7 +143,7 @@ export async function getContactDetailByOwnerId(
           id: session.user!.id
         }
       },
-      select: UniqueContactSelect
+      select: ContactSelect
     })
   } catch (err: any) {
     if ( err instanceof PrismaClientKnownRequestError && err.code === 'P2021'  ) {
@@ -149,6 +151,42 @@ export async function getContactDetailByOwnerId(
       throw new ResourceNoFoundError("Contact no Found")
     }
     LOGGER.error(`${formatSession(session)}`, "method: getContactDetailByOwnerId", err)
+    throw new InternalError()
+  }
+}
+
+export async function getActiveContactsByOwnerId(
+  session: Session
+) : Promise<Many<GetContact>> {
+  try {
+    const contacts = await getPrismaClient().contact.findMany({
+      where: {
+        OR: [
+          {
+            status: ContactStatus.ACTIVE
+          },
+          {
+            status: ContactStatus.AWAIT_VERIFY
+          }
+        ],
+        owner: {
+          id: session.user!.id
+        }
+      },
+      select: GetContactSelect
+    })
+
+    return {
+      meta: {
+        timestamp: new Date(),
+        count: contacts.length
+      },
+      many: contacts
+    }
+
+  } catch (err: any) {
+    LOGGER.error(`${formatSession(session)}`, "method: getActiveContactsByOwnerId", err)
+
     throw new InternalError()
   }
 }
@@ -164,7 +202,7 @@ function mapToTransferMethod(transferMethod: string) {
   }
 }
 
-const UniqueContactSelect = {
+const ContactSelect = {
   id: true,
   status: true,
   type: true,
@@ -212,7 +250,7 @@ const UniqueContactSelect = {
   }
 }
 
-const GetContactsSelect = {
+const GetContactSelect = {
   id: true,
   status: true,
   firstName: true,
