@@ -16,7 +16,8 @@ import {
   TableRow,
   TableCell,
   Tooltip,
-  Pagination
+  Pagination,
+  Spinner
 } from '@nextui-org/react'
 
 import {
@@ -97,22 +98,31 @@ const AllCell = ({notification}: {notification: GetNotification}) => {
 
 const fetcher = (url: string) => fetch(url).then(async (res) => {
   const data = await res.json() as HttpGET<GetNotifications>
-  // console.log("do something: ", data)
-
-  return data.payload.many
+  return data.payload
 })
 
-// TODO: Pagination
 export function NotificationTable(): React.JSX.Element {
 
   const [page, setPage] = useState(1)
-  const [rowsPerPage, setRowsPerPage] = useState(20)
+  // Ticket to prevent pages reset to zero when data is empty.
+  const [_pages, _setPages] = useState(1)
+  const rowsPerPage = 20
 
-  const {data, isLoading} = useSWR<GetNotifications>(`/api/nbp/user/notification?from=${page-1}&size=${rowsPerPage}`, fetcher, {
-    keepPreviousData: true,
-  });
+  const {data, isLoading} = useSWR(`/api/nbp/user/notification?from=${page-1}&size=${rowsPerPage}`, fetcher, {
+    revalidateOnFocus: false,
+    // keepPreviousData: true
+  })
+  const loadingState = isLoading || data?.many?.length === 0 ? "loading" : "idle"
 
-  console.log(data)
+  const pages = useMemo(() => {
+    if ( !data ) {
+      return _pages
+    }
+    const newPage =  Math.ceil(data.meta.count / rowsPerPage)
+    _setPages(newPage)
+    return newPage
+  }, [data?.meta.count, _pages])
+
   const renderCell = useCallback((notication: GetNotification, columnKey: React.Key) => {
     switch(columnKey) {
       case COLUME_TYPE.SUBJECT:
@@ -136,30 +146,24 @@ export function NotificationTable(): React.JSX.Element {
     }
   }, [])
 
-  // const pages = Math.ceil(notifications.length / rowsPerPage);
-
-  // const bottomContent = useMemo(() => {
-  //   return (
-  //     <div className="py-2 px-2 flex justify-center items-center">
-  //       <Pagination
-  //         isCompact
-  //         showControls
-  //         showShadow
-  //         color="primary"
-  //         page={page}
-  //         total={pages}
-  //         onChange={setPage}
-  //       />
-  //     </div>
-  //   );
-  // }, [page, pages]);
-
-  // const items = useMemo(() => {
-  //   const start = (page - 1) * rowsPerPage;
-  //   const end = start + rowsPerPage;
-
-  //   return notifications.slice(start, end)
-  // }, [page, notifications, rowsPerPage])
+  const bottomContent = useMemo(() => {
+    return (
+      <div className="py-2 px-2 flex justify-center items-center">
+        <Pagination
+          isCompact
+          showControls
+          showShadow
+          initialPage={1}
+          total={pages} 
+          color="primary"
+          page={page}
+          onChange={(newPage) => {
+            setPage(newPage)
+          }}
+        />
+      </div>
+    );
+  }, [pages, page]);
 
   const topContent = useMemo(() => {
     //TODO: reload, mark all, p
@@ -176,7 +180,7 @@ export function NotificationTable(): React.JSX.Element {
       isStriped
       removeWrapper
       topContent={topContent}
-      // bottomContent={bottomContent}
+      bottomContent={bottomContent}
       topContentPlacement="outside"
       onRowAction={(key) => alert(`Opening item ${key}...`)}
     >
@@ -191,9 +195,10 @@ export function NotificationTable(): React.JSX.Element {
         }}
       </TableHeader>
       <TableBody
-        items={data ?? []}
-        emptyContent={"No rows to display."}
-        isLoading={isLoading}
+        items={data?.many ?? []}
+        emptyContent={isLoading ? " " : "No rows to display."}
+        loadingContent={<Spinner/>}
+        loadingState={loadingState}
       >
         {(notification) => (
           <TableRow key={notification.id} className="hover:cursor-pointer">
