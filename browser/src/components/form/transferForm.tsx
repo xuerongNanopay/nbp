@@ -12,34 +12,11 @@ import {
 
 import { ConfirmTransferModal } from '@/components/modal'
 import { ITransferQuote, ITransferQuoteResult } from "@/type"
-type IAccount = any
-// User have to select account first.
-// Retrieve Currency from Account.
-// TODO: isDefault
-// TODO: getRoughRate
-const sourceAccounts = [
-  {
-    id: '1',
-    type: 'eTransfer',
-    name: 'E-Transfer(xx@xxqqd.com)',
-    currency: 'CAD'
-  }
-]
+import { TransactionQuoteDate } from "@/types/transaction"
+import { TransactionQuoteValidator } from "@/schema/validator"
+import { GetAccount } from "@/types/account"
+import { GetContact } from "@/types/contact"
 
-const destinationAccounts = [
-  {
-    id: '2',
-    type: 'bankAccount',
-    name: 'xxx(acount: ***)',
-    currency: 'PKR'
-  },
-  {
-    id: '3',
-    type: 'cashPickup',
-    name: 'yyy(cash)',
-    currency: 'PKR'
-  }
-]
 
 const transactionQuoteResult: ITransferQuoteResult = {
   id: '1',
@@ -67,52 +44,47 @@ const transactionQuoteResult: ITransferQuoteResult = {
 
 type Props  = {
   sourceAccountId?: string | null
-  destinationAccountId?: string | null
+  destinationContactId?: string | null
 }
 
-export default function TransferFrom({sourceAccountId, destinationAccountId}: Props) {
+export default function TransferFrom({sourceAccountId, destinationContactId}: Props) {
   const [showAmountInput, setShowAmountInput] = useState(false)
-  const [selectSourceAccout, setSelectSourceAccount ] = useState<IAccount|null>(null)
-  const [selectDestinationAccount, setSelectDestinationAccount ] = useState<IAccount|null>(null)
+  const [sourceCurrency, setSourceCurrency ] = useState<string|null>(null)
+  const [destinationCurrency, setDestinationCurrency ] = useState<string|null>(null)
+  const [sourceAccounts, setSourceAccounts] = useState<GetAccount[]>([])
+  const [destinationContacts, setDestinationContacts] = useState<GetContact[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [quoteSummary, setQuoteSummary] = useState<ITransferQuoteResult|null>(transactionQuoteResult)
-  const [isQuoting, setIsQuoting] = useState(false)
+  const [isSubmit, setIsSubmit] = useState(false)
   const [rate, setRate] = useState(0)
 
   const closeModal = () => {
     setIsModalOpen(false)
-    setIsQuoting(false)
+    setIsSubmit(false)
   }
 
-  const initialValues: ITransferQuote = {
-    sourceAccountId: '',
-    destinationAccountId: '',
-    sourceAmount: 0,
-    destinationAmount: 0
+  const initialValues: Partial<TransactionQuoteDate> = {
+    sourceAccountId: 0,
+    destinationContactId: 0,
+    sourceAmount: 0
   }
 
-  const transferQuoteHandler = (e: ITransferQuote) => {
+  const quoteTransaction = (e: Partial<TransactionQuoteDate>) => {
     console.log(e)
-    setIsQuoting(true)
+    setIsSubmit(true)
     //TODO: making button loading
     //
     setIsModalOpen(true)
   }
 
-  const formik = useFormik({
+  const formik = useFormik<Partial<TransactionQuoteDate>>({
     initialValues,
-    validationSchema: Yup.object({
-      sourceAccountId: Yup.string().trim().required('Required'),
-      destinationAccountId: Yup.string().trim().required('Required'),
-      sourceAmount: Yup.number().required('Required').moreThan(10).lessThan(1000),
-      destinationAmount: Yup.number().required('Required').moreThan(0)
-    }),
-    onSubmit: transferQuoteHandler
+    validationSchema: TransactionQuoteValidator,
+    onSubmit: quoteTransaction
   })
 
   useEffect(() => {
-    if ( formik.touched.destinationAccountId && formik.touched.sourceAccountId ) {
-      if ( !formik.errors.destinationAccountId && !formik.errors.sourceAccountId ) {
+    if ( formik.touched.destinationContactId && formik.touched.sourceAccountId ) {
+      if ( !formik.errors.destinationContactId && !formik.errors.sourceAccountId ) {
         setShowAmountInput(true)
       } else {
         setShowAmountInput(false)
@@ -120,23 +92,14 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
     }
   }, 
   [
-    formik.touched.destinationAccountId, 
+    formik.touched.destinationContactId, 
     formik.touched.sourceAccountId,
-    formik.errors.destinationAccountId,
+    formik.errors.destinationContactId,
     formik.errors.sourceAccountId
   ])
 
   useEffect(() => {
-    const sourceAccount = sourceAccounts.find((account) => account.id == formik.values.sourceAccountId)
-    sourceAccount && setSelectSourceAccount(sourceAccount)
-    const destinationAccount = destinationAccounts.find((account) => account.id == formik.values.destinationAccountId)
-    destinationAccount && setSelectDestinationAccount(destinationAccount)
-  }, [
-    formik.values.destinationAccountId, 
-    formik.values.sourceAccountId
-  ])
-
-  useEffect(() => {
+    console.log('aaa', formik.values.destinationContactId)
     setRate(0)
     formik.setFieldValue('sourceAmount', 0)
     formik.setFieldValue('destinationAmount', 0)
@@ -157,7 +120,7 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
     }
     fetchRate("CAD", "PKR")
     return () => controller.abort()
-  }, [formik.values.destinationAccountId, formik.values.sourceAccountId])
+  }, [formik.values.destinationContactId, formik.values.sourceAccountId])
 
   const setSourceAmount = (e: ChangeEvent<HTMLInputElement>) => {
     const sourceAmount = Math.round(Number(e.target.value) * 100) / 100
@@ -170,7 +133,7 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
     <div className="w-full max-w-xl">
       <h4 className="text-2xl font-bold mb-6 text-center">Transaction Details</h4>
       <p className="text-base mb-6 text-center">Enter the details for your transaction.</p>
-      <ConfirmTransferModal isOpen={isModalOpen} closeModal={closeModal} quoteSummary={quoteSummary}/>
+      {/* <ConfirmTransferModal isOpen={isModalOpen} closeModal={closeModal} quoteSummary={quoteSummary}/> */}
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Select
           id="sourceAccountId"
@@ -195,24 +158,24 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
           ))}
         </Select>
         <Select
-          id="destinationAccountId"
-          name="destinationAccountId"
+          id="destinationContactId"
+          name="destinationContactId"
           label="Send to"
           variant="bordered"
           selectionMode="single"
           labelPlacement="outside"
           // defaultSelectedKeys={[]}
-          selectedKeys={!formik.values.destinationAccountId ? [] : [formik.values.destinationAccountId]}
+          selectedKeys={!formik.values.destinationContactId ? [] : [formik.values.destinationContactId]}
           placeholder="please select payment method"
           color="primary"
           size="md"
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
-          errorMessage={formik.touched.destinationAccountId && formik.errors.destinationAccountId}
+          errorMessage={formik.touched.destinationContactId && formik.errors.destinationContactId}
         >
-          {destinationAccounts.map((source) => (
-            <SelectItem key={source.id} value={source.id}>
-              {source.name}
+          {destinationContacts.map((contact) => (
+            <SelectItem key={contact.id} value={contact.id}>
+              {}
             </SelectItem>
           ))}
         </Select>
@@ -237,7 +200,7 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
             <div className="flex items-center">
               <p className="outline-none border-0 bg-transparent text-default-400 text-small">
                 {
-                  selectSourceAccout && selectSourceAccout.currency
+                  sourceCurrency ?? sourceCurrency
                 }
               </p>
             </div>
@@ -269,20 +232,20 @@ export default function TransferFrom({sourceAccountId, destinationAccountId}: Pr
             <div className="flex items-center">
               <p className="outline-none border-0 bg-transparent text-default-400 text-small">
                 {
-                  selectDestinationAccount && selectDestinationAccount.currency
+                  destinationCurrency && destinationCurrency
                 }
               </p>
             </div>
           }
           {...formik.getFieldProps('destinationAmount')}
-          errorMessage={formik.touched.destinationAmount && formik.errors.destinationAmount}
+          // errorMessage={formik.touched.destinationAmount && formik.errors.destinationAmount}
         />
         <Button 
           type="submit"
           color="primary"
           className="mt-6"
           size="md"
-          isLoading={isQuoting}
+          isLoading={isSubmit}
           isDisabled={!(formik.isValid && formik.dirty)}
         >
           Quote

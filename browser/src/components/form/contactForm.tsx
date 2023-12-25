@@ -100,7 +100,7 @@ export default function ContactForm() {
     setIsSubmit(true)
 
     try {
-      const response = await fetch("/api/nbp/user/contact/pre_verify", {
+      const response = await fetch("/api/nbp/user/contacts/pre_verify", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -134,7 +134,7 @@ export default function ContactForm() {
   async function submitContact() {
     setIsSubmit(true)
     try {
-      const response = await fetch("/api/nbp/user/contact/create", {
+      const response = await fetch("/api/nbp/user/contacts/create", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

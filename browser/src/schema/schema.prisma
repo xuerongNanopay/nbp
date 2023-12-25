@@ -276,7 +276,7 @@ model Account {
   owner        User          @relation(fields: [ownerId], references: [id])
   ownerId      Int
   transactions Transaction[]
-
+  cashIns      CashIn[]
   @@map("account")
 }
 
@@ -358,6 +358,37 @@ model FeeDetail {
   @@map("fee_detail")
 }
 
+enum CashInMethod {
+  INTERAC @map("interac")
+}
+
+enum CashInStatus {
+  INITIAL @map("initial")
+  WAIT  @map("wait")
+  PAID @map("paid")
+}
+
+model CashIn {
+  id   Int    @id @default(autoincrement())
+  status CashInStatus @default(INITIAL)
+  method CashInMethod
+
+  externalRef String?
+  paymentLink String?
+
+  ownerId Int
+  paymentAccountId Int
+  paymentAccount Account @relation(fields: [paymentAccountId], references: [id])
+  transactionId Int @unique
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+
+  CashInReceiveAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("cash_in")
+}
+
 enum TransactionStatus {
   QUOTE               @map("quote")
   INITIAL             @map("initial")
@@ -397,6 +428,7 @@ model Transaction {
 
   ownerId Int
   owner   User @relation(fields: [ownerId], references: [id])
+  cashIn CashIn?
 
   endInfo String?
 

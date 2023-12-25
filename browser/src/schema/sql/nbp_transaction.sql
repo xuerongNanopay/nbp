@@ -74,15 +74,65 @@ create table fee_detail(
 
     description varchar(255) null,
     amount integer not null,
-    currency char(3),
+    currency char(3) not null,
 
-    ownerId bigint unsigned references user(id),
-    transactionId bigint unsigned references transaction(id),
+    ownerId bigint unsigned not null,
+    transactionId bigint unsigned not null,
 
-    foreign key (currency) references currency(isoCode),
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp,
 
     foreign key (ownerId) references user(id),
+    foreign key (currency) references currency(isoCode),
     foreign key (transactionId) references transaction(id)
 );
+
+create table cash_in(
+    id serial primary key,
+    status enum ('initial', 'wait', 'paid') not null default 'initial',
+    method enum('interac') not null,
+    paymentAccountId bigint unsigned not null,
+
+    externalRef varchar(255) null,
+    paymentLink varchar(255) null,
+
+    ownerId bigint unsigned not null,
+    transactionId bigint unsigned not null,
+
+    CashInReceiveAt timestamp null,
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp,
+
+    foreign key (paymentAccountId) references account(id),
+    foreign key (ownerId) references user(id),
+    foreign key (paymentAccountId) references account(id)
+);
+
+create table transfer(
+    id serial primary key,
+    name varchar(128) not null,
+    externalReference varchar(128) null,
+    status enum('initial', 'wait', 'success', 'failed', 'retry', 'cancel') not null default 'initial',
+
+    retryAttempt int,
+
+    ownerId bigint unsigned not null,
+    transactionId bigint unsigned not null,
+    nextId bigint unsigned null,
+
+    waitAt timestamp null,
+    completeAt timestamp null,
+    failAt timestamp null,
+    cancelAt timestamp null,
+    endInfo varchar(255) null,
+
+    foreign key (ownerId) references user(id),
+    foreign key (transactionId) references transaction(id),
+    foreign key (nextId) references transfer(id),
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp
+);
+
+alter table transfer add constraint fk_transfer_transfer_nextId_id foreign key ("nextId") REFERENCES transfer(id);
+ALTER TABLE transfer ADD CONSTRAINT transfer_nextId_unique UNIQUE ("nextId");

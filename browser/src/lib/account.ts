@@ -1,7 +1,6 @@
 import { InternalError } from "@/schema/error"
-import { EditInteracData, GetInteracAccount } from "@/types/account"
 import { Session } from "@/types/auth"
-import { GetAccounts, GetAccount, GetInteracAccounts } from "@/types/account"
+import { GetAccounts, GetAccount, EditInteracData} from "@/types/account"
 import { LOGGER, formatSession } from "@/utils/logUtil"
 import { getPrismaClient } from "@/utils/prisma"
 import { 
@@ -11,9 +10,9 @@ import { Many } from "@/types/http"
 
 export async function getAllAcountsByOwnerId(
   session: Session
-): Promise<GetAccounts | null> {
+): Promise<Many<GetAccount>> {
   try {
-    return await getPrismaClient().account.findMany({
+    const accounts = await getPrismaClient().account.findMany({
       where: {
         status: {
           not: AccountStatus.DELETE
@@ -30,6 +29,13 @@ export async function getAllAcountsByOwnerId(
         email: true
       }
     })
+    return {
+      meta: {
+        count: accounts.length,
+        timestamp: new Date()
+      },
+      many: accounts
+    }
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, 'Method: getAllAcountsByOwnerId', err)
     throw new InternalError()
@@ -38,7 +44,7 @@ export async function getAllAcountsByOwnerId(
 
 export async function getActiveInteracAccountsById(
   session: Session
-): Promise<Many<GetInteracAccount>> {
+): Promise<Many<GetAccount>> {
   try {
     const accounts = await getPrismaClient().account.findMany({
       where: {

@@ -13,7 +13,7 @@ export default function TransferView({
       <div className="flex justify-center mt-4 sm:mt-16">
         {
           !!from || !!to ? 
-          <TransferForm sourceAccountId={from} destinationAccountId={to}/>
+          <TransferForm sourceAccountId={from} destinationContactId={to}/>
           : <TransferForm/>
         }
       </div>

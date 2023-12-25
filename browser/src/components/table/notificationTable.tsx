@@ -114,7 +114,7 @@ export function NotificationTable(): React.JSX.Element {
   const [_pages, _setPages] = useState(1)
   const rowsPerPage = 15
   // const reads = []
-  const {data, isLoading} = useSWR(`/api/nbp/user/notification?from=${(page-1)*rowsPerPage}&size=${rowsPerPage}`, fetcher, {
+  const {data, isLoading} = useSWR(`/api/nbp/user/notifications?from=${(page-1)*rowsPerPage}&size=${rowsPerPage}`, fetcher, {
     revalidateOnFocus: false,
     // keepPreviousData: true
   })
@@ -141,7 +141,7 @@ export function NotificationTable(): React.JSX.Element {
   //     const mark_reads = reads
   //     console.log('aavv')
   //     setReads([])
-  //     fetch('/api/nbp/user/notification/mark_read', {
+  //     fetch('/api/nbp/user/notifications/mark_read', {
   //       method: 'POST',
   //       headers: {
   //         'Content-Type': 'application/json'
@@ -159,7 +159,7 @@ export function NotificationTable(): React.JSX.Element {
     const idx = data.many.findIndex((n) => n.id == key)
     if (idx < 0) return
     if (notifications[idx].status !== NotificationStatus.READ) {
-      fetch('/api/nbp/user/notification/mark_read', {
+      fetch('/api/nbp/user/notifications/mark_read', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
