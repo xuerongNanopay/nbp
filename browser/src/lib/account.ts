@@ -1,6 +1,6 @@
 import { InternalError } from "@/schema/error"
 import { Session } from "@/types/auth"
-import { GetAccounts, GetAccount, EditInteracData} from "@/types/account"
+import { GetAccount, EditInteracData} from "@/types/account"
 import { LOGGER, formatSession } from "@/utils/logUtil"
 import { getPrismaClient } from "@/utils/prisma"
 import { 

@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       }
     })
   } catch(err: any) {
-    LOGGER.error(formatSession(session), "API: contact/create-GET", err)
+    LOGGER.error(formatSession(session), "API: contacts/create-POST", err)
     
     const errorResponse = !err.errors ? {
       code: err.code,
