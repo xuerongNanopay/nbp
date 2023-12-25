@@ -16,3 +16,13 @@ insert into currency(isoCode, numCode, name) values
 ('CAD', '124', 'Canadian dollar'),
 ('PKR', '586', 'Pakistani rupee'),
 ('USD', '840', 'United States dollar');
+
+create table currency_rate(
+    id serial primary key,
+    provider char(64),
+    sourceCurrency char(3) not null,
+    destinationCurrency char(3) not null,
+    rate double not null,
+    foreign key (sourceCurrency) references currency(isoCode),
+    foreign key (destinationCurrency) references currency(isoCode)
+);

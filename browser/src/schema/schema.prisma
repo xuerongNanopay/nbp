@@ -78,13 +78,13 @@ model User {
   occupation   Occupation @relation(fields: [occupationId], references: [id])
   avatarUrl    String?
 
-  logins              Login[]
-  identification      Identification?
-  accounts            Account[]
-  contacts            Contact[]
-  summaryTransactions SummaryTransaction[]
-  transactions        Transaction[]
-  notifications       Notification[]
+  logins         Login[]
+  identification Identification?
+  accounts       Account[]
+  contacts       Contact[]
+  transactions   Transaction[]
+  // transactions        Transaction[]
+  notifications  Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -332,60 +332,21 @@ model Contact {
   @@map("contact")
 }
 
-enum SummaryTransactionStatus {
-  INITIAL             @map("initial")
-  WAITING_FOR_PAYMENT @map("waiting_for_payment")
-  PROCESS             @map("process")
-  COMPLETE            @map("complete")
-  REJECTED            @map("rejected")
-  CANCEL              @map("cancel")
-  REFUND_IN_PROGRESS  @map("refund_in_progress")
-  REFUNDED            @map("refunded")
-}
-
-model SummaryTransaction {
-  id Int @id @default(autoincrement())
-
-  sourceAccountId      Int
-  destinationContactId Int
-
-  sourceAmount   Int
-  sourceCurrency String
-
-  destinationAmount   Int
-  destinationCurrency String
-
-  fee         Int
-  feeCurrency String
-
-  debitAmount   Int
-  debitCurrency String
-
-  errorMessage String?
-
-  nbpReference  String
-  ownerId       Int
-  owner         User        @relation(fields: [ownerId], references: [id])
-  transactionId Int         @unique
-  transaction   Transaction @relation(fields: [transactionId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("summary_transaction")
-}
-
-enum FeeType {
-  BASIC @map("basic")
+model CurrencyRate {
+  id                  Int    @id @default(autoincrement())
+  provider            String
+  sourceCurrency      String @db.Char(3)
+  destinationCurrency String @db.Char(3)
+  rate                Float  @db.Double
 }
 
 model FeeDetail {
-  id   Int     @id @default(autoincrement())
-  type FeeType @default(BASIC)
+  id   Int    @id @default(autoincrement())
+  name String
 
-  description String
+  description String?
   amount      Int
-  currency    String
+  currency    String  @db.Char(3)
 
   ownerId       Int
   transactionId Int
@@ -398,41 +359,55 @@ model FeeDetail {
 }
 
 enum TransactionStatus {
-  QUOTE   @map("quote")
-  CONFIRM @map("confirm")
+  QUOTE               @map("quote")
+  INITIAL             @map("initial")
+  WAITING_FOR_PAYMENT @map("waiting_for_payment")
+  PROCESS             @map("process")
+  COMPLETE            @map("complete")
+  REJECT              @map("reject")
+  CANCEL              @map("cancel")
+  REFUND_IN_PROGRESS  @map("refund_in_progress")
+  REFUND              @map("refund")
 }
 
 model Transaction {
-  id     Int               @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
   status TransactionStatus @default(QUOTE)
 
-  sourceAccountId Int
-  sourceAccount   Account @relation(fields: [sourceAccountId], references: [id])
-
+  sourceAccountId      Int
+  sourceAccount        Account @relation(fields: [sourceAccountId], references: [id])
   destinationContactId Int
-  desticationContact   Contact @relation(fields: [destinationContactId], references: [id])
+  destinationContact   Contact @relation(fields: [destinationContactId], references: [id])
 
   sourceAmount   Int
-  sourceCurrency String
+  sourceCurrency String @db.Char(3)
 
   destinationAmount   Int
-  destinationCurrency String
+  destinationCurrency String @db.Char(3)
 
-  fromIp       String?
-  nbpReference String?
+  feeAmount   Int
+  feeCurrency String @db.Char(3)
 
-  curTransferId Int?
+  debitAmount   Int
+  debitCurrency String @db.Char(3)
 
-  quoteExpired DateTime
+  fromIp     String?
+  deviceType String?
 
-  owner               User                @relation(fields: [ownerId], references: [id])
-  ownerId             Int
-  feeDetails          FeeDetail[]
-  summaryTransaction  SummaryTransaction?
-  transfers           Transfer[]
-  reverseTransactions ReverseTransaction?
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id])
 
-  // TransferLog TransferLog[]
+  endInfo String?
+
+  confirmQuoteAt DateTime?
+  quoteExpired   DateTime
+  completedAt    DateTime?
+  failedAt       DateTime?
+  refundedAt     DateTime?
+
+  fees      FeeDetail[]
+  transfers Transfer[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -441,65 +416,42 @@ model Transaction {
 }
 
 enum TransferStatus {
-  START   @map("start")
-  WAIT    @map("wait")
-  SUCCESS @map("success")
-  FAIL    @map("failed")
-  RETRY   @map("retry")
-  CANCEL  @map("cancel")
+  INITIAL  @map("initial")
+  WAIT     @map("wait")
+  COMPLETE @map("complete")
+  FAIL     @map("failed")
+  RETRY    @map("retry")
+  CANCEL   @map("cancel")
 }
 
 model Transfer {
-  id     Int            @id @default(autoincrement())
-  status TransferStatus @default(START)
+  id                Int            @id @default(autoincrement())
+  name              String
+  status            TransferStatus @default(INITIAL)
+  externalReference String?
 
-  name         String
-  retryAttempt Int    @default(0)
+  retryAttempt Int @default(0)
 
   ownerId       Int
+  nexTransferId Int?
+
   transactionId Int
   transaction   Transaction @relation(fields: [transactionId], references: [id])
-  preTransferId Int?
-  nexTransferId Int?
+
+  waitAt     DateTime?
+  completeAt DateTime?
+  failAt     DateTime?
+  cancelAt   DateTime?
+  endInfo    String?
+
+  nextId Int?      @unique
+  next   Transfer? @relation("TransferChain", fields: [nextId], references: [id])
+  pre    Transfer? @relation("TransferChain")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("transfer")
-}
-
-model ReverseTransaction {
-  id Int @id @default(autoincrement())
-
-  ownerId             Int
-  originTransaction   Transaction       @relation(fields: [originTransactionId], references: [id])
-  originTransactionId Int               @unique
-  curTransferId       Int?
-  transfer            ReverseTransfer[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("reverse_transaction")
-}
-
-model ReverseTransfer {
-  id     Int            @id @default(autoincrement())
-  status TransferStatus @default(START)
-
-  name         String
-  retryAttempt Int    @default(0)
-
-  ownerId              Int
-  reverseTransactionId Int
-  reverseTransaction   ReverseTransaction @relation(fields: [reverseTransactionId], references: [id])
-  preTransferId        Int?
-  nexTransferId        Int?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("reverse_transfer")
 }
 
 enum NotificationStatus {
@@ -530,45 +482,3 @@ model Notification {
 
   @@map("notification")
 }
-
-// create table api_log (
-//     id serial primary key,
-//     ownerId int not null references user(id),
-//     transferId int null references transfer(id),
-//     externalReference varchar(255) null,
-//     provider varchar(255) not null,
-//     apiName varchar(255) not null,
-//     requestPayload TEXT null,
-//     responsePayload TEXT null,
-//     httpResponseCode int null,
-//     errorMessage TEXT null,
-//     createdAt timestamp default current_timestamp,
-//     updatedAt timestamp default current_timestamp on update current_timestamp
-// );
-
-// create table notification(
-//     id serial primary key,
-//     ownerId int not null references user(id),
-//     level enum('info', 'warming', 'error', 'debug') default 'info',
-//     subject varchar(250) null,
-//     content varchar(250) null,
-//     status enum('read', 'unread') default 'unread',
-//     createdAt timestamp default current_timestamp,
-//     updatedAt timestamp default current_timestamp on update current_timestamp
-// );
-
-// create table transfer_log(
-//     id serial primary key,
-//     ownerId int not null references user(id),
-//     transferId int not null references transfer(id),
-//     preTransferId  int null references transfer(id),
-
-//     status enum('start', 'wait', 'success', 'fail', 'retry', 'cancel', 'end') not null,
-//     severity enum('info', 'warming', 'error', 'debug') not null default 'info',
-
-//     subject varchar(255) not null,
-//     description TEXT,
-
-//     createdAt timestamp default current_timestamp,
-//     updatedAt timestamp default current_timestamp on update current_timestamp
-// );
