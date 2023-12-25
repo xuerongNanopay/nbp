@@ -277,6 +277,7 @@ model Account {
   ownerId      Int
   transactions Transaction[]
   cashIns      CashIn[]
+
   @@map("account")
 }
 
@@ -364,27 +365,27 @@ enum CashInMethod {
 
 enum CashInStatus {
   INITIAL @map("initial")
-  WAIT  @map("wait")
-  PAID @map("paid")
+  WAIT    @map("wait")
+  PAID    @map("paid")
 }
 
 model CashIn {
-  id   Int    @id @default(autoincrement())
+  id     Int          @id @default(autoincrement())
   status CashInStatus @default(INITIAL)
   method CashInMethod
 
   externalRef String?
   paymentLink String?
 
-  ownerId Int
+  ownerId          Int
   paymentAccountId Int
-  paymentAccount Account @relation(fields: [paymentAccountId], references: [id])
-  transactionId Int @unique
-  transaction Transaction @relation(fields: [transactionId], references: [id])
+  paymentAccount   Account     @relation(fields: [paymentAccountId], references: [id])
+  transactionId    Int         @unique
+  transaction      Transaction @relation(fields: [transactionId], references: [id])
 
   CashInReceiveAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   @@map("cash_in")
 }
@@ -427,8 +428,8 @@ model Transaction {
   deviceType String?
 
   ownerId Int
-  owner   User @relation(fields: [ownerId], references: [id])
-  cashIn CashIn?
+  owner   User    @relation(fields: [ownerId], references: [id])
+  cashIn  CashIn?
 
   endInfo String?
 
