@@ -14,8 +14,9 @@ import { ConfirmTransferModal } from '@/components/modal'
 import { ITransferQuote, ITransferQuoteResult } from "@/type"
 import { TransactionQuoteDate } from "@/types/transaction"
 import { TransactionQuoteValidator } from "@/schema/validator"
-import { GetAccount } from "@/types/account"
+import { GetAccount, GetAccounts } from "@/types/account"
 import { GetContact } from "@/types/contact"
+import { HttpGET } from "@/types/http"
 
 
 const transactionQuoteResult: ITransferQuoteResult = {
@@ -48,7 +49,7 @@ type Props  = {
 }
 
 export default function TransferFrom({sourceAccountId, destinationContactId}: Props) {
-  const [showAmountInput, setShowAmountInput] = useState(false)
+  const [disableAmountInput, setDisableAmountInput] = useState(true)
   const [sourceCurrency, setSourceCurrency ] = useState<string|null>(null)
   const [destinationCurrency, setDestinationCurrency ] = useState<string|null>(null)
   const [sourceAccounts, setSourceAccounts] = useState<GetAccount[]>([])
@@ -83,11 +84,15 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
   })
 
   useEffect(() => {
+
+  })
+
+  useEffect(() => {
     if ( formik.touched.destinationContactId && formik.touched.sourceAccountId ) {
       if ( !formik.errors.destinationContactId && !formik.errors.sourceAccountId ) {
-        setShowAmountInput(true)
+        setDisableAmountInput(false)
       } else {
-        setShowAmountInput(false)
+        setDisableAmountInput(true)
       }
     }
   }, 
@@ -98,6 +103,23 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
     formik.errors.sourceAccountId
   ])
 
+  useEffect(() => {
+    const controller = new AbortController()
+    const fetchAccounts = async () => {
+      const response = await fetch('/api/nbp/user/accounts')
+      const resposnePayload = await response.json() as HttpGET<GetAccounts>
+      
+    }
+    const fetchContacts = async () => {
+
+    }
+
+    fetchAccounts()
+    fetchContacts()
+    return () => controller.abort()
+  })
+
+  //Fetch Rate.
   useEffect(() => {
     console.log('aaa', formik.values.destinationContactId)
     setRate(0)
@@ -205,7 +227,7 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
               </p>
             </div>
           }
-          disabled={!showAmountInput}
+          isDisabled={disableAmountInput}
           onBlur={formik.handleBlur}
           onChange={setSourceAmount}
           value={''+formik.values.sourceAmount}
