@@ -174,7 +174,7 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           labelPlacement="outside"
           // defaultSelectedKeys={[]}
           selectedKeys={!formik.values.sourceAccountId ? [] : [formik.values.sourceAccountId]}
-          placeholder="please select payment method"
+          placeholder="Please select..."
           color="primary"
           size="lg"
           renderValue={(items: SelectedItems<GetAccount>) => {
@@ -184,7 +184,7 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           // onChange={formik.handleChange}
           onChange={e => {
             formik.setFieldValue('sourceAccountId', e.target.value)
-            console.log(e.target.value, formik.errors.sourceAccountId)
+            // console.log(e.target.value, formik.errors.sourceAccountId)
           }}
           errorMessage={formik.touched.sourceAccountId && formik.errors.sourceAccountId}
         >
@@ -205,14 +205,17 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           labelPlacement="outside"
           // defaultSelectedKeys={[]}
           selectedKeys={!formik.values.destinationContactId ? [] : [formik.values.destinationContactId]}
-          placeholder="please select payment method"
+          placeholder="Please select..."
           color="primary"
           size="lg"
           renderValue={(items: SelectedItems<GetContact>) => {
             return items.map(item => <ContactSelectShow key={item.data?.id} contact={item.data!} />)
           }}
           onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
+          onChange={e => {
+            formik.setFieldValue('destinationContactId', e.target.value)
+            // console.log(e.target.value, formik.errors.destinationContactId)
+          }}
           errorMessage={formik.touched.destinationContactId && formik.errors.destinationContactId}
         >
           {
@@ -230,7 +233,7 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           variant="bordered"
           label="You Send"
           color="primary"
-          size="md"
+          size="lg"
           placeholder="0.00"
           step=".01"
           min="0"
@@ -262,7 +265,7 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           variant="bordered"
           label="Recipient Receives"
           color="primary"
-          size="md"
+          size="lg"
           placeholder="0.00"
           isDisabled={true}
           min="0"
