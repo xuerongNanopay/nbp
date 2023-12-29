@@ -256,7 +256,7 @@ enum AccountStatus {
 }
 
 enum AccountType {
-  INTERACT     @map("interac")
+  INTERAC      @map("interac")
   BANK_ACCOUNT @map("bank_account")
 }
 

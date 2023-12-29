@@ -15,8 +15,10 @@ import { ITransferQuote, ITransferQuoteResult } from "@/type"
 import { TransactionQuoteDate } from "@/types/transaction"
 import { TransactionQuoteValidator } from "@/schema/validator"
 import { GetAccount, GetAccounts } from "@/types/account"
-import { GetContact } from "@/types/contact"
+import { GetContact, GetContacts } from "@/types/contact"
 import { HttpGET } from "@/types/http"
+import { AccountType } from "@prisma/client"
+import { blurEmail } from "@/utils/textUtil"
 
 
 const transactionQuoteResult: ITransferQuoteResult = {
@@ -106,12 +108,14 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
   useEffect(() => {
     const controller = new AbortController()
     const fetchAccounts = async () => {
-      const response = await fetch('/api/nbp/user/accounts')
+      const response = await fetch('/api/nbp/user/accounts', { signal: controller.signal })
       const resposnePayload = await response.json() as HttpGET<GetAccounts>
-      
+      setSourceAccounts(resposnePayload.payload.many)
     }
     const fetchContacts = async () => {
-
+      const response = await fetch('/api/nbp/user/contacts', { signal: controller.signal })
+      const responsePayload = await response.json() as HttpGET<GetContacts>
+      setDestinationContacts(responsePayload.payload.many)
     }
 
     fetchAccounts()
@@ -173,9 +177,9 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           onChange={formik.handleChange}
           errorMessage={formik.touched.sourceAccountId && formik.errors.sourceAccountId}
         >
-          {sourceAccounts.map((source) => (
-            <SelectItem key={source.id} value={source.id}>
-              {source.name}
+          {sourceAccounts.map((account) => (
+            <SelectItem key={account.id} value={account.id}>
+              <AccountSelectItem account={account} />
             </SelectItem>
           ))}
         </Select>
@@ -243,7 +247,7 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           color="primary"
           size="md"
           placeholder="0.00"
-          disabled
+          isDisabled={true}
           min="0"
           startContent={
             <div className="pointer-events-none flex items-center">
@@ -275,4 +279,12 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
       </form>
     </div>
   )
+}
+
+// function formatContact(contact: GetContact): string {
+
+// }
+
+function AccountSelectItem({account}: {account: GetAccount}) {
+  return <p>{account.type}(<span className="italic text-slate-700">{blurEmail(account.email, 8)}</span>)</p>
 }
