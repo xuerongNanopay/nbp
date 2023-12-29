@@ -10,12 +10,13 @@ export async function GET() {
     if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
     if (!assertNotDeleteUser(session)) throw new ForbiddenError("Inactive User")
 
-    const contacts = await getAllAcountsByOwnerId(session)
+    const accounts = await getAllAcountsByOwnerId(session)
 
     return Response.json(
       {
         code: 200,
-        data: contacts
+        message: 'Fetch Success',
+        payload: accounts
       },
       {
         status: 200,

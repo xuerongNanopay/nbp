@@ -16,7 +16,7 @@ import {
 } from "@prisma/client"
 import { isIBAN } from '@/utils/bankUtil'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
-import { Many } from '@/types/http'
+import { Many, Single } from '@/types/http'
 
 export async function createContact(
   session: Session,
@@ -108,9 +108,9 @@ export async function preVerifyContact(
 
 export async function getAllContactsByOwnerId(
   session: Session
-): Promise<GetContacts | null> {
+): Promise<Many<GetContact>> {
   try {
-    return await getPrismaClient().contact.findMany({
+    const contacts =await getPrismaClient().contact.findMany({
       where: {
         status: {
           not: ContactStatus.DELETE
@@ -121,6 +121,13 @@ export async function getAllContactsByOwnerId(
       },
       select: GetContactSelect
     })
+    return {
+      meta: {
+        timestamp: new Date(),
+        count: contacts.length
+      },
+      many: contacts
+    }
   } catch (err: any) {
     LOGGER.error(`${formatSession(session)}`, "method: getAllContactsByOwnerId", err)
 
@@ -131,9 +138,9 @@ export async function getAllContactsByOwnerId(
 export async function getContactDetailByOwnerId(
   contactId: number,
   session: Session
-) : Promise<Contact | null> {
+) : Promise<Contact> {
   try {
-    return await getPrismaClient().contact.findUnique({
+    const contact = await getPrismaClient().contact.findUnique({
       where: {
         id: contactId,
         status: {
@@ -145,6 +152,8 @@ export async function getContactDetailByOwnerId(
       },
       select: ContactSelect
     })
+    if (!contact) throw new ResourceNoFoundError("Contact no Found")
+    return contact
   } catch (err: any) {
     if ( err instanceof PrismaClientKnownRequestError && err.code === 'P2021'  ) {
       LOGGER.warn(`${formatSession(session)}`, "method: getContactDetailByOwnerId", `Contact no found with id \`${contactId}\``)

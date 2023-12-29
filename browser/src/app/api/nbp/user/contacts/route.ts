@@ -15,7 +15,8 @@ export async function GET() {
     return Response.json(
       {
         code: 200,
-        data: contacts
+        message: 'Fetch Success',
+        payload: contacts
       },
       {
         status: 200,
