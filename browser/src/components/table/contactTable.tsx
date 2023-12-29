@@ -30,7 +30,7 @@ import { EyeIcon } from '@/icons/EyeIcon'
 import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
 import { DeleteIcon } from '@/icons/DeleteIcon'
 import { SendMoneyIcon } from '@/icons/SendMoneyIcon'
-import { GetContactItem, GetContacts } from '@/types/contact';
+import { GetContact, GetContacts } from '@/types/contact';
 import { ContactStatus, ContactType } from '@prisma/client';
 
 const statusOptions = [
@@ -61,7 +61,7 @@ const columns = [
   { name: 'Actions', id: 'actions' }
 ]
 
-const NameCell = (contact: GetContactItem) => {
+const NameCell = (contact: GetContact) => {
   return (
     <div className="flex flex-col">
       <p className="text-bold text-sm capitalize">{`${contact.firstName} ${contact.lastName}`}</p>
@@ -69,7 +69,7 @@ const NameCell = (contact: GetContactItem) => {
   )
 }
 
-const AccountCell = (contact: GetContactItem) => {
+const AccountCell = (contact: GetContact) => {
   return (
     <>
       {
@@ -87,7 +87,7 @@ const AccountCell = (contact: GetContactItem) => {
   )
 }
 
-const StatusCell = ({status}: GetContactItem) => {
+const StatusCell = ({status}: GetContact) => {
   return (
     <Chip className="capitalize" color={statusColorMap[status]} size="sm" variant="flat">
       {statusTextMap[status]}
@@ -95,7 +95,7 @@ const StatusCell = ({status}: GetContactItem) => {
   )
 }
 
-const ActionsCell = (contact: GetContactItem) => {
+const ActionsCell = (contact: GetContact) => {
   return (
     <div className="relative flex items-center gap-2">
       <Link href={`/nbp/contacts/${contact.id}`}>
@@ -117,7 +117,7 @@ export default function ContactTable({className, contacts}: {className?: string,
   const [rowsPerPage, setRowsPerPage] = React.useState(14)
   const [statusFilter, setStatusFilter] = React.useState<Selection>('all')
 
-  const renderCell = React.useCallback((contact: GetContactItem, columnKey: React.Key) => {
+  const renderCell = React.useCallback((contact: GetContact, columnKey: React.Key) => {
     switch(columnKey) {
       case "name":
         return (

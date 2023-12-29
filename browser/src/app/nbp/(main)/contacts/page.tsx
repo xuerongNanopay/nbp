@@ -4,7 +4,7 @@ import { fetchSession } from "@/lib/session"
 
 export default async function Contacts() {
   const session = await fetchSession()
-  let contacts = await getAllContactsByOwnerId(session!)
+  let contacts = (await getAllContactsByOwnerId(session!)).many
   contacts = contacts ?? []
   return (
     <div>
