@@ -1,5 +1,5 @@
 'use client'
-import type { UniqueContact } from "@/types/contact"
+import type { Contact } from "@/types/contact"
 import { useRouter } from 'next/navigation'
 import { useState } from "react"
 import {
@@ -76,7 +76,7 @@ const ConfirmModal = (
   )
 }
 
-export function ContactDetail({contact}: {contact: UniqueContact}) {
+export function ContactDetail({contact}: {contact: Contact}) {
   const alert = useAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isDelete, setIsDelete] = useState<boolean>(false)
@@ -86,7 +86,7 @@ export function ContactDetail({contact}: {contact: UniqueContact}) {
   const deleteContact = async () => {
     setIsDelete(true)
     try {
-      const response = await fetch(`/api/nbp/user/contact/${contact.id}`, {
+      const response = await fetch(`/api/nbp/user/contacts/${contact.id}`, {
         method: 'DELETE',
       })
       const responsePayload = await response.json()
@@ -187,6 +187,6 @@ export function ContactDetail({contact}: {contact: UniqueContact}) {
   )
 }
 
-function formatAddress(contact: UniqueContact): string {
+function formatAddress(contact: Contact): string {
   return `${contact.address1}${!contact.address2 ? '' : ', ' + contact.address2}${!contact.city ? '' : ', ' + contact.city}${!contact.province.name ? '' : ', ' + contact.province.name}${!contact.country.name ? '' : ', ' + contact.country.name}${!contact.postCode ? '' : ', ' + contact.postCode}`
 }
