@@ -7,7 +7,8 @@ import {
   Input,
   Button,
   Select, 
-  SelectItem
+  SelectItem,
+  SelectedItems
 } from "@nextui-org/react"
 
 import { ConfirmTransferModal } from '@/components/modal'
@@ -17,7 +18,7 @@ import { TransactionQuoteValidator } from "@/schema/validator"
 import { GetAccount, GetAccounts } from "@/types/account"
 import { GetContact, GetContacts } from "@/types/contact"
 import { HttpGET } from "@/types/http"
-import { AccountType } from "@prisma/client"
+import { AccountType, ContactType } from "@prisma/client"
 import { blurEmail } from "@/utils/textUtil"
 
 
@@ -54,6 +55,7 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
   const [disableAmountInput, setDisableAmountInput] = useState(true)
   const [sourceCurrency, setSourceCurrency ] = useState<string|null>(null)
   const [destinationCurrency, setDestinationCurrency ] = useState<string|null>(null)
+  const [destinationAmount, setDestinationAmount] = useState<number>(0.0)
   const [sourceAccounts, setSourceAccounts] = useState<GetAccount[]>([])
   const [destinationContacts, setDestinationContacts] = useState<GetContact[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -68,7 +70,8 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
   const initialValues: Partial<TransactionQuoteDate> = {
     sourceAccountId: 0,
     destinationContactId: 0,
-    sourceAmount: 0
+    sourceAmount: 0,
+    
   }
 
   const quoteTransaction = (e: Partial<TransactionQuoteDate>) => {
@@ -121,32 +124,32 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
     fetchAccounts()
     fetchContacts()
     return () => controller.abort()
-  })
+  }, [])
 
-  //Fetch Rate.
-  useEffect(() => {
-    console.log('aaa', formik.values.destinationContactId)
-    setRate(0)
-    formik.setFieldValue('sourceAmount', 0)
-    formik.setFieldValue('destinationAmount', 0)
-    const controller = new AbortController();
-    const signal = controller.signal;
-    async function fetchRate(sourceCurrency: string, destinationCurrency: string) {
+  // //Fetch Rate.
+  // useEffect(() => {
+  //   console.log('aaa', formik.values.destinationContactId)
+  //   setRate(0)
+  //   formik.setFieldValue('sourceAmount', 0)
+  //   formik.setFieldValue('destinationAmount', 0)
+  //   const controller = new AbortController();
+  //   const signal = controller.signal;
+  //   async function fetchRate(sourceCurrency: string, destinationCurrency: string) {
 
-      fetch("https://jsonplaceholder.typicode.com/posts", { signal: signal })
-      .then((res) => res.json())
-      .then((res) => setRate(4.8))
-      .catch((err) => {
-        if (err.name === "AbortError") {
-          console.log("successfully aborted");
-        } else {
-          console.log(err)
-        }
-      });
-    }
-    fetchRate("CAD", "PKR")
-    return () => controller.abort()
-  }, [formik.values.destinationContactId, formik.values.sourceAccountId])
+  //     fetch("https://jsonplaceholder.typicode.com/posts", { signal: signal })
+  //     .then((res) => res.json())
+  //     .then((res) => setRate(4.8))
+  //     .catch((err) => {
+  //       if (err.name === "AbortError") {
+  //         console.log("successfully aborted");
+  //       } else {
+  //         console.log(err)
+  //       }
+  //     });
+  //   }
+  //   fetchRate("CAD", "PKR")
+  //   return () => controller.abort()
+  // }, [formik.values.destinationContactId, formik.values.sourceAccountId])
 
   const setSourceAmount = (e: ChangeEvent<HTMLInputElement>) => {
     const sourceAmount = Math.round(Number(e.target.value) * 100) / 100
@@ -164,6 +167,7 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
         <Select
           id="sourceAccountId"
           name="sourceAccountId"
+          items={sourceAccounts}
           label="From"
           variant="bordered"
           selectionMode="single"
@@ -172,20 +176,29 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           selectedKeys={!formik.values.sourceAccountId ? [] : [formik.values.sourceAccountId]}
           placeholder="please select payment method"
           color="primary"
-          size="md"
+          size="lg"
+          renderValue={(items: SelectedItems<GetAccount>) => {
+            return items.map(item => <AccountSelectItem key={item.data?.id} account={item.data!} />)
+          }}
           onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
+          // onChange={formik.handleChange}
+          onChange={e => {
+            formik.setFieldValue('sourceAccountId', e.target.value)
+            console.log(e.target.value, formik.errors.sourceAccountId)
+          }}
           errorMessage={formik.touched.sourceAccountId && formik.errors.sourceAccountId}
         >
-          {sourceAccounts.map((account) => (
-            <SelectItem key={account.id} value={account.id}>
-              <AccountSelectItem account={account} />
-            </SelectItem>
-          ))}
+          {
+            (account) => 
+              <SelectItem textValue={`${account.email}`} key={account.id} value={account.id}>
+                <AccountSelectItem account={account} />
+              </SelectItem>
+          }
         </Select>
         <Select
           id="destinationContactId"
           name="destinationContactId"
+          items={destinationContacts}
           label="Send to"
           variant="bordered"
           selectionMode="single"
@@ -194,16 +207,20 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           selectedKeys={!formik.values.destinationContactId ? [] : [formik.values.destinationContactId]}
           placeholder="please select payment method"
           color="primary"
-          size="md"
+          size="lg"
+          renderValue={(items: SelectedItems<GetContact>) => {
+            return items.map(item => <ContactSelectShow key={item.data?.id} contact={item.data!} />)
+          }}
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
           errorMessage={formik.touched.destinationContactId && formik.errors.destinationContactId}
         >
-          {destinationContacts.map((contact) => (
-            <SelectItem key={contact.id} value={contact.id}>
-              {}
-            </SelectItem>
-          ))}
+          {
+            (contact) => 
+              <SelectItem textValue={`${contact.id}`} key={contact.id} value={contact.id}>
+                <ContactSelectItem contact={contact} />
+              </SelectItem>
+          }
         </Select>
         <Input
           id="sourceAmount"
@@ -234,7 +251,7 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           isDisabled={disableAmountInput}
           onBlur={formik.handleBlur}
           onChange={setSourceAmount}
-          value={''+formik.values.sourceAmount}
+          value={`${formik.values.sourceAmount}`}
           errorMessage={formik.touched.sourceAmount && formik.errors.sourceAmount}
         />
         <Input
@@ -249,6 +266,7 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           placeholder="0.00"
           isDisabled={true}
           min="0"
+          value={`${destinationAmount}`}
           startContent={
             <div className="pointer-events-none flex items-center">
               <span className="text-default-400 text-small">$</span>
@@ -263,7 +281,7 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
               </p>
             </div>
           }
-          {...formik.getFieldProps('destinationAmount')}
+          // {...formik.getFieldProps('destinationAmount')}
           // errorMessage={formik.touched.destinationAmount && formik.errors.destinationAmount}
         />
         <Button 
@@ -281,9 +299,37 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
   )
 }
 
-// function formatContact(contact: GetContact): string {
+function ContactSelectItem({contact}: {contact: GetContact}) {
+  const Account = () => {
+    if ( contact.type === ContactType.CASH_PICKUP ) {
+      return <p className="italic text-slate-700">NBP(Cash Pickup)</p>
+    } else {
+      return <p className="italic text-slate-700">{contact.institution?.abbr}({contact.bankAccountNum ?? contact.iban})</p>
+    }
+  }
+  return (
+    <div>
+      <p>{`${contact.firstName} ${contact.lastName}`}</p>
+      <Account/>
+    </div>
+  )
+}
 
-// }
+function ContactSelectShow({contact}: {contact: GetContact}) {
+  const Account = () => {
+    if ( contact.type === ContactType.CASH_PICKUP ) {
+      return <p className="text-tiny italic text-slate-700">NBP(Cash Pickup)</p>
+    } else {
+      return <p className="text-tiny italic text-slate-700">{contact.institution?.abbr}({contact.bankAccountNum ?? contact.iban})</p>
+    }
+  }
+  return (
+    <div>
+      <p className="text-tiny">{`${contact.firstName} ${contact.lastName}`}</p>
+      <Account/>
+    </div>
+  )
+}
 
 function AccountSelectItem({account}: {account: GetAccount}) {
   return <p>{account.type}(<span className="italic text-slate-700">{blurEmail(account.email, 8)}</span>)</p>
