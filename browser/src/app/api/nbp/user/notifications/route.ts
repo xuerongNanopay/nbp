@@ -13,13 +13,6 @@ export async function GET(request: Request) {
   const fromStr = searchParams.get('from')
   const sizeStr = searchParams.get('size')
 
-  console.log(`from: ${fromStr}, to: ${sizeStr}`)
-
-  // for (let _ in Array(100).fill(0)) {
-
-  //   notifyInfo(session!.user!.id, "create account: " + randSixDigits(), "account create aaa: " + Array(50).fill(randSixDigits()).join(" "))
-  // }
-
   try {
     if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
 
