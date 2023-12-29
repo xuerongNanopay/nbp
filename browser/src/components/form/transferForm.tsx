@@ -267,8 +267,10 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           color="primary"
           size="lg"
           placeholder="0.00"
-          isDisabled={true}
+          isDisabled={disableAmountInput}
+          disabled
           min="0"
+          description={`Rate: 1.00 CAD \u2248 2000.00 PRK`}
           value={`${destinationAmount}`}
           startContent={
             <div className="pointer-events-none flex items-center">

@@ -150,5 +150,5 @@ export const NotificationReadMarkDataValidator = Yup.object<NotificationReadMark
 export const TransactionQuoteValidator = Yup.object<TransactionQuoteDate>({
   sourceAccountId: Yup.number().required('Required'),
   destinationContactId: Yup.number().required('Required'),
-  sourceAmount: Yup.number().required('Required').moreThan(10).lessThan(1000),
+  sourceAmount: Yup.number().required('Required').moreThan(10, 'Amount must be greater than 10').lessThan(1000, 'Amount must be less than 1000'),
 })
