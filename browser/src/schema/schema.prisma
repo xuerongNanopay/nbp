@@ -340,6 +340,9 @@ model CurrencyRate {
   destinationCurrency String @db.Char(3)
   value               Float  @db.Double
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("currency_rate")
 }
 
