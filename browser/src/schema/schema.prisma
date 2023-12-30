@@ -338,7 +338,9 @@ model CurrencyRate {
   provider            String
   sourceCurrency      String @db.Char(3)
   destinationCurrency String @db.Char(3)
-  rate                Float  @db.Double
+  value               Float  @db.Double
+
+  @@map("currency_rate")
 }
 
 model FeeDetail {

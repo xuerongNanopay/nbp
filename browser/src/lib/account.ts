@@ -24,6 +24,7 @@ export async function getAllAcountsByOwnerId(
       select: {
         id: true,
         status: true,
+        currency: true,
         type: true,
         isDefault: true,
         email: true
@@ -48,7 +49,7 @@ export async function getActiveInteracAccountsById(
   try {
     const accounts = await getPrismaClient().account.findMany({
       where: {
-        type: AccountType.INTERACT,
+        type: AccountType.INTERAC,
         status: {
           not: AccountStatus.DELETE
         },
@@ -59,7 +60,7 @@ export async function getActiveInteracAccountsById(
       select: {
         id: true,
         status: true,
-        
+        currency: true,
         type: true,
         email: true
       }
@@ -89,7 +90,7 @@ export async function updateInteracAccountEmail(
           status: {
             not: AccountStatus.DELETE
           },
-          type: AccountType.INTERACT,
+          type: AccountType.INTERAC,
           ownerId: session.user!.id
         }
       })
@@ -104,7 +105,7 @@ export async function updateInteracAccountEmail(
           status: {
             not: AccountStatus.DELETE
           },
-          type: AccountType.INTERACT,
+          type: AccountType.INTERAC,
           ownerId: session.user!.id
         },
         data: {
@@ -117,7 +118,7 @@ export async function updateInteracAccountEmail(
   
       const newInteracAccount = await getPrismaClient().account.create({
         data: {
-          type: AccountType.INTERACT,
+          type: AccountType.INTERAC,
           status: AccountStatus.ACTIVE,
           email: editInteracData.newEmail,
           currency: 'CAD',
@@ -128,7 +129,8 @@ export async function updateInteracAccountEmail(
           status: true,
           type: true,
           isDefault: true,
-          email: true
+          email: true,
+          currency: true
         }
       })
       LOGGER.info(`${formatSession(session)}`, 'Method: updateInteracAccountEmail', `create new interac account: \`${newInteracAccount.id}\``)

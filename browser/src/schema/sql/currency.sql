@@ -19,10 +19,15 @@ insert into currency(isoCode, numCode, name) values
 
 create table currency_rate(
     id serial primary key,
-    provider char(64),
+    provider varchar(64) not null,
     sourceCurrency char(3) not null,
     destinationCurrency char(3) not null,
-    rate double not null,
+    value double not null,
+
+    createdAt timestamp default current_timestamp,
+    updatedAt timestamp default current_timestamp on update current_timestamp,
+
+    unique(sourceCurrency, destinationCurrency),
     foreign key (sourceCurrency) references currency(isoCode),
     foreign key (destinationCurrency) references currency(isoCode)
 );

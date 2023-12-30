@@ -29,6 +29,7 @@ export type GetContact = Prisma.ContactGetPayload<{
     firstName: true,
     lastName: true,
     type: true,
+    currency: true,
     bankAccountNum: true,
     iban: true,
     institution: { select: {abbr: true}}

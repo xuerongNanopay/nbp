@@ -12,7 +12,6 @@ import {
 } from "@nextui-org/react"
 
 import { ConfirmTransferModal } from '@/components/modal'
-import { ITransferQuote, ITransferQuoteResult } from "@/type"
 import { TransactionQuoteDate } from "@/types/transaction"
 import { TransactionQuoteValidator } from "@/schema/validator"
 import { GetAccount, GetAccounts } from "@/types/account"
@@ -22,36 +21,7 @@ import { AccountType, ContactType } from "@prisma/client"
 import { blurEmail } from "@/utils/textUtil"
 
 
-const transactionQuoteResult: ITransferQuoteResult = {
-  id: '1',
-  sourceAccount: {
-    id: '',
-    type: '',
-    name: '',
-    currency: ''
-  },
-  destinationAccout: {
-    id: '',
-    type: '',
-    name: '',
-    currency: ''
-  },
-  sourceAmount: 11.11,
-  destinationAmount: 22.22,
-  sourceCurrency: 'CAD',
-  destinationCurrency: 'PKR',
-  exchangeRate: 111133.2233,
-  transactionFee: 3.4,
-  totalDebitAmount: 44.44,
-  expireTimestamp: new Date().getTime()
-}
-
-type Props  = {
-  sourceAccountId?: string | null
-  destinationContactId?: string | null
-}
-
-export default function TransferFrom({sourceAccountId, destinationContactId}: Props) {
+export default function TransferFrom() {
   const [disableAmountInput, setDisableAmountInput] = useState(true)
   const [sourceCurrency, setSourceCurrency ] = useState<string|null>(null)
   const [destinationCurrency, setDestinationCurrency ] = useState<string|null>(null)
@@ -126,30 +96,39 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
     return () => controller.abort()
   }, [])
 
-  // //Fetch Rate.
-  // useEffect(() => {
-  //   console.log('aaa', formik.values.destinationContactId)
-  //   setRate(0)
-  //   formik.setFieldValue('sourceAmount', 0)
-  //   formik.setFieldValue('destinationAmount', 0)
-  //   const controller = new AbortController();
-  //   const signal = controller.signal;
-  //   async function fetchRate(sourceCurrency: string, destinationCurrency: string) {
+  //Fetch Rate.
+  useEffect(() => {
+    setRate(0)
+    formik.setFieldValue('sourceAmount', 0)
+    formik.setFieldValue('destinationAmount', 0)
+    setSourceCurrency(null)
+    setDestinationCurrency(null)
 
-  //     fetch("https://jsonplaceholder.typicode.com/posts", { signal: signal })
-  //     .then((res) => res.json())
-  //     .then((res) => setRate(4.8))
-  //     .catch((err) => {
-  //       if (err.name === "AbortError") {
-  //         console.log("successfully aborted");
-  //       } else {
-  //         console.log(err)
-  //       }
-  //     });
-  //   }
-  //   fetchRate("CAD", "PKR")
-  //   return () => controller.abort()
-  // }, [formik.values.destinationContactId, formik.values.sourceAccountId])
+    const sa = sourceAccounts.find(s => s.id.toString() === formik.values.sourceAccountId?.toString())
+    const dc = destinationContacts.find(s => s.id.toString() === formik.values.destinationContactId?.toString())
+    if ( !sa || !dc ) return 
+
+    setSourceCurrency(sa.currency)
+    setDestinationCurrency(dc.currency)
+
+    const controller = new AbortController()
+    const signal = controller.signal
+
+    async function fetchRate(sourceCurrency: string, destinationCurrency: string) {
+      fetch("/api/nbp/user/accounts", { signal: signal })
+        .then((res) => res.json())
+        .then((res) => setRate(4.8))
+        .catch((err) => {
+          if (err.name === "AbortError") {
+            console.log("successfully aborted");
+          } else {
+            console.log(err)
+          }
+        })
+    }
+    fetchRate("CAD", "PKR")
+    return () => controller.abort()
+  }, [formik.values.destinationContactId, formik.values.sourceAccountId])
 
   const setSourceAmount = (e: ChangeEvent<HTMLInputElement>) => {
     const sourceAmount = Math.round(Number(e.target.value) * 100) / 100
@@ -184,7 +163,6 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           // onChange={formik.handleChange}
           onChange={e => {
             formik.setFieldValue('sourceAccountId', e.target.value)
-            // console.log(e.target.value, formik.errors.sourceAccountId)
           }}
           errorMessage={formik.touched.sourceAccountId && formik.errors.sourceAccountId}
         >
@@ -214,7 +192,6 @@ export default function TransferFrom({sourceAccountId, destinationContactId}: Pr
           onBlur={formik.handleBlur}
           onChange={e => {
             formik.setFieldValue('destinationContactId', e.target.value)
-            // console.log(e.target.value, formik.errors.destinationContactId)
           }}
           errorMessage={formik.touched.destinationContactId && formik.errors.destinationContactId}
         >

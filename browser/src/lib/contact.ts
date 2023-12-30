@@ -264,6 +264,7 @@ const GetContactSelect = {
   status: true,
   firstName: true,
   lastName: true,
+  currency: true,
   type: true,
   bankAccountNum: true,
   iban: true,

@@ -9,7 +9,8 @@ export type GetAccount = Prisma.AccountGetPayload<{
     id: true,
     status: true,
     type: true,
-    email: true
+    email: true,
+    currency: true
   }
 }>
 export type GetAccounts = GetAccount[]

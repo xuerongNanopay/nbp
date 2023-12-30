@@ -156,8 +156,9 @@ export async function getManyNotifyByOwnerId({
 }
 
 export async function getNotifyDetailByOwnerId
-(userId: number, notificationId: number):
-Promise<Single<GetNotification>>{
+(userId: number, 
+  notificationId: number
+) : Promise<Single<GetNotification>>{
   try {
     const nodification = await getPrismaClient().notification.findUnique({
       where: {
