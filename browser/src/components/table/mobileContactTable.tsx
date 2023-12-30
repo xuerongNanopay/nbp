@@ -28,7 +28,7 @@ import { SearchIcon } from '@/icons/SearchIcon'
 import { PlusIcon } from '@/icons/PlusIcon'
 import { EyeIcon } from '@/icons/EyeIcon'
 import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
-import { GetContactItem, GetContacts } from '@/types/contact';
+import { GetContact, GetContacts } from '@/types/contact';
 import { ContactStatus, ContactType } from '@prisma/client';
 
 const statusOptions = [
@@ -56,7 +56,7 @@ const columns = [
   { name: 'Contact', id: 'contact' }
 ]
 
-const StatusCell = ({status}: GetContactItem) => {
+const StatusCell = ({status}: GetContact) => {
   return (
     <Chip className="capitalize" color={statusColorMap[status]} size="sm" variant="flat">
       {statusTextMap[status]}
@@ -64,7 +64,7 @@ const StatusCell = ({status}: GetContactItem) => {
   )
 }
 
-const ContactSummaryCell = ({contact}:{ contact: GetContactItem}) => {
+const ContactSummaryCell = ({contact}:{ contact: GetContact}) => {
   return (
     <div className="flex justify-between">
       <div className="flex flex-col ms-2">
@@ -95,7 +95,7 @@ const ContactSummaryCell = ({contact}:{ contact: GetContactItem}) => {
   )
 }
 
-const ActionsCell = (contact: GetContactItem) => {
+const ActionsCell = (contact: GetContact) => {
   return (
     <div className="relative flex items-center gap-2">
       <Link href={`/contacts/${contact.id}`}>
@@ -117,7 +117,7 @@ export default function ContactTable({className, contacts}: {className?: string,
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
   const [statusFilter, setStatusFilter] = React.useState<Selection>('all')
 
-  const renderCell = React.useCallback((contact: GetContactItem, columnKey: React.Key) => {
+  const renderCell = React.useCallback((contact: GetContact, columnKey: React.Key) => {
     switch(columnKey) {
       case "contact":
         return (
