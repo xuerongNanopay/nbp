@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo, ChangeEvent, FormEvent } from "react"
 import { useFormik } from "formik"
-import * as Yup from 'yup'
 import {
   Input,
   Button,
@@ -19,6 +18,7 @@ import { GetContact, GetContacts } from "@/types/contact"
 import { HttpGET } from "@/types/http"
 import { AccountType, ContactType } from "@prisma/client"
 import { blurEmail } from "@/utils/textUtil"
+import type { CurrencyRate } from "@/types/currency"
 
 
 export default function TransferFrom() {
@@ -26,6 +26,7 @@ export default function TransferFrom() {
   const [sourceCurrency, setSourceCurrency ] = useState<string|null>(null)
   const [destinationCurrency, setDestinationCurrency ] = useState<string|null>(null)
   const [destinationAmount, setDestinationAmount] = useState<number>(0.0)
+  const [currencyRate, setCurrencyRate] = useState<number>(0.0)
   const [sourceAccounts, setSourceAccounts] = useState<GetAccount[]>([])
   const [destinationContacts, setDestinationContacts] = useState<GetContact[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -99,10 +100,12 @@ export default function TransferFrom() {
   //Fetch Rate.
   useEffect(() => {
     setRate(0)
+    setCurrencyRate(0.0)
     formik.setFieldValue('sourceAmount', 0)
     formik.setFieldValue('destinationAmount', 0)
     setSourceCurrency(null)
     setDestinationCurrency(null)
+    setDisableAmountInput(true)
 
     const sa = sourceAccounts.find(s => s.id.toString() === formik.values.sourceAccountId?.toString())
     const dc = destinationContacts.find(s => s.id.toString() === formik.values.destinationContactId?.toString())
@@ -114,25 +117,27 @@ export default function TransferFrom() {
     const controller = new AbortController()
     const signal = controller.signal
 
-    async function fetchRate(sourceCurrency: string, destinationCurrency: string) {
-      fetch("/api/nbp/user/accounts", { signal: signal })
-        .then((res) => res.json())
-        .then((res) => setRate(4.8))
-        .catch((err) => {
-          if (err.name === "AbortError") {
-            console.log("successfully aborted");
-          } else {
-            console.log(err)
-          }
-        })
+    async function fetchCurrencyRate(sourceCurrency: string, destinationCurrency: string) {
+      try {
+        const response = await fetch(`/api/nbp/common/currency_rate?sourceCurrency=${sourceCurrency}&destinationCurrency=${destinationCurrency}`, { signal: signal })
+        const responsePayload = await response.json() as HttpGET<CurrencyRate>
+        const currencyRate = responsePayload.payload.single
+
+        setCurrencyRate(currencyRate.value)
+        setDisableAmountInput(false)
+      } catch (err) {
+        //TODO: useAlert
+        console.error(err)
+      }
     }
-    fetchRate("CAD", "PKR")
+    fetchCurrencyRate(sa.currency, dc.currency)
     return () => controller.abort()
   }, [formik.values.destinationContactId, formik.values.sourceAccountId])
 
   const setSourceAmount = (e: ChangeEvent<HTMLInputElement>) => {
     const sourceAmount = Math.round(Number(e.target.value) * 100) / 100
-    const destinationAmount =  Math.round(sourceAmount * rate * 100) / 100
+    const destinationAmount =  Math.round(sourceAmount * currencyRate * 100) / 100
+    setDestinationAmount(destinationAmount)
     formik.setFieldValue('sourceAmount', sourceAmount)
     formik.setFieldValue('destinationAmount', destinationAmount)
   }
@@ -247,7 +252,7 @@ export default function TransferFrom() {
           isDisabled={disableAmountInput}
           disabled
           min="0"
-          description={`Rate: 1.00 CAD \u2248 2000.00 PRK`}
+          description={`Rate: 1.00 CAD \u2248 ${currencyRate} PRK`}
           value={`${destinationAmount}`}
           startContent={
             <div className="pointer-events-none flex items-center">

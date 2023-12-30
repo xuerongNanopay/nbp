@@ -2,7 +2,7 @@ import { getCurrencyRate } from "@/lib/currencyRate";
 import { assertSession } from "@/lib/guard";
 import { fetchSession } from "@/lib/session";
 import { ResourceNoFoundError, UnauthenticateError } from "@/schema/error";
-import { CurrencyRate } from "@/types/currency";
+import type { CurrencyRate } from "@/types/currency";
 import { HttpGET } from "@/types/http";
 import { LOGGER, formatSession } from "@/utils/logUtil";
 
