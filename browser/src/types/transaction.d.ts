@@ -4,7 +4,7 @@ export interface TransactionQuoteDate {
   sourceAmount: number
 }
 
-export interface TransactionConfirmDate {
+export interface TransactionConfirmData {
   transactionId: number
 }
 
