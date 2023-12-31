@@ -37,12 +37,12 @@ async function countTransactions(
     statuses?: TransactionStatus[]
   }
 ) {
-  
+
 }
 
 async function getTransactionDetailByOwnerId(
   session: Session, 
   transactionId: number
-  ) {
+) {
 
 }
