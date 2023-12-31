@@ -230,7 +230,7 @@ export default function TransactionTable({className, transactions}: {className?:
             <Button 
               color="primary"
               endContent={<PlusIcon />}
-              href="/transfer"
+              href="/nbp/transfer"
               as={Link}
             >              
               Transfer

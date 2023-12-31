@@ -7,7 +7,13 @@ import {
   Button,
   Select, 
   SelectItem,
-  SelectedItems
+  SelectedItems,
+  useDisclosure,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from "@nextui-org/react"
 
 import { TransactionQuoteDate } from "@/types/transaction"
@@ -15,11 +21,11 @@ import { TransactionQuoteValidator } from "@/schema/validator"
 import { GetAccount, GetAccounts } from "@/types/account"
 import { GetContact, GetContacts } from "@/types/contact"
 import { HttpGET } from "@/types/http"
-import { AccountType, ContactType } from "@prisma/client"
+import { ContactType } from "@prisma/client"
 import { blurEmail } from "@/utils/textUtil"
-import type { CurrencyRate } from "@/types/currency"
 import { useAlert } from "@/hook/useAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
+import { AlertFunc } from "@/types/log"
 
 export default function TransferFrom() {
   const alert = useAlert() ?? CONSOLE_ALERT
@@ -31,14 +37,10 @@ export default function TransferFrom() {
   const [currencyRate, setCurrencyRate] = useState<number>(0.0)
   const [sourceAccounts, setSourceAccounts] = useState<GetAccount[]>([])
   const [destinationContacts, setDestinationContacts] = useState<GetContact[]>([])
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSubmit, setIsSubmit] = useState(false)
-  const [rate, setRate] = useState(0)
-
-  const closeModal = () => {
-    setIsModalOpen(false)
+  const {isOpen, onOpen, onOpenChange} = useDisclosure({onClose: () => {
     setIsSubmit(false)
-  }
+  },})
 
   const initialValues: Partial<TransactionQuoteDate> = {
     sourceAccountId: 0,
@@ -51,8 +53,7 @@ export default function TransferFrom() {
     console.log(e)
     setIsSubmit(true)
     //TODO: making button loading
-    //
-    setIsModalOpen(true)
+    // setIsModalOpen(true)
   }
 
   const formik = useFormik<Partial<TransactionQuoteDate>>({
@@ -84,14 +85,22 @@ export default function TransferFrom() {
   useEffect(() => {
     const controller = new AbortController()
     const fetchAccounts = async () => {
-      const response = await fetch('/api/nbp/user/accounts', { signal: controller.signal })
-      const resposnePayload = await response.json() as HttpGET<GetAccounts>
-      setSourceAccounts(resposnePayload.payload.many)
+      try {
+        const response = await fetch('/api/nbp/user/accounts', { signal: controller.signal })
+        const resposnePayload = await response.json() as HttpGET<GetAccounts>
+        setSourceAccounts(resposnePayload.payload.many)
+      } catch ( err ) {
+        console.error(err)
+      }
     }
     const fetchContacts = async () => {
-      const response = await fetch('/api/nbp/user/contacts', { signal: controller.signal })
-      const responsePayload = await response.json() as HttpGET<GetContacts>
-      setDestinationContacts(responsePayload.payload.many)
+      try {
+        const response = await fetch('/api/nbp/user/contacts', { signal: controller.signal })
+        const responsePayload = await response.json() as HttpGET<GetContacts>
+        setDestinationContacts(responsePayload.payload.many)
+      } catch ( err ) {
+        console.error(err)
+      }
     }
 
     fetchAccounts()
@@ -101,7 +110,6 @@ export default function TransferFrom() {
 
   //Fetch Rate.
   useEffect(() => {
-    setRate(0)
     setCurrencyRate(0.0)
     formik.setFieldValue('sourceAmount', 0)
     formik.setFieldValue('destinationAmount', 0)
@@ -312,15 +320,27 @@ function ConfirmTransferModal(
     transaction,
     isOpen,
     onOpenChange,
-    onConfirmSubmit
+    alert
   }: {
     transaction: any,
     isOpen: boolean,
     onOpenChange: () => void,
-    onConfirmSubmit: () => void,
+    alert: AlertFunc,
   }
 ) {
-  
+  return (
+    <Modal placement="center" hideCloseButton isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
+      <ModalContent>
+        {
+          (onClose) => (
+            <>
+            
+            </>
+          )
+        }
+      </ModalContent>
+    </Modal>
+  )
 }
 
 function ContactSelectShow({contact}: {contact: GetContact}) {

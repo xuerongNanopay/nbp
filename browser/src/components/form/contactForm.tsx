@@ -92,8 +92,8 @@ export default function ContactForm() {
   const alert = useAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isSubmit, setIsSubmit] = useState<boolean>(false)
-  const {isOpen, onOpen, onOpenChange} = useDisclosure({onChange(isOpen) {
-    if (isOpen === false) setIsSubmit(false)
+  const {isOpen, onOpen, onOpenChange} = useDisclosure({onClose: () => {
+    setIsSubmit(false)
   },})
 
   const createContact = async (e: Partial<ContactData>) => { 
