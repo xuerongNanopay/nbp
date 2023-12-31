@@ -11,6 +11,8 @@ export const LOG_LEVEL = assertENVString('LOG_LEVEL', DEFAULT_LOG_LEVEL)
 
 export const NOTIFICATION_PAGINATION_AGE_SEC = 180 * 24 * 60 * 60 // 90 days
 
+export const DAILY_TRANSATION_LIMIT = assertENVNumber('DAILY_TRANSATION_LIMIT')
+
 function assertENVNumber(key: string, DEFAULT?: number): number {
   const value = process.env[key]
 
