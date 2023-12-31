@@ -19,9 +19,12 @@ import { HttpGET } from "@/types/http"
 import { AccountType, ContactType } from "@prisma/client"
 import { blurEmail } from "@/utils/textUtil"
 import type { CurrencyRate } from "@/types/currency"
-
+import { useAlert } from "@/hook/useAlert"
+import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 export default function TransferFrom() {
+  const alert = useAlert() ?? CONSOLE_ALERT
+
   const [disableAmountInput, setDisableAmountInput] = useState(true)
   const [sourceCurrency, setSourceCurrency ] = useState<string|null>(null)
   const [destinationCurrency, setDestinationCurrency ] = useState<string|null>(null)
@@ -120,13 +123,16 @@ export default function TransferFrom() {
     async function fetchCurrencyRate(sourceCurrency: string, destinationCurrency: string) {
       try {
         const response = await fetch(`/api/nbp/common/currency_rate?sourceCurrency=${sourceCurrency}&destinationCurrency=${destinationCurrency}`, { signal: signal })
-        const responsePayload = await response.json() as HttpGET<CurrencyRate>
-        const currencyRate = responsePayload.payload.single
-
-        setCurrencyRate(currencyRate.value)
-        setDisableAmountInput(false)
+        const responsePayload = await response.json()
+        if (responsePayload.code >> 7 === 1) {
+          const currencyRate = responsePayload.payload.single
+          setCurrencyRate(currencyRate.value)
+          setDisableAmountInput(false)
+        } else {
+          alert.error(responsePayload.message)
+        }
       } catch (err) {
-        //TODO: useAlert
+        alert.error("Please try later")
         console.error(err)
       }
     }

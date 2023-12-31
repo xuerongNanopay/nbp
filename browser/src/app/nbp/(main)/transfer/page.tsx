@@ -1,4 +1,5 @@
 import { TransferForm } from "@/components/form"
+import { AlertProvider } from "@/hook/useAlert"
 
 export default function TransferView({
   searchParams
@@ -15,7 +16,9 @@ export default function TransferView({
           <TransferForm sourceAccountId={from} destinationContactId={to}/>
           : <TransferForm/>
         } */}
-        <TransferForm/>
+        <AlertProvider>
+          <TransferForm/>
+        </AlertProvider>
       </div>
     </>
   )
