@@ -285,7 +285,7 @@ export default function TransferFrom() {
           isLoading={isSubmit}
           isDisabled={!(formik.isValid && formik.dirty)}
         >
-          Quote
+          <p className="font-semibold text-lg">Send</p>
         </Button>
       </form>
     </div>
