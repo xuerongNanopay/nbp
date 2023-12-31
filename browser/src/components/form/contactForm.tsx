@@ -66,7 +66,7 @@ const ConfirmModal = (
                 <ModalBody>
                   <p>We can&apos;t verify your account info with NBP</p>
                   <p className="text-slate-600">If you are guarantee that the contact you added is corrent</p>
-                  <p className="text-slate-600">Please click SAVE button</p>
+                  <p className="text-slate-600">Please click <span className="text-green-800 font-semibold italic">SAVE</span> button</p>
                 </ModalBody>
                 <ModalFooter>
                   <Button color="danger" variant="light" onPress={onClose}>

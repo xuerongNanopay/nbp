@@ -10,7 +10,6 @@ import {
   SelectedItems
 } from "@nextui-org/react"
 
-import { ConfirmTransferModal } from '@/components/modal'
 import { TransactionQuoteDate } from "@/types/transaction"
 import { TransactionQuoteValidator } from "@/schema/validator"
 import { GetAccount, GetAccounts } from "@/types/account"
@@ -306,6 +305,22 @@ function ContactSelectItem({contact}: {contact: GetContact}) {
       <Account/>
     </div>
   )
+}
+
+function ConfirmTransferModal(
+  {
+    transaction,
+    isOpen,
+    onOpenChange,
+    onConfirmSubmit
+  }: {
+    transaction: any,
+    isOpen: boolean,
+    onOpenChange: () => void,
+    onConfirmSubmit: () => void,
+  }
+) {
+  
 }
 
 function ContactSelectShow({contact}: {contact: GetContact}) {
