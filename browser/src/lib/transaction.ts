@@ -51,28 +51,25 @@ export async function quoteTransaction(
       }
     })
     //THINK: Get transactions, then compare. Or, Let DB handle the query.
+    //MOVE: move to confirm transaction.
+    //Something to Battle.
     const usedAmountPromise = await getPrismaClient().transaction.aggregate({
       _sum: {
         sourceAmount: true
       },
       where: {
         ownerId: session.user?.id,
-        quoteExpired: {
-          lt: new Date()
-        },
         createdAt: {
           //TODO: check if it is Toronto locale.
           gte: Time().startOf('day').toDate()
         },
         status: {
-          not: {
-            in: [
-              TransactionStatus.CANCEL,
-              TransactionStatus.REJECT,
-              TransactionStatus.REFUND,
-              TransactionStatus.REFUND_IN_PROGRESS
-            ]
-          }
+          in: [
+            TransactionStatus.COMPLETE,
+            TransactionStatus.INITIAL,
+            TransactionStatus.PROCESS,
+            TransactionStatus.WAITING_FOR_PAYMENT
+          ]
         }
       }
     })
@@ -123,9 +120,73 @@ export async function quoteTransaction(
   }
 }
 
-async function confirmTransaction(session: Session, transactionConfirm: TransactionConfirmData) {
-  //Ensure the transaction still valid
-  //Mark Transaction to Initial. and send to transaction process server.
+
+
+async function confirmTransaction(session: Session, transactionConfirmData: TransactionConfirmData) {
+  try {
+
+    const transactionPromise = await getPrismaClient().transaction.findUnique({
+      where: {
+        id: transactionConfirmData.transactionId,
+        status: TransactionStatus.QUOTE,
+        owner: session.user?.id,
+      },
+      select: {
+        id: true,
+        quoteExpired: true
+      }
+    })
+
+    const usedAmountPromise = await getPrismaClient().transaction.aggregate({
+      _sum: {
+        sourceAmount: true
+      },
+      where: {
+        ownerId: session.user?.id,
+        createdAt: {
+          //TODO: check if it is Toronto locale.
+          gte: Time().startOf('day').toDate()
+        },
+        status: {
+          in: [
+            TransactionStatus.COMPLETE,
+            TransactionStatus.INITIAL,
+            TransactionStatus.PROCESS,
+            TransactionStatus.WAITING_FOR_PAYMENT
+          ]
+        }
+      }
+    })
+
+    const rets = await Promise.all([transactionPromise, usedAmountPromise])
+    const [transaction, usedAmount] = rets
+
+    if (
+      (DAILY_TRANSATION_LIMIT*100 - 
+      (!usedAmount._sum.sourceAmount ? 0 : usedAmount._sum.sourceAmount)*100)
+      < 0
+    ) throw new ForbiddenError(`Over Limit: \$${DAILY_TRANSATION_LIMIT}.00 per day`)
+
+    if (!transaction) throw new ForbiddenError("Transaction no found")
+    if (transaction.quoteExpired.getTime() < new Date().getTime()) throw new ForbiddenError("Quote expired")
+
+    getPrismaClient().transaction.update({
+      where: {
+        id: transactionConfirmData.transactionId,
+        status: TransactionStatus.QUOTE,
+        owner: session.user?.id,
+      },
+      data: {
+        status: TransactionStatus.INITIAL,
+        confirmQuoteAt: new Date()
+      }
+    })
+
+  }  catch (err) {
+    if ( err instanceof NBPError) throw err
+    LOGGER.error(formatSession(session), "Method: quoteTransaction", err)
+    throw new InternalError()
+  }
 }
 
 async function getTransactionsByOwnerId(
