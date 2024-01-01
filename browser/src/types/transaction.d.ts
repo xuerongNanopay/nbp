@@ -45,3 +45,17 @@ export type TransactionQuoteResult = Prisma.TransactionGetPayload<{
     }
   }
 }>
+
+export type TransactionConfirmResult = Prisma.TransactionGetPayload<{
+  select: {
+    id: true,
+    cashIn: {
+      select: {
+        id: true,
+        status: true,
+        method: true,
+        paymentLink: true
+      }
+    }
+  }
+}>

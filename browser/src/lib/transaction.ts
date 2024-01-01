@@ -3,6 +3,7 @@ import { ForbiddenError, InternalError, NBPError } from "@/schema/error";
 import { Session } from "@/types/auth";
 import { 
   TransactionConfirmData, 
+  TransactionConfirmResult, 
   TransactionQuoteDate, 
   TransactionQuoteResult
 } from "@/types/transaction";
@@ -200,7 +201,7 @@ export async function quoteTransaction(
 async function confirmTransaction(
   session: Session, 
   transactionConfirmData: TransactionConfirmData
-) : Promise<> {
+) : Promise<TransactionConfirmResult> {
   try {
 
     const transactionPromise = await getPrismaClient().transaction.findUnique({
@@ -259,7 +260,15 @@ async function confirmTransaction(
         confirmQuoteAt: new Date()
       },
       select: {
-        id: true
+        id: true,
+        cashIn: {
+          select: {
+            id: true,
+            status: true,
+            method: true,
+            paymentLink: true
+          }
+        }
       }
     })
 
