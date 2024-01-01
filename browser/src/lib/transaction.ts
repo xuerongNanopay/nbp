@@ -51,7 +51,9 @@ export async function quoteTransaction(
       select: {
         id: true,
         currency: true,
-        status: true
+        status: true,
+        firstName: true,
+        lastName: true
       }
     })
     //THINK: Get transactions, then compare. Or, Let DB handle the query.
@@ -147,6 +149,7 @@ export async function quoteTransaction(
         sourceCurrency: account.currency,
         destinationAmount: rateConvertedAmount,
         destinationCurrency: contact.currency,
+        destinationName: `${contact.firstName} ${contact.lastName}`,
         feeAmount: 0,
         feeCurrency: account.currency,
         debitAmount: rateConvertedAmount,
@@ -185,7 +188,13 @@ export async function quoteTransaction(
             iban: true,
             currency: true
           }
-        }
+        },
+        destinationAmount: true,
+        destinationCurrency: true,
+        feeAmount: true,
+        feeCurrency: true,
+        debitAmount: true,
+        debitCurrency: true
       }
     })
     return transaction

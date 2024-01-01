@@ -420,8 +420,9 @@ model Transaction {
   sourceAmount   Int
   sourceCurrency String @db.Char(3)
 
-  destinationAmount   Int
-  destinationCurrency String @db.Char(3)
+  destinationAmount         Int
+  destinationCurrency       String @db.Char(3)
+  destinationName           String
 
   feeAmount   Int
   feeCurrency String @db.Char(3)

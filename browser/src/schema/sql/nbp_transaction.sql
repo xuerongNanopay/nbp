@@ -11,6 +11,8 @@ create table transaction(
 
     destinationAmount INTEGER not null,
     destinationCurrency char(3) not null,
+    destinationName varchar(255) not null,
+    destinationContactSummary varchar(255) not null,
 
     feeAmount Integer not null,
     feeCurrency char(3) not null,

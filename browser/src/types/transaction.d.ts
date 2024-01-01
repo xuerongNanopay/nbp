@@ -42,7 +42,13 @@ export type TransactionQuoteResult = Prisma.TransactionGetPayload<{
         iban: true,
         currency: true
       }
-    }
+    },
+    destinationAmount: true,
+    destinationCurrency: true,
+    feeAmount: true,
+    feeCurrency: true,
+    debitAmount: true,
+    debitCurrency: true
   }
 }>
 
@@ -57,5 +63,17 @@ export type TransactionConfirmResult = Prisma.TransactionGetPayload<{
         paymentLink: true
       }
     }
+  }
+}>
+
+export type GetTransaction = Prisma.TransactionGetPayload<{
+  select: {
+    id: true,
+    status: true,
+    createdAt: true,
+    sourceAmount: true,
+    sourceCurrency: true,
+    destinationAmount: true,
+    destinationCurrency: true,
   }
 }>
