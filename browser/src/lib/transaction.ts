@@ -2,6 +2,7 @@ import { DAILY_TRANSATION_LIMIT, QUOTE_EXPIRE_SEC } from "@/constants/env";
 import { ForbiddenError, InternalError, NBPError } from "@/schema/error";
 import { Session } from "@/types/auth";
 import { 
+  GetTransactions,
   TransactionConfirmData, 
   TransactionConfirmResult, 
   TransactionQuoteDate, 
@@ -298,8 +299,34 @@ async function getTransactionsByOwnerId(
     size?: Number,
     statuses?: TransactionStatus[]
   }
-) {
-
+) : Promise<GetTransactions> {
+  try {
+    const transactions = await getPrismaClient().transaction.findMany({
+      where: {
+        ownerId: session.user!.id,
+        status: {
+          not: TransactionStatus.QUOTE
+        }
+      },
+      orderBy: {
+        id: 'desc'
+      },
+      select: {
+        id: true,
+        status: true,
+        createdAt: true,
+        sourceAmount: true,
+        sourceCurrency: true,
+        destinationAmount: true,
+        destinationCurrency: true,
+        destinationName: true
+      }
+    })
+    return transactions
+  } catch (err) {
+    LOGGER.error(formatSession(session), "Method: getTransactionsByOwnerId", err)
+    throw new InternalError()
+  }
 }
 
 async function countTransactions(

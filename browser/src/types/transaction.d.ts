@@ -66,6 +66,8 @@ export type TransactionConfirmResult = Prisma.TransactionGetPayload<{
   }
 }>
 
+export type GetTransactions = GetTransaction[]
+
 export type GetTransaction = Prisma.TransactionGetPayload<{
   select: {
     id: true,
@@ -75,5 +77,6 @@ export type GetTransaction = Prisma.TransactionGetPayload<{
     sourceCurrency: true,
     destinationAmount: true,
     destinationCurrency: true,
+    destinationName: true
   }
 }>
