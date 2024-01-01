@@ -1,7 +1,8 @@
 import { DAILY_TRANSATION_LIMIT, QUOTE_EXPIRE_SEC } from "@/constants/env";
-import { ForbiddenError, InternalError, NBPError } from "@/schema/error";
+import { ForbiddenError, InternalError, NBPError, ResourceNoFoundError } from "@/schema/error";
 import { Session } from "@/types/auth";
 import { 
+  GetTransactionDetail,
   GetTransactions,
   TransactionConfirmData, 
   TransactionConfirmResult, 
@@ -297,9 +298,12 @@ async function getTransactionsByOwnerId(
   options?: {
     from?: Number,
     size?: Number,
+    searchKey?: String,
     statuses?: TransactionStatus[]
   }
 ) : Promise<GetTransactions> {
+  // const wherePredicate = { take: 50 } // Maximum size for each query
+  // if (!!options?.from) 
   try {
     const transactions = await getPrismaClient().transaction.findMany({
       where: {
@@ -341,6 +345,69 @@ async function countTransactions(
 async function getTransactionDetailByOwnerId(
   session: Session, 
   transactionId: number
-) {
-
+): Promise<GetTransactionDetail> {
+  try {
+    const transaction = await getPrismaClient().transaction.findUnique({
+      where: {
+        id: transactionId,
+        owner: session.user!.id,
+        status: {
+          not: TransactionStatus.QUOTE
+        }
+      },
+      select: {
+        id: true,
+        sourceAccount: {
+          select: {
+            id: true,
+            type: true,
+            email: true,
+            currency: true
+          }
+        },
+        sourceAmount: true,
+        sourceCurrency: true,
+        destinationContact: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            type: true,
+            status: true,
+            institution: {
+              select: {
+                id: true,
+                abbr: true,
+                name: true
+              }
+            },
+            bankAccountNum: true,
+            branchNum: true,
+            iban: true,
+            currency: true
+          }
+        },
+        destinationAmount: true,
+        destinationCurrency: true,
+        feeAmount: true,
+        feeCurrency: true,
+        debitAmount: true,
+        debitCurrency: true,
+        cashIn: {
+          select: {
+            status: true,
+            method: true,
+            paymentLink: true,
+            cashInReceiveAt: true
+          }
+        }
+      }
+    })
+    if (!transaction) throw new ResourceNoFoundError("Resource no found.");
+    return transaction
+  } catch (err) {
+    if ( err instanceof NBPError) throw err
+    LOGGER.error(formatSession(session), "Method: getTransactionDetailByOwnerId", err)
+    throw new InternalError()
+  }
 }

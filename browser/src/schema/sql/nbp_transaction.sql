@@ -101,7 +101,7 @@ create table cash_in(
     ownerId bigint unsigned not null,
     transactionId bigint unsigned not null,
 
-    CashInReceiveAt timestamp null,
+    cashInReceiveAt timestamp null,
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp,
 
