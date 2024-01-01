@@ -12,9 +12,9 @@ import {
 import type {
   NextRequest
 } from 'next/server'
-import { TransactionQuoteDateValidator } from '@/schema/validator'
-import type { TransactionQuoteDate, TransactionQuoteResult } from '@/types/transaction'
-import { quoteTransaction } from '@/lib/transaction'
+import { TransactionConfirmDataValidator } from '@/schema/validator'
+import type { TransactionConfirmData, TransactionConfirmResult, TransactionQuoteResult } from '@/types/transaction'
+import { confirmTransaction } from '@/lib/transaction'
 import { HttpPOST } from '@/types/http'
 
 export async function POST(req: NextRequest) {
@@ -25,10 +25,10 @@ export async function POST(req: NextRequest) {
     if (!assertActiveUser(session)) throw new ForbiddenError("Inactive User")
 
     const quotePayload = await req.json()
-    const quoteData = await castAndValidateData(quotePayload, TransactionQuoteDateValidator) as TransactionQuoteDate
+    const quoteData = await castAndValidateData(quotePayload, TransactionConfirmDataValidator) as TransactionConfirmData
 
-    const transaction = await quoteTransaction(session, quoteData)
-    const responsePayload: HttpPOST<TransactionQuoteResult> = {
+    const transaction = await confirmTransaction(session, quoteData)
+    const responsePayload: HttpPOST<TransactionConfirmResult> = {
       code: 201,
       message: 'Quote successfully.',
       payload: {
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
       }
     })
   } catch(err: any) {
-    LOGGER.error(formatSession(session), "API: transactions/quote-POST", err)
+    LOGGER.error(formatSession(session), "API: transactions/confirm-POST", err)
 
     const errorResponse = !err.errors ? {
       code: err.code,

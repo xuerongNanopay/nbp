@@ -17,7 +17,7 @@ import {
 } from "@nextui-org/react"
 
 import { TransactionQuoteDate } from "@/types/transaction"
-import { TransactionQuoteValidator } from "@/schema/validator"
+import { TransactionQuoteDateValidator } from "@/schema/validator"
 import { GetAccount, GetAccounts } from "@/types/account"
 import { GetContact, GetContacts } from "@/types/contact"
 import { HttpGET } from "@/types/http"
@@ -58,7 +58,7 @@ export default function TransferFrom() {
 
   const formik = useFormik<Partial<TransactionQuoteDate>>({
     initialValues,
-    validationSchema: TransactionQuoteValidator,
+    validationSchema: TransactionQuoteDateValidator,
     onSubmit: quoteTransaction
   })
 

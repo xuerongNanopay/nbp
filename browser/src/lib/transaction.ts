@@ -209,7 +209,7 @@ export async function quoteTransaction(
 
 
 
-async function confirmTransaction(
+export async function confirmTransaction(
   session: Session, 
   transactionConfirmData: TransactionConfirmData
 ) : Promise<TransactionConfirmResult> {
