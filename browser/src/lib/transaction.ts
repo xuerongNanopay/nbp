@@ -182,6 +182,8 @@ async function confirmTransaction(session: Session, transactionConfirmData: Tran
       }
     })
 
+    //TODO: send to Transaction Processor.
+
   }  catch (err) {
     if ( err instanceof NBPError) throw err
     LOGGER.error(formatSession(session), "Method: quoteTransaction", err)
