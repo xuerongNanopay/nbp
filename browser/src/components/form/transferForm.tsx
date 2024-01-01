@@ -38,8 +38,9 @@ export default function TransferFrom() {
   const [sourceAccounts, setSourceAccounts] = useState<GetAccount[]>([])
   const [destinationContacts, setDestinationContacts] = useState<GetContact[]>([])
   const [isSubmit, setIsSubmit] = useState(false)
-  const [quoteTransactionResult, setQuoteTransactionResult] = useState<TransactionQuoteResult>(null)
+  const [quoteTransactionResult, setQuoteTransactionResult] = useState<TransactionQuoteResult|null>(null)
   const {isOpen, onOpen, onOpenChange} = useDisclosure({onClose: () => {
+    setQuoteTransactionResult(null)
     setIsSubmit(false)
   },})
 
@@ -61,10 +62,6 @@ export default function TransferFrom() {
     initialValues,
     validationSchema: TransactionQuoteDateValidator,
     onSubmit: quoteTransaction
-  })
-
-  useEffect(() => {
-
   })
 
   useEffect(() => {
@@ -160,6 +157,7 @@ export default function TransferFrom() {
     <div className="w-full max-w-xl">
       <h4 className="text-2xl font-bold mb-6 text-center">Transaction Details</h4>
       <p className="text-base mb-6 text-center">Enter the details for your transaction.</p>
+      <ConfirmTransferModal transaction={quoteTransactionResult} isOpen={isOpen} onOpenChange={onOpenChange} alert={alert}/>
       {/* <ConfirmTransferModal isOpen={isModalOpen} closeModal={closeModal} quoteSummary={quoteSummary}/> */}
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Select
@@ -323,12 +321,18 @@ function ConfirmTransferModal(
     onOpenChange,
     alert
   }: {
-    transaction: any,
+    transaction: TransactionQuoteResult | null,
     isOpen: boolean,
     onOpenChange: () => void,
     alert: AlertFunc,
   }
 ) {
+  if (!transaction) return (<></>)
+
+  const confirmTransaction = async() => {
+    console.log(transaction)
+  }
+
   return (
     <Modal placement="center" hideCloseButton isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
       <ModalContent>
