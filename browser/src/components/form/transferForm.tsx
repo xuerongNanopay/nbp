@@ -1,6 +1,11 @@
 'use client'
 
-import { useState, useEffect, useMemo, ChangeEvent, FormEvent } from "react"
+import { 
+  useState, 
+  useEffect, 
+  ChangeEvent
+} from 'react'
+
 import { useFormik } from "formik"
 import {
   Input,
@@ -20,7 +25,7 @@ import { TransactionQuoteDate, TransactionQuoteResult } from "@/types/transactio
 import { TransactionQuoteDateValidator } from "@/schema/validator"
 import { GetAccount, GetAccounts } from "@/types/account"
 import { GetContact, GetContacts } from "@/types/contact"
-import { HttpGET } from "@/types/http"
+import { HttpGET, HttpPOST } from "@/types/http"
 import { ContactType } from "@prisma/client"
 import { blurEmail } from "@/utils/textUtil"
 import { useAlert } from "@/hook/useAlert"
@@ -51,9 +56,32 @@ export default function TransferFrom() {
     
   }
 
-  const quoteTransaction = (e: Partial<TransactionQuoteDate>) => {
-    console.log(e)
+  const quoteTransaction = async (e: Partial<TransactionQuoteDate>) => {
     setIsSubmit(true)
+    try {
+      const response = await fetch("/api/nbp/user/transactions/quote", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(e)
+      })
+      const responsePayload = await response.json()
+      if (responsePayload.code >> 7 === 1) {
+        //TODO: onpen wizard.
+        const response = responsePayload as HttpPOST<TransactionQuoteResult>
+        const transaction = response.payload.single
+        setQuoteTransactionResult(transaction)
+        onOpen()
+      } else {
+        alert.error(responsePayload.message)
+        setIsSubmit(false)
+      }
+    } catch(err) {
+      alert.error(JSON.stringify(err))
+      console.log(err)
+      setIsSubmit(false)
+    }
     //TODO: making button loading
     // setIsModalOpen(true)
   }
@@ -145,7 +173,8 @@ export default function TransferFrom() {
     return () => controller.abort()
   }, [formik.values.destinationContactId, formik.values.sourceAccountId])
 
-  const setSourceAmount = (e: ChangeEvent<HTMLInputElement>) => {
+  const setSourceAmount = (e: 
+    ChangeEvent<HTMLInputElement>) => {
     const sourceAmount = Math.round(Number(e.target.value) * 100) / 100
     const destinationAmount =  Math.round(sourceAmount * currencyRate * 100) / 100
     setDestinationAmount(destinationAmount)
@@ -339,7 +368,23 @@ function ConfirmTransferModal(
         {
           (onClose) => (
             <>
-            
+              <ModalHeader><p className="text-green-800">Confrim</p></ModalHeader>
+              <ModalBody>
+
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Cancel
+                </Button>
+                <Button 
+                  className="font-bold bg-[#0E793C] text-[#ffffff]" 
+                  onPress={async () => {
+                    await confirmTransaction()
+                    onClose()
+                  }}>
+                    SAVE
+                  </Button>
+              </ModalFooter>
             </>
           )
         }
