@@ -23,7 +23,7 @@ export default async function MainLayout({
           <Nav session={session}/>
         </div>
         <div className="max-w-[1024px] mx-auto lg:hidden">
-          <div className="pt-4 px-2 mb-4">
+          <div className="pt-4 px-2 pb-4">
             {children}
           </div>
         </div>
