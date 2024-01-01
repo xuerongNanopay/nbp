@@ -1,9 +1,10 @@
-import { DAILY_TRANSATION_LIMIT } from "@/constants/env";
+import { DAILY_TRANSATION_LIMIT, QUOTE_EXPIRE_SEC } from "@/constants/env";
 import { ForbiddenError, InternalError, NBPError } from "@/schema/error";
 import { Session } from "@/types/auth";
 import { 
   TransactionConfirmData, 
-  TransactionQuoteDate 
+  TransactionQuoteDate, 
+  TransactionQuoteResult
 } from "@/types/transaction";
 import { LOGGER, formatSession } from "@/utils/logUtil";
 import { getPrismaClient } from "@/utils/prisma";
@@ -13,7 +14,7 @@ import { AccountStatus, ContactStatus, TransactionStatus, UserStatus } from "@pr
 export async function quoteTransaction(
   session: Session, 
   transactionQuoteDate: TransactionQuoteDate
-) : Promise<null> 
+) : Promise<TransactionQuoteResult> 
 {
   //Ensure both user and login are active.
   //Ensure both account and contact are active.
@@ -37,6 +38,7 @@ export async function quoteTransaction(
       },
       select: {
         id: true,
+        currency: true,
         status: true
       }
     })
@@ -47,6 +49,7 @@ export async function quoteTransaction(
       },
       select: {
         id: true,
+        currency: true,
         status: true
       }
     })
@@ -95,7 +98,13 @@ export async function quoteTransaction(
                                     usedAmountPromise,
                                     mostRecentTransactionPromise
                                   ])
-    const [user, account, contact, usedAmount, mostRecentTransaction] = rets
+    const [
+      user, 
+      account, 
+      contact, 
+      usedAmount, 
+      mostRecentTransaction
+    ] = rets
 
     if (!user || user.status != UserStatus.ACTIVE) throw new ForbiddenError("Forbidden User")
     if (!account || account.status != AccountStatus.ACTIVE) throw new ForbiddenError("Forbidden Account")
@@ -111,8 +120,74 @@ export async function quoteTransaction(
       (mostRecentTransaction.createdAt.getTime() - new Date().getTime()) < 4000 // It is no possible for a user to create two transaction within 4 seconds.
     ) throw new ForbiddenError("Please try later")
 
-    // Pass all safety check. Save to create account.
-    return null
+
+    const exchangeRate = await getPrismaClient().currencyRate.findFirst({
+      where: {
+        sourceCurrency: account.currency,
+        destinationCurrency: contact.currency
+      },
+      select: {
+        id: true,
+        value: true
+      }
+    })
+
+    if ( !exchangeRate ) throw new ForbiddenError("Exchange rate not support")
+    
+    //TODO: fee calculate. 
+    const rateConvertedAmount = Math.round((transactionQuoteDate.sourceAmount/100) * exchangeRate.value * 100) 
+    
+    const transaction = await getPrismaClient().transaction.create({
+      data: {
+        status: TransactionStatus.QUOTE,
+        sourceAccountId: account.id,
+        destinationContactId: contact.id,
+        sourceAmount: transactionQuoteDate.sourceAmount,
+        sourceCurrency: account.currency,
+        destinationAmount: rateConvertedAmount,
+        destinationCurrency: contact.currency,
+        feeAmount: 0,
+        feeCurrency: account.currency,
+        debitAmount: rateConvertedAmount,
+        debitCurrency: account.currency,
+        ownerId: session.user!.id,
+        quoteExpired: new Date(new Date().getTime() + QUOTE_EXPIRE_SEC*1000)
+      },
+      select: {
+        id: true,
+        sourceAccount: {
+          select: {
+            id: true,
+            type: true,
+            email: true,
+            currency: true
+          }
+        },
+        sourceAmount: true,
+        sourceCurrency: true,
+        destinationContact: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            type: true,
+            status: true,
+            institution: {
+              select: {
+                id: true,
+                abbr: true,
+                name: true
+              }
+            },
+            bankAccountNum: true,
+            branchNum: true,
+            iban: true,
+            currency: true
+          }
+        }
+      }
+    })
+    return transaction
   }  catch (err) {
     if ( err instanceof NBPError) throw err
     LOGGER.error(formatSession(session), "Method: quoteTransaction", err)
@@ -122,7 +197,10 @@ export async function quoteTransaction(
 
 
 
-async function confirmTransaction(session: Session, transactionConfirmData: TransactionConfirmData) {
+async function confirmTransaction(
+  session: Session, 
+  transactionConfirmData: TransactionConfirmData
+) : Promise<> {
   try {
 
     const transactionPromise = await getPrismaClient().transaction.findUnique({
@@ -170,7 +248,7 @@ async function confirmTransaction(session: Session, transactionConfirmData: Tran
     if (!transaction) throw new ForbiddenError("Transaction no found")
     if (transaction.quoteExpired.getTime() < new Date().getTime()) throw new ForbiddenError("Quote expired")
 
-    getPrismaClient().transaction.update({
+    const updateTransaction = getPrismaClient().transaction.update({
       where: {
         id: transactionConfirmData.transactionId,
         status: TransactionStatus.QUOTE,
@@ -179,11 +257,15 @@ async function confirmTransaction(session: Session, transactionConfirmData: Tran
       data: {
         status: TransactionStatus.INITIAL,
         confirmQuoteAt: new Date()
+      },
+      select: {
+        id: true
       }
     })
 
     //TODO: send to Transaction Processor.
 
+    return updateTransaction
   }  catch (err) {
     if ( err instanceof NBPError) throw err
     LOGGER.error(formatSession(session), "Method: quoteTransaction", err)
