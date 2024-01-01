@@ -47,7 +47,7 @@ export async function quoteTransaction(
     })
     const contactPromise = await getPrismaClient().contact.findUnique({
       where: {
-        id: transactionQuoteDate.sourceAccountId,
+        id: transactionQuoteDate.destinationContactId,
         ownerId: session.user?.id
       },
       select: {
