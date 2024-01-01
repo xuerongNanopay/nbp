@@ -16,7 +16,7 @@ import {
   ModalFooter
 } from "@nextui-org/react"
 
-import { TransactionQuoteDate } from "@/types/transaction"
+import { TransactionQuoteDate, TransactionQuoteResult } from "@/types/transaction"
 import { TransactionQuoteDateValidator } from "@/schema/validator"
 import { GetAccount, GetAccounts } from "@/types/account"
 import { GetContact, GetContacts } from "@/types/contact"
@@ -38,6 +38,7 @@ export default function TransferFrom() {
   const [sourceAccounts, setSourceAccounts] = useState<GetAccount[]>([])
   const [destinationContacts, setDestinationContacts] = useState<GetContact[]>([])
   const [isSubmit, setIsSubmit] = useState(false)
+  const [quoteTransactionResult, setQuoteTransactionResult] = useState<TransactionQuoteResult>(null)
   const {isOpen, onOpen, onOpenChange} = useDisclosure({onClose: () => {
     setIsSubmit(false)
   },})
