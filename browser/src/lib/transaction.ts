@@ -6,7 +6,7 @@ import {
   GetTransactions,
   TransactionConfirmData, 
   TransactionConfirmResult, 
-  TransactionQuoteDate, 
+  TransactionQuoteData, 
   TransactionQuoteResult
 } from "@/types/transaction";
 import { LOGGER, formatSession } from "@/utils/logUtil";
@@ -16,7 +16,7 @@ import { AccountStatus, ContactStatus, TransactionStatus, UserStatus } from "@pr
 
 export async function quoteTransaction(
   session: Session, 
-  transactionQuoteDate: TransactionQuoteDate
+  transactionQuoteData: TransactionQuoteData
 ) : Promise<TransactionQuoteResult> 
 {
   //Ensure both user and login are active.
@@ -36,7 +36,7 @@ export async function quoteTransaction(
     })
     const accountPromise = await getPrismaClient().account.findUnique({
       where: {
-        id: transactionQuoteDate.sourceAccountId,
+        id: transactionQuoteData.sourceAccountId,
         ownerId: session.user?.id
       },
       select: {
@@ -47,7 +47,7 @@ export async function quoteTransaction(
     })
     const contactPromise = await getPrismaClient().contact.findUnique({
       where: {
-        id: transactionQuoteDate.destinationContactId,
+        id: transactionQuoteData.destinationContactId,
         ownerId: session.user?.id
       },
       select: {
@@ -140,9 +140,9 @@ export async function quoteTransaction(
     if ( !exchangeRate ) throw new ForbiddenError("Exchange rate not support")
     
     //TODO: fee calculate. 
-    const rateConvertedAmount = Math.round((transactionQuoteDate.sourceAmount) * exchangeRate.value * 100) 
+    const rateConvertedAmount = Math.round((transactionQuoteData.sourceAmount) * exchangeRate.value * 100) 
     const totalFee = 200 //TODO: change.
-    const debitAmount = rateConvertedAmount + totalFee
+    const debitAmount = Math.round(transactionQuoteData.sourceAmount*100 + totalFee)
 
     const transaction = await getPrismaClient().transaction.create({
       data: {
@@ -150,7 +150,7 @@ export async function quoteTransaction(
         status: TransactionStatus.QUOTE,
         sourceAccountId: account.id,
         destinationContactId: contact.id,
-        sourceAmount: Math.round(transactionQuoteDate.sourceAmount*100),
+        sourceAmount: Math.round(transactionQuoteData.sourceAmount*100),
         sourceCurrency: account.currency,
         destinationAmount: rateConvertedAmount,
         destinationCurrency: contact.currency,

@@ -1,6 +1,6 @@
 import type { Prisma } from '@prisma/client'
   
-export interface TransactionQuoteDate {
+export interface TransactionQuoteData {
   sourceAccountId: number,
   destinationContactId: number,
   sourceAmount: number

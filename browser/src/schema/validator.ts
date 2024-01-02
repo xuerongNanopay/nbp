@@ -13,7 +13,7 @@ import { parse, isDate } from "date-fns";
 import { ContactType } from "@prisma/client";
 import { EditInteracData } from "@/types/account";
 import { NotificationReadMarkData } from "@/types/notification";
-import { TransactionConfirmData, TransactionQuoteDate } from "@/types/transaction";
+import { TransactionConfirmData, TransactionQuoteData } from "@/types/transaction";
 
 const eighteen_years_age = dayjs().subtract(18, 'year').format('YYYY-MM-DD')
 const hundred_years_age = dayjs().subtract(100, 'year').format('YYYY-MM-DD')
@@ -147,7 +147,7 @@ export const NotificationReadMarkDataValidator = Yup.object<NotificationReadMark
   ids: Yup.array().of(Yup.number().integer()).min(1, "At least one notification").required()
 })
 
-export const TransactionQuoteDataValidator = Yup.object<TransactionQuoteDate>({
+export const TransactionQuoteDataValidator = Yup.object<TransactionQuoteData>({
   sourceAccountId: Yup.number().required('Required'),
   destinationContactId: Yup.number().required('Required'),
   sourceAmount: Yup.number().required('Required').moreThan(10, 'Amount must be greater than 10.00 CAD').lessThan(1000, 'Amount must be less than 1000.00 CAD'),

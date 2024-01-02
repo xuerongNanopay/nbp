@@ -18,13 +18,15 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter
+  ModalFooter,
+  Spacer,
+  Divider
 } from "@nextui-org/react"
 
 import { useToastAlert } from "@/hook/useToastAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
-import { TransactionConfirmResult, TransactionQuoteDate, TransactionQuoteResult } from "@/types/transaction"
+import { TransactionConfirmResult, TransactionQuoteData, TransactionQuoteResult } from "@/types/transaction"
 import { TransactionQuoteDataValidator } from "@/schema/validator"
 import { GetAccount, GetAccounts } from "@/types/account"
 import { GetContact, GetContacts } from "@/types/contact"
@@ -51,14 +53,14 @@ export default function TransferForm() {
     setIsSubmit(false)
   },})
 
-  const initialValues: Partial<TransactionQuoteDate> = {
+  const initialValues: Partial<TransactionQuoteData> = {
     sourceAccountId: 0,
     destinationContactId: 0,
     sourceAmount: 0,
     
   }
 
-  const quoteTransaction = async (e: Partial<TransactionQuoteDate>) => {
+  const quoteTransaction = async (e: Partial<TransactionQuoteData>) => {
     setIsSubmit(true)
     try {
       const response = await fetch("/api/nbp/user/transactions/quote", {
@@ -86,7 +88,7 @@ export default function TransferForm() {
     }
   }
 
-  const formik = useFormik<Partial<TransactionQuoteDate>>({
+  const formik = useFormik<Partial<TransactionQuoteData>>({
     initialValues,
     validationSchema: TransactionQuoteDataValidator,
     onSubmit: quoteTransaction
@@ -374,35 +376,80 @@ function ConfirmTransferModal(
       })
       const responsePayload: HttpPOST<TransactionConfirmResult> = await response.json()
       if ( responsePayload.code >> 7 === 1 ) {
-        // toast(<p>&#9989; {responsePayload.message}</p>)
         alert.info(responsePayload.message)
-        // alert.info(responsePayload.message)
       } else {
         alert.error(responsePayload.message)
-        // alert.error(responsePayload.message)
       }
     } catch (err) {
       alert.error(JSON.stringify(err))
-      // alert.error("Please try again later")
       console.error(err)
     }
   }
 
   return (
-    <Modal placement="center" hideCloseButton isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
+    <Modal 
+      placement="center" 
+      hideCloseButton 
+      isOpen={isOpen} 
+      onOpenChange={onOpenChange} 
+      isDismissable={false}
+    >
       <ModalContent>
         {
           (onClose) => (
             <>
-              <ModalHeader><p className="text-green-800">Conformation: </p></ModalHeader>
+              <ModalHeader>
+                <p className="text-green-800">Conformation: </p>
+              </ModalHeader>
+              <Divider/>
               <ModalBody>
-                <div className="sm:flex justify-between">
-                  <div>
-                    <h4 className="font-semibold">Receiver: </h4>
-                    <p></p>
+                <div>
+                  <h4 className="font-semibold">Receiver: </h4>
+                  <div className="flex justify-end">
+                    <div>
+                      <p>{transaction.destinationContact.firstName} {transaction.destinationContact.lastName}</p>
+                      {
+                        transaction.destinationContact.type === ContactType.CASH_PICKUP ? 
+                        <p>NBP(<span className="italic text-slate-600">Cash Pickup</span>)</p> : 
+                        <p>{transaction.destinationContact.institution?.abbr}(<span className="italic text-slate-600">{!!transaction.destinationContact.iban ? transaction.destinationContact.iban : transaction.destinationContact.bankAccountNum}</span>)</p>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold">Send: </h4>
+                  <div className="flex justify-end">
+                    <div>
+                      <p>{(transaction.sourceAmount/100.0).toFixed(2)} {transaction.sourceCurrency}</p>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold">Receive: </h4>
+                  <div className="flex justify-end">
+                    <div>
+                      <p>{(transaction.destinationAmount/100.0).toFixed(2)} {transaction.destinationCurrency}</p>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold">Fee: </h4>
+                  <div className="flex justify-end">
+                    <div>
+                      <p>{(transaction.feeAmount/100.0).toFixed(2)} {transaction.feeCurrency}</p>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-green-800">Total Debited Amount: </h4>
+                  <div className="flex justify-end">
+                    <div>
+                      <p className="font-semibold text-green-800">{(transaction.debitAmount/100.0).toFixed(2)} {transaction.debitCurrency}</p>
+                    </div>
                   </div>
                 </div>
               </ModalBody>
+              <Divider/>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   Cancel
