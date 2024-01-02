@@ -147,10 +147,10 @@ export const NotificationReadMarkDataValidator = Yup.object<NotificationReadMark
   ids: Yup.array().of(Yup.number().integer()).min(1, "At least one notification").required()
 })
 
-export const TransactionQuoteDateValidator = Yup.object<TransactionQuoteDate>({
+export const TransactionQuoteDataValidator = Yup.object<TransactionQuoteDate>({
   sourceAccountId: Yup.number().required('Required'),
   destinationContactId: Yup.number().required('Required'),
-  sourceAmount: Yup.number().required('Required').moreThan(10, 'Amount must be greater than 10').lessThan(1000, 'Amount must be less than 1000'),
+  sourceAmount: Yup.number().required('Required').moreThan(10, 'Amount must be greater than 10.00 CAD').lessThan(1000, 'Amount must be less than 1000.00 CAD'),
 })
 
 export const TransactionConfirmDataValidator = Yup.object<TransactionConfirmData>({

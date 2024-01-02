@@ -12,7 +12,7 @@ import {
 import type {
   NextRequest
 } from 'next/server'
-import { TransactionQuoteDateValidator } from '@/schema/validator'
+import { TransactionQuoteDataValidator } from '@/schema/validator'
 import type { TransactionQuoteDate, TransactionQuoteResult } from '@/types/transaction'
 import { quoteTransaction } from '@/lib/transaction'
 import { HttpPOST } from '@/types/http'
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     if (!assertActiveUser(session)) throw new ForbiddenError("Inactive User")
 
     const quotePayload = await req.json()
-    const quoteData = await castAndValidateData(quotePayload, TransactionQuoteDateValidator) as TransactionQuoteDate
+    const quoteData = await castAndValidateData(quotePayload, TransactionQuoteDataValidator) as TransactionQuoteDate
 
     const transaction = await quoteTransaction(session, quoteData)
     const responsePayload: HttpPOST<TransactionQuoteResult> = {

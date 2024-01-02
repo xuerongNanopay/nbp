@@ -25,7 +25,7 @@ import { useToastAlert } from "@/hook/useToastAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 import { TransactionConfirmResult, TransactionQuoteDate, TransactionQuoteResult } from "@/types/transaction"
-import { TransactionQuoteDateValidator } from "@/schema/validator"
+import { TransactionQuoteDataValidator } from "@/schema/validator"
 import { GetAccount, GetAccounts } from "@/types/account"
 import { GetContact, GetContacts } from "@/types/contact"
 import { HttpGET, HttpPOST } from "@/types/http"
@@ -88,7 +88,7 @@ export default function TransferForm() {
 
   const formik = useFormik<Partial<TransactionQuoteDate>>({
     initialValues,
-    validationSchema: TransactionQuoteDateValidator,
+    validationSchema: TransactionQuoteDataValidator,
     onSubmit: quoteTransaction
   })
 
