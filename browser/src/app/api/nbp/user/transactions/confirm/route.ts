@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const transaction = await confirmTransaction(session, quoteData)
     const responsePayload: HttpPOST<TransactionConfirmResult> = {
       code: 201,
-      message: 'Quote successfully.',
+      message: 'Transaction initial successfully.',
       payload: {
         meta: {
           timestamp: new Date()

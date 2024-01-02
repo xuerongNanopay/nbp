@@ -117,13 +117,13 @@ export async function quoteTransaction(
 
     if (
       (DAILY_TRANSATION_LIMIT*100 - 
-      (!usedAmount._sum.sourceAmount ? 0 : usedAmount._sum.sourceAmount)*100)
+      (!usedAmount._sum.sourceAmount ? 0 : usedAmount._sum.sourceAmount))
       < 0
     ) throw new ForbiddenError(`Over Limit: \$${DAILY_TRANSATION_LIMIT}.00 per day`)
 
     if ( !!mostRecentTransaction &&
       (new Date().getTime() - mostRecentTransaction.createdAt.getTime()) < 2000 // It is no possible for a user to create two transaction within 4 seconds.
-    ) throw new ForbiddenError("Please try later")
+    ) throw new ForbiddenError("Quote to frequently. Please try later")
 
 
     const exchangeRate = await getPrismaClient().currencyRate.findFirst({
@@ -222,7 +222,7 @@ export async function confirmTransaction(
       where: {
         id: transactionConfirmData.transactionId,
         status: TransactionStatus.QUOTE,
-        owner: session.user?.id,
+        ownerId: session.user!.id,
       },
       select: {
         id: true,
@@ -235,7 +235,7 @@ export async function confirmTransaction(
         sourceAmount: true
       },
       where: {
-        ownerId: session.user?.id,
+        ownerId: session.user!.id,
         createdAt: {
           //TODO: check if it is Toronto locale.
           gte: Time().startOf('day').toDate()
@@ -256,7 +256,7 @@ export async function confirmTransaction(
 
     if (
       (DAILY_TRANSATION_LIMIT*100 - 
-      (!usedAmount._sum.sourceAmount ? 0 : usedAmount._sum.sourceAmount)*100)
+      (!usedAmount._sum.sourceAmount ? 0 : usedAmount._sum.sourceAmount))
       < 0
     ) throw new ForbiddenError(`Over Limit: \$${DAILY_TRANSATION_LIMIT}.00 per day`)
 
@@ -267,7 +267,7 @@ export async function confirmTransaction(
       where: {
         id: transactionConfirmData.transactionId,
         status: TransactionStatus.QUOTE,
-        owner: session.user?.id,
+        ownerId: session.user?.id,
       },
       data: {
         status: TransactionStatus.INITIAL,

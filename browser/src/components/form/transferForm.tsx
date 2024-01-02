@@ -21,7 +21,7 @@ import {
   ModalFooter
 } from "@nextui-org/react"
 
-import { TransactionQuoteDate, TransactionQuoteResult } from "@/types/transaction"
+import { TransactionConfirmResult, TransactionQuoteDate, TransactionQuoteResult } from "@/types/transaction"
 import { TransactionQuoteDateValidator } from "@/schema/validator"
 import { GetAccount, GetAccounts } from "@/types/account"
 import { GetContact, GetContacts } from "@/types/contact"
@@ -356,7 +356,26 @@ function ConfirmTransferModal(
   if (!transaction) return (<></>)
 
   const confirmTransaction = async() => {
-    console.log(transaction)
+    try {
+      const response = await fetch("/api/nbp/user/transactions/confirm", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          transactionId: transaction.id
+        })
+      })
+      const responsePayload: HttpPOST<TransactionConfirmResult> = await response.json()
+      if ( responsePayload.code >> 7 === 1 ) {
+        alert.info(responsePayload.message)
+      } else {
+        alert.error(responsePayload.message)
+      }
+    } catch (err) {
+      alert.error("Please try again later")
+      console.error(err)
+    }
   }
 
   return (
