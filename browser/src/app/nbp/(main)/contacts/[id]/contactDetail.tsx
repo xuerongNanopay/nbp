@@ -17,7 +17,7 @@ import {
   ModalFooter
 } from '@nextui-org/react'
 import { ContactStatus, ContactType } from '@prisma/client'
-import { useAlert } from "@/hook/useAlert"
+import { useToastAlert } from "@/hook/useToastAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 const statusColorMap: Record<string, ChipProps["color"]>  = {
@@ -77,7 +77,7 @@ const ConfirmModal = (
 }
 
 export function ContactDetail({contact}: {contact: Contact}) {
-  const alert = useAlert() ?? CONSOLE_ALERT
+  const alert = useToastAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isDelete, setIsDelete] = useState<boolean>(false)
   const {isOpen, onOpen, onOpenChange} = useDisclosure({onChange(isOpen) {
@@ -118,7 +118,7 @@ export function ContactDetail({contact}: {contact: Contact}) {
       </h1>
       <div className="mb-4">
         {/* Use link for deletion */}
-        <Button variant="ghost" color="danger" onClick={onOpen}>DELETE</Button>
+        <Button variant="ghost" color="danger" onClick={onOpen} isLoading={isDelete}>DELETE</Button>
       </div>
       <div className="grid grid-cols-1 gap-2 p-2 sm:p-4 border border-slate-400 rounded-md">
         <div>
