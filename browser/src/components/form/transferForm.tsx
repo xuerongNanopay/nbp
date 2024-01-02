@@ -82,7 +82,6 @@ export default function TransferForm() {
       }
     } catch(err) {
       alert.error(JSON.stringify(err))
-      console.log(err)
       setIsSubmit(false)
     }
   }
@@ -183,8 +182,8 @@ export default function TransferForm() {
     setDestinationAmount(destinationAmount)
     formik.setFieldValue('sourceAmount', sourceAmount)
     formik.setFieldValue('destinationAmount', destinationAmount)
+    formik.setFieldTouched('sourceAmount')
   }
-
   return (
     <div className="w-full max-w-xl">
       <h4 className="text-2xl font-bold mb-6 text-center">Transaction Details</h4>
