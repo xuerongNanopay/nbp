@@ -122,7 +122,7 @@ export async function quoteTransaction(
     ) throw new ForbiddenError(`Over Limit: \$${DAILY_TRANSATION_LIMIT}.00 per day`)
 
     if ( !!mostRecentTransaction &&
-      (mostRecentTransaction.createdAt.getTime() - new Date().getTime()) < 4000 // It is no possible for a user to create two transaction within 4 seconds.
+      (new Date().getTime() - mostRecentTransaction.createdAt.getTime()) < 2000 // It is no possible for a user to create two transaction within 4 seconds.
     ) throw new ForbiddenError("Please try later")
 
 
