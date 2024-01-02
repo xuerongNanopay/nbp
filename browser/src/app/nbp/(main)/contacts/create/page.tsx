@@ -1,12 +1,12 @@
 import { ContactForm } from "@/components/form"
-import { AlertProvider } from "@/hook/useAlert"
+import { ToastProvider } from "@/hook/useToastAlert"
 
 export default function CreateContact() {
   return (
     <div className="flex justify-center mt-4">
-      <AlertProvider>
+      <ToastProvider>
         <ContactForm/>
-      </AlertProvider>
+      </ToastProvider>
     </div>
   )
 }

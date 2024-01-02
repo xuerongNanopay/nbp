@@ -1,5 +1,5 @@
 import { TransferForm } from "@/components/form"
-import { AlertProvider } from "@/hook/useAlert"
+import { ToastProvider } from "@/hook/useToastAlert"
 
 export default function TransferView({
   searchParams
@@ -11,14 +11,9 @@ export default function TransferView({
   return (
     <>
       <div className="flex justify-center mt-4 sm:mt-16">
-        {/* {
-          !!from || !!to ? 
-          <TransferForm sourceAccountId={from} destinationContactId={to}/>
-          : <TransferForm/>
-        } */}
-        <AlertProvider>
+        <ToastProvider>
           <TransferForm/>
-        </AlertProvider>
+        </ToastProvider>
       </div>
     </>
   )

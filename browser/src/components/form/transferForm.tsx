@@ -21,8 +21,8 @@ import {
   ModalFooter
 } from "@nextui-org/react"
 
-import { ToastContainer, ToastContent, toast as _toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { useToastAlert } from "@/hook/useToastAlert"
+import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 import { TransactionConfirmResult, TransactionQuoteDate, TransactionQuoteResult } from "@/types/transaction"
 import { TransactionQuoteDateValidator } from "@/schema/validator"
@@ -31,26 +31,10 @@ import { GetContact, GetContacts } from "@/types/contact"
 import { HttpGET, HttpPOST } from "@/types/http"
 import { ContactType } from "@prisma/client"
 import { blurEmail } from "@/utils/textUtil"
+import { AlertFunc } from '@/types/log'
 
-function toast(msg: ToastContent) {
-  // &#9989; success.
-  // &#10060; error.
-  _toast(
-    msg,
-    {
-      position: "top-right",
-      autoClose: 4000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light"
-    }
-  )
-}
-export default function TransferFrom() {
-  // const alert = useAlert() ?? CONSOLE_ALERT
+export default function TransferForm() {
+  const alert = useToastAlert() ?? CONSOLE_ALERT
   const [isAccountLoading, setIsAccountLoading] = useState(true)
   const [isContactLoading, setIsContactLoading] = useState(true)
   const [disableAmountInput, setDisableAmountInput] = useState(true)
@@ -93,11 +77,11 @@ export default function TransferFrom() {
         onOpen()
         
       } else {
-        toast(`🚫 ${responsePayload.message}`)
+        alert.error(responsePayload.message)
         setIsSubmit(false)
       }
     } catch(err) {
-      toast(`🚫 ${JSON.stringify(err)}`)
+      alert.error(JSON.stringify(err))
       console.log(err)
       setIsSubmit(false)
     }
@@ -181,10 +165,10 @@ export default function TransferFrom() {
           setCurrencyRate(currencyRate.value)
           setDisableAmountInput(false)
         } else {
-          toast(`🚫 ${responsePayload.message}`)
+          alert.error(responsePayload.message)
         }
       } catch (err) {
-        toast(`🚫 ${JSON.stringify(err)}`)
+        alert.error(`${JSON.stringify(err)}`)
         console.error(err)
       }
     }
@@ -203,10 +187,9 @@ export default function TransferFrom() {
 
   return (
     <div className="w-full max-w-xl">
-      <ToastContainer/>
       <h4 className="text-2xl font-bold mb-6 text-center">Transaction Details</h4>
       <p className="text-base mb-6 text-center">Enter the details for your transaction.</p>
-      <ConfirmTransferModal transaction={quoteTransactionResult} isOpen={isOpen} onOpenChange={onOpenChange}/>
+      <ConfirmTransferModal transaction={quoteTransactionResult} isOpen={isOpen} onOpenChange={onOpenChange} alert={alert}/>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Select
           id="sourceAccountId"
@@ -368,11 +351,13 @@ function ConfirmTransferModal(
   {
     transaction,
     isOpen,
-    onOpenChange
+    onOpenChange,
+    alert
   }: {
     transaction: TransactionQuoteResult | null,
     isOpen: boolean,
-    onOpenChange: () => void
+    onOpenChange: () => void,
+    alert: AlertFunc
   }
 ) {
   if (!transaction) return (<></>)
@@ -391,12 +376,14 @@ function ConfirmTransferModal(
       const responsePayload: HttpPOST<TransactionConfirmResult> = await response.json()
       if ( responsePayload.code >> 7 === 1 ) {
         // toast(<p>&#9989; {responsePayload.message}</p>)
-        toast(`✅ ${responsePayload.message}`)
+        alert.info(responsePayload.message)
         // alert.info(responsePayload.message)
       } else {
+        alert.error(responsePayload.message)
         // alert.error(responsePayload.message)
       }
     } catch (err) {
+      alert.error(JSON.stringify(err))
       // alert.error("Please try again later")
       console.error(err)
     }

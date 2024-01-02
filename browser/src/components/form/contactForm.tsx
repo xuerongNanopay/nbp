@@ -23,8 +23,9 @@ import TransferMethod from "@/constants/transferMethod"
 import { ContactDataValidator } from "@/schema/validator"
 import { ContactType } from "@prisma/client"
 import { GetInstitutions, GetPersonalRelationships, GetRegions } from "@/types/common"
-import { useAlert } from "@/hook/useAlert"
+// import { useAlert } from "@/hook/useAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
+import { useToastAlert } from "@/hook/useToastAlert"
 
 const initialValues: Partial<ContactData> = {
   countryCode: 'PK',
@@ -89,7 +90,7 @@ const ConfirmModal = (
 }
 
 export default function ContactForm() {
-  const alert = useAlert() ?? CONSOLE_ALERT
+  const alert = useToastAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isSubmit, setIsSubmit] = useState<boolean>(false)
   const {isOpen, onOpen, onOpenChange} = useDisclosure({onClose: () => {
