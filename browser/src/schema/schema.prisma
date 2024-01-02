@@ -409,7 +409,7 @@ enum TransactionStatus {
 
 model Transaction {
   id Int @id @default(autoincrement())
-
+  name String
   status TransactionStatus @default(QUOTE)
 
   sourceAccountId      Int

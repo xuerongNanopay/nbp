@@ -140,21 +140,24 @@ export async function quoteTransaction(
     if ( !exchangeRate ) throw new ForbiddenError("Exchange rate not support")
     
     //TODO: fee calculate. 
-    const rateConvertedAmount = Math.round((transactionQuoteDate.sourceAmount/100) * exchangeRate.value * 100) 
-    
+    const rateConvertedAmount = Math.round((transactionQuoteDate.sourceAmount) * exchangeRate.value * 100) 
+    const totalFee = 200 //TODO: change.
+    const debitAmount = rateConvertedAmount + totalFee
+
     const transaction = await getPrismaClient().transaction.create({
       data: {
+        name: 'NBP_Transaction',
         status: TransactionStatus.QUOTE,
         sourceAccountId: account.id,
         destinationContactId: contact.id,
-        sourceAmount: transactionQuoteDate.sourceAmount,
+        sourceAmount: Math.round(transactionQuoteDate.sourceAmount*100),
         sourceCurrency: account.currency,
         destinationAmount: rateConvertedAmount,
         destinationCurrency: contact.currency,
         destinationName: `${contact.firstName} ${contact.lastName}`,
-        feeAmount: 0,
+        feeAmount: totalFee,
         feeCurrency: account.currency,
-        debitAmount: rateConvertedAmount,
+        debitAmount: debitAmount,
         debitCurrency: account.currency,
         ownerId: session.user!.id,
         quoteExpired: new Date(new Date().getTime() + QUOTE_EXPIRE_SEC*1000)

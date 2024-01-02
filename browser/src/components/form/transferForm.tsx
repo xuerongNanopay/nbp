@@ -82,8 +82,6 @@ export default function TransferFrom() {
       console.log(err)
       setIsSubmit(false)
     }
-    //TODO: making button loading
-    // setIsModalOpen(true)
   }
 
   const formik = useFormik<Partial<TransactionQuoteDate>>({
@@ -187,7 +185,6 @@ export default function TransferFrom() {
       <h4 className="text-2xl font-bold mb-6 text-center">Transaction Details</h4>
       <p className="text-base mb-6 text-center">Enter the details for your transaction.</p>
       <ConfirmTransferModal transaction={quoteTransactionResult} isOpen={isOpen} onOpenChange={onOpenChange} alert={alert}/>
-      {/* <ConfirmTransferModal isOpen={isModalOpen} closeModal={closeModal} quoteSummary={quoteSummary}/> */}
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Select
           id="sourceAccountId"
@@ -370,7 +367,12 @@ function ConfirmTransferModal(
             <>
               <ModalHeader><p className="text-green-800">Confrim</p></ModalHeader>
               <ModalBody>
-
+                <div className="sm:flex justify-between">
+                  <div>
+                    <h4 className="font-semibold">Receiver: </h4>
+                    <p></p>
+                  </div>
+                </div>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
