@@ -384,7 +384,7 @@ function ConfirmTransferModal(
         {
           (onClose) => (
             <>
-              <ModalHeader><p className="text-green-800">Confrim</p></ModalHeader>
+              <ModalHeader><p className="text-green-800">Conformation: </p></ModalHeader>
               <ModalBody>
                 <div className="sm:flex justify-between">
                   <div>
@@ -403,7 +403,7 @@ function ConfirmTransferModal(
                     await confirmTransaction()
                     onClose()
                   }}>
-                    SAVE
+                    OK
                   </Button>
               </ModalFooter>
             </>
