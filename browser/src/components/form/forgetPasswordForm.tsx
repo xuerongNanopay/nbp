@@ -7,13 +7,13 @@ import {
 } from "@nextui-org/react";
 import { ForgetPasswordData } from "@/types/auth";
 import { ForgetPasswordDataValidator } from "@/schema/validator";
-import { useState } from "react";
-import { useAlert } from "@/hook/useAlert"
+import { useState } from "react"
+import { useToastAlert } from "@/hook/useToastAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 
 export default function ForgetPasswrodForm() {
-  const alert = useAlert() ?? CONSOLE_ALERT
+  const alert = useToastAlert() ?? CONSOLE_ALERT
   const [isSubmit, setIsSubmit] = useState(false)
   const initialValues: ForgetPasswordData = {email: ''}
 

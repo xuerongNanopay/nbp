@@ -1,4 +1,5 @@
 import { AlertProvider } from "@/hook/useAlert"
+import { ToastProvider } from "@/hook/useToastAlert"
 
 export default function AuthLayout({
   children,
@@ -11,13 +12,13 @@ export default function AuthLayout({
         className="bg-nbp-background max-md:h-32 flex-initial w-full md:w-5/12 lg:w-7/12 xl:w-8/12"
       >
       </div>
-      <AlertProvider>
+      <ToastProvider>
         <div 
           className="flex-auto"
         >
           {children}
         </div>
-      </AlertProvider>
+      </ToastProvider>
     </div>
   )
 }

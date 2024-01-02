@@ -23,7 +23,7 @@ import type {
 import IdentityType from "@/constants/IdentityType"
 import { OnboardingDataValidator } from "@/schema/validator"
 import { GetCountries, GetOccupations, GetRegions } from "@/types/common"
-import { useAlert } from "@/hook/useAlert"
+import { useToastAlert } from "@/hook/useToastAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 const initialValues: OnboardingData = {
@@ -47,7 +47,7 @@ const initialValues: OnboardingData = {
 }
 
 export default function OnboardingForm() {
-  const alert = useAlert() ?? CONSOLE_ALERT
+  const alert = useToastAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isSubmit, setIsSubmit] = useState(false)
   const onboardingHandler = async (e: Partial<OnboardingData>) => {

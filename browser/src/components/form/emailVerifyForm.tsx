@@ -10,7 +10,7 @@ import {
 
 import { EmailVerifyData } from '@/types/auth'
 import { EmailVerifyDataValidator } from "@/schema/validator"
-import { useAlert } from "@/hook/useAlert"
+import { useToastAlert } from "@/hook/useToastAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 export default function EmailVerifyForm() {

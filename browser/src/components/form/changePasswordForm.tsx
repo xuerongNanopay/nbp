@@ -12,11 +12,11 @@ import { EyeSlashFilledIcon } from "@/icons/EyeSlashFilledIcon"
 import { EyeFilledIcon } from "@/icons/EyeFilledIcon"
 import { ChangePassowrdData } from "@/types/auth";
 import { ChangePassowrdDataValidator } from "@/schema/validator";
-import { useAlert } from "@/hook/useAlert"
+import { useToastAlert } from "@/hook/useToastAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 export default function ChangePasswordForm({email, oneTimeToken}: {email: string, oneTimeToken: string}) {
-  const alert = useAlert() ?? CONSOLE_ALERT
+  const alert = useToastAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isSubmit, setIsSubmit] = useState(false)
   const [ isNewPasswordVisible, setIsNewPasswordVisible ] = useState(false)

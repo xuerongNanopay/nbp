@@ -7,14 +7,14 @@ import {
   Button
 } from "@nextui-org/react";
 
-import { useAlert } from "@/hook/useAlert"
+import { useToastAlert } from "@/hook/useToastAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
-import { EditInteracData } from '@/types/account';
+import { EditInteracData } from '@/types/account'
 import { EditInteracDataValidator } from '@/schema/validator';
 
 
 export default function EditInteracForm() {
-  const alert = useAlert() ?? CONSOLE_ALERT
+  const alert = useToastAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [ isSubmit, setIsSubmit ] = useState(false)
   const initialValues: EditInteracData = {newEmail: ''}
