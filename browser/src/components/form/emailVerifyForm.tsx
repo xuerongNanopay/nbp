@@ -14,7 +14,7 @@ import { useToastAlert } from "@/hook/useToastAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
 
 export default function EmailVerifyForm() {
-  const alert = useAlert() ?? CONSOLE_ALERT
+  const alert = useToastAlert() ?? CONSOLE_ALERT
   const router = useRouter()
   const [isSubmit, setIsSubmit] = useState(false)
   const initialValues: EmailVerifyData = {code: ''}
