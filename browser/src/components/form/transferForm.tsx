@@ -51,7 +51,8 @@ function toast(msg: ToastContent) {
 }
 export default function TransferFrom() {
   // const alert = useAlert() ?? CONSOLE_ALERT
-
+  const [isAccountLoading, setIsAccountLoading] = useState(true)
+  const [isContactLoading, setIsContactLoading] = useState(true)
   const [disableAmountInput, setDisableAmountInput] = useState(true)
   const [sourceCurrency, setSourceCurrency ] = useState<string|null>(null)
   const [destinationCurrency, setDestinationCurrency ] = useState<string|null>(null)
@@ -131,6 +132,7 @@ export default function TransferFrom() {
         const response = await fetch('/api/nbp/user/accounts', { signal: controller.signal })
         const resposnePayload = await response.json() as HttpGET<GetAccounts>
         setSourceAccounts(resposnePayload.payload.many)
+        setIsAccountLoading(false)
       } catch ( err ) {
         console.error(err)
       }
@@ -140,6 +142,7 @@ export default function TransferFrom() {
         const response = await fetch('/api/nbp/user/contacts', { signal: controller.signal })
         const responsePayload = await response.json() as HttpGET<GetContacts>
         setDestinationContacts(responsePayload.payload.many)
+        setIsContactLoading(false)
       } catch ( err ) {
         console.error(err)
       }
@@ -213,6 +216,7 @@ export default function TransferFrom() {
           variant="bordered"
           selectionMode="single"
           labelPlacement="outside"
+          isLoading={isAccountLoading}
           // defaultSelectedKeys={[]}
           selectedKeys={!formik.values.sourceAccountId ? [] : [formik.values.sourceAccountId]}
           placeholder="Please select..."
@@ -243,6 +247,7 @@ export default function TransferFrom() {
           variant="bordered"
           selectionMode="single"
           labelPlacement="outside"
+          isLoading={isContactLoading}
           // defaultSelectedKeys={[]}
           selectedKeys={!formik.values.destinationContactId ? [] : [formik.values.destinationContactId]}
           placeholder="Please select..."
