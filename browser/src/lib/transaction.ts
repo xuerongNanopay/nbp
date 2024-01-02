@@ -123,7 +123,7 @@ export async function quoteTransaction(
 
     if ( !!mostRecentTransaction &&
       (new Date().getTime() - mostRecentTransaction.createdAt.getTime()) < 2000 // It is no possible for a user to create two transaction within 4 seconds.
-    ) throw new ForbiddenError("Quote to frequently. Please try later")
+    ) throw new ForbiddenError("Quote too frequently.")
 
 
     const exchangeRate = await getPrismaClient().currencyRate.findFirst({
