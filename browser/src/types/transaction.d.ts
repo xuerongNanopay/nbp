@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client'
+import type { Prisma, TransactionStatus } from '@prisma/client'
   
 export interface TransactionQuoteData {
   sourceAccountId: number,
@@ -8,6 +8,13 @@ export interface TransactionQuoteData {
 
 export interface TransactionConfirmData {
   transactionId: number
+}
+
+export interface GetTransactionOption {
+  from?: number,
+  size?: number,
+  searchKey?: string,
+  statuses: TransactionStatus[]
 }
 
 export type TransactionQuoteResult = Prisma.TransactionGetPayload<{

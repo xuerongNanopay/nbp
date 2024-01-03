@@ -10,10 +10,11 @@ import type { ContactData} from "@/types/contact"
 import * as Yup from 'yup';
 import dayjs from "dayjs"
 import { parse, isDate } from "date-fns";
-import { ContactType } from "@prisma/client";
+import { ContactType, TransactionStatus } from "@prisma/client";
 import { EditInteracData } from "@/types/account";
 import { NotificationReadMarkData } from "@/types/notification";
-import { TransactionConfirmData, TransactionQuoteData } from "@/types/transaction";
+import { GetTransactionOption, TransactionConfirmData, TransactionQuoteData } from "@/types/transaction";
+import Transactions from "@/app/nbp/(main)/transactions/page";
 
 const eighteen_years_age = dayjs().subtract(18, 'year').format('YYYY-MM-DD')
 const hundred_years_age = dayjs().subtract(100, 'year').format('YYYY-MM-DD')
@@ -155,4 +156,19 @@ export const TransactionQuoteDataValidator = Yup.object<TransactionQuoteData>({
 
 export const TransactionConfirmDataValidator = Yup.object<TransactionConfirmData>({
   transactionId: Yup.number().required('Required')
+})
+
+export const GetTransactionOptionValidator = Yup.object<GetTransactionOption>({
+  from: Yup.number().min(0, "from: must great than 0").optional(),
+  size: Yup.number().max(50, "size: must be less or equal to 50").optional(),
+  searchKey: Yup.string().matches(/^[A-Za-z0-9 ]+$/, "invalid search key").optional(),
+  status: Yup.array().of(Yup.string().oneOf([
+    TransactionStatus.INITIAL,
+    TransactionStatus.PROCESS,
+    TransactionStatus.REFUND,
+    TransactionStatus.REFUND_IN_PROGRESS,
+    TransactionStatus.CANCEL,
+    TransactionStatus.REJECT,
+    TransactionStatus.WAITING_FOR_PAYMENT
+  ])).optional()
 })

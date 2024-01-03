@@ -3,6 +3,7 @@ import { ForbiddenError, InternalError, NBPError, ResourceNoFoundError } from "@
 import { Session } from "@/types/auth";
 import { 
   GetTransactionDetail,
+  GetTransactionOption,
   GetTransactions,
   TransactionConfirmData, 
   TransactionConfirmResult, 
@@ -298,12 +299,7 @@ export async function confirmTransaction(
 
 async function getTransactionsByOwnerId(
   session: Session,
-  options?: {
-    from?: Number,
-    size?: Number,
-    searchKey?: String,
-    statuses?: TransactionStatus[]
-  }
+  options?: GetTransactionOption
 ) : Promise<GetTransactions> {
   // const wherePredicate = { take: 50 } // Maximum size for each query
   // if (!!options?.from) 
