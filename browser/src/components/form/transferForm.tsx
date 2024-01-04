@@ -416,35 +416,38 @@ function ConfirmTransferModal(
                     </div>
                   </div>
                 </div>
-                <div>
-                  <h4 className="font-semibold">Send: </h4>
-                  <div className="flex justify-end">
-                    <div>
-                      <p>{(transaction.sourceAmount/100.0).toFixed(2)} {transaction.sourceCurrency}</p>
+                <Divider/>
+                <div className="flex flex-col">
+                  <div className="flex justify-between">
+                    <h4 className="font-semibold">Send: </h4>
+                    <div className="flex justify-end">
+                      <div>
+                        <p>{(transaction.sourceAmount/100.0).toFixed(2)} {transaction.sourceCurrency}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold">Receive: </h4>
-                  <div className="flex justify-end">
-                    <div>
-                      <p>{(transaction.destinationAmount/100.0).toFixed(2)} {transaction.destinationCurrency}</p>
+                  <div className="flex justify-between">
+                    <h4 className="font-semibold">Receive: </h4>
+                    <div className="flex justify-end">
+                      <div>
+                        <p>{(transaction.destinationAmount/100.0).toFixed(2)} {transaction.destinationCurrency}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold">Fee: </h4>
-                  <div className="flex justify-end">
-                    <div>
-                      <p>{(transaction.feeAmount/100.0).toFixed(2)} {transaction.feeCurrency}</p>
+                  <div className="flex justify-between">
+                    <h4 className="font-semibold">Fee: </h4>
+                    <div className="flex justify-end">
+                      <div>
+                        <p>{(transaction.feeAmount/100.0).toFixed(2)} {transaction.feeCurrency}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-green-800">Total Debited Amount: </h4>
-                  <div className="flex justify-end">
-                    <div>
-                      <p className="font-semibold text-green-800">{(transaction.debitAmount/100.0).toFixed(2)} {transaction.debitCurrency}</p>
+                  <div className="flex justify-between">
+                    <h4 className="font-semibold text-green-800">Total Cost: </h4>
+                    <div className="flex justify-end">
+                      <div>
+                        <p className="font-semibold text-green-800">{(transaction.debitAmount/100.0).toFixed(2)} {transaction.debitCurrency}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
