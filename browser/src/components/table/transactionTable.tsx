@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect } from 'react'
-import { Selection } from '@nextui-org/react';
+import { Selection } from '@nextui-org/react'
+import useSWR from 'swr'
 
 import {
   Table,
@@ -143,40 +144,65 @@ const COLUME_MAP = {
 const ReceiverCell = (transaction: GetTransaction) => {
   return (
     <>
+      <p>{transaction.destinationName}</p>
     </>
   )
 }
 const ReceiverAmountCell = (transaction: GetTransaction) => {
   return (
     <>
+      <p>{transaction.destinationAmount/100.0} {transaction.destinationCurrency}</p>
     </>
   )
 }
-// const StatusCell = (transaction: GetTransaction) => {
-//   return (
-//     <>
-//     </>
-//   )
-// }
-const DateCell = (transaction: GetTransaction) => {
+const StatusCell = ({status}: GetTransaction) => {
   return (
-    <>
-    </>
+    <Chip className="capitalize" color={statusColorMap[status]} size="sm" variant="flat">
+      {STATUS_TEXT_MAP[status]}
+    </Chip>
+  )
+}
+const DateCell = ({createdAt}: GetTransaction) => {
+  return (
+    <p>{formatRelativeDate(createdAt)}</p>
   )
 }
 const AllCell = (transaction: GetTransaction) => {
   return (
-    <>
-    </>
+    <div>
+      TODO
+    </div>
   )
 }
 
-// const ActionsCell = (transaction: GetTransaction) => {
-//   return (
-//     <>
-//     </>
-//   )
-// }
+const ActionsCell = (transaction: GetTransaction) => {
+  return (
+    <div className="relative flex items-center gap-2">
+      <Link href={'/transactions/' + transaction.id}>
+        <Tooltip content="Details">
+          <span 
+            className="text-lg text-default-400 cursor-pointer active:opacity-50"
+          >
+            <EyeIcon/>
+          </span>
+        </Tooltip>     
+      </Link>
+      { 
+        // transaction.status === 'awaitPayent' &&
+        //   <Link href={'/transactions/' + transaction.id}>
+        //     <Tooltip content="Pay">
+        //       <span 
+        //         className="text-lg text-default-400 cursor-pointer active:opacity-50"
+        //       >
+        //         💵
+        //         {/* <SendMoneyIcon/> */}
+        //       </span>
+        //     </Tooltip>
+        //   </Link>
+      }
+  </div>
+  )
+}
 
 const Summary = ({summary}: NBPTransactionSummary) => {
   return (
@@ -184,7 +210,7 @@ const Summary = ({summary}: NBPTransactionSummary) => {
   )
 }
 
-const StatusCell = ({status}: NBPTransactionSummary) => {
+const StatusCelll = ({status}: NBPTransactionSummary) => {
   return (
     <Chip className="capitalize" color={statusColorMap[status]} size="sm" variant="flat">
       {statusTextMap[status]}
@@ -206,7 +232,7 @@ const AmountCell = ({receiveAmount}: NBPTransactionSummary) => {
   )
 }
 
-const ActionsCell = (transaction: NBPTransactionSummary) => {
+const ActionsCelll = (transaction: NBPTransactionSummary) => {
   return (
     <div className="relative flex items-center gap-2">
       <Link href={'/transactions/' + transaction.id}>
@@ -218,16 +244,18 @@ const ActionsCell = (transaction: NBPTransactionSummary) => {
           </span>
         </Tooltip>     
       </Link>
-      { transaction.status === 'awaitPayent' &&
-        <Link href={'/transactions/' + transaction.id}>
-          <Tooltip content="Pay">
-            <span 
-              className="text-lg text-default-400 cursor-pointer active:opacity-50"
-            >
-              <SendMoneyIcon/>
-            </span>
-          </Tooltip>
-        </Link>
+      { 
+        // transaction.status === 'awaitPayent' &&
+        //   <Link href={'/transactions/' + transaction.id}>
+        //     <Tooltip content="Pay">
+        //       <span 
+        //         className="text-lg text-default-400 cursor-pointer active:opacity-50"
+        //       >
+        //         💵
+        //         {/* <SendMoneyIcon/> */}
+        //       </span>
+        //     </Tooltip>
+        //   </Link>
       }
   </div>
   )
@@ -252,7 +280,7 @@ export default function TransactionTable({className, transactions}: {className?:
         )
       case "status":
         return (
-          <StatusCell {...transaction}/>
+          <StatusCelll {...transaction}/>
         )
       case "receiveAmount":
         return (
@@ -260,7 +288,7 @@ export default function TransactionTable({className, transactions}: {className?:
         )
       case "actions":
         return (
-          <ActionsCell {...transaction}/>
+          <ActionsCelll {...transaction}/>
         )
       default:
         return null
@@ -316,10 +344,7 @@ export default function TransactionTable({className, transactions}: {className?:
             className="w-full sm:max-w-[44%]"
             placeholder="Search by Receiver..."
             value={searchValue}
-            // onClear={() => onClear()}
-            // // endContent={
-            // //   <div>afdfd</div>
-            // // }
+            size='sm'
             onValueChange={onSearchValueChange}
             endContent={
               <Button
@@ -346,8 +371,8 @@ export default function TransactionTable({className, transactions}: {className?:
                 selectionMode="multiple"
                 onSelectionChange={setStatusFilter}
               >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
+                {STATUS_OPTIONS.map((status) => (
+                  <DropdownItem key={status.id} className="capitalize">
                     {status.name}
                   </DropdownItem>
                 ))}
