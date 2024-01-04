@@ -297,7 +297,7 @@ export async function confirmTransaction(
   }
 }
 
-async function getTransactionsByOwnerId(
+export async function getTransactionsByOwnerId(
   session: Session,
   options?: GetTransactionOption
 ) : Promise<GetTransactions> {

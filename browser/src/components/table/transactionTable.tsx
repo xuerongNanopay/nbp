@@ -62,6 +62,47 @@ const columns = [
   { id: 'actions', name: 'Actions'}
 ]
 
+enum COLUME_TYPE {
+  RECEIVER='receiver',
+  RECEIVER_AMOUNT='amount',
+  STATUS='status',
+  CREATED_AT='createdAt',
+  ACTIONS='actions',
+  ALL='All'
+}
+
+const COLUME_MAP = {
+  [COLUME_TYPE.RECEIVER]: {
+    name: 'Receiver',
+    headerCss: 'max-sm:hidden',
+    cellCss: 'max-sm:hidden'
+  },
+  [COLUME_TYPE.RECEIVER_AMOUNT]: {
+    name: 'Amount',
+    headerCss: 'max-sm:hidden',
+    cellCss: 'max-sm:hidden'
+  },
+  [COLUME_TYPE.STATUS]: {
+    name: 'Status',
+    headerCss: 'sm:hidden',
+    cellCss: 'sm:hidden'
+  },
+  [COLUME_TYPE.CREATED_AT]: {
+    name: 'Date',
+    headerCss: 'max-sm:hidden',
+    cellCss: 'max-sm:hidden'
+  },
+  [COLUME_TYPE.ALL]: {
+    name: 'Transactions',
+    headerCss: 'max-sm:hidden',
+    cellCss: 'max-sm:hidden'
+  },
+  [COLUME_TYPE.ACTIONS]: {
+    name: 'Actions',
+    headerCss: 'max-sm:hidden',
+    cellCss: 'max-sm:hidden'
+  }
+}
 const Summary = ({summary}: NBPTransactionSummary) => {
   return (
     <p>{summary}</p>

@@ -9,7 +9,7 @@ import {
   Link
 } from "@nextui-org/react"
 
-import { SendMoneyIcon } from "@/icons/SendMoneyIcon"
+// import { SendMoneyIcon } from "@/icons/SendMoneyIcon"
 import { CurrencyRate } from "@/types/currency"
 
 
@@ -25,7 +25,7 @@ export default function RateCard({className, rate}: {className?: string, rate: C
         </h4>
       </CardBody>
       <CardFooter className="grid place-content-stretch">
-        <Button href="/nbp/transfer" as={Link} color="primary" startContent={<SendMoneyIcon />}>
+        <Button href="/nbp/transfer" as={Link} color="primary" startContent={<p>💰</p>}>
           Send Money
         </Button>
       </CardFooter>
