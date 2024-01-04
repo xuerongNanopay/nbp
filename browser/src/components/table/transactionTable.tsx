@@ -35,18 +35,6 @@ import { NBPTransactionSummary } from '@/type';
 import { GetTransaction } from '@/types/transaction';
 import { TransactionStatus } from '@prisma/client';
 
-
-const STATUS_OPTIONS = [
-  {id: TransactionStatus.INITIAL, name: TransactionStatus.INITIAL},
-  {id: TransactionStatus.WAITING_FOR_PAYMENT, name: TransactionStatus.WAITING_FOR_PAYMENT},
-  {id: TransactionStatus.PROCESS, name: TransactionStatus.PROCESS},
-  {id: TransactionStatus.REFUND_IN_PROGRESS, name: TransactionStatus.REFUND_IN_PROGRESS},
-  {id: TransactionStatus.REFUND, name: TransactionStatus.REFUND},
-  {id: TransactionStatus.CANCEL, name: TransactionStatus.CANCEL},
-  {id: TransactionStatus.COMPLETE, name: TransactionStatus.COMPLETE},
-  {id: TransactionStatus.REJECT, name: TransactionStatus.REJECT}
-]
-
 const STATUS_COLOR_MAP: Record<string, ChipProps["color"]> = {
   [TransactionStatus.INITIAL]: "secondary",
   [TransactionStatus.WAITING_FOR_PAYMENT]: "warning",
@@ -59,15 +47,17 @@ const STATUS_COLOR_MAP: Record<string, ChipProps["color"]> = {
 }
 
 const STATUS_TEXT_MAP:  Record<string, string>  = {
-  [TransactionStatus.INITIAL]: TransactionStatus.INITIAL,
-  [TransactionStatus.WAITING_FOR_PAYMENT]: TransactionStatus.WAITING_FOR_PAYMENT,
-  [TransactionStatus.PROCESS]: TransactionStatus.PROCESS,
-  [TransactionStatus.REFUND_IN_PROGRESS]: TransactionStatus.REFUND_IN_PROGRESS,
-  [TransactionStatus.REFUND]: TransactionStatus.REFUND,
-  [TransactionStatus.CANCEL]: TransactionStatus.CANCEL,
-  [TransactionStatus.REJECT]: TransactionStatus.REJECT,
-  [TransactionStatus.COMPLETE]: "success"
+  [TransactionStatus.INITIAL]: "Initial",
+  [TransactionStatus.WAITING_FOR_PAYMENT]: "Await Payment",
+  [TransactionStatus.PROCESS]: "Process",
+  [TransactionStatus.REFUND_IN_PROGRESS]: "Refunding",
+  [TransactionStatus.REFUND]: "Refund",
+  [TransactionStatus.CANCEL]: "Cancel",
+  [TransactionStatus.REJECT]: "Reject",
+  [TransactionStatus.COMPLETE]: "Complete"
 }
+
+const STATUS_OPTIONS = Object.keys(STATUS_TEXT_MAP)
 
 const statusOptions = [
   {name: "SUCCESS", uid: "complete"},
@@ -157,7 +147,7 @@ const ReceiverAmountCell = (transaction: GetTransaction) => {
 }
 const StatusCell = ({status}: GetTransaction) => {
   return (
-    <Chip className="capitalize" color={statusColorMap[status]} size="sm" variant="flat">
+    <Chip color={STATUS_COLOR_MAP[status]} size="sm" variant="flat">
       {STATUS_TEXT_MAP[status]}
     </Chip>
   )
@@ -372,8 +362,8 @@ export default function TransactionTable({className, transactions}: {className?:
                 onSelectionChange={setStatusFilter}
               >
                 {STATUS_OPTIONS.map((status) => (
-                  <DropdownItem key={status.id} className="capitalize">
-                    {status.name}
+                  <DropdownItem key={status} className="capitalize">
+                    {STATUS_TEXT_MAP[status]}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
