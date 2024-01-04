@@ -313,13 +313,23 @@ export default function TransactionTable({className, transactions}: {className?:
       <div className="flex flex-col gap-4 sticky top-0">
         <div className="flex flex-col items-start sm:flex-row justify-between gap-3 sm:items-end">
           <Input
-            isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by summary..."
-            startContent={<SearchIcon />}
+            placeholder="Search by Receiver..."
             value={searchValue}
-            onClear={() => onClear()}
+            // onClear={() => onClear()}
+            // // endContent={
+            // //   <div>afdfd</div>
+            // // }
             onValueChange={onSearchValueChange}
+            endContent={
+              <Button
+                isIconOnly
+                variant="light"
+                onClick={() => console.log('Search button click')}
+              >
+                🔍
+              </Button>
+            }
           />
           <div className="flex gap-3">
             <Dropdown>
