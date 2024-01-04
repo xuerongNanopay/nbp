@@ -26,6 +26,7 @@ import {
 
 import { formatRelativeDate } from '@/utils/dateUtil'
 
+import { FiSend } from "react-icons/fi"
 import { EyeIcon } from '@/icons/EyeIcon'
 import { SendMoneyIcon } from '@/icons/SendMoneyIcon'
 import { SearchIcon } from '@/icons/SearchIcon'
@@ -289,7 +290,7 @@ export default function TransactionTable() {
               </Dropdown>
               <Button 
                 color="primary"
-                endContent={<PlusIcon />}
+                endContent={<FiSend/>}
                 href="/nbp/transfer"
                 as={Link}
               >              
