@@ -180,6 +180,7 @@ export default function TransactionTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(13)
   const [statusFilter, setStatusFilter] = React.useState<Selection>(new Set(STATUS_OPTIONS))
   const [transactions, setTransactions] = React.useState<GetTransactions>([])
+  const [isTransactionsLoading, setIsTransactionLoading] = React.useState(false)
 
   const renderCell = React.useCallback((transaction: GetTransaction, columnKey: React.Key) => {
     switch(columnKey) {
@@ -314,18 +315,11 @@ export default function TransactionTable() {
 
   const bottomContent = React.useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-center items-center">
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          page={page}
-          total={pages}
-          onChange={setPage}
-        />
+      <div className="flex justify-end gap-2">
+        <Button color='primary' variant="ghost">Previous</Button>
+        <Button color="primary">Next</Button>
       </div>
-    );
+    )
   }, [page, pages]);
 
   return (
