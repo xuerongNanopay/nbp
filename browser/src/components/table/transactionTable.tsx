@@ -213,6 +213,16 @@ export default function TransactionTable() {
     }
   }, [])
 
+  const fetchTransaction = React.useCallback((option?: GetTransaction): Promise<Response> => {
+    return fetch('/api/nbp/usr/transactions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(option)
+    })
+  }, [])
+
   const onSearchValueChange = React.useCallback((value?: string) => {
     if (value) {
       setSearchValue(value)
