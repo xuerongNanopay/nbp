@@ -66,14 +66,6 @@ const statusOptions = [
   {name: "AWAIT PAYMENT", uid: "awaitPayent"}
 ]
 
-const columns = [
-  { id: 'summary', name: 'Summary' },
-  { id: 'created', name: 'Date' },
-  { id: 'status', name: 'Status' },
-  { id: 'receiveAmount', name: 'Amount' },
-  { id: 'actions', name: 'Actions'}
-]
-
 enum COLUME_TYPE {
   RECEIVER='receiver',
   RECEIVER_AMOUNT='amount',
@@ -185,7 +177,7 @@ export default function TransactionTable() {
   const [searchValue, setSearchValue] = React.useState('')
   const [page, setPage] = React.useState(1)
   const [rowsPerPage, setRowsPerPage] = React.useState(13)
-  const [statusFilter, setStatusFilter] = React.useState<Selection>(new Set([]))
+  const [statusFilter, setStatusFilter] = React.useState<Selection>(new Set(STATUS_OPTIONS))
   const [transactions, setTransactions] = React.useState<GetTransactions>([])
 
   const renderCell = React.useCallback((transaction: GetTransaction, columnKey: React.Key) => {
@@ -251,19 +243,12 @@ export default function TransactionTable() {
 
   const pages = Math.ceil(filteredTransactions.length / rowsPerPage);
 
-  const items = React.useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return filteredTransactions.slice(start, end)
-  }, [page, filteredTransactions, rowsPerPage])
-
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4 sticky top-0">
-        <div className="flex flex-col items-start sm:flex-row justify-between gap-3 sm:items-end">
+        <div className="flex flex-col items-center sm:flex-row justify-between gap-3 max-sm:items-end">
           <Input
-            className="w-full sm:max-w-[44%]"
+            className="w-full sm:max-w-[50%]"
             placeholder="Search by Receiver..."
             value={searchValue}
             size='sm'
@@ -278,39 +263,42 @@ export default function TransactionTable() {
               </Button>
             }
           />
-          <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                  Status
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {STATUS_OPTIONS.map((status) => (
-                  <DropdownItem key={status}>
-                    {STATUS_TEXT_MAP[status]}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Button 
-              color="primary"
-              endContent={<PlusIcon />}
-              href="/nbp/transfer"
-              as={Link}
-            >              
-              Transfer
-            </Button>
+          <div className="max-sm:flex justify-between items-center max-sm:w-full">
+            <p className="text-default-400 text-small sm:hidden">Total {filteredTransactions.length} Transactions</p>
+            <div className="flex gap-3">
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                    Status
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  disallowEmptySelection
+                  aria-label="Table Columns"
+                  closeOnSelect={false}
+                  selectedKeys={statusFilter}
+                  selectionMode="multiple"
+                  onSelectionChange={setStatusFilter}
+                >
+                  {STATUS_OPTIONS.map((status) => (
+                    <DropdownItem key={status}>
+                      {STATUS_TEXT_MAP[status]}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+              <Button 
+                color="primary"
+                endContent={<PlusIcon />}
+                href="/nbp/transfer"
+                as={Link}
+              >              
+                Transfer
+              </Button>
+            </div>
           </div>
         </div>
-        <div className="flex flex-col items-start sm:flex-row justify-between sm:items-center">
+        <div className="flex flex-col items-start sm:flex-row justify-between sm:items-center max-sm:hidden">
           <span className="text-default-400 text-small">Total {filteredTransactions.length} transactions</span>
         </div>
       </div>
@@ -320,7 +308,6 @@ export default function TransactionTable() {
     onSearchValueChange,
     statusFilter,
     setStatusFilter,
-    onClear,
     filteredTransactions.length
   ])
 
