@@ -32,7 +32,7 @@ import { SearchIcon } from '@/icons/SearchIcon'
 import { PlusIcon } from '@/icons/PlusIcon'
 import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
 import { NBPTransactionSummary } from '@/type';
-import { GetTransaction } from '@/types/transaction';
+import { GetTransaction, GetTransactions } from '@/types/transaction';
 import { TransactionStatus } from '@prisma/client';
 
 const STATUS_COLOR_MAP: Record<string, ChipProps["color"]> = {
@@ -66,21 +66,6 @@ const statusOptions = [
   {name: "AWAIT PAYMENT", uid: "awaitPayent"}
 ]
 
-const statusColorMap: Record<string, ChipProps["color"]>  = {
-  complete: "success",
-  cancel: "danger",
-  process: "secondary",
-  awaitPayent: "warning",
-}
-
-const statusTextMap: Record<string, string>  = {
-  complete: "SUCCESS",
-  cancel: "CANCEL",
-  process: "PROCESS",
-  awaitPayent: "AWAIT PAYMENT",
-  // refund: "REFUND IN PROGRESS"
-}
-
 const columns = [
   { id: 'summary', name: 'Summary' },
   { id: 'created', name: 'Date' },
@@ -111,8 +96,8 @@ const COLUME_MAP = {
   },
   [COLUME_TYPE.STATUS]: {
     name: 'Status',
-    headerCss: 'sm:hidden',
-    cellCss: 'sm:hidden'
+    headerCss: 'max-sm:hidden',
+    cellCss: 'max-sm:hidden'
   },
   [COLUME_TYPE.CREATED_AT]: {
     name: 'Date',
@@ -121,8 +106,8 @@ const COLUME_MAP = {
   },
   [COLUME_TYPE.ALL]: {
     name: 'Transactions',
-    headerCss: 'max-sm:hidden',
-    cellCss: 'max-sm:hidden'
+    headerCss: 'sm:hidden',
+    cellCss: 'sm:hidden'
   },
   [COLUME_TYPE.ACTIONS]: {
     name: 'Actions',
@@ -130,34 +115,36 @@ const COLUME_MAP = {
     cellCss: 'max-sm:hidden'
   }
 }
+const COLUMES = Object.keys(COLUME_MAP).map(k => ({id: k}))
 
-const ReceiverCell = (transaction: GetTransaction) => {
+
+const ReceiverCell = ({transaction}: {transaction: GetTransaction}) => {
   return (
     <>
       <p>{transaction.destinationName}</p>
     </>
   )
 }
-const ReceiverAmountCell = (transaction: GetTransaction) => {
+const ReceiverAmountCell = ({transaction}: {transaction: GetTransaction}) => {
   return (
     <>
       <p>{transaction.destinationAmount/100.0} {transaction.destinationCurrency}</p>
     </>
   )
 }
-const StatusCell = ({status}: GetTransaction) => {
+const StatusCell = ({transaction}: {transaction: GetTransaction}) => {
   return (
-    <Chip color={STATUS_COLOR_MAP[status]} size="sm" variant="flat">
-      {STATUS_TEXT_MAP[status]}
+    <Chip color={STATUS_COLOR_MAP[transaction.status]} size="sm" variant="flat">
+      {STATUS_TEXT_MAP[transaction.status]}
     </Chip>
   )
 }
-const DateCell = ({createdAt}: GetTransaction) => {
+const DateCell = ({transaction}: {transaction: GetTransaction}) => {
   return (
-    <p>{formatRelativeDate(createdAt)}</p>
+    <p>{formatRelativeDate(transaction.createdAt)}</p>
   )
 }
-const AllCell = (transaction: GetTransaction) => {
+const AllCell = ({transaction}: {transaction: GetTransaction}) => {
   return (
     <div>
       TODO
@@ -165,10 +152,10 @@ const AllCell = (transaction: GetTransaction) => {
   )
 }
 
-const ActionsCell = (transaction: GetTransaction) => {
+const ActionsCell = ({transaction}: {transaction: GetTransaction}) => {
   return (
     <div className="relative flex items-center gap-2">
-      <Link href={'/transactions/' + transaction.id}>
+      <Link href={'/nbp/transactions/' + transaction.id}>
         <Tooltip content="Details">
           <span 
             className="text-lg text-default-400 cursor-pointer active:opacity-50"
@@ -194,91 +181,38 @@ const ActionsCell = (transaction: GetTransaction) => {
   )
 }
 
-const Summary = ({summary}: NBPTransactionSummary) => {
-  return (
-    <p>{summary}</p>
-  )
-}
-
-const StatusCelll = ({status}: NBPTransactionSummary) => {
-  return (
-    <Chip className="capitalize" color={statusColorMap[status]} size="sm" variant="flat">
-      {statusTextMap[status]}
-    </Chip>
-  )
-}
-
-const CreatedCell = ({created}: NBPTransactionSummary) => {
-  return (
-    <>
-      <p>{formatRelativeDate(created)}</p>
-    </>
-  )
-}
-
-const AmountCell = ({receiveAmount}: NBPTransactionSummary) => {
-  return (
-    <p>{receiveAmount}</p>
-  )
-}
-
-const ActionsCelll = (transaction: NBPTransactionSummary) => {
-  return (
-    <div className="relative flex items-center gap-2">
-      <Link href={'/transactions/' + transaction.id}>
-        <Tooltip content="Details">
-          <span 
-            className="text-lg text-default-400 cursor-pointer active:opacity-50"
-          >
-            <EyeIcon/>
-          </span>
-        </Tooltip>     
-      </Link>
-      { 
-        // transaction.status === 'awaitPayent' &&
-        //   <Link href={'/transactions/' + transaction.id}>
-        //     <Tooltip content="Pay">
-        //       <span 
-        //         className="text-lg text-default-400 cursor-pointer active:opacity-50"
-        //       >
-        //         💵
-        //         {/* <SendMoneyIcon/> */}
-        //       </span>
-        //     </Tooltip>
-        //   </Link>
-      }
-  </div>
-  )
-}
-
-//FOR NOW, load all transactions and doing the fileter in frontEnd.
-export default function TransactionTable({className, transactions}: {className?: string, transactions: NBPTransactionSummary[]}) {
+export default function TransactionTable() {
   const [searchValue, setSearchValue] = React.useState('')
   const [page, setPage] = React.useState(1)
   const [rowsPerPage, setRowsPerPage] = React.useState(13)
-  const [statusFilter, setStatusFilter] = React.useState<Selection>('all')
+  const [statusFilter, setStatusFilter] = React.useState<Selection>(new Set([]))
+  const [transactions, setTransactions] = React.useState<GetTransactions>([])
 
-  const renderCell = React.useCallback((transaction: NBPTransactionSummary, columnKey: React.Key) => {
+  const renderCell = React.useCallback((transaction: GetTransaction, columnKey: React.Key) => {
     switch(columnKey) {
-      case "summary":
+      case COLUME_TYPE.RECEIVER:
         return (
-          <Summary {...transaction}/>
+          <ReceiverCell transaction={transaction}/>
         )
-      case "created":
+      case COLUME_TYPE.RECEIVER_AMOUNT:
         return (
-          <CreatedCell {...transaction}/>
+          <ReceiverAmountCell transaction={transaction}/>
         )
-      case "status":
+      case COLUME_TYPE.STATUS:
         return (
-          <StatusCelll {...transaction}/>
+          <StatusCell transaction={transaction}/>
         )
-      case "receiveAmount":
+      case COLUME_TYPE.CREATED_AT:
         return (
-          <AmountCell {...transaction}/>
+          <DateCell transaction={transaction}/>
         )
-      case "actions":
+      case COLUME_TYPE.ACTIONS:
         return (
-          <ActionsCelll {...transaction}/>
+          <ActionsCell transaction={transaction}/>
+        )
+      case COLUME_TYPE.ALL:
+        return (
+          <AllCell transaction={transaction}/>
         )
       default:
         return null
@@ -287,10 +221,9 @@ export default function TransactionTable({className, transactions}: {className?:
 
   const onSearchValueChange = React.useCallback((value?: string) => {
     if (value) {
-      setSearchValue(value);
-      setPage(1);
+      setSearchValue(value)
     } else {
-      setSearchValue("");
+      setSearchValue("")
     }
   }, []);
 
@@ -301,13 +234,8 @@ export default function TransactionTable({className, transactions}: {className?:
 
   //TODO: Improve to reduce the network load.
   const filteredTransactions = React.useMemo(() => {
-    let filteredTransactions = [...transactions];
+    let filteredTransactions = [...transactions]
 
-    if (Boolean(searchValue)) {
-      filteredTransactions = filteredTransactions.filter((transaction) =>
-        transaction.summary.toLowerCase().includes(searchValue.toLowerCase()),
-      );
-    }
     if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
       filteredTransactions = filteredTransactions.filter((transaction) =>
         Array.from(statusFilter).includes(transaction.status),
@@ -315,7 +243,11 @@ export default function TransactionTable({className, transactions}: {className?:
     }
 
     return filteredTransactions;
-  }, [searchValue, statusFilter])
+  }, [statusFilter])
+
+  useEffect(() => {
+    console.log("aaa", statusFilter)
+  }, [statusFilter])
 
   const pages = Math.ceil(filteredTransactions.length / rowsPerPage);
 
@@ -362,7 +294,7 @@ export default function TransactionTable({className, transactions}: {className?:
                 onSelectionChange={setStatusFilter}
               >
                 {STATUS_OPTIONS.map((status) => (
-                  <DropdownItem key={status} className="capitalize">
+                  <DropdownItem key={status}>
                     {STATUS_TEXT_MAP[status]}
                   </DropdownItem>
                 ))}
@@ -418,17 +350,20 @@ export default function TransactionTable({className, transactions}: {className?:
       // topContentPlacement="outside"
       // removeWrapper
       bottomContent={bottomContent}
-      className={`w-full max-w-5xl ${className}`}
     >
-      <TableHeader columns={columns}>
-        {(column) => (
-          <TableColumn key={column.id}>
-            {column.name}
-          </TableColumn>
-        )}
+      <TableHeader columns={COLUMES}>
+        {
+          (column) => {
+            return (
+              <TableColumn className={`${COLUME_MAP[column.id as keyof typeof COLUME_MAP].headerCss}`} key={column.id}>
+                {COLUME_MAP[column.id as keyof typeof COLUME_MAP].name}
+              </TableColumn>
+            )
+          }
+        }
       </TableHeader>
       <TableBody 
-        items={items}
+        items={transactions}
         emptyContent={"No rows to display."}
       >
       {(item) => (
