@@ -215,10 +215,10 @@ export default function TransactionTable() {
   }, [])
 
   useEffect(() => {
-    const controller = new AbortController()
+    let controller = new AbortController()
     const loadTransaction = async () => {
       try {
-        const response = await fetchTransactions()
+        const response = await fetchTransactions({controller})
         const responsePayload = await response.json() as HttpGET<GetTransactions>
         console.log(responsePayload)
       } catch ( err ) {
@@ -226,15 +226,19 @@ export default function TransactionTable() {
       }
     }
     loadTransaction()
-    return () => controller.abort()
+    //INVESTIGATE: cause typeError: Response body object should not be disturbed or locked on server.
+    // return () => controller.abort()
+    return () => {}
   }, [])
-  const fetchTransactions = React.useCallback((option?: GetTransaction): Promise<Response> => {
+
+  const fetchTransactions = React.useCallback(({options, controller}: {options?: GetAnimationsOptions, controller?: AbortController}): Promise<Response> => {
     return fetch('/api/nbp/user/transactions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(option ?? {})
+      body: JSON.stringify(options ?? {}),
+      signal: controller?.signal
     })
   }, [])
 

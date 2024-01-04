@@ -21,13 +21,12 @@ export async function POST(req: NextRequest) {
     if (!session || !assertSession(session)) throw new UnauthenticateError("Please Login")
 
     const getTransactionOptionPayload = await req.json()
-    console.log("aaaa: ", getTransactionOptionPayload)
     const getTransactionOption = await castAndValidateData(getTransactionOptionPayload, GetTransactionOptionValidator) as GetTransactionOption
 
     const transactions = await getTransactionsByOwnerId(session, getTransactionOption)
 
     return Response.json(transactions, {
-      status: 201,
+      status: 200,
       headers: {
         'Content-Type': 'application/json'
       }
