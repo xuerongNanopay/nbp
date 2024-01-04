@@ -301,16 +301,36 @@ export async function getTransactionsByOwnerId(
   session: Session,
   options?: GetTransactionOption
 ) : Promise<GetTransactions> {
-  // const wherePredicate = { take: 50 } // Maximum size for each query
-  // if (!!options?.from) 
+  //TODO: Limit the maximum size
+  const opts: GetTransactionOption = {
+    from: 0,
+    size: 50,
+    statuses: [
+      TransactionStatus.INITIAL,
+      TransactionStatus.PROCESS,
+      TransactionStatus.REFUND,
+      TransactionStatus.REFUND_IN_PROGRESS,
+      TransactionStatus.CANCEL,
+      TransactionStatus.REJECT,
+      TransactionStatus.WAITING_FOR_PAYMENT
+    ],
+    searchKey: "",
+    ...options
+  }
   try {
     const transactions = await getPrismaClient().transaction.findMany({
       where: {
         ownerId: session.user!.id,
         status: {
-          not: TransactionStatus.QUOTE
+          not: TransactionStatus.QUOTE,
+          in: opts.statuses
+        },
+        destinationName: {
+          contains: opts.searchKey
         }
       },
+      skip: opts.from,
+      take: opts.size,
       orderBy: {
         id: 'desc'
       },
@@ -334,9 +354,7 @@ export async function getTransactionsByOwnerId(
 
 async function countTransactions(
   session: Session,
-  options?: {
-    statuses?: TransactionStatus[]
-  }
+  options?: Pick<GetTransactionOption, 'searchKey' | 'statuses'>
 ) {
 
 }

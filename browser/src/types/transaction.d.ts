@@ -14,7 +14,7 @@ export interface GetTransactionOption {
   from?: number,
   size?: number,
   searchKey?: string,
-  statuses: TransactionStatus[]
+  statuses?: TransactionStatus[]
 }
 
 export type TransactionQuoteResult = Prisma.TransactionGetPayload<{
