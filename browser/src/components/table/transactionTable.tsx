@@ -35,6 +35,7 @@ import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
 import { NBPTransactionSummary } from '@/type';
 import { GetTransaction, GetTransactions } from '@/types/transaction';
 import { TransactionStatus } from '@prisma/client';
+import { HttpGET } from '@/types/http';
 
 const STATUS_COLOR_MAP: Record<string, ChipProps["color"]> = {
   [TransactionStatus.INITIAL]: "secondary",
@@ -213,13 +214,27 @@ export default function TransactionTable() {
     }
   }, [])
 
-  const fetchTransaction = React.useCallback((option?: GetTransaction): Promise<Response> => {
-    return fetch('/api/nbp/usr/transactions', {
+  useEffect(() => {
+    const controller = new AbortController()
+    const loadTransaction = async () => {
+      try {
+        const response = await fetchTransactions()
+        const responsePayload = await response.json() as HttpGET<GetTransactions>
+        console.log(responsePayload)
+      } catch ( err ) {
+        console.error(err)
+      }
+    }
+    loadTransaction()
+    return () => controller.abort()
+  }, [])
+  const fetchTransactions = React.useCallback((option?: GetTransaction): Promise<Response> => {
+    return fetch('/api/nbp/user/transactions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(option)
+      body: JSON.stringify(option ?? {})
     })
   }, [])
 
