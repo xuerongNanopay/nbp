@@ -31,6 +31,7 @@ import { SearchIcon } from '@/icons/SearchIcon'
 import { PlusIcon } from '@/icons/PlusIcon'
 import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
 import { NBPTransactionSummary } from '@/type';
+import { GetTransaction } from '@/types/transaction';
 
 const statusOptions = [
   {name: "SUCCESS", uid: "complete"},
@@ -103,6 +104,45 @@ const COLUME_MAP = {
     cellCss: 'max-sm:hidden'
   }
 }
+
+const ReceiverCell = (transaction: GetTransaction) => {
+  return (
+    <>
+    </>
+  )
+}
+const ReceiverAmountCell = (transaction: GetTransaction) => {
+  return (
+    <>
+    </>
+  )
+}
+// const StatusCell = (transaction: GetTransaction) => {
+//   return (
+//     <>
+//     </>
+//   )
+// }
+const DateCell = (transaction: GetTransaction) => {
+  return (
+    <>
+    </>
+  )
+}
+const AllCell = (transaction: GetTransaction) => {
+  return (
+    <>
+    </>
+  )
+}
+
+// const ActionsCell = (transaction: GetTransaction) => {
+//   return (
+//     <>
+//     </>
+//   )
+// }
+
 const Summary = ({summary}: NBPTransactionSummary) => {
   return (
     <p>{summary}</p>
