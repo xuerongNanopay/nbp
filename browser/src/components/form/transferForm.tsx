@@ -95,15 +95,19 @@ export default function TransferForm() {
   })
 
   useEffect(() => {
+    console.log(formik.touched.destinationContactId, 
+      formik.touched.sourceAccountId,
+      formik.errors.destinationContactId,
+      formik.errors.sourceAccountId)
     if ( formik.touched.destinationContactId && formik.touched.sourceAccountId ) {
-      if ( !!formik.errors.destinationContactId || !!formik.errors.sourceAccountId ) {
-        setDisableAmountInput(true)
-        setDestinationAmount(0.0)
-        formik.setFieldValue('sourceAmount', 0.0)
-      } else {
+      if ( !!formik.errors.destinationContactId && !!formik.errors.sourceAccountId ) {
         setDisableAmountInput(false)
+        return
       }
     }
+    setDisableAmountInput(true)
+    setDestinationAmount(0.0)
+    formik.setFieldValue('sourceAmount', 0.0)
   }, 
   [
     formik.touched.destinationContactId, 
