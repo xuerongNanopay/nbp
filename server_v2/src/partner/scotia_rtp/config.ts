@@ -1,4 +1,4 @@
-import type { Credential } from "./index.d.js"
+import type { Credential } from "./index.js"
 
 const CREDENTIAL: Credential = {
   ['API_KEY']: 'todo',

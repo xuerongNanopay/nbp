@@ -16,6 +16,16 @@ export interface Credential {
   ['CLIENT_ASSERTION_TYPE']: string
 }
 
-export interface Token {
-  
+export interface RawToken {
+  ['access_token']: string
+  ['scope']: string
+  ['token_type']: string
+  ['expires_in']: string
+}
+
+export interface Token extends RawToken {
+  ['access_token']: string
+  ['scope']: string
+  ['token_type']: string
+  ['expires_in']: Date
 }

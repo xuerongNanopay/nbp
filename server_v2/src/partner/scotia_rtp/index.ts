@@ -2,13 +2,16 @@
 
 import { base64Encode } from "@/utils/bast64Util.js"
 import axios from "axios"
-import type { Credential, Token } from "./index.d.js"
-import { getCredential } from "./credential.js"
+import type { AxiosResponse } from "axios"
+import type { Credential, RawToken, Token } from "./index.d.js"
+import { getCredential } from "./config.js"
 
 //Mutex when request a new token.
 let TOKEN :Token
 
-async function requestToken() {
+// Request is core service for the API.
+// If it is outage for long time or cannot recover. We need to raise emergency alert.
+async function requestToken(): Promise<Token | null> {
   const credential = getCredential()
   //TODO: in config
   const endpoint = '/wam/v1/getToken'
@@ -19,7 +22,7 @@ async function requestToken() {
   formData.append("client_assertion", encodeURIComponent(signJWT(credential)))
   formData.append("client_assertion_type", encodeURIComponent(credential.CLIENT_ASSERTION_TYPE))
 
-  const response = await axios.post(
+  const axiosResponse = await axios.post(
     endpoint,
     formData,
     {
@@ -29,6 +32,21 @@ async function requestToken() {
       }
     }
   )
+
+  //TODO: check response status
+  if ( axiosResponse.status >> 7 === 1 ) {
+    // Success
+    const response = axiosResponse as AxiosResponse<RawToken, any>
+    const rawToken = response.data
+    return {
+      ...rawToken,
+      expires_in: new Date(rawToken.expires_in)
+    }
+  } else {
+    // Fail
+    //TODO: log the error.
+    return null
+  }
 }
 
 function signJWT(credential: Credential):string {
