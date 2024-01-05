@@ -40,7 +40,7 @@ export async function GET(request: Request) {
       }
     )
   } catch (err: any) {
-    LOGGER.error(`${formatSession(session)}`, "API: notification-GET", err)
+    LOGGER.error(`${formatSession(session)}`, "API: notifications-GET", err)
 
     const errorResponse: HttpERROR = !err.errors ? {
       code: err.code,
