@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const fromStr = searchParams.get('from')
   const sizeStr = searchParams.get('size')
-  const searchKey = searchParams.get("search")
+  const searchKey = searchParams.get("searchKey")
   const statuses = searchParams.get("statuses")
 
   try {

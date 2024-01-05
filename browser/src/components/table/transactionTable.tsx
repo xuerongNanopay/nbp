@@ -34,6 +34,8 @@ import {
 } from '@/types/transaction';
 import { TransactionStatus } from '@prisma/client'
 import { HttpGET } from '@/types/http';
+import { CONSOLE_ALERT } from '@/utils/alertUtil';
+import { useToastAlert } from '@/hook/useToastAlert';
 
 const STATUS_COLOR_MAP: Record<string, ChipProps["color"]> = {
   [TransactionStatus.INITIAL]: "secondary",
@@ -174,6 +176,7 @@ const ActionsCell = ({transaction}: {transaction: GetTransaction}) => {
 }
 
 export default function TransactionTable() {
+  const alert = useToastAlert() ?? CONSOLE_ALERT
   const [searchValue, setSearchValue] = React.useState('')
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(13)
@@ -220,6 +223,7 @@ export default function TransactionTable() {
         const responsePayload = await response.json() as HttpGET<GetTransactions>
         console.log(responsePayload)
       } catch ( err ) {
+        alert.error("Internal Error. Please Try Later.")
         console.error(err)
       }
     }
