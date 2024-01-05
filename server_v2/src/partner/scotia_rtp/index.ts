@@ -4,7 +4,10 @@ import { base64Encode } from "@/utils/bast64Util.js"
 import axios from "axios"
 import type { Credential } from "./index.d.js"
 
+let Token :string
+
 // No sure if this is GET or POST.
+//TODO: using credential loader. Since credential mainly remaining unchanged.
 async function getToken(credential: Credential) {
   //TODO: in config
   const endpoint = '/wam/v1/getToken'
@@ -12,7 +15,7 @@ async function getToken(credential: Credential) {
   formData.append("grant_type", encodeURIComponent("client_credentials"))
   formData.append("scope", encodeURIComponent(credential.SCOPE))
   formData.append("client_id", encodeURIComponent(credential.CLIENT_ID))
-  formData.append("client_assertion", encodeURIComponent(credential.CLIENT_ASSERTION))
+  formData.append("client_assertion", encodeURIComponent(signJWT(credential)))
   formData.append("client_assertion_type", encodeURIComponent(credential.CLIENT_ASSERTION_TYPE))
 
   const response = await axios.post(
@@ -25,6 +28,11 @@ async function getToken(credential: Credential) {
       }
     }
   )
+}
+
+function signJWT(credential: Credential):string {
+
+  return ''
 }
 
 function rtpPaymentOption() {
