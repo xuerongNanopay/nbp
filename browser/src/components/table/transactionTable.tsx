@@ -115,7 +115,7 @@ const COLUMES = Object.keys(COLUME_MAP).map(k => ({id: k}))
 const ReceiverCell = ({transaction}: {transaction: GetTransaction}) => {
   return (
     <>
-      <p>{transaction.destinationName}</p>
+      <p>{transaction.destinationName.length < 20 ? transaction.destinationName : transaction.destinationName.split(' ')[0]}</p>
     </>
   )
 }
