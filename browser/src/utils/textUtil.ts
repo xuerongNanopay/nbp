@@ -7,3 +7,12 @@ export function blurEmail(email: String, radius: number=4) {
 
   return `${e.substring(0, radius)}****@${d}`
 }
+
+export function currencyFormatter(dollar: number, currency: string) {
+  const formatter = new Intl.NumberFormat('ca-US', {
+    style: 'currency',
+    currency,
+  })
+
+  return formatter.format(dollar)
+}

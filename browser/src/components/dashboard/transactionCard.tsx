@@ -5,7 +5,9 @@ import {
   CardHeader, 
   CardBody, 
   CardFooter,
-  Link
+  Link,
+  ChipProps,
+  Chip
 } from "@nextui-org/react"
 
 import { 
@@ -13,35 +15,41 @@ import {
 } from '@/icons/RightArrow'
 
 import { formatRelativeDate } from '@/utils/dateUtil'
-import { NBPTransactionSummary } from '@/type'
+import { GetTransaction } from '@/types/transaction'
+import { TransactionStatus } from '@prisma/client'
+import { currencyFormatter } from '@/utils/textUtil'
 
 type Props = {
-  maxContent?: number,
-  className?: string,
-  transactions?: NBPTransactionSummary[]
+  transactions: GetTransaction[]
 }
-// ·
 
-export default function TransactionCard({className, transactions}: Props) {
-  const testTransaction: NBPTransactionSummary= {
-    id: '1',
-    sendName: 'vvvd dd',
-    receiveName: 'Xuerong Wu',
-    created: new Date(), // Or Date type
-    status: 'Await for payment',
-    nbpReference: 'NP000000000000000',
-    sendAmount: "22.00 CAD",
-    receiveAmount: "4520.34 PRK",
-    summary: "aaa -> vvv | avvv -> ccc"
-  }
-  
-  const testTransactions: NBPTransactionSummary[] = Array(10).fill(null).map((_, idx): NBPTransactionSummary => {
-    return {...testTransaction, id: idx.toString()}
-  })
+const STATUS_COLOR_MAP: Record<string, ChipProps["color"]> = {
+  [TransactionStatus.INITIAL]: "secondary",
+  [TransactionStatus.WAITING_FOR_PAYMENT]: "warning",
+  [TransactionStatus.PROCESS]: "secondary",
+  [TransactionStatus.REFUND_IN_PROGRESS]: "secondary",
+  [TransactionStatus.REFUND]: "success",
+  [TransactionStatus.CANCEL]: "danger",
+  [TransactionStatus.REJECT]: "danger",
+  [TransactionStatus.COMPLETE]: "success"
+}
 
-  const renderTransactions = testTransactions
+const STATUS_TEXT_MAP:  Record<string, string>  = {
+  [TransactionStatus.INITIAL]: "Initial",
+  [TransactionStatus.WAITING_FOR_PAYMENT]: "Await Payment",
+  [TransactionStatus.PROCESS]: "Process",
+  [TransactionStatus.REFUND_IN_PROGRESS]: "Refunding",
+  [TransactionStatus.REFUND]: "Refund",
+  [TransactionStatus.CANCEL]: "Cancel",
+  [TransactionStatus.REJECT]: "Reject",
+  [TransactionStatus.COMPLETE]: "Complete"
+}
+
+export default function TransactionCard({transactions}: Props) {
+
+  const renderTransactions = transactions
   return (
-    <Card className={`text-black bg-[#f2f7f5] max-w-[1080px] ${!className ? '' : className}`}>
+    <Card className={`text-black bg-[#f2f7f5] max-w-[1080px]`}>
       <CardHeader className="font-semibold text-lg">Recent Transaction</CardHeader>
       {
         !renderTransactions || renderTransactions.length === 0 ?
@@ -57,7 +65,7 @@ export default function TransactionCard({className, transactions}: Props) {
               renderTransactions.slice(0,7).map((transaction) => {
                 return (
                   <div key={transaction.id} className="border-b-1 border-slate-200 last:border-b-0">
-                    <Link href={`/transactions/${transaction.id}`} className="text-slate-900 block">
+                    <Link href={`/nbp/transactions/${transaction.id}`} className="text-slate-900 block">
                       <TransactionItem transaction={transaction}/>
                     </Link>
                   </div>
@@ -70,7 +78,7 @@ export default function TransactionCard({className, transactions}: Props) {
               renderTransactions.slice(0,4).map((transaction) => {
                 return (
                   <div key={transaction.id} className="border-b-1 border-slate-300 last:border-b-0">
-                    <Link href={`/transactions/${transaction.id}`} className="text-slate-900 block">
+                    <Link href={`/nbp/transactions/${transaction.id}`} className="text-slate-900 block">
                       <MobileTransactionItem transaction={transaction}/>
                     </Link>
                   </div>
@@ -79,7 +87,7 @@ export default function TransactionCard({className, transactions}: Props) {
             }
           </CardBody>
           <CardFooter>
-            <Link href="/transactions" className="text-slate-600 text-lg font-semibold mx-auto">
+            <Link href="/nbp/transactions" className="text-slate-600 text-lg font-semibold mx-auto">
               See More...
             </Link>
           </CardFooter>
@@ -90,7 +98,7 @@ export default function TransactionCard({className, transactions}: Props) {
 }
 
 function TransactionItem(
-  {transaction}: {transaction: NBPTransactionSummary}
+  {transaction}: {transaction: GetTransaction}
 ) : React.JSX.Element {
   return (
     <div className="py-2">
@@ -99,16 +107,16 @@ function TransactionItem(
           <div className="flex items-center">
             <RightArrow className="me-4"/>
             <div>
-              <p className="font-semibold">Sent to {transaction.receiveName}</p>
-              <p className="text-sm text-slate-600">{formatRelativeDate(transaction.created)} · {transaction.nbpReference} · {transaction.status}</p>
+              <p className="font-semibold">Sent to {transaction.destinationName}</p>
+              <div className="text-sm text-slate-600">{formatRelativeDate(transaction.createdAt)} · <StatusChip transaction={transaction}/></div>
             </div>
           </div>
         </div>
         <div>
           <div className="flex items-center">
-            <div>
-              <p className="font-semibold">{transaction.receiveAmount}</p>
-              <p className="text-sm">{transaction.sendAmount}</p>
+            <div className="flext justify-end">
+              <p className="font-semibold text-end">{currencyFormatter(transaction.destinationAmount/100.0, transaction.destinationCurrency)}</p>
+              <p className="text-sm text-end">{currencyFormatter(transaction.sourceAmount/100.0, transaction.sourceCurrency)}</p>
             </div>
             <RightArrow className="ms-4"/>
           </div>
@@ -119,16 +127,16 @@ function TransactionItem(
 }
 
 function MobileTransactionItem(
-  {transaction}: {transaction: NBPTransactionSummary}
+  {transaction}: {transaction: GetTransaction}
 ) : React.JSX.Element {
   return (
     <div className="flex justify-between items-center py-2">
-      <div>
-        <p className="font-semibold text-sm">Sent to {transaction.receiveName}</p>
-        <p className="text-sm">Receive: {transaction.receiveAmount}</p>
+      <div className="flex flex-col gap-0">
+        <p className="font-semibold text-sm">Sent to: {transaction.destinationName}</p>
+        <p className="text-sm">Receive: {currencyFormatter(transaction.destinationAmount/100.0, transaction.destinationCurrency)}</p>
         {/* <p className="text-sm">{transaction.sendAmount}</p> */}
-        <p className="text-sm">Status: {transaction.status}</p>
-        <p className="text-sm text-slate-600">Created: {formatRelativeDate(transaction.created)}</p>
+        <p className="text-sm text-slate-600 italic">Created: {formatRelativeDate(transaction.createdAt)}</p>
+        <StatusChip transaction={transaction}/>
       </div>
       <div>
         <RightArrow/>
@@ -136,3 +144,11 @@ function MobileTransactionItem(
     </div>
   )
 } 
+
+function StatusChip({transaction}: {transaction: GetTransaction}) {
+  return (
+    <Chip color={STATUS_COLOR_MAP[transaction.status]} size="sm" variant="flat">
+      {STATUS_TEXT_MAP[transaction.status]}
+    </Chip>
+  )
+}

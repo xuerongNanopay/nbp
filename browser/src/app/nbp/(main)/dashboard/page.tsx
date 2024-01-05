@@ -5,11 +5,13 @@ import {
 } from '@/components/dashboard'
 import { getCurrencyRate } from '@/lib/currencyRate'
 import { fetchSession } from '@/lib/session'
+import { getTransactionsByOwnerId } from '@/lib/transaction'
 
 export default async function Dashboard() {
   const session = await fetchSession()
   const currencyRate = await getCurrencyRate(session!, "CAD", "PKR")
 
+  const transactions = await getTransactionsByOwnerId(session!, {from: 0, size: 10})
   return (
     <>
       <h2 className="mx-2 text-2xl max-sm:text-xl font-semibold mb-4">
@@ -20,7 +22,7 @@ export default async function Dashboard() {
         <NBPCard className="w-full flex-auto" />
       </div>
       <div className="mt-4 mx-2">
-        <TransactionCard/>
+        <TransactionCard transactions={transactions}/>
       </div>
     </>
   )

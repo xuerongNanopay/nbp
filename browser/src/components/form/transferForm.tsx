@@ -32,7 +32,7 @@ import { GetAccount, GetAccounts } from "@/types/account"
 import { GetContact, GetContacts } from "@/types/contact"
 import { HttpGET, HttpPOST } from "@/types/http"
 import { ContactType } from "@prisma/client"
-import { blurEmail } from "@/utils/textUtil"
+import { blurEmail, currencyFormatter } from "@/utils/textUtil"
 import { AlertFunc } from '@/types/log'
 
 export default function TransferForm() {
@@ -422,7 +422,7 @@ function ConfirmTransferModal(
                     <h4 className="font-semibold">Send: </h4>
                     <div className="flex justify-end">
                       <div>
-                        <p>{(transaction.sourceAmount/100.0).toFixed(2)} {transaction.sourceCurrency}</p>
+                        <p>{currencyFormatter(transaction.sourceAmount/100.0, transaction.sourceCurrency)}</p>
                       </div>
                     </div>
                   </div>
@@ -430,7 +430,7 @@ function ConfirmTransferModal(
                     <h4 className="font-semibold">Receive: </h4>
                     <div className="flex justify-end">
                       <div>
-                        <p>{(transaction.destinationAmount/100.0).toFixed(2)} {transaction.destinationCurrency}</p>
+                        <p>{currencyFormatter(transaction.destinationAmount/100.0, transaction.destinationCurrency)}</p>
                       </div>
                     </div>
                   </div>
@@ -438,7 +438,7 @@ function ConfirmTransferModal(
                     <h4 className="font-semibold">Fee: </h4>
                     <div className="flex justify-end">
                       <div>
-                        <p>{(transaction.feeAmount/100.0).toFixed(2)} {transaction.feeCurrency}</p>
+                        <p>{currencyFormatter(transaction.feeAmount/100.0, transaction.feeCurrency)}</p>
                       </div>
                     </div>
                   </div>
@@ -446,7 +446,7 @@ function ConfirmTransferModal(
                     <h4 className="font-semibold text-green-800">Total Cost: </h4>
                     <div className="flex justify-end">
                       <div>
-                        <p className="font-semibold text-green-800">{(transaction.debitAmount/100.0).toFixed(2)} {transaction.debitCurrency}</p>
+                        <p className="font-semibold text-green-800">{currencyFormatter(transaction.debitAmount/100.0, transaction.debitCurrency)}</p>
                       </div>
                     </div>
                   </div>

@@ -36,6 +36,7 @@ import { TransactionStatus } from '@prisma/client'
 import { HttpGET } from '@/types/http';
 import { CONSOLE_ALERT } from '@/utils/alertUtil';
 import { useToastAlert } from '@/hook/useToastAlert';
+import { currencyFormatter } from '@/utils/textUtil';
 
 const STATUS_COLOR_MAP: Record<string, ChipProps["color"]> = {
   [TransactionStatus.INITIAL]: "secondary",
@@ -122,7 +123,7 @@ const ReceiverCell = ({transaction}: {transaction: GetTransaction}) => {
 const ReceiverAmountCell = ({transaction}: {transaction: GetTransaction}) => {
   return (
     <>
-      <p>{transaction.destinationAmount/100.0} {transaction.destinationCurrency}</p>
+      <p>{currencyFormatter(transaction.destinationAmount/100.0, transaction.destinationCurrency)}</p>
     </>
   )
 }
@@ -143,7 +144,7 @@ const AllCell = ({transaction}: {transaction: GetTransaction}) => {
     <div className="flex justify-between items-center">
       <div className="flex flex-col gap-1">
         <p>{transaction.destinationName}</p>
-        <p className="italic text-slate-600">{transaction.destinationAmount/100.0} {transaction.destinationCurrency}</p>
+        <p className="italic text-slate-600">{currencyFormatter(transaction.destinationAmount/100.0, transaction.destinationCurrency)}</p>
         <p className="italic text-slate-600">{formatRelativeDate(transaction.createdAt)}</p>
         <Chip color={STATUS_COLOR_MAP[transaction.status]} size="sm" variant="flat">
           {STATUS_TEXT_MAP[transaction.status]}
