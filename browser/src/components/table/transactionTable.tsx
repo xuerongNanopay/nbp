@@ -1,7 +1,6 @@
 'use client'
 import React, { useEffect } from 'react'
 import { Selection } from '@nextui-org/react'
-import useSWR from 'swr'
 
 import {
   Table,
@@ -20,7 +19,6 @@ import {
   Button,
   DropdownMenu,
   DropdownItem,
-  Pagination,
   Link
 } from "@nextui-org/react";
 
@@ -28,13 +26,13 @@ import { formatRelativeDate } from '@/utils/dateUtil'
 
 import { FiSend } from "react-icons/fi"
 import { EyeIcon } from '@/icons/EyeIcon'
-import { SendMoneyIcon } from '@/icons/SendMoneyIcon'
-import { SearchIcon } from '@/icons/SearchIcon'
-import { PlusIcon } from '@/icons/PlusIcon'
 import { ChevronDownIcon } from '@/icons/ChevronDownIcon'
-import { NBPTransactionSummary } from '@/type';
-import { GetTransaction, GetTransactions } from '@/types/transaction';
-import { TransactionStatus } from '@prisma/client';
+import { 
+  GetTransaction, 
+  GetTransactionOption, 
+  GetTransactions 
+} from '@/types/transaction';
+import { TransactionStatus } from '@prisma/client'
 import { HttpGET } from '@/types/http';
 
 const STATUS_COLOR_MAP: Record<string, ChipProps["color"]> = {
@@ -177,7 +175,7 @@ const ActionsCell = ({transaction}: {transaction: GetTransaction}) => {
 
 export default function TransactionTable() {
   const [searchValue, setSearchValue] = React.useState('')
-  const [page, setPage] = React.useState(1)
+  const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(13)
   const [statusFilter, setStatusFilter] = React.useState<Selection>(new Set(STATUS_OPTIONS))
   const [transactions, setTransactions] = React.useState<GetTransactions>([])
@@ -227,17 +225,24 @@ export default function TransactionTable() {
     }
     loadTransaction()
     //INVESTIGATE: cause typeError: Response body object should not be disturbed or locked on server.
-    // return () => controller.abort()
-    return () => {}
+    //             when using POST
+    return () => controller.abort()
+    // return () => {}
   }, [])
 
-  const fetchTransactions = React.useCallback(({options, controller}: {options?: GetAnimationsOptions, controller?: AbortController}): Promise<Response> => {
-    return fetch('/api/nbp/user/transactions', {
-      method: 'POST',
+  const fetchTransactions = React.useCallback(({options, controller}: {options?: GetTransactionOption, controller?: AbortController}): Promise<Response> => {
+    const urlParams = new URLSearchParams()
+    if ( !!options && !!options.from ) urlParams.set('from', `${options.from}`)
+    if ( !!options && !!options.size ) urlParams.set('size', `${options.size}`)
+    if ( !!options && !!options.searchKey ) urlParams.set('searchKey', `${options.searchKey}`)
+    if ( !!options && !!options.statuses && options.statuses.length > 0)
+      urlParams.set('statuses', `${options.statuses.join(',')}`)
+
+
+    return fetch(`/api/nbp/user/transactions?${urlParams}`, {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(options ?? {}),
       signal: controller?.signal
     })
   }, [])
