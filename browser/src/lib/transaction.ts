@@ -360,21 +360,22 @@ export async function countTransactions(
   }
 }
 
-async function getTransactionDetailByOwnerId(
+export async function getTransactionDetailByOwnerId(
   session: Session, 
   transactionId: number
-): Promise<GetTransactionDetail> {
+): Promise<GetTransactionDetail | null> {
   try {
     const transaction = await getPrismaClient().transaction.findUnique({
       where: {
         id: transactionId,
-        owner: session.user!.id,
+        ownerId: session.user!.id,
         status: {
           not: TransactionStatus.QUOTE
         }
       },
       select: {
         id: true,
+        status: true,
         sourceAccount: {
           select: {
             id: true,
@@ -407,6 +408,7 @@ async function getTransactionDetailByOwnerId(
         },
         destinationAmount: true,
         destinationCurrency: true,
+        destinationName: true,
         feeAmount: true,
         feeCurrency: true,
         debitAmount: true,
@@ -418,10 +420,10 @@ async function getTransactionDetailByOwnerId(
             paymentLink: true,
             cashInReceiveAt: true
           }
-        }
+        },
+        createdAt: true
       }
     })
-    if (!transaction) throw new ResourceNoFoundError("Resource no found.");
     return transaction
   } catch (err) {
     if ( err instanceof NBPError) throw err

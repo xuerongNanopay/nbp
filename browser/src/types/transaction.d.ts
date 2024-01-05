@@ -91,6 +91,7 @@ export type GetTransaction = Prisma.TransactionGetPayload<{
 export type GetTransactionDetail = Prisma.TransactionGetPayload<{
   select: {
     id: true,
+    status: true,
     sourceAccount: {
       select: {
         id: true,
@@ -123,6 +124,7 @@ export type GetTransactionDetail = Prisma.TransactionGetPayload<{
     },
     destinationAmount: true,
     destinationCurrency: true,
+    destinationName: true,
     feeAmount: true,
     feeCurrency: true,
     debitAmount: true,
@@ -134,6 +136,7 @@ export type GetTransactionDetail = Prisma.TransactionGetPayload<{
         paymentLink: true,
         cashInReceiveAt: true
       }
-    }
+    },
+    createdAt: true
   }
 }>
