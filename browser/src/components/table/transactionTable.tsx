@@ -246,7 +246,7 @@ export default function TransactionTable() {
     //             when using POST
     return () => controller.abort()
     // return () => {}
-  }, [])
+  }, [statusFilter, page])
 
   const fetchTransactions = React.useCallback(({options, controller}: {options?: GetTransactionOption, controller?: AbortController}): Promise<Response> => {
     const urlParams = new URLSearchParams()
@@ -275,27 +275,8 @@ export default function TransactionTable() {
 
   const onClear = React.useCallback(()=>{
     setSearchValue("")
-    setPage(1)
+    setPage(0)
   },[])
-
-  //TODO: Improve to reduce the network load.
-  const filteredTransactions = React.useMemo(() => {
-    let filteredTransactions = [...transactions]
-
-    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredTransactions = filteredTransactions.filter((transaction) =>
-        Array.from(statusFilter).includes(transaction.status),
-      );
-    }
-
-    return filteredTransactions;
-  }, [statusFilter])
-
-  useEffect(() => {
-    console.log("aaa", statusFilter)
-  }, [statusFilter])
-
-  const pages = Math.ceil(filteredTransactions.length / rowsPerPage);
 
   const topContent = React.useMemo(() => {
     return (
@@ -362,18 +343,30 @@ export default function TransactionTable() {
     searchValue,
     onSearchValueChange,
     statusFilter,
-    setStatusFilter,
-    filteredTransactions.length
+    setStatusFilter
   ])
 
   const bottomContent = React.useMemo(() => {
     return (
       <div className="flex justify-end gap-2">
-        <Button color='primary' variant="ghost">Previous</Button>
-        <Button color="primary">Next</Button>
+        <Button 
+          color="primary"
+          variant="ghost"
+          isDisabled={page===0}
+          onClick={() => {
+            setPage(page => page-1)
+          }}
+        >Previous</Button>
+        <Button 
+          color="primary"
+          isDisabled={page*rowsPerPage > transactionCount}
+          onClick={() => {
+            setPage(page => page+1)
+          }}
+        >Next</Button>
       </div>
     )
-  }, [page, pages]);
+  }, [page, setPage, transactionCount, rowsPerPage]);
 
   return (
     <Table 
