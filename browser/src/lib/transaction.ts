@@ -329,11 +329,11 @@ export async function getTransactionsByOwnerId(
           contains: opts.searchKey
         }
       },
-      skip: opts.from,
-      take: opts.size,
       orderBy: {
         id: 'desc'
       },
+      skip: opts.from,
+      take: opts.size,
       select: {
         id: true,
         status: true,
