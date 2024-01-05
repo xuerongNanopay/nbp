@@ -6,6 +6,8 @@ import type { AxiosResponse } from "axios"
 import type { Credential, RawToken, Token } from "./index.d.js"
 import { getCredential } from "./config.js"
 
+//TODO: using single instance architecture for the module.
+
 //Mutex when request a new token.
 let TOKEN :Token
 
