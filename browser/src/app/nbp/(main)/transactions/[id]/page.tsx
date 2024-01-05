@@ -1,12 +1,5 @@
 
 import { notFound, redirect } from 'next/navigation'
-
-import {
-  Button,
-  Link,
-  Breadcrumbs,
-  BreadcrumbItem
-} from '@nextui-org/react'
 import { TransactionDetail } from './transactionDetail'
 import { getTransactionDetailByOwnerId } from '@/lib/transaction'
 import { fetchSession } from '@/lib/session'
