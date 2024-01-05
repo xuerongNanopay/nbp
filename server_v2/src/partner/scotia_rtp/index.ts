@@ -5,6 +5,7 @@ import axios from "axios"
 import type { AxiosResponse } from "axios"
 import type { Credential, RawToken, Token } from "./index.d.js"
 import { getCredential } from "./config.js"
+import * as jose from 'jose'
 
 //TODO: using single instance architecture for the module.
 
@@ -52,7 +53,7 @@ async function requestToken(): Promise<Token | null> {
 }
 
 function signJWT(credential: Credential):string {
-
+  jose.SignJWT()
   return ''
 }
 
