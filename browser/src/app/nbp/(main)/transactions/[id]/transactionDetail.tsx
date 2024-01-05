@@ -38,14 +38,14 @@ const STATUS_TEXT_MAP:  Record<string, string>  = {
 export function TransactionDetail({transaction}: {transaction: GetTransactionDetail}) {
 
   return (
-    <div className="px-2 sm:px-2 py-2 sm:py-4 max-w-4xl mx-auto">
-      <Breadcrumbs className="mb-4">
+    <div className="max-w-4xl mx-auto">
+      <Breadcrumbs className="mb-4" color="primary">
         <BreadcrumbItem href='/nbp/transactions'>transactions</BreadcrumbItem>
         <BreadcrumbItem href='#'>{transaction.id}</BreadcrumbItem>
       </Breadcrumbs>
-      {/* <h1 className="font-semibold text-ellipsis sm:font-bold sm:text-3xl mb-4">
-        {transactionDetail.summary}
-      </h1> */}
+      <h1 className="font-semibold text-ellipsis sm:font-bold sm:text-3xl mb-4">
+        {transaction.destinationName} 💰 {currencyFormatter(transaction.destinationAmount, transaction.destinationCurrency)}
+      </h1>
       {/* Interact */}
       <div className="flex">
         <div className="flex-none w-1 bg-yellow-600 rounded-s-medium"></div>
