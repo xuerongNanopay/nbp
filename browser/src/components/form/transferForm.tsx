@@ -96,10 +96,12 @@ export default function TransferForm() {
 
   useEffect(() => {
     if ( formik.touched.destinationContactId && formik.touched.sourceAccountId ) {
-      if ( !formik.errors.destinationContactId && !formik.errors.sourceAccountId ) {
-        setDisableAmountInput(false)
-      } else {
+      if ( !!formik.errors.destinationContactId || !!formik.errors.sourceAccountId ) {
         setDisableAmountInput(true)
+        setDestinationAmount(0.0)
+        formik.setFieldValue('sourceAmount', 0.0)
+      } else {
+        setDisableAmountInput(false)
       }
     }
   }, 
