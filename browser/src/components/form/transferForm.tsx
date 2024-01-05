@@ -413,7 +413,7 @@ function ConfirmTransferModal(
                       {
                         transaction.destinationContact.type === ContactType.CASH_PICKUP ? 
                         <p>NBP(<span className="italic text-slate-600">Cash Pickup</span>)</p> : 
-                        <p>{transaction.destinationContact.institution?.abbr}(<span className="italic text-slate-600">{!!transaction.destinationContact.iban ? transaction.destinationContact.iban : transaction.destinationContact.bankAccountNum}</span>)</p>
+                        <p className="text-end">{transaction.destinationContact.institution?.abbr}(<span className="italic text-slate-600">{!!transaction.destinationContact.iban ? transaction.destinationContact.iban : transaction.destinationContact.bankAccountNum}</span>)</p>
                       }
                     </div>
                   </div>
