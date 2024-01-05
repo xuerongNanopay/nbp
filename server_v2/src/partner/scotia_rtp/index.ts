@@ -2,13 +2,14 @@
 
 import { base64Encode } from "@/utils/bast64Util.js"
 import axios from "axios"
-import type { Credential } from "./index.d.js"
+import type { Credential, Token } from "./index.d.js"
+import { getCredential } from "./credential.js"
 
-let Token :string
+//Mutex when request a new token.
+let TOKEN :Token
 
-// No sure if this is GET or POST.
-//TODO: using credential loader. Since credential mainly remaining unchanged.
-async function getToken(credential: Credential) {
+async function requestToken() {
+  const credential = getCredential()
   //TODO: in config
   const endpoint = '/wam/v1/getToken'
   const formData = new FormData()

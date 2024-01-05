@@ -15,3 +15,7 @@ export interface Credential {
   ['CLIENT_ASSERTION']: string
   ['CLIENT_ASSERTION_TYPE']: string
 }
+
+export interface Token {
+  
+}
