@@ -34,7 +34,7 @@ export default function SideNav({session}: {session: Session}) {
                 className={`${menu.href === curPath ? 'text-primary': 'text-slate-800'} w-full text-lg font-semibold hover:ps-2`}
                 href={menu.href}
               >
-                {menu.name}
+                <span className="me-1">{menu.icon}</span>{menu.name}
               </Link>
             </ListboxItem>
           ))}

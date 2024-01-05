@@ -58,7 +58,7 @@ export default function Nav({session}: {session: Session}) {
                         as={NextLink}
                         onClick={() => {setIsMenuOpen(false)}}
                       >
-                        {menu.name}
+                        <span className="me-1">{menu.icon}</span>{menu.name}
                       </Link>
                     </NavbarMenuItem>
                 )})
