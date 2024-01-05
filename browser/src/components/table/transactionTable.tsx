@@ -179,10 +179,11 @@ export default function TransactionTable() {
   const alert = useToastAlert() ?? CONSOLE_ALERT
   const [searchValue, setSearchValue] = React.useState('')
   const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(13)
+  const [rowsPerPage, setRowsPerPage] = React.useState(15)
   const [statusFilter, setStatusFilter] = React.useState<Selection>(new Set(STATUS_OPTIONS))
   const [transactions, setTransactions] = React.useState<GetTransactions>([])
-  const [isTransactionsLoading, setIsTransactionLoading] = React.useState(false)
+  const [transactionCount, setTransactionCount] = React.useState<number>(0)
+  const [isTransactionsLoading, setIsTransactionLoading] = React.useState(true)
 
   const renderCell = React.useCallback((transaction: GetTransaction, columnKey: React.Key) => {
     switch(columnKey) {
@@ -218,12 +219,25 @@ export default function TransactionTable() {
   useEffect(() => {
     let controller = new AbortController()
     const loadTransaction = async () => {
+      setIsTransactionLoading(true)
       try {
-        const response = await fetchTransactions({controller})
+        const options = {
+          from: page * rowsPerPage,
+          size: rowsPerPage,
+          statuses: Array.from(statusFilter) as TransactionStatus[]
+        }
+        const response = await fetchTransactions({controller, options})
         const responsePayload = await response.json() as HttpGET<GetTransactions>
-        console.log(responsePayload)
+
+        if ( responsePayload.code >> 7 === 1 ) {
+          setTransactions(responsePayload.payload.many)
+          setTransactionCount(responsePayload.payload.meta.count)
+        } else {
+          alert.error(responsePayload.message)
+        }
+        setIsTransactionLoading(false)
       } catch ( err ) {
-        alert.error("Internal Error. Please Try Later.")
+        setIsTransactionLoading(false)
         console.error(err)
       }
     }
@@ -304,7 +318,7 @@ export default function TransactionTable() {
             }
           />
           <div className="max-sm:flex justify-between items-center max-sm:w-full">
-            <p className="text-default-400 text-small sm:hidden">Total {filteredTransactions.length} Transactions</p>
+            <p className="text-default-400 text-small sm:hidden">{transactionCount <= 0 ? "" : `Total: ${transactionCount}`}</p>
             <div className="flex gap-3">
               <Dropdown>
                 <DropdownTrigger>
@@ -327,23 +341,24 @@ export default function TransactionTable() {
                   ))}
                 </DropdownMenu>
               </Dropdown>
-              <Button 
+              <Button
                 color="primary"
                 endContent={<FiSend/>}
                 href="/nbp/transfer"
                 as={Link}
               >              
-                Transfer
+                <p className="max-sm:hidden">Transfer</p>
               </Button>
             </div>
           </div>
         </div>
         <div className="flex flex-col items-start sm:flex-row justify-between sm:items-center max-sm:hidden">
-          <span className="text-default-400 text-small">Total {filteredTransactions.length} transactions</span>
+          <span className="text-default-400 text-small">{transactionCount <= 0 ? "" : `Total ${transactionCount} Transactions`}</span>
         </div>
       </div>
     )
   },[
+    transactionCount,
     searchValue,
     onSearchValueChange,
     statusFilter,
@@ -383,12 +398,14 @@ export default function TransactionTable() {
         }
       </TableHeader>
       <TableBody 
+        loadingContent={<Spinner/>}
+        loadingState={isTransactionsLoading ? 'loading' : 'idle'}
         items={transactions}
-        emptyContent={"No rows to display."}
+        emptyContent={isTransactionsLoading ? " " : "No rows to display."}
       >
       {(item) => (
         <TableRow key={item.id}>
-          {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+          {(columnKey) => <TableCell className={`${COLUME_MAP[columnKey as keyof typeof COLUME_MAP].cellCss}`}>{renderCell(item, columnKey)}</TableCell>}
         </TableRow>
       )}
       </TableBody>
