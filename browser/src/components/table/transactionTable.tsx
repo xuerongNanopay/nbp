@@ -178,6 +178,7 @@ const ActionsCell = ({transaction}: {transaction: GetTransaction}) => {
 export default function TransactionTable() {
   const alert = useToastAlert() ?? CONSOLE_ALERT
   const [searchValue, setSearchValue] = React.useState('')
+  const [_searchValue, _setSearchValue] = React.useState('')
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(15)
   const [statusFilter, setStatusFilter] = React.useState<Selection>(new Set(STATUS_OPTIONS))
@@ -221,9 +222,10 @@ export default function TransactionTable() {
     const loadTransaction = async () => {
       setIsTransactionLoading(true)
       try {
-        const options = {
+        const options: GetTransactionOption = {
           from: page * rowsPerPage,
           size: rowsPerPage,
+          searchKey: !_searchValue.trim() ? "" : _searchValue.trim(),
           statuses: Array.from(statusFilter) as TransactionStatus[]
         }
         const response = await fetchTransactions({controller, options})
@@ -246,7 +248,7 @@ export default function TransactionTable() {
     //             when using POST
     return () => controller.abort()
     // return () => {}
-  }, [statusFilter, page])
+  }, [statusFilter, page, _searchValue])
 
   const fetchTransactions = React.useCallback(({options, controller}: {options?: GetTransactionOption, controller?: AbortController}): Promise<Response> => {
     const urlParams = new URLSearchParams()
@@ -274,7 +276,7 @@ export default function TransactionTable() {
   }, []);
 
   const onClear = React.useCallback(()=>{
-    setSearchValue("")
+    _setSearchValue('')
     setPage(0)
   },[])
 
@@ -282,24 +284,38 @@ export default function TransactionTable() {
     return (
       <div className="flex flex-col gap-4 sticky top-0">
         <div className="flex flex-col items-center sm:flex-row justify-between gap-3 max-sm:items-end">
-          <Input
-            className="w-full sm:max-w-[50%]"
-            placeholder="Search by Receiver..."
-            value={searchValue}
-            size='sm'
-            onValueChange={onSearchValueChange}
-            endContent={
-              <Button
-                isIconOnly
-                variant="light"
-                onClick={() => console.log('Search button click')}
-              >
-                🔍
-              </Button>
-            }
-          />
+          <div className="flex w-full sm:max-w-[50%] items-center gap-1">
+            <Input
+              // className="w-full"
+              placeholder="Search by Receiver..."
+              value={searchValue}
+              size='sm'
+              isClearable
+              onClear={onClear}
+              onValueChange={onSearchValueChange}
+              // endContent={
+              //   <Button
+              //     isIconOnly
+              //     variant="light"
+              //     onClick={() => console.log('Search button click')}
+              //   >
+              //     🔍
+              //   </Button>
+              // }
+            />
+            <Button
+              isIconOnly
+              variant="light"
+              onClick={() => {
+                setPage(0)
+                _setSearchValue(searchValue)
+              }}
+            >
+              🔍
+            </Button>
+          </div>
           <div className="max-sm:flex justify-between items-center max-sm:w-full">
-            <p className="text-default-400 text-small sm:hidden">{transactionCount <= 0 ? "" : `Total: ${transactionCount}`}</p>
+            <p className="text-default-400 text-small sm:hidden">{`Total: ${transactionCount}`}</p>
             <div className="flex gap-3">
               <Dropdown>
                 <DropdownTrigger>
@@ -313,7 +329,10 @@ export default function TransactionTable() {
                   closeOnSelect={false}
                   selectedKeys={statusFilter}
                   selectionMode="multiple"
-                  onSelectionChange={setStatusFilter}
+                  onSelectionChange={(e) => {
+                    setPage(0)
+                    setStatusFilter(e)
+                  }}
                 >
                   {STATUS_OPTIONS.map((status) => (
                     <DropdownItem key={status}>
@@ -334,7 +353,7 @@ export default function TransactionTable() {
           </div>
         </div>
         <div className="flex flex-col items-start sm:flex-row justify-between sm:items-center max-sm:hidden">
-          <span className="text-default-400 text-small">{transactionCount <= 0 ? "" : `Total ${transactionCount} Transactions`}</span>
+          <span className="text-default-400 text-small">{`Total ${transactionCount} Transactions`}</span>
         </div>
       </div>
     )
@@ -352,21 +371,23 @@ export default function TransactionTable() {
         <Button 
           color="primary"
           variant="ghost"
-          isDisabled={page===0}
+          isDisabled={page<=0}
+          isLoading={isTransactionsLoading}
           onClick={() => {
             setPage(page => page-1)
           }}
         >Previous</Button>
         <Button 
           color="primary"
-          isDisabled={page*rowsPerPage > transactionCount}
+          isDisabled={(page+1)*rowsPerPage > transactionCount}
+          isLoading={isTransactionsLoading}
           onClick={() => {
             setPage(page => page+1)
           }}
         >Next</Button>
       </div>
     )
-  }, [page, setPage, transactionCount, rowsPerPage]);
+  }, [page, setPage, transactionCount, rowsPerPage, isTransactionsLoading]);
 
   return (
     <Table 
