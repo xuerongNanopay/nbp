@@ -63,7 +63,7 @@ export function TransactionDetail({transaction}: {transaction: GetTransactionDet
         </div>
       </div>
       {/* Genera Info */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 p-2 mt-2 sm:mt-4 border border-slate-200 rounded-md">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-2 mt-2 sm:mt-4 border border-slate-200 rounded-md">
         <div>
           <h5 className="font-semibold">Created</h5>
           <p className="text-sm text-slate-600">{transaction.createdAt.toISOString()}</p>
@@ -85,28 +85,29 @@ export function TransactionDetail({transaction}: {transaction: GetTransactionDet
         </div>
         <div>
           <h5 className="font-semibold">Destination Account</h5>
-          <p className="text-sm text-slate-600">{currencyFormatter(transaction.destinationAmount/100.0, transaction.destinationCurrency)}</p>
+          <p>TODO</p>
+          {/* <p className="text-sm text-slate-600">{currencyFormatter(transaction.destinationAmount/100.0, transaction.destinationCurrency)}</p> */}
         </div>
       </div>
             {/* Cost Info */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-2 p-2 mt-2 sm:mt-4 border border-slate-200 rounded-md">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-2 p-2 mt-2 sm:mt-4 border border-slate-200 rounded-md">
         <div>
           <h5 className="font-semibold">Source Amount</h5>
-          <p className="text-sm text-slate-600">{transactionDetail.sendAmount}</p>
-        </div>
-        <div>
-          <h5 className="font-semibold">FX Rate</h5>
-          <p className="text-sm text-slate-600">{transactionDetail.fxRate}</p>
-        </div>
-        <div>
-          <h5 className="font-semibold">Fee</h5>
-          <p className="text-sm text-slate-600">{transactionDetail.fee}</p>
+          <p className="text-sm text-slate-600">{currencyFormatter(transaction.sourceAmount/100.0, transaction.sourceCurrency)}</p>
         </div>
         <div>
           <h5 className="font-semibold">Destination Amount</h5>
-          <p className="text-sm text-slate-600">{transactionDetail.receiveAmount}</p>
+          <p className="text-sm text-slate-600">{currencyFormatter(transaction.destinationAmount/100.0, transaction.destinationCurrency)}</p>
         </div>
-      </div> */}
+        <div>
+          <h5 className="font-semibold">Fee</h5>
+          <p className="text-sm text-slate-600">{currencyFormatter(transaction.feeAmount/100.0, transaction.feeCurrency)}</p>
+        </div>
+        <div>
+          <h5 className="font-semibold">Debit Amount</h5>
+          <p className="text-sm text-slate-600">{currencyFormatter(transaction.debitAmount/100.0, transaction.debitCurrency)}</p>
+        </div>
+      </div>
     </div>
   )
 }
