@@ -25,6 +25,7 @@ import {
 
 import { useToastAlert } from "@/hook/useToastAlert"
 import { CONSOLE_ALERT } from "@/utils/alertUtil"
+import { useRouter } from 'next/navigation'
 
 import { TransactionConfirmResult, TransactionQuoteData, TransactionQuoteResult } from "@/types/transaction"
 import { TransactionQuoteDataValidator } from "@/schema/validator"
@@ -37,6 +38,7 @@ import { AlertFunc } from '@/types/log'
 
 export default function TransferForm() {
   const alert = useToastAlert() ?? CONSOLE_ALERT
+  const router = useRouter()
   const [isAccountLoading, setIsAccountLoading] = useState(true)
   const [isContactLoading, setIsContactLoading] = useState(true)
   const [disableAmountInput, setDisableAmountInput] = useState(true)
@@ -52,6 +54,7 @@ export default function TransferForm() {
     setQuoteTransactionResult(null)
     setIsSubmit(false)
   },})
+  
 
   const initialValues: Partial<TransactionQuoteData> = {
     sourceAccountId: 0,
@@ -196,7 +199,7 @@ export default function TransferForm() {
     <div className="w-full max-w-xl">
       <h4 className="text-2xl font-bold mb-6 text-center">Transaction Details</h4>
       <p className="text-base mb-6 text-center">Enter the details for your transaction.</p>
-      <ConfirmTransferModal transaction={quoteTransactionResult} isOpen={isOpen} onOpenChange={onOpenChange} alert={alert}/>
+      <ConfirmTransferModal transaction={quoteTransactionResult} isOpen={isOpen} onOpenChange={onOpenChange} alert={alert} router={router}/>
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Select
           id="sourceAccountId"
@@ -359,12 +362,14 @@ function ConfirmTransferModal(
     transaction,
     isOpen,
     onOpenChange,
-    alert
+    alert,
+    router
   }: {
     transaction: TransactionQuoteResult | null,
     isOpen: boolean,
     onOpenChange: () => void,
-    alert: AlertFunc
+    alert: AlertFunc,
+    router: any
   }
 ) {
   if (!transaction) return (<></>)
@@ -383,6 +388,7 @@ function ConfirmTransferModal(
       const responsePayload: HttpPOST<TransactionConfirmResult> = await response.json()
       if ( responsePayload.code >> 7 === 1 ) {
         alert.info(responsePayload.message)
+        router.replace(`/nbp/transactions/${responsePayload.payload.single.id}`)
       } else {
         alert.error(responsePayload.message)
       }
