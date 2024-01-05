@@ -128,7 +128,7 @@ const ReceiverAmountCell = ({transaction}: {transaction: GetTransaction}) => {
 }
 const StatusCell = ({transaction}: {transaction: GetTransaction}) => {
   return (
-    <Chip color={STATUS_COLOR_MAP[transaction.status]} size="sm" variant="flat">
+    <Chip color={STATUS_COLOR_MAP[transaction.status]} size="md" variant="flat">
       {STATUS_TEXT_MAP[transaction.status]}
     </Chip>
   )
@@ -140,8 +140,26 @@ const DateCell = ({transaction}: {transaction: GetTransaction}) => {
 }
 const AllCell = ({transaction}: {transaction: GetTransaction}) => {
   return (
-    <div>
-      TODO
+    <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-1">
+        <p>{transaction.destinationName}</p>
+        <p className="italic text-slate-600">{transaction.destinationAmount/100.0} {transaction.destinationCurrency}</p>
+        <p className="italic text-slate-600">{formatRelativeDate(transaction.createdAt)}</p>
+        <Chip color={STATUS_COLOR_MAP[transaction.status]} size="sm" variant="flat">
+          {STATUS_TEXT_MAP[transaction.status]}
+        </Chip>
+      </div>
+      <div>
+        <Link href={`/nbp/transactions/${transaction.id}`}>
+          <Tooltip content="Details">
+            <span 
+              className="text-lg text-default-400 cursor-pointer active:opacity-50"
+            >
+              <EyeIcon/>
+            </span>
+          </Tooltip>     
+        </Link>
+      </div>
     </div>
   )
 }
@@ -342,12 +360,22 @@ export default function TransactionTable() {
                 </DropdownMenu>
               </Dropdown>
               <Button
+                className="max-sm:hidden"
                 color="primary"
                 endContent={<FiSend/>}
                 href="/nbp/transfer"
                 as={Link}
               >              
-                <p className="max-sm:hidden">Transfer</p>
+                Transfer
+              </Button>
+              <Button
+                isIconOnly
+                className="sm:hidden"
+                color="primary"
+                endContent={<FiSend/>}
+                href="/nbp/transfer"
+                as={Link}
+              >              
               </Button>
             </div>
           </div>
