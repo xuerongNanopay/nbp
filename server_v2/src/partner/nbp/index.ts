@@ -1,3 +1,3 @@
-class A implements NBPClient {
+// class A implements NBPClient {
   
-}
+// }
