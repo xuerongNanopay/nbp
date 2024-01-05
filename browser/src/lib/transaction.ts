@@ -299,41 +299,25 @@ export async function confirmTransaction(
 
 export async function getTransactionsByOwnerId(
   session: Session,
-  options?: GetTransactionOption
+  options: GetTransactionOption
 ) : Promise<GetTransactions> {
-  //TODO: Limit the maximum size
-  const opts: GetTransactionOption = {
-    from: 0,
-    size: 50,
-    statuses: [
-      TransactionStatus.INITIAL,
-      TransactionStatus.PROCESS,
-      TransactionStatus.REFUND,
-      TransactionStatus.REFUND_IN_PROGRESS,
-      TransactionStatus.CANCEL,
-      TransactionStatus.REJECT,
-      TransactionStatus.WAITING_FOR_PAYMENT
-    ],
-    searchKey: "",
-    ...options
-  }
   try {
     const transactions = await getPrismaClient().transaction.findMany({
       where: {
         ownerId: session.user!.id,
         status: {
           not: TransactionStatus.QUOTE,
-          in: opts.statuses
+          in: options.statuses
         },
         destinationName: {
-          contains: opts.searchKey
+          contains: options.searchKey
         }
       },
       orderBy: {
         id: 'desc'
       },
-      skip: opts.from,
-      take: opts.size,
+      skip: options.from,
+      take: options.size,
       select: {
         id: true,
         status: true,
@@ -352,11 +336,28 @@ export async function getTransactionsByOwnerId(
   }
 }
 
-async function countTransactions(
+export async function countTransactions(
   session: Session,
-  options?: Pick<GetTransactionOption, 'searchKey' | 'statuses'>
-) {
-
+  options: Pick<GetTransactionOption, 'searchKey' | 'statuses'>
+) : Promise<number> {
+  try {
+    const count = await getPrismaClient().transaction.count({
+      where: {
+        ownerId: session.user!.id,
+        status: {
+          not: TransactionStatus.QUOTE,
+          in: options.statuses
+        },
+        destinationName: {
+          contains: options.searchKey
+        }
+      }
+    })
+    return count
+  } catch(err) {
+    LOGGER.error(formatSession(session), "Method: countTransactions", err)
+    throw new InternalError()
+  }
 }
 
 async function getTransactionDetailByOwnerId(

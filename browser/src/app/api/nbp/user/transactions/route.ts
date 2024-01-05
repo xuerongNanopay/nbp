@@ -4,11 +4,11 @@ import {
   castAndValidateData
 } from '@/lib/guard'
 import { fetchSession } from '@/lib/session'
-import { getTransactionsByOwnerId } from '@/lib/transaction'
+import { countTransactions, getTransactionsByOwnerId } from '@/lib/transaction'
 import { UnauthenticateError } from '@/schema/error'
 import { GetTransactionOptionValidator } from '@/schema/validator'
-import { HttpERROR } from '@/types/http'
-import { GetTransactionOption } from '@/types/transaction'
+import { HttpERROR, HttpGET, Many } from '@/types/http'
+import { GetTransaction, GetTransactionOption, GetTransactions } from '@/types/transaction'
 import { LOGGER, formatSession } from '@/utils/logUtil'
 import { TransactionStatus } from '@prisma/client'
 
@@ -39,9 +39,46 @@ export async function GET(request: Request) {
 
     const getTransactionOption = await castAndValidateData(options, GetTransactionOptionValidator) as GetTransactionOption
 
-    const transactions = await getTransactionsByOwnerId(session, getTransactionOption)
+    const opts: GetTransactionOption = {
+      from: 0,
+      size: 50,
+      statuses: [
+        TransactionStatus.INITIAL,
+        TransactionStatus.PROCESS,
+        TransactionStatus.REFUND,
+        TransactionStatus.REFUND_IN_PROGRESS,
+        TransactionStatus.CANCEL,
+        TransactionStatus.REJECT,
+        TransactionStatus.WAITING_FOR_PAYMENT
+      ],
+      searchKey: "",
+      ...getTransactionOption
+    }
 
-    return Response.json(transactions, {
+    const transactionsPromise = await getTransactionsByOwnerId(session, opts)
+    const countPromise = await countTransactions(session, opts)
+
+    const [transactions, count] = await Promise.all([transactionsPromise, countPromise])
+
+    const payload: Many<GetTransaction> = {
+      meta: {
+        query: {
+          from: opts.from,
+          size: opts.size,
+          searchKey: opts.searchKey,
+          statuses: opts.statuses
+        },
+        timestamp: new Date(),
+        count
+      },
+      many: transactions
+    }
+    const res: HttpGET<GetTransactions> = {
+      code: 200,
+      message: 'Success!',
+      payload
+    }
+    return Response.json(res, {
       status: 200,
       headers: {
         'Content-Type': 'application/json'
