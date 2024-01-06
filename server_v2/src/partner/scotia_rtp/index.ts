@@ -168,3 +168,15 @@ function requestForPaymentDetails() {
 function cancelRequestForPayment() {
 
 }
+
+const RTPPaymentOptionsErrorMap = {
+  ['E_PSVC_50100']: 'Mandatory field missing',
+  ['E_PSVC_50101']: 'Invalid field length',
+  ['E_PSVC_50102']: 'Invalid field value',
+  ['E_PSVC_50103']: 'Invalid enumerate value',
+  ['E_PSVC_50104']: 'Provided Deposit Type not supported',
+  ['E_PSVC_50107']: 'Unknown field error',
+  ['E_PSVC_50109']: 'Creditor Agent not enabled for Account Deposit',
+  ['E_PSVC_60200']: 'Invalid Creditor Account. Please check creditor account and try again.',
+  ['E_PSVC_60000']: 'Unable to process the request due to a system problem. Please contact the help desk.',
+}
