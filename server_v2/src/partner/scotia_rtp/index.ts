@@ -8,6 +8,7 @@ import type {
   RTPPaymentOptionsRequest, 
   RTPPaymentOptionsResult, 
   RTPPaymentRequest, 
+  RTPPaymentResult, 
   RawToken, 
   Token 
 } from "./index.d.js"
@@ -171,7 +172,7 @@ async function rtpPaymentOptions(
 async function rtpPayment(
   request: RTPPaymentRequest,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
-): Promise<null> {
+): Promise<RTPPaymentResult> {
   const endPoint = '/treasury/payments/rtp/v1/payments/commit-transaction'
   let headers = _getDefaultHeaders()
   const token = await _getToken()
