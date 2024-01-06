@@ -4,7 +4,6 @@ export interface RequestHeader {
   ['x-b3-spanid']: string
   ['x-country-code']: string
   ['customer-profile-id']: string
-  ['Authorization']: string
 }
 
 export interface Credential {
