@@ -1,7 +1,7 @@
 //PUT Everything in one file now. I am lazy💀
 
 import { base64Encode } from "@/utils/bast64Util.js"
-import type { AxiosResponse } from "axios"
+import { AxiosError, type AxiosResponse } from "axios"
 import type { 
   Credential, 
   OptionHeader, 
@@ -46,30 +46,29 @@ async function _requestToken(): Promise<Token|null> {
       }
     )
   
-    //TODO: check response status
-    if ( axiosResponse.status >> 7 === 1 ) {
-      // Success
-      const response = axiosResponse as AxiosResponse<RawToken, any>
-      const rawToken = response.data
-      LOGGER.info('scotia_rtp', 'token update', `expires_in: ${new Date(rawToken.expires_in)}`)
-      return {
-        ...rawToken,
-        expires_in: new Date(rawToken.expires_in)
-      }
+    const response = axiosResponse as AxiosResponse<RawToken, any>
+    const rawToken = response.data
+    LOGGER.info('scotia_rtp', 'token update', `expires_in: ${new Date(rawToken.expires_in)}`)
+    return {
+      ...rawToken,
+      expires_in: new Date(rawToken.expires_in)
     }
-    LOGGER.error(
-      'scotia_rtp', 
-      'function: _requestToken', 
-      `status: ${axiosResponse.status}`,
-      `status: ${axiosResponse.statusText}`,
-      `data: ${JSON.stringify(axiosResponse.data)}`
-    )
   } catch (err) {
-    LOGGER.error(
-      'scotia_rtp', 
-      'function: _requestToken', 
-      err
-    )
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: _requestToken', 
+        `status: ${err.response?.status ?? "Empty status"}`,
+        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
+        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+    } else {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: _requestToken', 
+        JSON.stringify(err)
+      )
+    }
   }
   return null
 }
@@ -137,6 +136,14 @@ async function rtpPaymentOptions(
     'Content-Type': 'application/json',
     ...optionHeaders
   }
+
+  getAxios().post(
+    endpoint,
+    request,
+    {
+      headers
+    }
+  )
 }
 
 function rtpPayment() {

@@ -42,5 +42,7 @@ export interface Token extends RawToken {
 }
 
 export interface PaymentOptionsRequest {
-  ['product_code']: 'DOMESTIC'
+  ['product_code']: 'DOMESTIC',
+  ['deposit_type']: 'EMAIL' | 'ACCOUNT_DEPOSIT',
+  ['deposit_handle']: string
 }
