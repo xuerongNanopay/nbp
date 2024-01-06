@@ -48,40 +48,40 @@ export interface RTPPaymentOptionsRequest {
 }
 
 export interface RTPPaymentOptionsResult {
-  ['data']: {
-    ['payment_options']: {
-      ['payment_type']: 'REGULAR_PAYMENT' | 'ACCOUNT_ALIAS_PAYMENT' | 'REAL_TIME_ACCOUNT_ALIAS_PAYMENT' | 'ACCOUNT_DEPOSIT_PAYMENT' | 'REAL_TIME_ACCOUNT_DEPOSIT_PAYMENT'
-      ['account_alias_reference']: string
-      ['sender_account_identifier_required']: boolean
-      ['sender_account_identifier_format']: string
-      ['sender_account_identifier_description']: string
-      ['max_payment_outgoing_amount']: {
+  ['data']?: {
+    ['payment_options']?: {
+      ['payment_type']?: 'REGULAR_PAYMENT' | 'ACCOUNT_ALIAS_PAYMENT' | 'REAL_TIME_ACCOUNT_ALIAS_PAYMENT' | 'ACCOUNT_DEPOSIT_PAYMENT' | 'REAL_TIME_ACCOUNT_DEPOSIT_PAYMENT'
+      ['account_alias_reference']?: string
+      ['sender_account_identifier_required']?: boolean
+      ['sender_account_identifier_format']?: string
+      ['sender_account_identifier_description']?: string
+      ['max_payment_outgoing_amount']?: {
         ['amount']: string
         ['currency']: string
       }
-      ['customer_type']: 'RETAIL' | 'SMALL_BUSINESS' | 'CORPORATION'
-      ['customer_name']: {
+      ['customer_type']?: 'RETAIL' | 'SMALL_BUSINESS' | 'CORPORATION'
+      ['customer_name']?: {
         ['registration_name']: string
         ['legal_name']: {
-          ['retail_name']: {
+          ['retail_name']?: {
             ['first_name']: string
-            ['middle_name']: string
+            ['middle_name']?: string
             ['last_name']: string
           }
           ['business_name']: {
-            ['company_name']: string
+            ['company_name']?: string
             ['trade_name']: string
           }
         }
       }
     }[],
   }
-  ['notifications']: {
-    ['severity']: string
-    ['code']: string
-    ['message']: string
-    ['uuid']: string
-    ['timestamp']: string
+  ['notifications']?: {
+    ['severity']?: string
+    ['code']?: string
+    ['message']?: string
+    ['uuid']?: string
+    ['timestamp']?: string
     ['metadata']?: any
   }[]
 }
@@ -320,5 +320,11 @@ export interface RTPPaymentRequest {
       ['customer_authentication_method']: 'PASSWORD' | 'PVQ' | 'FINGERPRINT' | 'BIO_METRICS' | 'OTP' | 'TOKEN' | 'NONE' | 'OTHER'
       ['customer_ip_address']: string
     }
+  }
+}
+
+export interface RTPPaymentResult {
+  ['data']?: {
+
   }
 }
