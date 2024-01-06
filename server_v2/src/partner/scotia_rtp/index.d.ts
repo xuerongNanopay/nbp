@@ -325,6 +325,16 @@ export interface RTPPaymentRequest {
 
 export interface RTPPaymentResult {
   ['data']?: {
-
+    ['payment_id']: string
+    ['clearing_system_reference']: string
+    ['status']: 'SUCCESS' | 'FAILURE'
   }
+  ['notifications']?: {
+    ['severity']?: string
+    ['code']?: string
+    ['message']?: string
+    ['uuid']?: string
+    ['timestamp']?: string
+    ['metadata']?: any
+  }[]
 }
