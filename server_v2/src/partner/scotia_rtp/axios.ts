@@ -1,11 +1,11 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
+import { getBaseUrl } from './config.js'
 
 //THINK: retry, and auth.
 const AXIOS_INSTANCE =  axios.create({
-  baseURL: 'https://some-domain.com/api/',
-  timeout: 1000,
-  headers: {'X-Custom-Header': 'foobar'}
+  baseURL: getBaseUrl(),
+  timeout: 2000,
 })
 
 

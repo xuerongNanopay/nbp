@@ -1,7 +1,22 @@
 import type { Credential } from './index.d.js'
 import * as jose from 'jose'
 
+//TODO: Setup DB schema to store all configs
 const CREDENTIAL: Credential = _generateCredential()
+const PRIVATE_KEY = await _generatePrivateKey()
+const BASE_URL = "TODO"
+
+export function getPrivateKey() {
+  return PRIVATE_KEY
+}
+
+export function getCredential() {
+  return CREDENTIAL
+}
+
+export function getBaseUrl() {
+  return BASE_URL
+}
 
 function _generateCredential(): Credential {
   return {
@@ -17,12 +32,6 @@ function _generateCredential(): Credential {
     ['JWT_EXPIRY']: 'TODO'
   }
 }
-
-export function getCredential() {
-  return CREDENTIAL
-}
-
-const PRIVATE_KEY = await _generatePrivateKey() 
 
 async function _generatePrivateKey(): Promise<jose.KeyLike> {
   //TODO: load key from file or DB.
@@ -56,8 +65,4 @@ K5mX069IKG82CMqh3Mzptd7e7lyb9lsoGO0BAtjho3cWtha/UZ70vfaMzGuZ6JmQ
 ak6k+8+UFd93M4z0Qo74OhXB
 -----END PRIVATE KEY-----`
   return await jose.importPKCS8(pkcs8, alg)
-}
-
-export function getPrivateKey() {
-  return PRIVATE_KEY
 }

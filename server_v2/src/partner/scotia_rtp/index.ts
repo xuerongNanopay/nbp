@@ -1,11 +1,11 @@
 //PUT Everything in one file now. I am lazy💀
 
 import { base64Encode } from "@/utils/bast64Util.js"
-import axios from "axios"
 import type { AxiosResponse } from "axios"
 import type { Credential, RawToken, Token } from "./index.d.js"
 import { getCredential, getPrivateKey } from "./config.js"
 import * as jose from 'jose'
+import { getAxios } from "./axios.js"
 
 //TODO: using single instance architecture for the module.
 
@@ -14,10 +14,10 @@ let TOKEN :Token
 
 // Request is core service for the API.
 // If it is outage for long time or cannot recover. We need to raise emergency alert.
-async function requestToken(): Promise<Token | null> {
+async function requestToken(): Promise<Token|null> {
   const credential = getCredential()
-  //TODO: in config
-  const endpoint = '/wam/v1/getToken'
+  const endpoint = '/scotiabank/wam/v1/getToken'
+  const basicAuth = base64Encode(`${credential.API_KEY}:${credential.API_SECRET}`)
   const formData = new FormData()
   formData.append("grant_type", encodeURIComponent("client_credentials"))
   formData.append("scope", encodeURIComponent(credential.SCOPE))
@@ -25,12 +25,12 @@ async function requestToken(): Promise<Token | null> {
   formData.append("client_assertion", encodeURIComponent(await signJWT(credential)))
   formData.append("client_assertion_type", encodeURIComponent(credential.CLIENT_ASSERTION_TYPE))
 
-  const axiosResponse = await axios.post(
+  const axiosResponse = await getAxios().post(
     endpoint,
     formData,
     {
       headers: {
-        'Authorization': `Bearer ${base64Encode(`${credential.API_KEY}:${credential.API_SECRET}`)}`,
+        'Authorization': `Bearer ${basicAuth}`,
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     }
