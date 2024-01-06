@@ -75,11 +75,13 @@ export interface PaymentOptionsResult {
         }
       }
     }[],
-    ['notifications']: {
-      ['severity']: string
-      ['code']: string
-      ['message']: string
-      ['uuid']: string
-    }[]
   }
+  ['notifications']: {
+    ['severity']: string
+    ['code']: string
+    ['message']: string
+    ['uuid']: string
+    ['timestamp']: string
+    ['metadata']?: any
+  }[]
 }
