@@ -5,8 +5,9 @@ import { AxiosError, type AxiosResponse } from "axios"
 import type { 
   Credential, 
   OptionHeader, 
-  PaymentOptionsRequest, 
-  PaymentOptionsResult, 
+  RTPPaymentOptionsRequest, 
+  RTPPaymentOptionsResult, 
+  RTPPaymentRequest, 
   RawToken, 
   Token 
 } from "./index.d.js"
@@ -122,9 +123,9 @@ function _getDefaultHeaders(): Record<string, string> {
 }
 
 async function rtpPaymentOptions(
-  request: PaymentOptionsRequest,
+  request: RTPPaymentOptionsRequest,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
-): Promise<PaymentOptionsResult> {
+): Promise<RTPPaymentOptionsResult> {
   const endPoint = '/treasury/payments/rtp/v1/payment-options/inquiry'
   let headers = _getDefaultHeaders()
   const token = await _getToken()
@@ -144,7 +145,7 @@ async function rtpPaymentOptions(
       {
         headers
       }
-    ) as AxiosResponse<PaymentOptionsResult>
+    ) as AxiosResponse<RTPPaymentOptionsResult>
     return response.data
   } catch (err) {
     if ( err instanceof AxiosError ) {
@@ -168,7 +169,7 @@ async function rtpPaymentOptions(
 }
 
 async function rtpPayment(
-  request: PaymentOptionsRequest,
+  request: RTPPaymentRequest,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ): Promise<null> {
   const endPoint = '/treasury/payments/rtp/v1/payments/commit-transaction'
@@ -189,7 +190,7 @@ async function rtpPayment(
       {
         headers
       }
-    ) as AxiosResponse<PaymentOptionsResult>
+    ) as AxiosResponse<RTPPaymentResult>
     return response.data
   } catch (err) {
     if ( err instanceof AxiosError ) {
