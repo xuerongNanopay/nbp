@@ -14,6 +14,9 @@ export interface Credential {
   ['CLIENT_ID']: string
   ['CLIENT_ASSERTION']: string
   ['CLIENT_ASSERTION_TYPE']: string
+  ['JWT_AUDIENCE']: string
+  ['JWT_KID']: string
+  ['JWT_EXPIRY']: string
 }
 
 export interface RawToken {

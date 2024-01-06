@@ -1,24 +1,30 @@
 import type { Credential } from './index.d.js'
 import * as jose from 'jose'
 
-const CREDENTIAL: Credential = {
-  ['API_KEY']: 'todo',
-  ['API_SECRET']: 'todo',
-  ['SCOPE']: 'todo',
-  ['GRAND_TYPE']: 'todo',
-  ['CLIENT_ID']: 'todo',
-  ['CLIENT_ASSERTION']: 'todo',
-  ['CLIENT_ASSERTION_TYPE']: 'todo',
-}
+const CREDENTIAL: Credential = _generateCredential()
 
+function _generateCredential(): Credential {
+  return {
+    ['API_KEY']: 'TODO',
+    ['API_SECRET']: 'TODO',
+    ['SCOPE']: 'TODO',
+    ['GRAND_TYPE']: 'TODO',
+    ['CLIENT_ID']: 'TODO',
+    ['CLIENT_ASSERTION']: 'TODO',
+    ['CLIENT_ASSERTION_TYPE']: 'TODO',
+    ['JWT_AUDIENCE']: 'TODO',
+    ['JWT_KID']: 'TODO',
+    ['JWT_EXPIRY']: 'TODO'
+  }
+}
 
 export function getCredential() {
   return CREDENTIAL
 }
 
-const PRIVATE_KEY = await _getPrivateKey() 
+const PRIVATE_KEY = await _generatePrivateKey() 
 
-async function _getPrivateKey(): Promise<jose.KeyLike> {
+async function _generatePrivateKey(): Promise<jose.KeyLike> {
   //TODO: load key from file or DB.
   const alg = 'RS256'
   const pkcs8 = `-----BEGIN PRIVATE KEY-----
