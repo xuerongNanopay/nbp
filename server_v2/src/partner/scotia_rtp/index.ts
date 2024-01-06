@@ -129,7 +129,6 @@ async function rtpPaymentOptions(
   const token = await _getToken()
 
   if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
-
   headers = {
     ...headers,
     'Authorization': `Bearer ${token.access_token}`,
@@ -137,13 +136,17 @@ async function rtpPaymentOptions(
     ...optionHeaders
   }
 
-  getAxios().post(
-    endpoint,
-    request,
-    {
-      headers
-    }
-  )
+  try {
+    const response = await getAxios().post(
+      endpoint,
+      request,
+      {
+        headers
+      }
+    )
+  } catch (err) {
+
+  }
 }
 
 function rtpPayment() {
