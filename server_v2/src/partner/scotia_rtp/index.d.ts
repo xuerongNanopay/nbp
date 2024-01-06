@@ -338,3 +338,84 @@ export interface RTPPaymentResult {
     ['metadata']?: any
   }[]
 }
+
+export interface RTPPaymentSummary {
+  ['data']?: {
+    ['clearing_system_reference']: string
+    ['product_code']: 'DOMESTIC'
+    ['payment_type']: 'ACCOUNT_ALIAS_PAYMENT' | 'REAL_TIME_ACCOUNT_ALIAS_PAYMENT' | 'ACCOUNT_DEPOSIT_PAYMENT' | 'REAL_TIME_ACCOUNT_DEPOSIT_PAYMENT'
+    ['request_date']: Date
+    ['amount']: {
+      ['amount']: number
+      ['currency']: string
+    }
+    ['receiving_channel_indicator']: 'ETRANSFER_SYSTEM'
+    ['payment_status']?: 'INITIATED' | 'DIRECT_DEPOSIT_PENDING' | 'DIRECT_DEPOSIT_FAILED' | 'COMPLETED' | 'REALTIME_INITIATED' | 'REALTIME_DEPOSIT_COMPLETED' | 'REALTIME_DEPOSIT_FAILED'
+    ['expiry_date']: Date
+    ['payment_id']: string
+    ['sender_memo']?: string
+    ['originating_channel_indicator']?: 'ONLINE'
+    ['request_for_payment_reference']?: string
+    ['payment_schedule_reference']?: string
+    ['contact_outgoing_details']: {
+      ['contact_id']?: string
+      ['contact_type']: string
+      ['alias_name']: string
+      ['legal_name']?: {
+        ['retail_name']?: {
+          ['first_name']: string
+          ['middle_name']?: string
+          ['last_name']: string
+        }
+        ['business_name']?: {
+          ['company_name']: string
+          ['trade_name']?: string
+        }
+      }
+      ['notification_preference']?: {
+        ['type']: 'Email' | 'SMS' | 'RN'
+        ['active']: boolean
+      }[]
+    }
+    ['account_alias_reg_details']?: {
+      ['account_alias_handle']: string
+      ['service_type']: 'EMAIL'
+      ['sender_account_identifier']?: string
+    }
+    ['authentication_type']: 'NOT_REQUIRED'
+    ['customer_account']: {
+      ['fi_account_id']?: string
+      ['account_holder_name']: string
+      ['bank_account_identifier']: {
+        ['type']: 'CANADIAN'
+        ['account']: string
+      }
+    }
+    ['additional_remittance_info']: 'NOT_PROVIDED' | 'ADVICE_DETAILS' | 'LOCATION_DETAILS' | 'ADVICE_AND_LOCATION_DETAILS'
+  }
+  ['notifications']?: {
+    ['severity']?: string
+    ['code']?: string
+    ['message']?: string
+    ['uuid']?: string
+    ['timestamp']?: string
+    ['metadata']?: any
+  }[]
+}
+
+//TODO: find API
+// export interface AccountValidationRequest {
+//   ['accountInformation']: {
+//     ['institution_number']: string
+//     ['transit']: string
+//     ['account_number']: string
+//     ['currency_code']: string
+//     ['transaction_type']: string
+//   }
+// }
+
+// export interface AccountValidationResult {
+//   ['data']?: {
+    
+//   }
+// }

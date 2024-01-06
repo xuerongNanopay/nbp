@@ -214,11 +214,47 @@ async function rtpPayment(
   }
 }
 
-function rtpPaymentSummary(
+async function rtpPaymentSummary(
   paymentId: string,
-  optionHeaders: OptionHeader = {}
+  optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ) {
+  const host = `/treasury/payments/rtp/v1/payments/${paymentId}/summary`
+  let headers = _getDefaultHeaders()
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
+  headers = {
+    ...headers,
+    'Authorization': `Bearer ${token.access_token}`,
+    'Content-Type': 'application/json',
+    ...optionHeaders
+  }
 
+  try {
+    const response = await getAxios().get(
+      host,
+      {
+        headers
+      }
+    )
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: rtpPaymentOptions', 
+        `status: ${err.response?.status ?? "Empty status"}`,
+        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
+        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.message)
+    } else {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: rtpPaymentOptions', 
+        JSON.stringify(err)
+      )
+      throw new Error("RTP Connection Fail")
+    }
+  }
 }
 
 function requestForPayment() {
