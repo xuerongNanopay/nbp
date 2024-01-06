@@ -6,6 +6,7 @@ import type {
   Credential, 
   OptionHeader, 
   PaymentOptionsRequest, 
+  PaymentOptionsResult, 
   RawToken, 
   Token 
 } from "./index.d.js"
@@ -123,7 +124,7 @@ function _getDefaultHeaders(): Record<string, string> {
 async function rtpPaymentOptions(
   request: PaymentOptionsRequest,
   optionHeaders: OptionHeader = {}
-) {
+): Promise<PaymentOptionsResult> {
   const endpoint = '/treasury/payments/rtp/v1/payment-options/inquiry'
   let headers = _getDefaultHeaders()
   const token = await _getToken()
@@ -143,9 +144,26 @@ async function rtpPaymentOptions(
       {
         headers
       }
-    )
+    ) as AxiosResponse<PaymentOptionsResult>
+    return response.data
   } catch (err) {
-
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: rtpPaymentOptions', 
+        `status: ${err.response?.status ?? "Empty status"}`,
+        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
+        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.message)
+    } else {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: rtpPaymentOptions', 
+        JSON.stringify(err)
+      )
+      throw new Error("RTP Connection Fail")
+    }
   }
 }
 
