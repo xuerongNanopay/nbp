@@ -123,9 +123,9 @@ function _getDefaultHeaders(): Record<string, string> {
 
 async function rtpPaymentOptions(
   request: PaymentOptionsRequest,
-  optionHeaders: OptionHeader = {}
+  optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ): Promise<PaymentOptionsResult> {
-  const endpoint = '/treasury/payments/rtp/v1/payment-options/inquiry'
+  const endPoint = '/treasury/payments/rtp/v1/payment-options/inquiry'
   let headers = _getDefaultHeaders()
   const token = await _getToken()
 
@@ -139,7 +139,7 @@ async function rtpPaymentOptions(
 
   try {
     const response = await getAxios().post(
-      endpoint,
+      endPoint,
       request,
       {
         headers
@@ -167,8 +167,49 @@ async function rtpPaymentOptions(
   }
 }
 
-function rtpPayment() {
+async function rtpPayment(
+  request: PaymentOptionsRequest,
+  optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
+): Promise<null> {
+  const endPoint = '/treasury/payments/rtp/v1/payments/commit-transaction'
+  let headers = _getDefaultHeaders()
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
+  headers = {
+    ...headers,
+    'Authorization': `Bearer ${token.access_token}`,
+    'Content-Type': 'application/json',
+    ...optionHeaders
+  }
 
+  try {
+    const response = await getAxios().post(
+      endPoint,
+      request,
+      {
+        headers
+      }
+    ) as AxiosResponse<PaymentOptionsResult>
+    return response.data
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: rtpPaymentOptions', 
+        `status: ${err.response?.status ?? "Empty status"}`,
+        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
+        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.message)
+    } else {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: rtpPaymentOptions', 
+        JSON.stringify(err)
+      )
+      throw new Error("RTP Connection Fail")
+    }
+  }
 }
 
 function rtpPaymentSummary() {
