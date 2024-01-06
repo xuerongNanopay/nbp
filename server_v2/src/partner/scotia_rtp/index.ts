@@ -31,7 +31,7 @@ async function _requestToken(): Promise<Token|null> {
   formData.append("grant_type", encodeURIComponent("client_credentials"))
   formData.append("scope", encodeURIComponent(credential.SCOPE))
   formData.append("client_id", encodeURIComponent(credential.CLIENT_ID))
-  formData.append("client_assertion", encodeURIComponent(await signJWT(credential)))
+  formData.append("client_assertion", encodeURIComponent(await _signJWT(credential)))
   formData.append("client_assertion_type", encodeURIComponent(credential.CLIENT_ASSERTION_TYPE))
 
   try {
