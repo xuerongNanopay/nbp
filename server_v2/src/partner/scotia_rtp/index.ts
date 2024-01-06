@@ -6,15 +6,18 @@ import type { Credential, RawToken, Token } from "./index.d.js"
 import { getCredential, getPrivateKey } from "./config.js"
 import * as jose from 'jose'
 import { getAxios } from "./axios.js"
+import { LOGGER } from "@/utils/logUtil.js"
+import { Mutex } from "async-mutex"
 
 //TODO: using single instance architecture for the module.
 
 //Mutex when request a new token.
 let TOKEN :Token
+const mutex = new Mutex()
 
 // Request is core service for the API.
 // If it is outage for long time or cannot recover. We need to raise emergency alert.
-async function requestToken(): Promise<Token|null> {
+async function _requestToken(): Promise<Token|null> {
   const credential = getCredential()
   const endpoint = '/scotiabank/wam/v1/getToken'
   const basicAuth = base64Encode(`${credential.API_KEY}:${credential.API_SECRET}`)
@@ -25,31 +28,66 @@ async function requestToken(): Promise<Token|null> {
   formData.append("client_assertion", encodeURIComponent(await signJWT(credential)))
   formData.append("client_assertion_type", encodeURIComponent(credential.CLIENT_ASSERTION_TYPE))
 
-  const axiosResponse = await getAxios().post(
-    endpoint,
-    formData,
-    {
-      headers: {
-        'Authorization': `Bearer ${basicAuth}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
+  try {
+    const axiosResponse = await getAxios().post(
+      endpoint,
+      formData,
+      {
+        headers: {
+          'Authorization': `Bearer ${basicAuth}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }
+    )
+  
+    //TODO: check response status
+    if ( axiosResponse.status >> 7 === 1 ) {
+      // Success
+      const response = axiosResponse as AxiosResponse<RawToken, any>
+      const rawToken = response.data
+      LOGGER.info('scotia_rtp', 'token update', `expires_in: ${new Date(rawToken.expires_in)}`)
+      return {
+        ...rawToken,
+        expires_in: new Date(rawToken.expires_in)
       }
     }
-  )
-
-  //TODO: check response status
-  if ( axiosResponse.status >> 7 === 1 ) {
-    // Success
-    const response = axiosResponse as AxiosResponse<RawToken, any>
-    const rawToken = response.data
-    return {
-      ...rawToken,
-      expires_in: new Date(rawToken.expires_in)
-    }
-  } else {
-    // Fail
-    //TODO: log the error.
-    return null
+    LOGGER.error(
+      'scotia_rtp', 
+      'function: _requestToken', 
+      `status: ${axiosResponse.status}`,
+      `status: ${axiosResponse.statusText}`,
+      `data: ${JSON.stringify(axiosResponse.data)}`
+    )
+  } catch (err) {
+    LOGGER.error(
+      'scotia_rtp', 
+      'function: _requestToken', 
+      err
+    )
   }
+  return null
+}
+
+async function _getToken(): Promise<Token | null> {
+  const maxRetryAttempts = 3
+  for (let i=0 ; i < maxRetryAttempts ; i++ ) {
+    if ( !TOKEN || new Date().getTime() > TOKEN.expires_in.getTime() ) {
+      const release = await mutex.acquire()
+      try {
+        if (!TOKEN || new Date().getTime() > TOKEN.expires_in.getTime() ) {
+          const newToken = await _requestToken()
+          if (!newToken) continue
+          TOKEN = newToken
+        }
+      } catch (err) {
+        LOGGER.error('scotia_rtp', 'function: _getToken', err)
+      } finally {
+        release()
+      }
+    }
+    return TOKEN
+  }
+  return null
 }
 
 async function signJWT(credential: Credential): Promise<string> {
@@ -69,7 +107,7 @@ async function signJWT(credential: Credential): Promise<string> {
 }
 
 function rtpPaymentOptions() {
-
+  const endpoint = '/scotiabank/wam/v1/getToken'
 }
 
 function rtpPayment() {
