@@ -2,7 +2,13 @@
 
 import { base64Encode } from "@/utils/bast64Util.js"
 import type { AxiosResponse } from "axios"
-import type { Credential, RawToken, Token } from "./index.d.js"
+import type { 
+  Credential, 
+  OptionHeader, 
+  PaymentOptionsRequest, 
+  RawToken, 
+  Token 
+} from "./index.d.js"
 import { getCredential, getPrivateKey } from "./config.js"
 import * as jose from 'jose'
 import { getAxios } from "./axios.js"
@@ -90,7 +96,7 @@ async function _getToken(): Promise<Token | null> {
   return null
 }
 
-async function signJWT(credential: Credential): Promise<string> {
+async function _signJWT(credential: Credential): Promise<string> {
   const privateKey = getPrivateKey()
   const jwt = await new jose.SignJWT()
               .setProtectedHeader({
@@ -106,8 +112,31 @@ async function signJWT(credential: Credential): Promise<string> {
   return jwt
 }
 
-function rtpPaymentOptions() {
-  const endpoint = '/scotiabank/wam/v1/getToken'
+function _getDefaultHeaders(): Record<string, string> {
+  const credential = getCredential()
+  return {
+    'customer-profile-id': credential.CUSTOMER_PROFILE_ID,
+    'x-country-code': credential.X_COUNTRY_CODE,
+    'x-api-key': credential.API_KEY
+  }
+}
+
+async function rtpPaymentOptions(
+  request: PaymentOptionsRequest,
+  optionHeaders: OptionHeader = {}
+) {
+  const endpoint = '/treasury/payments/rtp/v1/payment-options/inquiry'
+  let headers = _getDefaultHeaders()
+  const token = await _getToken()
+
+  if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
+
+  headers = {
+    ...headers,
+    'Authorization': `Bearer ${token.access_token}`,
+    'Content-Type': 'application/json',
+    ...optionHeaders
+  }
 }
 
 function rtpPayment() {

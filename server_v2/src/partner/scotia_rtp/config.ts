@@ -27,6 +27,8 @@ function _generateCredential(): Credential {
     ['CLIENT_ID']: 'TODO',
     ['CLIENT_ASSERTION']: 'TODO',
     ['CLIENT_ASSERTION_TYPE']: 'TODO',
+    ['CUSTOMER_PROFILE_ID']: 'TODO',
+    ['X_COUNTRY_CODE']: 'TODO',
     ['JWT_AUDIENCE']: 'TODO',
     ['JWT_KID']: 'TODO',
     ['JWT_EXPIRY']: 'TODO'
