@@ -68,7 +68,7 @@ async function signJWT(credential: Credential): Promise<string> {
   return jwt
 }
 
-function rtpPaymentOption() {
+function rtpPaymentOptions() {
 
 }
 

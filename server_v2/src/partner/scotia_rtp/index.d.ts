@@ -1,9 +1,10 @@
-export interface RTPHeader {
-  'x-api-key': string
-  'x-b3-traceid': string
-  'x-b3-spanid': string
-  'x-country-code': string
-  'customer-profile-id': string
+export interface RequestHeader {
+  ['x-api-key']: string
+  ['x-b3-traceid']: string
+  ['x-b3-spanid']: string
+  ['x-country-code']: string
+  ['customer-profile-id']: string
+  ['Authorization']: string
 }
 
 export interface Credential {
