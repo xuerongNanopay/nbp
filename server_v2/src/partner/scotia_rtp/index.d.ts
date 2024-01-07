@@ -28,10 +28,10 @@ export interface RawToken {
   ['expires_in']: string
 }
 
-interface Reponse<T = any> {
+interface Reponse<T> {
   status: number
   statusMessage: string,
-  data: T
+  data?: T
 }
 
 export interface Token extends RawToken {
@@ -636,6 +636,21 @@ export interface RequestForPaymentRequest {
       // ['enclosure']: Uint8Array
     }
   }
+}
+
+export interface RequestForPaymentResult {
+  ['data']?: {
+    ['payment_id']: string
+    ['clearing_system_reference']: string
+  },
+  ['notifications']?: {
+    ['severity']?: string
+    ['code']?: string
+    ['message']?: string
+    ['uuid']?: string
+    ['timestamp']?: string
+    ['metadata']?: any
+  }[]
 }
 
 //TODO: find API
