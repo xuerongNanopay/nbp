@@ -232,9 +232,9 @@ export interface RTPPaymentRequest {
             ['code_or_proprietary']: {
               ['code']: 'MSIN' | 'CNFA' | 'DNFA' | 'CINV' | 'CREN' | 'DEBN' | 'HIRI' | 'SBIN' | 'CMCN' | 'SOAC' | 'DISP' | 'BOLD' | 'VCHR' | 'AROI' | 'TSUT' | 'PUOR'
             }
-            ['number']: string
+            ['number']?: string
             // YYYY-MM-DD
-            ['related_date']: string
+            ['related_date']?: string
           }
         }[]
         ['referred_document_amount']?: {
@@ -442,7 +442,7 @@ export interface RequestForPaymentRequest {
       }
     }
     ['ultimate_debtor']?: {
-      ['name']: string
+      ['name']?: string
       ['postal_address']?: {
         ['address_type']?: {
           ['code']: 'ADDR' | 'PBOX' | 'HOME' | 'BIZZ' | 'MLTO' | 'DLVY'
@@ -651,6 +651,198 @@ export interface RequestForPaymentResult {
     ['timestamp']?: string
     ['metadata']?: any
   }[]
+}
+
+export interface RequestForPaymentDetailResult {
+  ['data']?: {
+    ['creation_datetime']: string
+    ['original_creation_datetime']?: string
+    ['original_end_to_end_identification']: string
+    ['transaction_status']: 'ACTC' | 'PDNG' | 'ACSP' | 'RJCT',
+    ['acceptance_datetime']?: string
+    ['clearing_system_reference']?: string
+    ['amount']: {
+      ['instructed_amount']: {
+        ['amount']: number
+        ['currency']: string
+      }
+    }
+    ['requested_execution_date']: string
+    ['expiry_date']: string
+    ['payment_type_information']?: {
+      ['category_purpose']: {
+        ['code']: 'BONU' | 'CASH' | 'CBLK' | 'CCRD' | 'CORT' | 'DCRD' | 'DIVI' | 'DVPM' | 'EPAY' | 'FCIN' | 'FCOL' | 'GP2P' | 'GOVT' | 'HEDG' | 'ICCP' | 'IDCP' | 'INTC' | 'INTE' | 'LBOX' | 'LOAN' | 'MP2B' | 'MP2P' | 'OTHR' | 'PENS' | 'RPRE' | 'RRCT' | 'RVPM' | 'SALA' | 'SECU' | 'SSBE' | 'SUPP' | 'TAXS' | 'TRAD' | 'TREA' | 'VATX' | 'WHLD' | '240' | '260' | '308' | '311' | '318' | '330' | '370' | '400' | '430' | '452' | '460' | '480'
+      }
+    }
+    ['remittance_information']?: {
+      ['unstructured']?: string
+      ['structured']?: {
+        ['referred_document_information']?: {
+          ['type']?: {
+            ['code_or_proprietary']: {
+              ['code']: 'MSIN' | 'CNFA' | 'DNFA' | 'CINV' | 'CREN' | 'DEBN' | 'HIRI' | 'SBIN' | 'CMCN' | 'SOAC' | 'DISP' | 'BOLD' | 'VCHR' | 'AROI' | 'TSUT' | 'PUOR'
+            }
+            ['number']?: string
+            // YYYY-MM-DD
+            ['related_date']?: string
+          }
+        }[]
+        ['referred_document_amount']?: {
+          ['due_payable_amount']?: {
+            ['amount']: number
+            ['currency']: string
+          }
+          ['adjustment_amount_and_reason']?: {
+            ['amount']: {
+              ['amount']: number
+              ['currency']: string
+            }
+            ['credit_debit_indicator']?: 'CRDT' | 'DBIT'
+            ['reason']: string
+            ['additional_information']: string
+          }[]
+          ['remitted_amount']?: {
+            ['amount']: number
+            ['currency']: string
+          }
+        }
+        ['creditor_reference_information']?: {
+          ['type']: {
+            ['code_or_proprietary']: {
+              ['code']: 'RADM' | 'RPIN' | 'FXDR' | 'DISP' | 'PUOR' | 'SCOR'
+            }
+          }
+          ['reference']: string
+        }
+        ['invoicer']?: {
+          ['name']?: string
+          ['postal_address']?: {
+            ['address_type']?: {
+              ['code']: 'ADDR' | 'PBOX' | 'HOME' | 'BIZZ' | 'MLTO' | 'DLVY'
+            }
+            ['department']?: string
+            ['sub_department']?: string
+            ['street_name']?: string
+            ['building_number']?: string
+            ['post_code']?: string
+            ['town_name']?: string
+            ['country_sub_division']?: string
+            ['country']?: string
+            ['address_line']?: string
+          }
+          ['country_of_residence']?: string
+          ['contact_details']?: {
+            ['name']?: string
+            ['phone_number']?: string
+            ['mobile_number']?: string
+            ['fax_number']?: string
+            ['email_address']?: string
+          }
+        }
+        ['invoicee']?: {
+          ['name']?: string
+          ['postal_address']?: {
+            ['address_type']?: {
+              ['code']: 'ADDR' | 'PBOX' | 'HOME' | 'BIZZ' | 'MLTO' | 'DLVY'
+            }
+            ['department']?: string
+            ['sub_department']?: string
+            ['street_name']?: string
+            ['building_number']?: string
+            ['post_code']?: string
+            ['town_name']?: string
+            ['country_sub_division']?: string
+            ['country']?: string
+            ['address_line']?: string
+          }
+          ['country_of_residence']?: string
+          ['contact_details']?: {
+            ['name']?: string
+            ['phone_number']?: string
+            ['mobile_number']?: string
+            ['fax_number']?: string
+            ['email_address']?: string
+          }
+        }
+        ['additional_remittance_information']: string[]
+      }[]
+    }
+    ['enclosed_file']?: {
+      ['type']: {
+        ['code']: 'CINV' | 'CNFA' | 'CONT' | 'CREN' | 'DEBN' | 'DISP' | 'DNFA' | 'HIRI' | 'INVS' | 'MSIN' | 'PROF' | 'PUOR' | 'QUOT' | 'SBIN' | 'SPRR' | 'TISH' | 'USAR'
+      }
+      ['identification']: string
+      ['issue_date']: string
+      ['name']?: string
+      ['format']: {
+        ['code']: 'DPDF' |'DXML' | 'SDSH' | 'WORD' | 'XSLT'
+      }
+      ['file_name']: string
+      ['enclosure']: string //byte
+    }[]
+    ['ultimate_debtor']?: {
+      ['name']?: string
+      ['postal_address']?: {
+        ['address_type']?: {
+          ['code']: 'ADDR' | 'PBOX' | 'HOME' | 'BIZZ' | 'MLTO' | 'DLVY'
+        }
+        ['department']?: string
+        ['sub_department']?: string
+        ['street_name']?: string
+        ['building_number']?: string
+        ['post_code']?: string
+        ['town_name']?: string
+        ['country_sub_division']?: string
+        ['country']?: string
+        ['address_line']?: string
+      }
+      ['country_of_residence']?: string
+      ['contact_details']?: {
+        ['name']?: string
+        ['phone_number']?: string
+        ['mobile_number']?: string
+        ['fax_number']?: string
+        ['email_address']?: string
+      }
+    },
+    ['debtor']?: {
+      ['name']?: string
+      ['postal_address']?: {
+        ['address_type']?: {
+          ['code']: 'ADDR' | 'PBOX' | 'HOME' | 'BIZZ' | 'MLTO' | 'DLVY'
+        }
+        ['department']?: string
+        ['sub_department']?: string
+        ['street_name']?: string
+        ['building_number']?: string
+        ['post_code']?: string
+        ['town_name']?: string
+        ['country_sub_division']?: string
+        ['country']?: string
+        ['address_line']?: string
+      }
+      ['country_of_residence']?: string
+      ['contact_details']: {
+        ['name']: string
+        ['phone_number']?: string
+        ['mobile_number']?: string
+        ['fax_number']?: string
+        ['email_address']?: string
+      }
+    }
+    ['debtor_account']?: {
+      ['identification']: {
+        ['other']?: {
+          ['identification']: string
+        }
+      }
+    }
+    ['debtor_agent']?: {
+      ['financial_institution_identification']: {
+        
+      }
+    }
+  }
 }
 
 //TODO: find API
