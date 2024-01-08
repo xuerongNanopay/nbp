@@ -48,7 +48,8 @@ async function _requestToken(): Promise<Token|null> {
   const endPoint = `api/v2/Authenticate?Agency_Code=${credential.AGENCY_CODE}`
   const basicAuth = base64Encode(`${credential.USERNAME}:${credential.PASSWORD}`)
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${basicAuth}`,
   }
   try {
     const axiosResponse = await getAxios().post(
@@ -68,7 +69,7 @@ async function _requestToken(): Promise<Token|null> {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
         'nbp', 
-        'function: hello', 
+        'function: _requestToken', 
         `status: ${err.response?.status ?? "Empty status"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
@@ -76,7 +77,7 @@ async function _requestToken(): Promise<Token|null> {
     } else {
       LOGGER.error(
         'nbp', 
-        'function: hello', 
+        'function: _requestToken', 
         JSON.stringify(err)
       )
     }
