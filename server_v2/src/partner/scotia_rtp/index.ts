@@ -84,10 +84,10 @@ async function _requestToken(): Promise<Token|null> {
 async function _getToken(): Promise<Token | null> {
   const maxRetryAttempts = 3
   for (let i=0 ; i < maxRetryAttempts ; i++ ) {
-    if ( !TOKEN || new Date().getTime() > TOKEN.expires_in.getTime() ) {
+    if ( !TOKEN || new Date().getTime() + 30000 > TOKEN.expires_in.getTime() ) {
       const release = await mutex.acquire()
       try {
-        if (!TOKEN || new Date().getTime() > TOKEN.expires_in.getTime() ) {
+        if (!TOKEN || new Date().getTime() + 30000 > TOKEN.expires_in.getTime() ) {
           const newToken = await _requestToken()
           if (!newToken) continue
           TOKEN = newToken
