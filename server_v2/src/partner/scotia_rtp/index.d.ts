@@ -899,7 +899,82 @@ export interface RequestForPaymentDetailResult {
         }
       }
     }
+    ['creditor']?: {
+      ['name']?: string
+      ['postal_address']?: {
+        ['address_type']?: {
+          ['code']: 'ADDR' | 'PBOX' | 'HOME' | 'BIZZ' | 'MLTO' | 'DLVY'
+        }
+        ['department']?: string
+        ['sub_department']?: string
+        ['street_name']?: string
+        ['building_number']?: string
+        ['post_code']?: string
+        ['town_name']?: string
+        ['country_sub_division']?: string
+        ['country']?: string
+        ['address_line']?: string
+      }
+      ['country_of_residence']?: string
+      ['contact_details']: {
+        ['name']: string
+        ['phone_number']?: string
+        ['mobile_number']?: string
+        ['fax_number']?: string
+        ['email_address']?: string
+      }
+    }
+    ['creditor_account']?: {
+      ['identification']: {
+        ['other']?: {
+          ['identification']?: string
+          ['scheme_name']: {
+            ['proprietary']: 'ALIAS_ACCT_NO' | 'BANK_ACCT_NO'
+          }
+        }
+      }
+      ['proxy']?: {
+        ['type']: {
+          ['proprietary']: 'EMAIL'
+        }
+        ['identification']: string
+      }
+    }
+    ['ultimate_creditor']?: {
+      ['name']?: string
+      ['postal_address']?: {
+        ['address_type']?: {
+          ['code']: 'ADDR' | 'PBOX' | 'HOME' | 'BIZZ' | 'MLTO' | 'DLVY'
+        }
+        ['department']?: string
+        ['sub_department']?: string
+        ['street_name']?: string
+        ['building_number']?: string
+        ['post_code']?: string
+        ['town_name']?: string
+        ['country_sub_division']?: string
+        ['country']?: string
+        ['address_line']?: string
+      }
+      ['country_of_residence']?: string
+      ['contact_details']: {
+        ['name']: string
+        ['phone_number']?: string
+        ['mobile_number']?: string
+        ['fax_number']?: string
+        ['email_address']?: string
+      }
+    }
+    ['request_for_payment_status']: 'INITIATED' | 'AVAILABLE_TO_BE_FULFILLED' | 'FULFILLED' | 'DECLINED' | 'CANCELLED' | 'EXPIRED' | 'DEPOSIT_FAILED' | 'DEPOSIT_COMPLETE'
   }
+  ['notifications']?: {
+    ['severity']?: string
+    ['code']?: string
+    ['message']?: string
+    ['uuid']?: string
+    ['timestamp']?: string
+    ['metadata']?: any
+  }[]
 }
 
 //TODO: find API
