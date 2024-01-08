@@ -11,6 +11,8 @@ import type {
   RTPPaymentResult, 
   RTPPaymentSummaryResult, 
   RawToken, 
+  RequestForPaymentDetailResult, 
+  RequestForPaymentResult, 
   Token 
 } from "./index.d.js"
 import { getCredential, getPrivateKey } from "./config.js"
@@ -219,7 +221,7 @@ async function rtpPaymentSummary(
   paymentId: string,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ) : Promise<RTPPaymentSummaryResult>  {
-  const host = `/treasury/payments/rtp/v1/payments/${paymentId}/summary`
+  const endPoint = `/treasury/payments/rtp/v1/payments/${paymentId}/summary`
   let headers = _getDefaultHeaders()
   const token = await _getToken()
   if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
@@ -232,7 +234,7 @@ async function rtpPaymentSummary(
 
   try {
     const response = await getAxios().get(
-      host,
+      endPoint,
       {
         headers
       }
@@ -259,12 +261,93 @@ async function rtpPaymentSummary(
   }
 }
 
-function requestForPayment() {
+async function requestForPayment(
+  request: RTPPaymentRequest,
+  optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
+) : Promise<RequestForPaymentResult>  {
+  const endPoint = '/treasury/payments/rtp/v1/requests'
+  let headers = _getDefaultHeaders()
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
+  headers = {
+    ...headers,
+    'Authorization': `Bearer ${token.access_token}`,
+    'Content-Type': 'application/json',
+    ...optionHeaders
+  }
 
+  try {
+    const response = await getAxios().post(
+      endPoint,
+      request,
+      {
+        headers
+      }
+    ) as AxiosResponse<RequestForPaymentResult>
+    return response.data
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: requestForPayment', 
+        `status: ${err.response?.status ?? "Empty status"}`,
+        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
+        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.message)
+    } else {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: requestForPayment', 
+        JSON.stringify(err)
+      )
+      throw new Error("RTP Connection Fail")
+    }
+  }
 }
 
-function requestForPaymentDetails() {
+async function requestForPaymentDetails(
+  paymentRequestId: string,
+  optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
+) : Promise<RequestForPaymentDetailResult>  {
+  const endPoint = `/treasury/payments/rtp/v1/requests/${paymentRequestId}`
+  let headers = _getDefaultHeaders()
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
+  headers = {
+    ...headers,
+    'Authorization': `Bearer ${token.access_token}`,
+    'Content-Type': 'application/json',
+    ...optionHeaders
+  }
 
+  try {
+    const response = await getAxios().get(
+      endPoint,
+      {
+        headers
+      }
+    ) as AxiosResponse<RequestForPaymentDetailResult>
+    return response.data
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: requestForPaymentDetails', 
+        `status: ${err.response?.status ?? "Empty status"}`,
+        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
+        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.message)
+    } else {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: requestForPaymentDetails', 
+        JSON.stringify(err)
+      )
+      throw new Error("RTP Connection Fail")
+    }
+  }
 }
 
 function cancelRequestForPayment() {
