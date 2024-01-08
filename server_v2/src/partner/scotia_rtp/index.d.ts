@@ -839,7 +839,64 @@ export interface RequestForPaymentDetailResult {
     }
     ['debtor_agent']?: {
       ['financial_institution_identification']: {
-        
+        ['bicfi']?: string
+        ['clearing_system_member_identification']?: {
+          ['member_identification']: string
+        }
+        ['name']?: string
+        ['postal_address']?: {
+          ['address_type']?: {
+            ['code']: 'ADDR' | 'PBOX' | 'HOME' | 'BIZZ' | 'MLTO' | 'DLVY'
+          }
+          ['department']?: string
+          ['sub_department']?: string
+          ['street_name']?: string
+          ['building_number']?: string
+          ['post_code']?: string
+          ['town_name']?: string
+          ['country_sub_division']?: string
+          ['country']?: string
+          ['address_line']?: string
+        }
+        ['other']?: {
+          ['identification']: string
+          ['scheme_name']: {
+            ['code']: string
+            ['proprietary']: string
+          }
+          ['issuer']: string
+        }
+      }
+    }
+    ['creditor_agent']: {
+      ['financial_institution_identification']: {
+        ['bicfi']?: string
+        ['clearing_system_member_identification']?: {
+          ['member_identification']: string
+        }
+        ['name']?: string
+        ['postal_address']?: {
+          ['address_type']?: {
+            ['code']: 'ADDR' | 'PBOX' | 'HOME' | 'BIZZ' | 'MLTO' | 'DLVY'
+          }
+          ['department']?: string
+          ['sub_department']?: string
+          ['street_name']?: string
+          ['building_number']?: string
+          ['post_code']?: string
+          ['town_name']?: string
+          ['country_sub_division']?: string
+          ['country']?: string
+          ['address_line']?: string
+        }
+        ['other']?: {
+          ['identification']: string
+          ['scheme_name']: {
+            ['code']: string
+            ['proprietary']: string
+          }
+          ['issuer']: string
+        }
       }
     }
   }
