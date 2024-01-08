@@ -34,7 +34,7 @@ interface Reponse<T> {
   data?: T
 }
 
-export interface Token extends RawToken {
+export interface Token {
   ['access_token']: string
   ['scope']: string
   ['token_type']: string

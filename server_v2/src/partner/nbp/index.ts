@@ -1,10 +1,15 @@
-import { AxiosError, AxiosResponse } from "axios";
-import { getAxios } from "./config.js";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { CREDENTIAL, getAxios } from "./config.js";
 import { LOGGER } from "@/utils/logUtil.js";
 
+import type {
+  RawToken,
+  Token
+} from './index.d.js'
+import { base64Encode } from "@/utils/bast64Util.js";
 
 async function hello(): Promise<String> {
-  const endPoint = '/treasury/payments/rtp/v1/payment-options/inquiry'
+  const endPoint = 'api/v2/Hello'
   const headers = {
     'Content-Type': 'application/json'
   }
@@ -36,4 +41,45 @@ async function hello(): Promise<String> {
       throw new Error("NBP Connection Fail")
     }
   }
+}
+
+async function _requestToken(): Promise<Token|null> {
+  const credential = CREDENTIAL
+  const endPoint = `api/v2/Authenticate?Agency_Code=${credential.AGENCY_CODE}`
+  const basicAuth = base64Encode(`${credential.USERNAME}:${credential.PASSWORD}`)
+  const headers = {
+    'Content-Type': 'application/json'
+  }
+  try {
+    const axiosResponse = await getAxios().post(
+      endPoint,
+      {},
+      {
+        headers
+      }
+    ) as AxiosResponse<RawToken, any>
+    const rawToken = axiosResponse.data
+    LOGGER.info('nbp', 'token update', `expires_in: ${new Date(rawToken.Token_Expiry)}`)
+    return {
+      ...rawToken,
+      Token_Expiry: new Date(rawToken.Token_Expiry)
+    }
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'nbp', 
+        'function: hello', 
+        `status: ${err.response?.status ?? "Empty status"}`,
+        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
+        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+    } else {
+      LOGGER.error(
+        'nbp', 
+        'function: hello', 
+        JSON.stringify(err)
+      )
+    }
+  }
+  return null
 }

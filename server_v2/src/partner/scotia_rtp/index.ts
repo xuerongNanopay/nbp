@@ -33,7 +33,7 @@ const mutex = new Mutex()
 // If it is outage for long time or cannot recover. We need to raise emergency alert.
 async function _requestToken(): Promise<Token|null> {
   const credential = getCredential()
-  const endpoint = '/scotiabank/wam/v1/getToken'
+  const endpoint = 'scotiabank/wam/v1/getToken'
   const basicAuth = base64Encode(`${credential.API_KEY}:${credential.API_SECRET}`)
   const formData = new FormData()
   formData.append("grant_type", encodeURIComponent("client_credentials"))
@@ -132,7 +132,7 @@ async function rtpPaymentOptions(
   request: RTPPaymentOptionsRequest,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ): Promise<RTPPaymentOptionsResult> {
-  const endPoint = '/treasury/payments/rtp/v1/payment-options/inquiry'
+  const endPoint = 'treasury/payments/rtp/v1/payment-options/inquiry'
   let headers = _getDefaultHeaders()
   const token = await _getToken()
 
@@ -178,7 +178,7 @@ async function rtpPayment(
   request: RTPPaymentRequest,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ): Promise<RTPPaymentResult> {
-  const endPoint = '/treasury/payments/rtp/v1/payments/commit-transaction'
+  const endPoint = 'treasury/payments/rtp/v1/payments/commit-transaction'
   let headers = _getDefaultHeaders()
   const token = await _getToken()
   if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
@@ -223,7 +223,7 @@ async function rtpPaymentSummary(
   paymentId: string,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ) : Promise<RTPPaymentSummaryResult>  {
-  const endPoint = `/treasury/payments/rtp/v1/payments/${paymentId}/summary`
+  const endPoint = `treasury/payments/rtp/v1/payments/${paymentId}/summary`
   let headers = _getDefaultHeaders()
   const token = await _getToken()
   if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
@@ -267,7 +267,7 @@ async function requestForPayment(
   request: RTPPaymentRequest,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ) : Promise<RequestForPaymentResult>  {
-  const endPoint = '/treasury/payments/rtp/v1/requests'
+  const endPoint = 'treasury/payments/rtp/v1/requests'
   let headers = _getDefaultHeaders()
   const token = await _getToken()
   if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
@@ -312,7 +312,7 @@ async function requestForPaymentDetails(
   paymentId: string,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ) : Promise<RequestForPaymentDetailResult>  {
-  const endPoint = `/treasury/payments/rtp/v1/requests/${paymentId}`
+  const endPoint = `treasury/payments/rtp/v1/requests/${paymentId}`
   let headers = _getDefaultHeaders()
   const token = await _getToken()
   if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
@@ -357,7 +357,7 @@ async function cancelRequestForPayment(
   request: RequestForCancelPaymentRequest,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ) : Promise<RequestForCancelResult> {
-  const endPoint = `/treasury/payments/rtp/v1/requests/${paymentId}/cancel`
+  const endPoint = `treasury/payments/rtp/v1/requests/${paymentId}/cancel`
   let headers = _getDefaultHeaders()
   const token = await _getToken()
   if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
