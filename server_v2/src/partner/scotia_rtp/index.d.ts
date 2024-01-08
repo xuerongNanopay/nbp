@@ -339,7 +339,7 @@ export interface RTPPaymentResult {
   }[]
 }
 
-export interface RTPPaymentSummary {
+export interface RTPPaymentSummaryResult {
   ['data']?: {
     ['clearing_system_reference']: string
     ['product_code']: 'DOMESTIC'

@@ -9,6 +9,7 @@ import type {
   RTPPaymentOptionsResult, 
   RTPPaymentRequest, 
   RTPPaymentResult, 
+  RTPPaymentSummaryResult, 
   RawToken, 
   Token 
 } from "./index.d.js"
@@ -197,7 +198,7 @@ async function rtpPayment(
     if ( err instanceof AxiosError ) {
       LOGGER.error(
         'scotia_rtp', 
-        'function: rtpPaymentOptions', 
+        'function: rtpPayment', 
         `status: ${err.response?.status ?? "Empty status"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
@@ -206,7 +207,7 @@ async function rtpPayment(
     } else {
       LOGGER.error(
         'scotia_rtp', 
-        'function: rtpPaymentOptions', 
+        'function: rtpPayment', 
         JSON.stringify(err)
       )
       throw new Error("RTP Connection Fail")
@@ -217,7 +218,7 @@ async function rtpPayment(
 async function rtpPaymentSummary(
   paymentId: string,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
-) {
+) : Promise<RTPPaymentSummaryResult>  {
   const host = `/treasury/payments/rtp/v1/payments/${paymentId}/summary`
   let headers = _getDefaultHeaders()
   const token = await _getToken()
@@ -235,12 +236,13 @@ async function rtpPaymentSummary(
       {
         headers
       }
-    )
+    ) as AxiosResponse<RTPPaymentSummaryResult>
+    return response.data
   } catch (err) {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
         'scotia_rtp', 
-        'function: rtpPaymentOptions', 
+        'function: rtpPaymentSummary', 
         `status: ${err.response?.status ?? "Empty status"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
@@ -249,7 +251,7 @@ async function rtpPaymentSummary(
     } else {
       LOGGER.error(
         'scotia_rtp', 
-        'function: rtpPaymentOptions', 
+        'function: rtpPaymentSummary', 
         JSON.stringify(err)
       )
       throw new Error("RTP Connection Fail")
