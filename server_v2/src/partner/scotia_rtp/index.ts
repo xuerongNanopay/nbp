@@ -11,6 +11,8 @@ import type {
   RTPPaymentResult, 
   RTPPaymentSummaryResult, 
   RawToken, 
+  RequestForCancelPaymentRequest, 
+  RequestForCancelResult, 
   RequestForPaymentDetailResult, 
   RequestForPaymentResult, 
   Token 
@@ -307,10 +309,10 @@ async function requestForPayment(
 }
 
 async function requestForPaymentDetails(
-  paymentRequestId: string,
+  paymentId: string,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ) : Promise<RequestForPaymentDetailResult>  {
-  const endPoint = `/treasury/payments/rtp/v1/requests/${paymentRequestId}`
+  const endPoint = `/treasury/payments/rtp/v1/requests/${paymentId}`
   let headers = _getDefaultHeaders()
   const token = await _getToken()
   if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
@@ -350,8 +352,50 @@ async function requestForPaymentDetails(
   }
 }
 
-function cancelRequestForPayment() {
+async function cancelRequestForPayment(
+  paymentId: string,
+  request: RequestForCancelPaymentRequest,
+  optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
+) : Promise<RequestForCancelResult> {
+  const endPoint = `/treasury/payments/rtp/v1/requests/${paymentId}/cancel`
+  let headers = _getDefaultHeaders()
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
+  headers = {
+    ...headers,
+    'Authorization': `Bearer ${token.access_token}`,
+    'Content-Type': 'application/json',
+    ...optionHeaders
+  }
 
+  try {
+    const response = await getAxios().post(
+      endPoint,
+      request,
+      {
+        headers
+      }
+    ) as AxiosResponse<RequestForCancelResult>
+    return response.data
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: cancelRequestForPayment', 
+        `status: ${err.response?.status ?? "Empty status"}`,
+        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
+        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.message)
+    } else {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: cancelRequestForPayment', 
+        JSON.stringify(err)
+      )
+      throw new Error("RTP Connection Fail")
+    }
+  }
 }
 
 const RTPPaymentOptionsErrorMap = {
