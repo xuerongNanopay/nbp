@@ -977,6 +977,24 @@ export interface RequestForPaymentDetailResult {
   }[]
 }
 
+export interface RequestForCancelPaymentRequest {
+  'cancel_reason'?: string
+}
+
+export interface RequestForCancelResult {
+  ['data']: {
+    ['status']: 'SUCCESS' | 'FAILURE'
+  }
+  ['notifications']?: {
+    ['severity']?: string
+    ['code']?: string
+    ['message']?: string
+    ['uuid']?: string
+    ['timestamp']?: string
+    ['metadata']?: any
+  }[]
+}
+
 //TODO: find API
 // export interface AccountValidationRequest {
 //   ['accountInformation']: {
