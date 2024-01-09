@@ -3,6 +3,7 @@ import { CREDENTIAL, getAxios } from "./config.js"
 import { LOGGER } from "@/utils/logUtil.js"
 
 import type {
+  BankListResult,
   RawToken,
   Token
 } from './index.d.js'
@@ -109,4 +110,51 @@ async function _getToken(): Promise<Token | null> {
     return TOKEN
   }
   return null
+}
+
+async function bankList(): Promise<BankListResult> {
+  const endPoint = 'api/v2/BankList'
+  const credential = CREDENTIAL
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  }
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
+
+  const defaultRequest = {
+    'Token': token.Token,
+    'Agency_Code': credential.AGENCY_CODE
+  }
+
+  try {
+    const response = await getAxios().post(
+      endPoint,
+      {
+        ...defaultRequest
+      },
+      {
+        headers
+      }
+    ) as AxiosResponse<BankListResult>
+      return response.data
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'nbp', 
+        'function: bankList', 
+        `status: ${err.response?.status ?? "Empty status"}`,
+        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
+        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.message)
+    } else {
+      LOGGER.error(
+        'nbp', 
+        'function: bankList', 
+        JSON.stringify(err)
+      )
+      throw new Error("NBP Connection Fail")
+    }
+  }
 }

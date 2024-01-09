@@ -13,3 +13,12 @@ export interface Token {
   ['Token']: string
   ['Token_Expiry']: Date
 }
+
+export interface BankListResult {
+  ['ResponseCode']: string
+  ['ResponseMessage']: string
+  ['banklist']: {
+    ['BankName']: string
+    ['BankAbbr']: string
+  }[]
+}

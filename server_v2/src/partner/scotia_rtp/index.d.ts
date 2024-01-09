@@ -28,12 +28,6 @@ export interface RawToken {
   ['expires_in']: string
 }
 
-interface Reponse<T> {
-  status: number
-  statusMessage: string,
-  data?: T
-}
-
 export interface Token {
   ['access_token']: string
   ['scope']: string
