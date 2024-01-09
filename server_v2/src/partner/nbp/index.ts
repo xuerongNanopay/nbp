@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from "axios"
+import { AxiosError, AxiosResponse } from "axios"
 import { CREDENTIAL, getAxios } from "./config.js"
 import { LOGGER } from "@/utils/logUtil.js"
 
@@ -21,7 +21,7 @@ import { base64Encode } from "@/utils/bast64Util.js"
 let TOKEN :Token
 const mutex = new Mutex()
 
-async function hello(): Promise<String> {
+export async function hello(): Promise<string> {
   const endPoint = 'api/v2/Hello'
   const headers = {
     'Content-Type': 'application/json'
@@ -118,7 +118,7 @@ async function _getToken(): Promise<Token | null> {
   return null
 }
 
-async function bankList(): Promise<BankListResult> {
+export async function bankList(): Promise<BankListResult> {
   const endPoint = 'api/v2/BankList'
   const credential = CREDENTIAL
   const headers = {
@@ -164,7 +164,7 @@ async function bankList(): Promise<BankListResult> {
   }
 }
 
-async function accountEnquiry(
+export async function accountEnquiry(
   request: AccountEnquiryRequest
 ): Promise<AccountEnquiryResult> {
   const endPoint = 'api/v2/AccountEnquiry'
@@ -213,7 +213,7 @@ async function accountEnquiry(
   }
 }
 
-async function loadRemittanceCash(
+export async function loadRemittanceCash(
   request: LoadRemittanceCashRequest
 ): Promise<LoadRemittanceResult> {
   const endPoint = 'api/v2/LoadRemittanceCash'
@@ -262,7 +262,7 @@ async function loadRemittanceCash(
   }
 }
 
-async function loadRemittanceAccounts(
+export async function loadRemittanceAccounts(
   request: LoadRemittanceAccountsRequest
 ) : Promise<LoadRemittanceResult> {
   const endPoint = 'api/v2/LoadRemittanceAccounts'
@@ -311,7 +311,7 @@ async function loadRemittanceAccounts(
   }
 }
 
-async function loadRemittanceThirdParty(
+export async function loadRemittanceThirdParty(
   request: LoadRemittanceThirdPartyRequest
 ): Promise<LoadRemittanceResult> {
   const endPoint = 'api/v2/LoadRemittanceThirdParty'
@@ -360,7 +360,7 @@ async function loadRemittanceThirdParty(
   }
 }
 
-async function transactionStatus(
+export async function transactionStatus(
   date: string
 ) : Promise<TransactionStatusResult> {
   const endPoint = 'api/v2/TransactionStatus'
@@ -409,7 +409,7 @@ async function transactionStatus(
   }
 }
 
-async function transactionStatusByIds(
+export async function transactionStatusByIds(
   ...ids: string[]
 ) : Promise<TransactionStatusByIdsResult> {
   const endPoint = 'api/v2/TransactionStatus'
