@@ -1,7 +1,7 @@
 import type { 
   TransferReqeust, 
   TransferResult 
-} from "@/partner/idm/index.d.js";
+} from "@/partner/idm/index.d.js"
 
 //TODO: Mock Service for development mode
 export const IDMService = await _getRealService()
