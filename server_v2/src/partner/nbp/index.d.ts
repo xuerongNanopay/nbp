@@ -119,10 +119,6 @@ export interface TransactionStatusResult {
   ['Processing_Time']?: string
 }
 
-export interface TransactionStatusByIdsRequest {
-  ['ids']: string //111,222,444,555 seperate by comma
-}
-
 export interface TransactionStatusByIdsResult {
   ['ResponseCode']: string
   ['ResponseMessage']: string

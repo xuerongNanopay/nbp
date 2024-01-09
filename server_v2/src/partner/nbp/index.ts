@@ -11,7 +11,9 @@ import type {
   LoadRemittanceResult,
   LoadRemittanceThirdPartyRequest,
   RawToken,
-  Token
+  Token,
+  TransactionStatusByIdsResult,
+  TransactionStatusResult
 } from './index.d.js'
 import { Mutex } from "async-mutex"
 import { base64Encode } from "@/utils/bast64Util.js"
@@ -262,7 +264,7 @@ async function loadRemittanceCash(
 
 async function loadRemittanceAccounts(
   request: LoadRemittanceAccountsRequest
-): Promise<LoadRemittanceResult> {
+) : Promise<LoadRemittanceResult> {
   const endPoint = 'api/v2/LoadRemittanceAccounts'
   const credential = CREDENTIAL
   const headers = {
@@ -351,6 +353,104 @@ async function loadRemittanceThirdParty(
       LOGGER.error(
         'nbp', 
         'function: loadRemittanceThirdParty', 
+        JSON.stringify(err)
+      )
+      throw new Error("NBP Connection Fail")
+    }
+  }
+}
+
+async function transactionStatus(
+  date: string
+) : Promise<TransactionStatusResult> {
+  const endPoint = 'api/v2/TransactionStatus'
+  const credential = CREDENTIAL
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  }
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch nbp access token.')
+
+  const defaultRequest = {
+    'Token': token.Token,
+    'Agency_Code': credential.AGENCY_CODE
+  }
+
+  try {
+    const response = await getAxios().post(
+      endPoint,
+      {
+        ...defaultRequest,
+        Date: date
+      },
+      {
+        headers
+      }
+    ) as AxiosResponse<TransactionStatusResult>
+      return response.data
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'nbp', 
+        'function: transactionStatus',
+        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+    } else {
+      LOGGER.error(
+        'nbp', 
+        'function: transactionStatus', 
+        JSON.stringify(err)
+      )
+      throw new Error("NBP Connection Fail")
+    }
+  }
+}
+
+async function transactionStatusByIds(
+  ...ids: string[]
+) : Promise<TransactionStatusByIdsResult> {
+  const endPoint = 'api/v2/TransactionStatus'
+  const credential = CREDENTIAL
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  }
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch nbp access token.')
+
+  const defaultRequest = {
+    'Token': token.Token,
+    'Agency_Code': credential.AGENCY_CODE
+  }
+
+  try {
+    const response = await getAxios().post(
+      endPoint,
+      {
+        ...defaultRequest,
+        ids: ids.join(',')
+      },
+      {
+        headers
+      }
+    ) as AxiosResponse<TransactionStatusByIdsResult>
+      return response.data
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'nbp', 
+        'function: transactionStatusByIds',
+        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+    } else {
+      LOGGER.error(
+        'nbp', 
+        'function: transactionStatusByIds', 
         JSON.stringify(err)
       )
       throw new Error("NBP Connection Fail")
