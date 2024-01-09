@@ -94,3 +94,27 @@ export interface LoadRemittanceResult {
   ['Global_Id']: string
   ['Tracking_Id']?: string
 }
+
+export interface TransactionStatusRequest {
+  ['Date']: string
+}
+
+export interface TransactionStatusResult {
+  ['ResponseCode']: string
+  ['ResponseMessage']: string
+  ['Global_Id']: string
+  ['Tracking_Id']: string
+  ['Status']: 'PENDING' | 'CANCELLED' | 'REJECTED' | 'PAID' | 'IN_PROCESS' | 'IN_PROCESS'
+  ['Status_Details']: string
+  ['Beneficiary_Id_Type']?: string
+  ['Beneficiary_Id_Number']?: string
+  ['Branch_Code']: number
+  ['Branch_Name']: string
+  ['Beneficiary_Name']: string
+  ['Beneficiary_Id_Expiry_Date']: string
+  ['Beneficiary_Id_Issue_Date']?: string
+  ['Beneficiary_Id_Issued_By']?: string
+  ['Beneficiary_Date_Of_Birth']?: string
+  ['Processing_Date']?: string
+  ['Processing_Time']?: string
+}
