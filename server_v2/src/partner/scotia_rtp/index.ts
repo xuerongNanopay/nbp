@@ -352,7 +352,7 @@ export async function requestForPaymentDetails(
   }
 }
 
-async function cancelRequestForPayment(
+export async function cancelRequestForPayment(
   paymentId: string,
   request: RequestForCancelPaymentRequest,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
