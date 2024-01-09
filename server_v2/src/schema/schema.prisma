@@ -408,8 +408,8 @@ enum TransactionStatus {
 }
 
 model Transaction {
-  id Int @id @default(autoincrement())
-  name String
+  id     Int               @id @default(autoincrement())
+  name   String
   status TransactionStatus @default(QUOTE)
 
   sourceAccountId      Int
@@ -420,9 +420,9 @@ model Transaction {
   sourceAmount   Int
   sourceCurrency String @db.Char(3)
 
-  destinationAmount         Int
-  destinationCurrency       String @db.Char(3)
-  destinationName           String
+  destinationAmount   Int
+  destinationCurrency String @db.Char(3)
+  destinationName     String
 
   feeAmount   Int
   feeCurrency String @db.Char(3)

@@ -8,7 +8,9 @@
     "clean": "rm -rf ./dist",
     "compile": "npm run clean && tsc && tsc-alias",
     "run": "npm run clean && npm run compile && node ./dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prismaGen": "npx prisma generate --schema=./src/schema/schema.prisma",
+    "prismaFormat": "npx prisma format --schema=./src/schema/schema.prisma"
   },
   "keywords": [],
   "author": "",
