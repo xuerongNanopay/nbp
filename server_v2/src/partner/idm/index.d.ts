@@ -3,7 +3,7 @@ export interface Credential {
   ['API_KEY']: string
 }
 
-export interface TransaferRequest {
+export interface TransferReqeust {
   ['man']?: string
   ['tea']?: string
   ['soc']?: string
@@ -143,7 +143,7 @@ export interface TransaferRequest {
   [key:string]: any
 }
 
-export interface TransaferResult {
+export interface TransferResult {
   ['upr']?: string
   ['frp']?: string
   ['frn']?: string

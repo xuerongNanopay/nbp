@@ -38,7 +38,7 @@ async function hello(): Promise<String> {
   } catch (err) {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: hello',
         `httpCode: ${err.code ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
@@ -46,7 +46,7 @@ async function hello(): Promise<String> {
       throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
     } else {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: hello', 
         JSON.stringify(err)
       )
@@ -72,7 +72,7 @@ async function _requestToken(): Promise<Token|null> {
       }
     ) as AxiosResponse<RawToken, any>
     const rawToken = axiosResponse.data
-    LOGGER.info('nbp', 'token update', `expires_in: ${new Date(rawToken.Token_Expiry)}`)
+    LOGGER.info('NBP', 'token update', `expires_in: ${new Date(rawToken.Token_Expiry)}`)
     return {
       ...rawToken,
       Token_Expiry: new Date(rawToken.Token_Expiry)
@@ -80,14 +80,14 @@ async function _requestToken(): Promise<Token|null> {
   } catch (err) {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: _requestToken', 
         `httpCode: ${err.code ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
     } else {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: _requestToken', 
         JSON.stringify(err)
       )
@@ -108,7 +108,7 @@ async function _getToken(): Promise<Token | null> {
           TOKEN = newToken
         }
       } catch (err) {
-        LOGGER.error('nbp', 'function: _getToken', err)
+        LOGGER.error('NBP', 'function: _getToken', err)
       } finally {
         release()
       }
@@ -147,7 +147,7 @@ async function bankList(): Promise<BankListResult> {
   } catch (err) {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: bankList',
         `httpCode: ${err.code ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
@@ -155,7 +155,7 @@ async function bankList(): Promise<BankListResult> {
       throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
     } else {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: bankList', 
         JSON.stringify(err)
       )
@@ -196,7 +196,7 @@ async function accountEnquiry(
   } catch (err) {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: accountEnquiry',
         `httpCode: ${err.code ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
@@ -204,7 +204,7 @@ async function accountEnquiry(
       throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
     } else {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: accountEnquiry', 
         JSON.stringify(err)
       )
@@ -245,7 +245,7 @@ async function loadRemittanceCash(
   } catch (err) {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: loadRemittanceCash',
         `httpCode: ${err.code ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
@@ -253,7 +253,7 @@ async function loadRemittanceCash(
       throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
     } else {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: loadRemittanceCash', 
         JSON.stringify(err)
       )
@@ -294,7 +294,7 @@ async function loadRemittanceAccounts(
   } catch (err) {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: loadRemittanceAccounts',
         `httpCode: ${err.code ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
@@ -302,7 +302,7 @@ async function loadRemittanceAccounts(
       throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
     } else {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: loadRemittanceAccounts', 
         JSON.stringify(err)
       )
@@ -343,7 +343,7 @@ async function loadRemittanceThirdParty(
   } catch (err) {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: loadRemittanceThirdParty',
         `httpCode: ${err.code ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
@@ -351,7 +351,7 @@ async function loadRemittanceThirdParty(
       throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
     } else {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: loadRemittanceThirdParty', 
         JSON.stringify(err)
       )
@@ -392,7 +392,7 @@ async function transactionStatus(
   } catch (err) {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: transactionStatus',
         `httpCode: ${err.code ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
@@ -400,7 +400,7 @@ async function transactionStatus(
       throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
     } else {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: transactionStatus', 
         JSON.stringify(err)
       )
@@ -441,7 +441,7 @@ async function transactionStatusByIds(
   } catch (err) {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: transactionStatusByIds',
         `httpCode: ${err.code ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
@@ -449,7 +449,7 @@ async function transactionStatusByIds(
       throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
     } else {
       LOGGER.error(
-        'nbp', 
+        'NBP', 
         'function: transactionStatusByIds', 
         JSON.stringify(err)
       )
