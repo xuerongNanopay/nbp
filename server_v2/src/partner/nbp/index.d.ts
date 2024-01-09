@@ -118,3 +118,27 @@ export interface TransactionStatusResult {
   ['Processing_Date']?: string
   ['Processing_Time']?: string
 }
+
+export interface TransactionStatusByIdsRequest {
+  ['ids']: string //111,222,444,555 seperate by comma
+}
+
+export interface TransactionStatusByIdsResult {
+  ['ResponseCode']: string
+  ['ResponseMessage']: string
+  ['Global_Id']: string
+  ['Tracking_Id']: string
+  ['Status']: 'PENDING' | 'CANCELLED' | 'REJECTED' | 'PAID' | 'IN_PROCESS' | 'IN_PROCESS'
+  ['Status_Details']: string
+  ['Beneficiary_Id_Type']?: string
+  ['Beneficiary_Id_Number']?: string
+  ['Branch_Code']: number
+  ['Branch_Name']: string
+  ['Beneficiary_Name']: string
+  ['Beneficiary_Id_Expiry_Date']: string
+  ['Beneficiary_Id_Issue_Date']?: string
+  ['Beneficiary_Id_Issued_By']?: string
+  ['Beneficiary_Date_Of_Birth']?: string
+  ['Processing_Date']?: string
+  ['Processing_Time']?: string
+}
