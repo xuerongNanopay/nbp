@@ -142,3 +142,18 @@ export interface TransaferRequest {
   //Memos
   [key:string]: any
 }
+
+export interface TransaferResult {
+  ['upr']?: string
+  ['frp']?: string
+  ['frn']?: string
+  ['frd']?: string
+  ['arpr']?: string
+  ['arpid']?: string
+  ['arpd']?: string
+  ['tid']?: string
+  ['erd']?: string
+  ['res']?: string
+  ['rcd']?: number[]
+  ['ednaScoreCard']?: any
+}
