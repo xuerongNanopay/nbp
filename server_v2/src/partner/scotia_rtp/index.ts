@@ -128,7 +128,7 @@ function _getDefaultHeaders(): Record<string, string> {
   }
 }
 
-async function rtpPaymentOptions(
+export async function rtpPaymentOptions(
   request: RTPPaymentOptionsRequest,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ): Promise<RTPPaymentOptionsResult> {
@@ -174,7 +174,7 @@ async function rtpPaymentOptions(
   }
 }
 
-async function rtpPayment(
+export async function rtpPayment(
   request: RTPPaymentRequest,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ): Promise<RTPPaymentResult> {
@@ -219,7 +219,7 @@ async function rtpPayment(
   }
 }
 
-async function rtpPaymentSummary(
+export async function rtpPaymentSummary(
   paymentId: string,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ) : Promise<RTPPaymentSummaryResult>  {
@@ -263,7 +263,7 @@ async function rtpPaymentSummary(
   }
 }
 
-async function requestForPayment(
+export async function requestForPayment(
   request: RTPPaymentRequest,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ) : Promise<RequestForPaymentResult>  {
@@ -308,7 +308,7 @@ async function requestForPayment(
   }
 }
 
-async function requestForPaymentDetails(
+export async function requestForPaymentDetails(
   paymentId: string,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ) : Promise<RequestForPaymentDetailResult>  {
