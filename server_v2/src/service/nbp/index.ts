@@ -11,7 +11,7 @@ import type {
 } from "@/partner/nbp/index.d.js"
 
 //TODO: Mock Service for development mode
-const NBPService = await getRealService()
+export const NBPService = await _getRealService()
 
 export interface NBPService {
   hello(): Promise<string>
@@ -24,7 +24,7 @@ export interface NBPService {
   transactionStatusByIds(...ids: string[]): Promise<TransactionStatusByIdsResult>
 }
 
-async function getRealService(): Promise<NBPService> {
+async function _getRealService(): Promise<NBPService> {
   const nbp =  await import('@/partner/nbp/index.js')
   return {
     hello: nbp.hello,
