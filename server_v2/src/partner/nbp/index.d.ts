@@ -22,3 +22,14 @@ export interface BankListResult {
     ['BankAbbr']: string
   }[]
 }
+
+export interface AccountEnquiryRequest {
+  ['AccountNo']: string
+  ['BranchCode']?: string
+  ['BankName']: string
+}
+
+export interface AccountEnquiryResult {
+  ['IBAN']?: string
+  ['AccountNo']?: string
+}

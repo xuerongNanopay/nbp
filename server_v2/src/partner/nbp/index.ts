@@ -3,6 +3,8 @@ import { CREDENTIAL, getAxios } from "./config.js"
 import { LOGGER } from "@/utils/logUtil.js"
 
 import type {
+  AccountEnquiryRequest,
+  AccountEnquiryResult,
   BankListResult,
   RawToken,
   Token
@@ -31,12 +33,11 @@ async function hello(): Promise<String> {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
         'nbp', 
-        'function: hello', 
-        `status: ${err.response?.status ?? "Empty status"}`,
-        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
-        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+        'function: hello',
+        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.message)
+      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
     } else {
       LOGGER.error(
         'nbp', 
@@ -75,9 +76,8 @@ async function _requestToken(): Promise<Token|null> {
       LOGGER.error(
         'nbp', 
         'function: _requestToken', 
-        `status: ${err.response?.status ?? "Empty status"}`,
-        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
-        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
     } else {
       LOGGER.error(
@@ -142,16 +142,64 @@ async function bankList(): Promise<BankListResult> {
     if ( err instanceof AxiosError ) {
       LOGGER.error(
         'nbp', 
-        'function: bankList', 
-        `status: ${err.response?.status ?? "Empty status"}`,
-        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
-        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+        'function: bankList',
+        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.message)
+      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
     } else {
       LOGGER.error(
         'nbp', 
         'function: bankList', 
+        JSON.stringify(err)
+      )
+      throw new Error("NBP Connection Fail")
+    }
+  }
+}
+
+async function accountEnquiry(
+  request: AccountEnquiryRequest
+): Promise<AccountEnquiryResult> {
+  const endPoint = 'api/v2/AccountEnquiry'
+  const credential = CREDENTIAL
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  }
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
+
+  const defaultRequest = {
+    'Token': token.Token,
+    'Agency_Code': credential.AGENCY_CODE
+  }
+
+  try {
+    const response = await getAxios().post(
+      endPoint,
+      {
+        ...defaultRequest,
+        ...request
+      },
+      {
+        headers
+      }
+    ) as AxiosResponse<AccountEnquiryResult>
+      return response.data
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'nbp', 
+        'function: accountEnquiry',
+        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+    } else {
+      LOGGER.error(
+        'nbp', 
+        'function: accountEnquiry', 
         JSON.stringify(err)
       )
       throw new Error("NBP Connection Fail")
