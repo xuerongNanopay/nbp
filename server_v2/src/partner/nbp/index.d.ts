@@ -32,4 +32,8 @@ export interface AccountEnquiryRequest {
 export interface AccountEnquiryResult {
   ['IBAN']?: string
   ['AccountNo']?: string
+  ['AccountTitle']?: string
+  ['BranchCode']?: number
+  ['AccountStatus']?: string
+  ['BankName']?: string
 }
