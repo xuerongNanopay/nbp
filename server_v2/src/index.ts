@@ -2,7 +2,7 @@
 import '@/boot'
 
 import express from 'express'
-import { HTTP_PORT } from './constant/env.js'
+import { HTTP_PORT } from './boot/env.js'
 
 const PORT = HTTP_PORT
 
