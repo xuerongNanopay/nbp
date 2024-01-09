@@ -82,7 +82,7 @@ export type LoadRemittanceAccountsRequest = LoadRemittanceRequest & {
   ['Beneficiary_Account']: string
 }
 
-export type LoadRemittanceAccountsRequest = LoadRemittanceRequest & {
+export type LoadRemittanceThirdPartyRequest = LoadRemittanceRequest & {
   ['Pmt_Mode']: 'THIRD_PARTY_PAYMENTS'
   ['Beneficiary_Branch']: string
   ['Beneficiary_Account']: string

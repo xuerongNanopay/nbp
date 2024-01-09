@@ -6,6 +6,10 @@ import type {
   AccountEnquiryRequest,
   AccountEnquiryResult,
   BankListResult,
+  LoadRemittanceAccountsRequest,
+  LoadRemittanceCashRequest,
+  LoadRemittanceResult,
+  LoadRemittanceThirdPartyRequest,
   RawToken,
   Token
 } from './index.d.js'
@@ -120,7 +124,7 @@ async function bankList(): Promise<BankListResult> {
     'Content-Type': 'application/json'
   }
   const token = await _getToken()
-  if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
+  if (!token) throw new Error('Fail to fetch nbp access token.')
 
   const defaultRequest = {
     'Token': token.Token,
@@ -168,7 +172,7 @@ async function accountEnquiry(
     'Content-Type': 'application/json'
   }
   const token = await _getToken()
-  if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
+  if (!token) throw new Error('Fail to fetch nbp access token.')
 
   const defaultRequest = {
     'Token': token.Token,
@@ -207,6 +211,149 @@ async function accountEnquiry(
   }
 }
 
-// async function loadRemittanceCash(
-//   request: 
-// )
+async function loadRemittanceCash(
+  request: LoadRemittanceCashRequest
+): Promise<LoadRemittanceResult> {
+  const endPoint = 'api/v2/LoadRemittanceCash'
+  const credential = CREDENTIAL
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  }
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch nbp access token.')
+
+  const defaultRequest = {
+    'Token': token.Token,
+    'Agency_Code': credential.AGENCY_CODE
+  }
+
+  try {
+    const response = await getAxios().post(
+      endPoint,
+      {
+        ...defaultRequest,
+        ...request
+      },
+      {
+        headers
+      }
+    ) as AxiosResponse<LoadRemittanceResult>
+      return response.data
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'nbp', 
+        'function: loadRemittanceCash',
+        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+    } else {
+      LOGGER.error(
+        'nbp', 
+        'function: loadRemittanceCash', 
+        JSON.stringify(err)
+      )
+      throw new Error("NBP Connection Fail")
+    }
+  }
+}
+
+async function loadRemittanceAccounts(
+  request: LoadRemittanceAccountsRequest
+): Promise<LoadRemittanceResult> {
+  const endPoint = 'api/v2/LoadRemittanceAccounts'
+  const credential = CREDENTIAL
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  }
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch nbp access token.')
+
+  const defaultRequest = {
+    'Token': token.Token,
+    'Agency_Code': credential.AGENCY_CODE
+  }
+
+  try {
+    const response = await getAxios().post(
+      endPoint,
+      {
+        ...defaultRequest,
+        ...request
+      },
+      {
+        headers
+      }
+    ) as AxiosResponse<LoadRemittanceResult>
+      return response.data
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'nbp', 
+        'function: loadRemittanceAccounts',
+        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+    } else {
+      LOGGER.error(
+        'nbp', 
+        'function: loadRemittanceAccounts', 
+        JSON.stringify(err)
+      )
+      throw new Error("NBP Connection Fail")
+    }
+  }
+}
+
+async function loadRemittanceThirdParty(
+  request: LoadRemittanceThirdPartyRequest
+): Promise<LoadRemittanceResult> {
+  const endPoint = 'api/v2/LoadRemittanceThirdParty'
+  const credential = CREDENTIAL
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  }
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch nbp access token.')
+
+  const defaultRequest = {
+    'Token': token.Token,
+    'Agency_Code': credential.AGENCY_CODE
+  }
+
+  try {
+    const response = await getAxios().post(
+      endPoint,
+      {
+        ...defaultRequest,
+        ...request
+      },
+      {
+        headers
+      }
+    ) as AxiosResponse<LoadRemittanceResult>
+      return response.data
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'nbp', 
+        'function: loadRemittanceThirdParty',
+        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+    } else {
+      LOGGER.error(
+        'nbp', 
+        'function: loadRemittanceThirdParty', 
+        JSON.stringify(err)
+      )
+      throw new Error("NBP Connection Fail")
+    }
+  }
+}
