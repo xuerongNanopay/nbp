@@ -4,6 +4,10 @@ const ROUTER = Router()
 
 ROUTER.post('/initial_transaction', async (req, res) => {
   console.log("AAA: ", req.body)
+  res.status(200).json({
+    code: '200',
+    message: 'Success'
+  })
 })
 
 ROUTER.post('/process_transaction', async (req, res) => {
