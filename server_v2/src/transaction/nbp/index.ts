@@ -12,7 +12,9 @@ function processTransaction(transactionId: number) {
 
 }
 
-function retryTransaction(transactionId: number, transferId: number) {
+//Retry only available on the last transfer.
+//And transfer status is FAIL.
+function retryTransaction(transactionId: number) {
 
 }
 
