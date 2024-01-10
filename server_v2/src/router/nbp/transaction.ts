@@ -1,13 +1,27 @@
+import { initialCashIn } from "@/service/transaction/nbp/index.js"
 import { Router } from "express"
 
 const ROUTER = Router()
 
+interface PostParams {
+  transactionId: number
+}
+
 ROUTER.post('/initial_transaction', async (req, res) => {
-  console.log("AAA: ", req.body)
-  res.status(200).json({
-    code: '200',
-    message: 'Success'
-  })
+  try {
+    const request = req.body as PostParams
+    await initialCashIn(request.transactionId)
+    res.status(200).json({
+      code: '200',
+      message: 'Success Initial Transaction',
+      data: {}
+    })
+  } catch (err: any) {
+    res.status(400).json({
+      code: 400,
+      message: err.message
+    })
+  }
 })
 
 ROUTER.post('/process_transaction', async (req, res) => {

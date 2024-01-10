@@ -6,11 +6,11 @@ import { TransactionStatus } from "@prisma/client"
 //Refund transaction
 
 // Initial CashIn.
-async function initialCashIn(transactionId: number) {
+export async function initialCashIn(transactionId: number) {
 
-  PRISMAService.$transaction(async (tx) => {
+  // PRISMAService.$transaction(async (tx) => {
     
-  })
+  // })
   const transaction = await PRISMAService.transaction.findUnique({
     where: {
       id: transactionId
