@@ -1,9 +1,32 @@
+import { PRISMAService } from "@/service/prisma/index.js"
+import { TransactionStatus } from "@prisma/client"
+
 //Processing transactions
 //Cancel transaction
 //Refund transaction
 
 // Initial CashIn.
 async function initialCashIn(transactionId: number) {
+
+  PRISMAService.$transaction(async (tx) => {
+    
+  })
+  const transaction = await PRISMAService.transaction.findUnique({
+    where: {
+      id: transactionId
+    },
+    select: {
+      id: true,
+      status: true,
+      cashIn: {
+        select: {
+          status: true
+        }
+      }
+    }
+  })
+  if (!transaction) throw new Error(`Transaction no found with id: \`${transactionId}\``)
+  if (transaction.status !== TransactionStatus.INITIAL) throw new Error(`Can not Initial transaction with id: \`${transactionId}\``)
 }
 
 // Once payment received processing the payment.
