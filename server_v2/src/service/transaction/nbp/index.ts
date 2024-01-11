@@ -12,6 +12,32 @@ import {
 import { DefaultArgs } from "@prisma/client/runtime/library.js"
 
 type PrismaTransaction = Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
+type TRANSACTION_PROJET_TYPE = Prisma.TransactionGetPayload<{
+  select: {
+    id: true,
+    status: true,
+    cashIn: {
+      select: {
+        id: true,
+        status: true,
+        cashInReceiveAt: true
+      }
+    },
+    transfers: {
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        next: {
+          select: {
+            id: true
+          }
+        }
+      }
+    },
+    ownerId: true
+  }
+}>
 const TRANSACTION_PROJECT = {
   id: true,
   status: true,
@@ -51,29 +77,34 @@ export async function initialCashIn(transactionId: number): Promise<CashIn> {
     if (!transaction) throw new Error(`Transaction \`${transactionId}\` no found`)
     if (transaction.status !== 'initial') throw new Error(`Transaction \`${transactionId}\` is not in initial status`)
 
-    //TODO: call RTP API to initial payment.
-    //IF, RTP fail reject transaction.
-    
-    const cashInPromise = tx.cashIn.create({
-      data: {
-        status: CashInStatus.WAIT,
-        method: CashInMethod.INTERAC,
-        ownerId: Number(transaction.ownerId),
-        transactionId: Number(transaction.id),
-        paymentAccountId: Number(transaction.sourceAccountId),
-        paymentLink: 'https//www.google.ca'
-      }
-    })
-    const transactionPromise = tx.transaction.update({
-      where: {
-        id: transaction.id
-      },
-      data: {
-        status: TransactionStatus.WAITING_FOR_PAYMENT
-      }
-    })
-    const ret = await Promise.all([cashInPromise, transactionPromise])
-    return ret[0]
+    try {
+      //TODO: call RTP API to initial payment.
+      //Send Email to user.
+      //IF, RTP fail reject transaction.
+      const cashInPromise = tx.cashIn.create({
+        data: {
+          status: CashInStatus.WAIT,
+          method: CashInMethod.INTERAC,
+          ownerId: Number(transaction.ownerId),
+          transactionId: Number(transaction.id),
+          paymentAccountId: Number(transaction.sourceAccountId),
+          paymentLink: 'https//www.google.ca'
+        }
+      })
+      const transactionPromise = tx.transaction.update({
+        where: {
+          id: transaction.id
+        },
+        data: {
+          status: TransactionStatus.WAITING_FOR_PAYMENT
+        }
+      })
+      const ret = await Promise.all([cashInPromise, transactionPromise])
+      return ret[0]
+    } catch(err: any) {
+      //TODO: If fails What I should do?.
+      throw Error("Transaction Initial failed.")
+    }    
   })
   return cashIn
 }
@@ -203,11 +234,29 @@ async function _idmProcessor(transactionId: number): Promise<boolean> {
       return false
     }
 
-
+    const transfer = transaction.transfers[0]!
+    switch (transfer.status) {
+      case TransferStatus.INITIAL:
+        return await _idmInitialProcessor(tx, transaction)
+      case TransferStatus.COMPLETE:
+        return true
+      case TransferStatus.CANCEL:
+      case TransferStatus.FAIL:
+        return true
+      case TransferStatus.WAIT:
+        return false
+    }
     return false
   })
 }
 
+async function _idmInitialProcessor(
+  tx: PrismaTransaction, 
+  transaction: TRANSACTION_PROJET_TYPE
+): Promise<boolean> {
+
+  return false
+}
 //Retry only available on the last transfer.
 //And transfer status is FAIL.
 async function retryTransaction(transactionId: number) {
@@ -220,4 +269,12 @@ async function cancelTransaction(transactionId: number) {
 
 async function refundTransaction(transactionId: number) {
 
+}
+
+function _isTransactionTeminate(status: TransactionStatus) {
+  return status === TransactionStatus.CANCEL || status === TransactionStatus.COMPLETE || status === TransactionStatus.REFUND
+}
+
+function _isTransactionRefund(status: TransactionStatus) {
+  return status === TransactionStatus.REFUND_IN_PROGRESS || status === TransactionStatus.REFUND
 }
