@@ -50,7 +50,7 @@ async function processTransaction(transactionId: number) {
   //CashIn Finalize -> Initial IDM
   // IDM Finalize -> Initial NBP
   // NBP Finilize -> final transaction status.
-  await PRISMAService.$transaction(async (tx) => {
+  const a = await PRISMAService.$transaction(async (tx) => {
     //Just need to lock the transaction when we process it
     await PRISMAService.$queryRaw`select id from transaction where id = ${transactionId} for update`
     const transaction = await PRISMAService.transaction.findUnique({
@@ -105,6 +105,9 @@ async function processTransaction(transactionId: number) {
         LOGGER.warn('Transaction Process', `Transation \`${transactionId}\` do not receive the payment`)
       } else if (transaction.cashIn.status === CashInStatus.COMPLETE) {
         // CashIn received, Initial IDM.
+      } else {
+        LOGGER.error('Transaction Process', `Transation \`${transactionId}\``, 'Unable to process')
+        throw new Error(`Unable to process transaction \`${transaction.id}\``)
       }
     }
   })
