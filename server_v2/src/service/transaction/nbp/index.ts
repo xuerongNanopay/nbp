@@ -1,4 +1,5 @@
 import { PRISMAService } from "@/service/prisma/index.js"
+import { LOGGER } from "@/utils/logUtil.js"
 import { CashInMethod, CashInStatus, TransactionStatus } from "@prisma/client"
 
 //Processing transactions
@@ -86,9 +87,25 @@ async function processTransaction(transactionId: number) {
 
     if ( 
       transaction.status == TransactionStatus.WAITING_FOR_PAYMENT && 
-      !! transaction.cashIn && transaction.cashIn.status === CashInStatus.COMPLETE
+      !! transaction.cashIn && 
+      (transaction.cashIn.status === CashInStatus.COMPLETE ||
+        transaction.cashIn.status === CashInStatus.FAIL)
     ) {
-      //Cash In finalized. Initi
+      if (transaction.cashIn.status === CashInStatus.FAIL) {
+        await PRISMAService.transaction.update({
+          where: {
+            id: transaction.id
+          },
+          data: {
+            status: TransactionStatus.REJECT,
+            failedAt: new Date(),
+            endInfo: 'Do not receive the payment'
+          }
+        })
+        LOGGER.warn('Transaction Process', `Transation \`${transactionId}\` do not receive the payment`)
+      } else if (transaction.cashIn.status === CashInStatus.COMPLETE) {
+        // CashIn received, Initial IDM.
+      }
     }
   })
 }
