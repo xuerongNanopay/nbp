@@ -10,11 +10,11 @@ interface PostParams {
 ROUTER.post('/initial_transaction', async (req, res) => {
   try {
     const request = req.body as PostParams
-    await initialCashIn(request.transactionId)
+    const cashIn = await initialCashIn(request.transactionId)
     res.status(200).json({
       code: 200,
       message: 'Success Initial Transaction',
-      data: {}
+      data: cashIn
     })
   } catch (err: any) {
     res.status(400).json({
