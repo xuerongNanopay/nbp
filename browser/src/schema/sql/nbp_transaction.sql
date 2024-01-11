@@ -93,13 +93,13 @@ create table cash_in(
     id serial primary key,
     status enum ('initial', 'wait', 'paid') not null default 'initial',
     method enum('interac') not null,
-    paymentAccountId bigint unsigned not null,
 
     externalRef varchar(255) null,
     paymentLink varchar(255) null,
 
     ownerId bigint unsigned not null,
     transactionId bigint unsigned not null,
+    paymentAccountId bigint unsigned not null,
 
     cashInReceiveAt timestamp null,
     createdAt timestamp default current_timestamp,
@@ -107,7 +107,7 @@ create table cash_in(
 
     foreign key (paymentAccountId) references account(id),
     foreign key (ownerId) references user(id),
-    foreign key (paymentAccountId) references account(id)
+    foreign key (transactionId) references transaction(id)
 );
 
 create table transfer(

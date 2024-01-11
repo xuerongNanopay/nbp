@@ -36,7 +36,9 @@ export async function initialCashIn(transactionId: number) {
 
 // Once payment received processing the payment.
 async function processTransaction(transactionId: number) {
-
+  //CashIn Finalize -> Initial IDM
+  // IDM Finalize -> Initial NBP
+  // NBP Finilize -> final transaction status.
 }
 
 //Retry only available on the last transfer.
@@ -46,7 +48,7 @@ async function retryTransaction(transactionId: number) {
 }
 
 async function cancelTransaction(transactionId: number) {
-
+  //TODO: do not support now.
 }
 
 async function refundTransaction(transactionId: number) {
