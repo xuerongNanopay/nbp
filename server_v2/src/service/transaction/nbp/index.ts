@@ -1,6 +1,6 @@
 import { PRISMAService } from "@/service/prisma/index.js"
 import { LOGGER } from "@/utils/logUtil.js"
-import { CashInMethod, CashInStatus, Prisma, TransactionStatus, TransferStatus } from "@prisma/client"
+import { CashIn, CashInMethod, CashInStatus, Prisma, TransactionStatus, TransferStatus } from "@prisma/client"
 
 //Processing transactions
 //Cancel transaction
@@ -8,7 +8,7 @@ import { CashInMethod, CashInStatus, Prisma, TransactionStatus, TransferStatus }
 
 // Initial CashIn.
 // TODO: prevent sql injection.
-export async function initialCashIn(transactionId: number) {
+export async function initialCashIn(transactionId: number): Promise<CashIn> {
 
   const cashIn = await PRISMAService.$transaction(async (tx) => {
     const transactionResult = await PRISMAService.$queryRaw`
@@ -43,7 +43,7 @@ export async function initialCashIn(transactionId: number) {
   })
   return cashIn
 }
-const project = {
+const TRANSACTION_PROJECT = {
   id: true,
   status: true,
   cashIn: {
@@ -71,7 +71,7 @@ const project = {
 }
 // Once payment received processing the payment.
 // IDM, NBP
-async function processTransaction(transactionId: number) {
+export async function processTransaction(transactionId: number) {
   //CashIn Finalize -> Initial IDM
   // IDM Finalize -> Initial NBP
   // NBP Finilize -> final transaction status.
@@ -82,7 +82,7 @@ async function processTransaction(transactionId: number) {
       where: {
         id: transactionId
       },
-      select: project
+      select: TRANSACTION_PROJECT
     })
     if (!transaction) throw new Error(`Transaction \`${transactionId}\` no found`)
 
@@ -137,8 +137,86 @@ async function processTransaction(transactionId: number) {
 
 //Who do this: Avoid transaction reprocessing.
 async function _tryProcessing(transactionId: number) {
+  const transaction = await PRISMAService.transaction.findUnique({
+    where: {
+      id: transactionId
+    },
+    select: TRANSACTION_PROJECT
+  })
+  if (!transaction) throw new Error(`Transaction \`${transactionId}\` no found`)
 
+  if ( 
+    transaction.status == TransactionStatus.WAITING_FOR_PAYMENT && 
+    !! transaction.cashIn && 
+    (transaction.cashIn.status === CashInStatus.COMPLETE ||
+      transaction.cashIn.status === CashInStatus.FAIL)
+  ) {
+    await _cashInProcessor(transactionId)
+  } else if (
+    "TODO"
+  ) {
+
+  } else if (
+    "TODO"
+  ) {
+    
+  } else {
+    //End of processing.
+  }
 }
+
+async function _cashInProcessor(transactionId: number): Promise<boolean> {
+  return await PRISMAService.$transaction(async (tx) => {
+    await PRISMAService.$queryRaw`select id from transaction where id = ${transactionId} for update`
+    const transaction = await PRISMAService.transaction.findUnique({
+      where: {
+        id: transactionId
+      },
+      select: TRANSACTION_PROJECT
+    })
+    if (!transaction) throw new Error(`Transaction \`${transactionId}\` no found`)
+
+    if ( 
+      transaction.status == TransactionStatus.WAITING_FOR_PAYMENT && 
+      !! transaction.cashIn && 
+      (transaction.cashIn.status === CashInStatus.COMPLETE ||
+        transaction.cashIn.status === CashInStatus.FAIL)
+    ) {
+      if (transaction.cashIn.status === CashInStatus.FAIL) {
+        await PRISMAService.transaction.update({
+          where: {
+            id: transaction.id
+          },
+          data: {
+            status: TransactionStatus.REJECT,
+            failedAt: new Date(),
+            endInfo: 'Do not receive the payment'
+          }
+        })
+        LOGGER.warn('Transaction CashIn Processor', `Transation \`${transactionId}\` do not receive the payment`)
+      } else if (transaction.cashIn.status === CashInStatus.COMPLETE) {
+        //TODO: CashIn received, Initial IDM.
+      
+        await PRISMAService.transaction.update({
+          where: {
+            id: transaction.id
+          },
+          data: {
+            status: TransactionStatus.PROCESS
+          }
+        })
+        LOGGER.info('Transaction CashIn Processor', `Transation \`${transactionId}\``, `Cash In complete, Transaction status update to \`${TransactionStatus.PROCESS}\``)
+      } else {
+        LOGGER.error('Transaction CashIn Processor', `Transation \`${transactionId}\``, 'Unknow state.')
+        throw new Error(`Unable to process transaction \`${transaction.id}\``)
+      }
+      return true
+    } else {
+      return false
+    }
+  })
+}
+
 
 //Retry only available on the last transfer.
 //And transfer status is FAIL.
