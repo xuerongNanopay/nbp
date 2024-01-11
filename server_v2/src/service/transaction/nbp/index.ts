@@ -53,8 +53,8 @@ export async function processTransaction(transactionId: number) {
   // NBP Finilize -> final transaction status.
   const a = await PRISMAService.$transaction(async (tx) => {
     //Just need to lock the transaction when we process it
-    await PRISMAService.$queryRaw`select id from transaction where id = ${transactionId} for update`
-    const transaction = await PRISMAService.transaction.findUnique({
+    await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
+    const transaction = await tx.transaction.findUnique({
       where: {
         id: transactionId
       },
@@ -69,7 +69,7 @@ export async function processTransaction(transactionId: number) {
         transaction.cashIn.status === CashInStatus.FAIL)
     ) {
       if (transaction.cashIn.status === CashInStatus.FAIL) {
-        await PRISMAService.transaction.update({
+        await tx.transaction.update({
           where: {
             id: transaction.id
           },
@@ -83,7 +83,7 @@ export async function processTransaction(transactionId: number) {
       } else if (transaction.cashIn.status === CashInStatus.COMPLETE) {
         //TODO: CashIn received, Initial IDM.
       
-        await PRISMAService.transaction.update({
+        await tx.transaction.update({
           where: {
             id: transaction.id
           },
@@ -136,14 +136,19 @@ async function _tryProcessing(transactionId: number) {
   ) {
     // return await _nbpProcessor(transactionId)
   } else {
+    LOGGER.warn(
+      'Transaction Processor', 
+      `Transation \`${transactionId}\``, 
+      `Cash In complete, Transaction status update to \`${TransactionStatus.PROCESS}\``
+    )
     return false
   }
 }
 
 async function _cashInProcessor(transactionId: number): Promise<boolean> {
   return await PRISMAService.$transaction(async (tx) => {
-    await PRISMAService.$queryRaw`select id from transaction where id = ${transactionId} for update`
-    const transaction = await PRISMAService.transaction.findUniqueOrThrow({
+    await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
+    const transaction = await tx.transaction.findUniqueOrThrow({
       where: {
         id: transactionId
       },
@@ -153,7 +158,7 @@ async function _cashInProcessor(transactionId: number): Promise<boolean> {
     if (!transaction.cashIn) throw Error(`Transaction \`${transactionId}\` miss cash_in during Cash In Process`)
 
     if (transaction.cashIn.status === CashInStatus.COMPLETE) {
-      await PRISMAService.transaction.update({
+      const newTransaction = await tx.transaction.update({
         where: {
           id: transaction.id
         },
@@ -168,12 +173,16 @@ async function _cashInProcessor(transactionId: number): Promise<boolean> {
               }
             ]
           }
+        },
+        select: {
+          id: true,
+          status: true
         }
       })
-      LOGGER.info('Transaction CashIn Processor', `Transation \`${transactionId}\``, `Cash In complete, Transaction status update to \`${TransactionStatus.PROCESS}\``)
+      LOGGER.info('Transaction CashIn Processor', `Transation \`${transactionId}\``, `Cash In complete, Transaction status update to \`${newTransaction.status}\``)
       return true
     } else if (transaction.cashIn.status === CashInStatus.FAIL) {
-      await PRISMAService.transaction.update({
+      await tx.transaction.update({
         where: {
           id: transaction.id
         },
@@ -183,10 +192,10 @@ async function _cashInProcessor(transactionId: number): Promise<boolean> {
           endInfo: 'Do not receive the payment'
         }
       })
-      LOGGER.warn('Transaction CashIn Processor', `Transation \`${transactionId}\` do not receive the payment`)
+      LOGGER.warn('Transaction CashIn Processor', `Transation \`${transactionId}\` Cash In failed.`)
       return true
     } else {
-      LOGGER.info('Transaction CashIn Processor', `Transaction: \`${transactionId}\``, `CashIn Status: \`${transaction.cashIn.status}\``)
+      LOGGER.warn('Transaction CashIn Processor', `Transaction: \`${transactionId}\``, `No status change`, `CashIn Status: \`${transaction.cashIn.status}\``)
       return false
     }
   })
@@ -194,8 +203,8 @@ async function _cashInProcessor(transactionId: number): Promise<boolean> {
 
 async function _idmProcessor(transactionId: number): Promise<boolean> {
   return await PRISMAService.$transaction(async (tx) => {
-    await PRISMAService.$queryRaw`select id from transaction where id = ${transactionId} for update`
-    const transaction = await PRISMAService.transaction.findUnique({
+    await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
+    const transaction = await tx.transaction.findUnique({
       where: {
         id: transactionId
       },
