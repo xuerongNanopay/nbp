@@ -1,6 +1,6 @@
 import { PRISMAService } from "@/service/prisma/index.js"
 import { LOGGER } from "@/utils/logUtil.js"
-import { CashInMethod, CashInStatus, TransactionStatus } from "@prisma/client"
+import { CashInMethod, CashInStatus, Prisma, TransactionStatus, TransferStatus } from "@prisma/client"
 
 //Processing transactions
 //Cancel transaction
@@ -43,7 +43,32 @@ export async function initialCashIn(transactionId: number) {
   })
   return cashIn
 }
-
+const project = {
+  id: true,
+  status: true,
+  cashIn: {
+    select: {
+      id: true,
+      status: true,
+      cashInReceiveAt: true
+    }
+  },
+  transfers: {
+    orderBy: {
+      id: Prisma.SortOrder.asc
+    },
+    select: {
+      id: true,
+      status: true,
+      next: {
+        select: {
+          id: true
+        }
+      }
+    }
+  },
+  ownerId: true
+}
 // Once payment received processing the payment.
 // IDM, NBP
 async function processTransaction(transactionId: number) {
@@ -57,31 +82,7 @@ async function processTransaction(transactionId: number) {
       where: {
         id: transactionId
       },
-      select: {
-        id: true,
-        status: true,
-        cashIn: {
-          select: {
-            id: true,
-            status: true,
-            cashInReceiveAt: true
-          }
-        },
-        transfers: {
-          select: {
-            id: true,
-            status: true,
-            next: {
-              select: {
-                id: true
-              }
-            }
-          },
-          orderBy: {
-            id: 'asc'
-          }
-        }
-      }
+      select: project
     })
     if (!transaction) throw new Error(`Transaction \`${transactionId}\` no found`)
 
@@ -104,13 +105,39 @@ async function processTransaction(transactionId: number) {
         })
         LOGGER.warn('Transaction Process', `Transation \`${transactionId}\` do not receive the payment`)
       } else if (transaction.cashIn.status === CashInStatus.COMPLETE) {
-        // CashIn received, Initial IDM.
+        //TODO: CashIn received, Initial IDM.
+      
+        await PRISMAService.transaction.update({
+          where: {
+            id: transaction.id
+          },
+          data: {
+            status: TransactionStatus.PROCESS,
+            transfers: {
+              create: [
+                {
+                  name: 'IDM',
+                  status: TransferStatus.INITIAL,
+                  ownerId: transaction.ownerId,
+                }
+              ]
+            }
+          }
+        })
+        //TODO: call IDM
+
+
       } else {
         LOGGER.error('Transaction Process', `Transation \`${transactionId}\``, 'Unable to process')
         throw new Error(`Unable to process transaction \`${transaction.id}\``)
       }
     }
   })
+}
+
+//Who do this: Avoid transaction reprocessing.
+async function _tryProcessing(transactionId: number) {
+
 }
 
 //Retry only available on the last transfer.
