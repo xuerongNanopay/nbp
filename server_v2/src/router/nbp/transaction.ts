@@ -12,7 +12,7 @@ ROUTER.post('/initial_transaction', async (req, res) => {
     const request = req.body as PostParams
     await initialCashIn(request.transactionId)
     res.status(200).json({
-      code: '200',
+      code: 200,
       message: 'Success Initial Transaction',
       data: {}
     })
