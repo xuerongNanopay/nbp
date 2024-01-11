@@ -96,9 +96,9 @@ async function _tryProcessing(transactionId: number) {
   if (!transaction) throw new Error(`Transaction \`${transactionId}\` no found`)
 
   if ( 
-    transaction.status == TransactionStatus.WAITING_FOR_PAYMENT
+    transaction.status === TransactionStatus.WAITING_FOR_PAYMENT
   ) {
-    return  await _cashInProcessor(transactionId)
+    return await _cashInProcessor(transactionId)
   } else if (
     transaction.status == TransactionStatus.PROCESS &&
     !!transaction.transfers && 
@@ -110,15 +110,15 @@ async function _tryProcessing(transactionId: number) {
     transaction.status == TransactionStatus.PROCESS &&
     !!transaction.transfers && 
     transaction.transfers.length === 2 &&
-    transaction.transfers[0]!.name === 'NBP'
+    transaction.transfers[1]!.name === 'NBP'
   ) {
     // return await _nbpProcessor(transactionId)
   } else {
     LOGGER.warn(
       'Transaction Processor', 
       `Transation \`${transactionId}\``, 
-      `No status change`,
-      `Transactions status: \`${transaction.status}\``
+      `Transactions status: \`${transaction.status}\``,
+      'No Processor found for current status'
     )
     return false
   }
@@ -134,8 +134,11 @@ async function _cashInProcessor(transactionId: number): Promise<boolean> {
       },
       select: TRANSACTION_PROJECT
     })    
-    if (transaction.status == TransactionStatus.WAITING_FOR_PAYMENT) return false
-    if (!transaction.cashIn) throw Error(`Transaction \`${transactionId}\` miss cash_in during Cash In Process`)
+    if (transaction.status !== TransactionStatus.WAITING_FOR_PAYMENT) {
+      LOGGER.warn('Transaction CashIn Processor', `Transaction: \`${transaction.id}\` is out of Cash In processor scope`)
+      return false
+    }
+    if (!transaction.cashIn) throw Error(`Transaction \`${transactionId}\` miss cash_in during Cash In processor`)
 
     if (transaction.cashIn.status === CashInStatus.COMPLETE) {
       const newTransaction = await tx.transaction.update({
@@ -184,13 +187,23 @@ async function _cashInProcessor(transactionId: number): Promise<boolean> {
 async function _idmProcessor(transactionId: number): Promise<boolean> {
   return await PRISMAService.$transaction(async (tx) => {
     await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
-    const transaction = await tx.transaction.findUnique({
+    const transaction = await tx.transaction.findFirstOrThrow({
       where: {
         id: transactionId
       },
       select: TRANSACTION_PROJECT
     })
-    if (!transaction) throw new Error(`Transaction \`${transactionId}\` no found`)
+    if (!(
+      transaction.status == TransactionStatus.PROCESS &&
+      !!transaction.transfers && 
+      transaction.transfers.length === 1 &&
+      transaction.transfers[0]!.name === 'IDM'
+    )) {
+      LOGGER.warn('Transaction IDM Processor', `Transaction: \`${transaction.id}\` is out of IDM processor scope`)
+      return false
+    }
+
+
     return false
   })
 }
