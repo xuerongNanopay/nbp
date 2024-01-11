@@ -458,10 +458,11 @@ model Transaction {
 enum TransferStatus {
   INITIAL  @map("initial")
   WAIT     @map("wait")
+  RETRY    @map("retry")
+  // Terminal Status
+  CANCEL   @map("cancel")
   COMPLETE @map("complete")
   FAIL     @map("failed")
-  RETRY    @map("retry")
-  CANCEL   @map("cancel")
 }
 
 model Transfer {
