@@ -1,5 +1,5 @@
 import { PRISMAService } from "@/service/prisma/index.js"
-import { CashInMethod, CashInStatus } from "@prisma/client"
+import { CashInMethod, CashInStatus, TransactionStatus } from "@prisma/client"
 
 //Processing transactions
 //Cancel transaction
@@ -16,10 +16,10 @@ export async function initialCashIn(transactionId: number) {
     const transaction = Array.isArray(transactionResult) ? transactionResult[0] : transactionResult
     if (!transaction) throw new Error(`Transaction \`${transactionId}\` no found`)
     if (transaction.status !== 'initial') throw new Error(`Transaction \`${transactionId}\` is not in initial status`)
-    console.log(transaction, transaction.id)
-    //TODO: call RTP API to initial payment.
 
-    const cashIn = await PRISMAService.cashIn.create({
+    //TODO: call RTP API to initial payment.
+    
+    const cashInPromise = PRISMAService.cashIn.create({
       data: {
         status: CashInStatus.WAIT,
         method: CashInMethod.INTERAC,
@@ -29,16 +29,66 @@ export async function initialCashIn(transactionId: number) {
         paymentLink: 'https//www.google.ca'
       }
     })
-    return cashIn
+    const transactionPromise = PRISMAService.transaction.update({
+      where: {
+        id: transaction.id
+      },
+      data: {
+        status: TransactionStatus.WAITING_FOR_PAYMENT
+      }
+    })
+    const ret = await Promise.all([cashInPromise, transactionPromise])
+    return ret[0]
   })
   return cashIn
 }
 
 // Once payment received processing the payment.
+// IDM, NBP
 async function processTransaction(transactionId: number) {
   //CashIn Finalize -> Initial IDM
   // IDM Finalize -> Initial NBP
   // NBP Finilize -> final transaction status.
+  await PRISMAService.$transaction(async (tx) => {
+    //Just need to lock the transaction when we process it
+    await PRISMAService.$queryRaw`select id from transaction where id = ${transactionId} for update`
+    const transaction = await PRISMAService.transaction.findUnique({
+      where: {
+        id: transactionId
+      },
+      select: {
+        id: true,
+        status: true,
+        cashIn: {
+          select: {
+            id: true,
+            status: true,
+            cashInReceiveAt: true
+          }
+        },
+        transfers: {
+          select: {
+            id: true,
+            status: true,
+            next: {
+              select: {
+                id: true
+              }
+            }
+          },
+          orderBy: {
+            id: 'asc'
+          }
+        }
+      }
+    })
+    if ( 
+      transaction?.status == TransactionStatus.WAITING_FOR_PAYMENT && 
+      !! transaction.cashIn
+    ) {
+
+    }
+  })
 }
 
 //Retry only available on the last transfer.
