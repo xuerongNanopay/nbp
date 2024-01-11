@@ -82,11 +82,13 @@ async function processTransaction(transactionId: number) {
         }
       }
     })
-    if ( 
-      transaction?.status == TransactionStatus.WAITING_FOR_PAYMENT && 
-      !! transaction.cashIn
-    ) {
+    if (!transaction) throw new Error(`Transaction \`${transactionId}\` no found`)
 
+    if ( 
+      transaction.status == TransactionStatus.WAITING_FOR_PAYMENT && 
+      !! transaction.cashIn && transaction.cashIn.status === CashInStatus.COMPLETE
+    ) {
+      //Cash In finalized. Initi
     }
   })
 }

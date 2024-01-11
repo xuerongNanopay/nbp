@@ -369,9 +369,10 @@ enum CashInMethod {
 }
 
 enum CashInStatus {
-  INITIAL @map("initial")
-  WAIT    @map("wait")
-  PAID    @map("paid")
+  INITIAL  @map("initial")
+  WAIT     @map("wait")
+  COMPLETE @map("complete")
+  FAIL     @map("fail")
 }
 
 model CashIn {
