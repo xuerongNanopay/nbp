@@ -286,7 +286,7 @@ async function _idmInitialProcessor(
 
   const transfer = transaction.transfers[0]!
   if (transfer.status !== TransferStatus.INITIAL) {
-    LOGGER.error(`IDM Initial Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
+    LOGGER.error(`IDM Initial Processor`, `transaction \`${transaction.id}\``, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
     throw new Error('Unsupport status')
   }
 
@@ -301,7 +301,7 @@ async function _idmInitialProcessor(
       completeAt: new Date()
     }
   })
-  LOGGER.info(`IDM Initial Processor`, `Transfer \`${transfer.id} Initial Successfully.\``)
+  LOGGER.info(`IDM Initial Processor`, `transaction \`${transaction.id}\``, `Transfer \`${transfer.id}\` Initial Successfully.\``)
   return true
 }
 
@@ -314,7 +314,7 @@ async function _idmCompleteProcessor(
 
   const transfer = transaction.transfers[0]!
   if (transfer.status !== TransferStatus.COMPLETE) {
-    LOGGER.error(`IDM Complete Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
+    LOGGER.error(`IDM Complete Processor`, `transaction \`${transaction.id}\``, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
     throw new Error('Unsupport status')
   }
 
@@ -333,7 +333,7 @@ async function _idmCompleteProcessor(
       }
     }
   })
-  LOGGER.info(`IDM Complete Processor`, `Transfer \`${transfer.id}\` Complete Successfully.\``)
+  LOGGER.info(`IDM Complete Processor`, `transaction \`${transaction.id}\``, `Transfer \`${transfer.id}\` Complete Successfully.\``)
   return true
 }
 
@@ -410,7 +410,7 @@ async function _nbpInitialProcessor(
 ): Promise<boolean> {
   const transfer = transaction.transfers[1]!
   if (transfer.status !== TransferStatus.INITIAL) {
-    LOGGER.error(`NBP Initial Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
+    LOGGER.error(`NBP Initial Processor`, `transaction \`${transaction.id}\``, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
     throw new Error('Unsupport status')
   }
 
@@ -425,7 +425,7 @@ async function _nbpInitialProcessor(
     }
   })
 
-  LOGGER.info(`NBP Complete Processor`, `Transfer \`${transfer.id}\` Initial Successfully.\``)
+  LOGGER.info(`NBP Complete Processor`, `transaction \`${transaction.id}\``, `Transfer \`${transfer.id}\` Initial Successfully.\``)
   return false
 }
 
@@ -435,7 +435,7 @@ async function _nbpCompleteProcessor(
 ): Promise<boolean> {
   const transfer = transaction.transfers[1]!
   if (transfer.status !== TransferStatus.COMPLETE) {
-    LOGGER.error(`NBP Complete Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
+    LOGGER.error(`NBP Complete Processor`, `transaction \`${transaction.id}\``, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
     throw new Error('Unsupport status')
   }
 
@@ -462,7 +462,7 @@ async function _nbpTerminateProcessor(
     transfer.status !== TransferStatus.CANCEL &&
     transfer.status !== TransferStatus.FAIL
   ) {
-    LOGGER.error(`NBP Terminate Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
+    LOGGER.error(`NBP Terminate Processor`, `transaction \`${transaction.id}\``, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
     throw new Error('Unsupport status')
   }
 
