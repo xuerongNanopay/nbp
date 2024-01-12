@@ -403,8 +403,8 @@ export interface RequestForPaymentRequest {
     ['message_identification']: string
     ['end_to_end_identification']: string
     ['credit_debit_indicator']: 'CRDT' | 'DBIT'
-    ['creation_date_time']: Date
-    ['payment_expiry_date']?: Date
+    ['creation_date_time']: string
+    ['payment_expiry_date']?: string
     ['language']: 'EN' | 'FR'
     ['instructed_amount']: {
       ['amount']: number
@@ -487,10 +487,10 @@ export interface RequestForPaymentRequest {
     }
     ['creditor_account']: {
       ['identification']: string
-      ['currency']: string
-      ['scheme_name']: string
+      ['currency']?: string
+      ['scheme_name']?: string
     }
-    ['ultimate_creditor']: {
+    ['ultimate_creditor']?: {
       ['name']?: string
       ['postal_address']?: {
         ['address_type']?: {
