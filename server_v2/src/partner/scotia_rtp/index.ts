@@ -24,6 +24,7 @@ import * as jose from 'jose'
 import { getAxios } from "./axios.js"
 import { LOGGER } from "@/utils/logUtil.js"
 import { Mutex } from "async-mutex"
+import { APIError } from "@/schema/error.js"
 
 //TODO: using single instance architecture for the module.
 
@@ -164,7 +165,8 @@ export async function rtpPaymentOptions(
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.message)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'scotia_rtp', 
@@ -209,7 +211,8 @@ export async function rtpPayment(
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.message)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'scotia_rtp', 
@@ -253,7 +256,8 @@ export async function rtpPaymentSummary(
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.message)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'scotia_rtp', 
@@ -298,7 +302,8 @@ export async function requestForPayment(
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.message)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'scotia_rtp', 
@@ -342,7 +347,8 @@ export async function requestForPaymentStatus (
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.message)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'scotia_rtp', 
@@ -386,7 +392,8 @@ export async function requestForPaymentDetails(
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.message)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'scotia_rtp', 
@@ -432,7 +439,8 @@ export async function cancelRequestForPayment(
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.message)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'scotia_rtp', 

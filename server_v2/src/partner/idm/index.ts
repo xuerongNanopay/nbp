@@ -3,6 +3,7 @@ import { TransferReqeust, TransferResult } from "./index.d.js";
 import { CREDENTIAL, getAxios } from "./config.js";
 import { AxiosError, AxiosResponse } from "axios";
 import { LOGGER } from "@/utils/logUtil.js";
+import { APIError } from "@/schema/error.js";
 
 export async function transferout(
   request: TransferReqeust
@@ -33,6 +34,7 @@ export async function transferout(
         `httpCode: ${err.code ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
       throw new Error(err.message ?? `IDM \`transferout\` fails with code \`${err.code}\``)
     } else {
       LOGGER.error(
