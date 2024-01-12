@@ -462,7 +462,7 @@ enum TransferStatus {
   // Terminal Status
   CANCEL   @map("cancel")
   COMPLETE @map("complete")
-  FAIL     @map("failed")
+  FAIL     @map("fail")
 }
 
 model Transfer {
