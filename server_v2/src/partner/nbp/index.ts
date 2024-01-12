@@ -17,6 +17,7 @@ import type {
 } from './index.d.js'
 import { Mutex } from "async-mutex"
 import { base64Encode } from "@/utils/bast64Util.js"
+import { APIError } from "@/schema/error.js"
 
 let TOKEN :Token
 const mutex = new Mutex()
@@ -40,10 +41,11 @@ export async function hello(): Promise<string> {
       LOGGER.error(
         'NBP', 
         'function: hello',
-        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'NBP', 
@@ -82,7 +84,7 @@ async function _requestToken(): Promise<Token|null> {
       LOGGER.error(
         'NBP', 
         'function: _requestToken', 
-        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
     } else {
@@ -149,10 +151,11 @@ export async function bankList(): Promise<BankListResult> {
       LOGGER.error(
         'NBP', 
         'function: bankList',
-        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'NBP', 
@@ -198,10 +201,11 @@ export async function accountEnquiry(
       LOGGER.error(
         'NBP', 
         'function: accountEnquiry',
-        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'NBP', 
@@ -247,10 +251,11 @@ export async function loadRemittanceCash(
       LOGGER.error(
         'NBP', 
         'function: loadRemittanceCash',
-        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'NBP', 
@@ -296,10 +301,11 @@ export async function loadRemittanceAccounts(
       LOGGER.error(
         'NBP', 
         'function: loadRemittanceAccounts',
-        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'NBP', 
@@ -345,10 +351,11 @@ export async function loadRemittanceThirdParty(
       LOGGER.error(
         'NBP', 
         'function: loadRemittanceThirdParty',
-        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'NBP', 
@@ -394,10 +401,11 @@ export async function transactionStatus(
       LOGGER.error(
         'NBP', 
         'function: transactionStatus',
-        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'NBP', 
@@ -443,10 +451,11 @@ export async function transactionStatusByIds(
       LOGGER.error(
         'NBP', 
         'function: transactionStatusByIds',
-        `httpCode: ${err.code ?? 'Empty httpCode'}`,
+        `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      throw new Error(err.response?.data.ResponseMessage ?? err.message ?? err.code)
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
         'NBP', 
