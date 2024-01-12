@@ -1,4 +1,4 @@
-import { initialCashIn } from "@/service/transaction/nbp/index.js"
+import { initialCashIn, processTransaction } from "@/service/transaction/nbp/index.js"
 import { LOGGER } from "@/utils/logUtil.js"
 import { Router } from "express"
 
@@ -27,7 +27,20 @@ ROUTER.post('/initial_transaction', async (req, res) => {
 })
 
 ROUTER.post('/process_transaction', async (req, res) => {
-
+  const request = req.body as PostParams
+  try {
+    await processTransaction(request.transactionId)
+    res.status(200).json({
+      code: 200,
+      message: 'Processed'
+    })
+  } catch (err: any) {
+    LOGGER.error('API: process_transaction', `Transaction ID: \`${request.transactionId}\``, err)
+    res.status(400).json({
+      code: 400,
+      message: err.message
+    })
+  }
 })
 
 ROUTER.post('/retry_transaction', async (req, res) => {

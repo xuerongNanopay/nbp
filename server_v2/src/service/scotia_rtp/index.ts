@@ -11,6 +11,7 @@ import type {
   RequestForPaymentResult
 } from "@/partner/scotia_rtp/index.d.js";
 
+//TODO: refactor, service API should base on the feature. Make it simple to use.
 //TODO: Mock Service for development mode
 export const ScotiaRTPService = await _getRealService()
 
