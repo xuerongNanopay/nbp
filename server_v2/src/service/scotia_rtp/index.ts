@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid'
 import { RTP_CREDITOR_ACCOUNT_IDENTIFICATION, RTP_CREDITOR_NAME, RTP_PAYMENT_EXPIRY_MS, RTP_ULTIMATE_CREDITOR_EMAIL, RTP_ULTIMATE_CREDITOR_NAME } from "@/boot/env.js";
 import type {
   RTPPaymentOptionsResult,
@@ -29,7 +30,7 @@ async function _getRealService(): Promise<ScotiaRTPService> {
 }
 
 type ReqeustForPaymentProp = {
-  transactionId: string,
+  transactionId: number,
   create_date_time: Date,
   amount: number,
   debtor_name?: string,
@@ -45,8 +46,8 @@ async function _requestForPayment(
   const request: RequestForPaymentRequest = {
     data: {
       product_code: 'DOMESTIC',
-      message_identification: `transaction-${prop.transactionId}`,
-      end_to_end_identification: `transaction-${prop.transactionId}`,
+      message_identification: _transactionIdentifier(prop.transactionId),
+      end_to_end_identification: _transactionIdentifier(prop.transactionId),
       credit_debit_indicator: 'CRDT',
       creation_date_time: `${prop.create_date_time.toISOString()}`,
       payment_expiry_date: `${new Date(prop.create_date_time.getTime() + RTP_PAYMENT_EXPIRY_MS).toISOString()}`,
@@ -99,14 +100,14 @@ async function _requestForPayment(
 
   
   return await requestForPayment(request, {
-    ['x-b3-spanid']: `${prop.transactionId}`,
-    ['x-b3-traceid']: `${prop.transactionId}`
+    ['x-b3-spanid']: _transactionIdentifier(prop.transactionId),
+    ['x-b3-traceid']: _transactionIdentifier(prop.transactionId)
   })
 }
 
 type RequestForPaymentStatusProp = {
   paymentId: string,
-  transactionId: string
+  transactionId: number
 }
 
 async function _requestForPaymentStatus(
@@ -116,8 +117,8 @@ async function _requestForPaymentStatus(
   }: RequestForPaymentStatusProp
 ) {
   return await requestForPaymentStatus(paymentId, {
-    ['x-b3-spanid']: `transaction-${transactionId}`,
-    ['x-b3-traceid']: `transaction-${transactionId}`
+    ['x-b3-spanid']: _transactionIdentifier(transactionId),
+    ['x-b3-traceid']: _transactionIdentifier(transactionId)
   })
 }
 
@@ -129,14 +130,21 @@ type RTPPaymentOptionsProp = {
 async function _rtpPaymentOptions(
   {email, accountId}: RTPPaymentOptionsProp
 ) {
+  const rand16String = uuidv4().substring(0, 16)
   return await rtpPaymentOptions({
       product_code: 'DOMESTIC',
       deposit_type: 'EMAIL',
       deposit_handle: email
     },
     {
-      ['x-b3-spanid']: `account-${accountId}`,
-      ['x-b3-traceid']: `account-${accountId}`
+      ['x-b3-spanid']: rand16String,
+      ['x-b3-traceid']: rand16String
     }
   )
+}
+
+function _transactionIdentifier(transactionId: number) {
+  const zero16 = '0000000000000000'
+  const stringId = `${transactionId}`
+  return `${zero16.substring(0, 16-stringId.length)}${stringId}`
 }
