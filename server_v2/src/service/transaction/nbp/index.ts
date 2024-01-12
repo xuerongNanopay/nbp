@@ -72,12 +72,22 @@ const TRANSACTION_PROJECT = {
 export async function initialCashIn(transactionId: number): Promise<CashIn> {
 
   const cashIn = await PRISMAService.$transaction(async (tx) => {
-    const transactionResult = await tx.$queryRaw`
-      select id, status, ownerId, sourceAccountId from transaction where id = ${transactionId} for update
+    await tx.$queryRaw`
+      select id from transaction where id = ${transactionId} for update
     `
-    const transaction = Array.isArray(transactionResult) ? transactionResult[0] : transactionResult
+    const transaction = await tx.transaction.findUnique({
+      where: {
+        id: transactionId
+      },
+      select: {
+        id: true,
+        status: true,
+        ownerId: true,
+        sourceAccountId: true
+      }
+    })
     if (!transaction) throw new Error(`Transaction \`${transactionId}\` no found`)
-    if (transaction.status !== 'initial') throw new Error(`Transaction \`${transactionId}\` is not in initial status`)
+    if (transaction.status !== TransactionStatus.INITIAL) throw new Error(`Transaction \`${transactionId}\` is not in initial status`)
 
     try {
       //TODO: call RTP API to initial payment.
@@ -106,6 +116,7 @@ export async function initialCashIn(transactionId: number): Promise<CashIn> {
     } catch(err: any) {
       //TODO: If fails What I should do?.
       //put a cash in with fail status?
+      LOGGER.error('CashIn Initial', `transaction \`${transactionId}\``, err)
       throw Error("Transaction Initial failed.")
     }    
   })
