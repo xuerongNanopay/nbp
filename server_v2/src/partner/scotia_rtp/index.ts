@@ -14,6 +14,7 @@ import type {
   RequestForCancelPaymentRequest, 
   RequestForCancelResult, 
   RequestForPaymentDetailResult, 
+  RequestForPaymentRequest, 
   RequestForPaymentResult, 
   Token 
 } from "./index.d.js"
@@ -264,7 +265,7 @@ export async function rtpPaymentSummary(
 }
 
 export async function requestForPayment(
-  request: RTPPaymentRequest,
+  request: RequestForPaymentRequest,
   optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
 ) : Promise<RequestForPaymentResult>  {
   const endPoint = 'treasury/payments/rtp/v1/requests'

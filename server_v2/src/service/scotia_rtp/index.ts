@@ -12,9 +12,13 @@ import type {
   RequestForPaymentResult
 } from "@/partner/scotia_rtp/index.d.js";
 
+import {
+  requestForPayment 
+} from "@/partner/scotia_rtp/index.js"
+
 //TODO: refactor, service API should base on the feature. Make it simple to use.
 //TODO: Mock Service for development mode
-export const ScotiaRTPService = await _getRealService()
+// export const ScotiaRTPService = await _getRealService()
 
 export interface ScotiaRTPService {
   rtpPaymentOptions(
@@ -44,19 +48,21 @@ export interface ScotiaRTPService {
   ) : Promise<RequestForCancelResult>
 }
 
-async function _getRealService(): Promise<ScotiaRTPService> {
-  const rtp =  await import('@/partner/scotia_rtp/index.js')
-  return {
-    rtpPaymentOptions: rtp.rtpPaymentOptions,
-    rtpPayment: rtp.rtpPayment,
-    rtpPaymentSummary: rtp.rtpPaymentSummary,
-    requestForPayment: rtp.requestForPayment,
-    requestForPaymentDetails: rtp.requestForPaymentDetails,
-    cancelRequestForPayment: rtp.cancelRequestForPayment
-  }
-}
+// async function _getRealService(): Promise<ScotiaRTPService> {
+//   const rtp =  await import('@/partner/scotia_rtp/index.js')
+//   return {
+//     rtpPaymentOptions: rtp.rtpPaymentOptions,
+//     rtpPayment: rtp.rtpPayment,
+//     rtpPaymentSummary: rtp.rtpPaymentSummary,
+//     requestForPayment: rtp.requestForPayment,
+//     requestForPaymentDetails: rtp.requestForPaymentDetails,
+//     cancelRequestForPayment: rtp.cancelRequestForPayment
+//   }
+// }
 
-function _requestForPayment() {
+async function _requestForPayment(
+  transactionId: number
+) {
   // Miss initiating_party?
   // Miss payment_condition?
   const request: RequestForPaymentRequest = {
@@ -114,4 +120,19 @@ function _requestForPayment() {
       }
     }
   }
+
+  
+  return await requestForPayment(request, {
+    ['x-b3-spanid']: `TODO: transactionId`,
+    ['x-b3-traceid']: `TODO: transactionId`
+  })
+
+  //TODO: move to caller
+  // if (!!result && !!result.data) {
+
+  // } else if (!!result && !!result.notifications && result.notifications.length > 0) {
+
+  // } else {
+  //   //TODO: Log error.
+  // }
 }
