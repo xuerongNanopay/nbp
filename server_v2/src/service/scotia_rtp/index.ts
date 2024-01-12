@@ -1,3 +1,4 @@
+import { RTP_CREDITOR_ACCOUNT_IDENTIFICATION, RTP_CREDITOR_NAME, RTP_PAYMENT_EXPIRY_MS, RTP_ULTIMATE_CREDITOR_EMAIL, RTP_ULTIMATE_CREDITOR_NAME } from "@/boot/env.js";
 import type { 
   OptionHeader, 
   RTPPaymentOptionsRequest,
@@ -60,51 +61,58 @@ export interface ScotiaRTPService {
 //   }
 // }
 
+type ReqeustForPaymentProp = {
+  transactionId: string,
+  create_date_time: Date,
+  amount: number,
+  debtor_name?: string,
+  debtor_email: string,
+  remittance_information?: string
+}
 async function _requestForPayment(
-  transactionId: number
+  prop: ReqeustForPaymentProp
 ) {
   // Miss initiating_party?
   // Miss payment_condition?
   const request: RequestForPaymentRequest = {
     data: {
       product_code: 'DOMESTIC',
-      message_identification: 'TODO: transactionID',
-      end_to_end_identification: 'TODO: transactionID',
+      message_identification: `${prop.transactionId}`,
+      end_to_end_identification: `${prop.transactionId}`,
       credit_debit_indicator: 'CRDT',
-      creation_date_time: new Date().toISOString(),
-      //TODO: put into config. set up 2 hours as default.
-      payment_expiry_date: new Date(new Date().getTime() + 7200000).toISOString(),
+      creation_date_time: `${prop.create_date_time.toISOString()}`,
+      payment_expiry_date: `${new Date(prop.create_date_time.getTime() + RTP_PAYMENT_EXPIRY_MS).toISOString()}`,
       // requestData.setSuppressResponderNotifications(credential.getSuppressResponderNotifications());
       // requestData.setReturnUrl("string"); // ????
       language: 'EN',
       instructed_amount: {
-        amount: 0,    //TODO: remember divide by 100
+        amount: prop.amount,
         currency: 'CAD'
       },
       debtor: {
-        name: 'Payer', //TODO: transaction ower name,
+        name: prop.debtor_name ?? 'Payer', //TODO: transaction ower name,
         country_of_residence: 'CA',
         contact_details: {
-          email_address: 'TODO: user interac account email'
+          email_address: prop.debtor_email
         }
       },
       creditor: {
-        name: 'TODO: profile name',
+        name: RTP_CREDITOR_NAME,
         country_of_residence: 'CA',
         contact_details: {
-          email_address: 'TODO: company email'
+          email_address: RTP_CREDITOR_NAME
         }
       },
       creditor_account: {
-        identification: 'TODO: void check?',
+        identification: RTP_CREDITOR_ACCOUNT_IDENTIFICATION,
         currency: 'CAD',
         scheme_name: 'ALIAS_ACCT_NO'
       },
       ultimate_creditor: {
-        name: 'TODO: payee name',
+        name: RTP_ULTIMATE_CREDITOR_NAME,
         country_of_residence: 'CA',
         contact_details: {
-          email_address: 'TODO: who is email'
+          email_address: RTP_ULTIMATE_CREDITOR_EMAIL
         }
       },
       fraud_supplementary_info: {
@@ -116,35 +124,28 @@ async function _requestForPayment(
         }
       },
       remittance_information: {
-        unstructured: 'We request money from your'
+        unstructured: prop.remittance_information ?? 'We request money from your'
       }
     }
   }
 
   
   return await requestForPayment(request, {
-    ['x-b3-spanid']: `TODO: transactionId`,
-    ['x-b3-traceid']: `TODO: transactionId`
+    ['x-b3-spanid']: `${prop.transactionId}`,
+    ['x-b3-traceid']: `${prop.transactionId}`
   })
+}
 
-  //TODO: move to caller
-  // if (!!result && !!result.data) {
-
-  // } else if (!!result && !!result.notifications && result.notifications.length > 0) {
-
-  // } else {
-  //   //TODO: Log error.
-  // }
+type RequestForPaymentStatusProp = {
+  paymentId: string,
+  transactionId: string
 }
 
 async function _requestForPaymentStatus(
   {
     paymentId,
     transactionId
-  }: {
-    paymentId: string,
-    transactionId: string
-  }
+  }: RequestForPaymentStatusProp
 ) {
   return await requestForPaymentStatus(paymentId, {
     ['x-b3-spanid']: `${transactionId}`,
