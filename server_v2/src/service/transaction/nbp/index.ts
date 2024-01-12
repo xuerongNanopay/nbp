@@ -237,7 +237,7 @@ async function _cashInProcessor(transactionId: number): Promise<boolean> {
       LOGGER.warn('Transaction CashIn Processor', `Transation \`${transactionId}\` Cash In failed.`)
       return true
     } else {
-      LOGGER.warn('Transaction CashIn Processor', `Transaction: \`${transactionId}\``, `No status change`, `CashIn Status: \`${transaction.cashIn.status}\``)
+      LOGGER.warn('Transaction CashIn Processor', `No status change`, `Transaction: \`${transactionId}\` has CashIn Status: \`${transaction.cashIn.status}\``)
       return false
     }
   })
@@ -272,7 +272,7 @@ async function _idmProcessor(transactionId: number): Promise<boolean> {
       case TransferStatus.FAIL:
         return await _idmTerminateProcessor(tx, transaction)
       default:
-        LOGGER.warn('Transaction IDM Processor', `Transfer: \`${transfer.id}\` is in \`${transfer.status}\``)
+        LOGGER.warn('Transaction IDM Processor', `No status change`, `Transfer: \`${transfer.id}\` is in \`${transfer.status}\``)
         return false
     }
   })
@@ -398,7 +398,7 @@ async function _nbpProcessor(transactionId: number): Promise<boolean> {
       case TransferStatus.FAIL:
         return await _nbpTerminateProcessor(tx, transaction)
       default:
-        LOGGER.warn('Transaction NBP Processor', `Transfer: \`${transfer.id}\` is in \`${transfer.status}\``)
+        LOGGER.warn('Transaction NBP Processor', `No status change`, `Transfer: \`${transfer.id}\` is in \`${transfer.status}\``)
         return false
     }
   })
