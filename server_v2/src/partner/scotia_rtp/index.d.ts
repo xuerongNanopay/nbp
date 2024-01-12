@@ -1014,12 +1014,16 @@ export interface RequestForCancelResult {
   }[]
 }
 
-// export interface RTPHook {
-//   ['sub']?: string
-//   ['aud']?: string
-//   ['']
-// }
-
+export interface RTPHookRequest {
+  ['sub']?: string
+  ['aud']?: string
+  ['payment_id']: string
+  ['iss']?: string
+  ['event_name']?: string
+  ['new_status']?: string
+  ['exp']?: number
+  ['iat']?: number
+}
 //TODO: find API
 // export interface AccountValidationRequest {
 //   ['accountInformation']: {
