@@ -116,10 +116,24 @@ export async function initialCashIn(transactionId: number): Promise<CashIn> {
 // IDM, NBP
 // Previous status should initial next one.
 export async function processTransaction(transactionId: number) {
-
+  return await _processTransaction(transactionId)
 }
 
-//Who do this: Avoid transaction reprocessing.
+async function _processTransaction(transactionId: number): Promise<number> {
+  const MAX_LOOP = 8
+  let i = 0
+  let ret: boolean
+  do {
+    ret = await _tryProcessing(transactionId)
+    i++
+  } while(i <= MAX_LOOP && ret)
+
+  if ( i > MAX_LOOP ) {
+    LOGGER.error(`Transaction \`${transactionId}\` reach maximum loop \`${MAX_LOOP}\``)
+  }
+  return i
+}
+
 async function _tryProcessing(transactionId: number) {
   const transaction = await PRISMAService.transaction.findUnique({
     where: {
