@@ -14,7 +14,7 @@ import type {
 } from "@/partner/scotia_rtp/index.d.js";
 
 import {
-  requestForPayment, requestForPaymentStatus 
+  requestForPayment, requestForPaymentStatus, rtpPaymentOptions 
 } from "@/partner/scotia_rtp/index.js"
 
 //TODO: refactor, service API should base on the feature. Make it simple to use.
@@ -77,8 +77,8 @@ async function _requestForPayment(
   const request: RequestForPaymentRequest = {
     data: {
       product_code: 'DOMESTIC',
-      message_identification: `${prop.transactionId}`,
-      end_to_end_identification: `${prop.transactionId}`,
+      message_identification: `transaction-${prop.transactionId}`,
+      end_to_end_identification: `transaction-${prop.transactionId}`,
       credit_debit_indicator: 'CRDT',
       creation_date_time: `${prop.create_date_time.toISOString()}`,
       payment_expiry_date: `${new Date(prop.create_date_time.getTime() + RTP_PAYMENT_EXPIRY_MS).toISOString()}`,
@@ -148,7 +148,27 @@ async function _requestForPaymentStatus(
   }: RequestForPaymentStatusProp
 ) {
   return await requestForPaymentStatus(paymentId, {
-    ['x-b3-spanid']: `${transactionId}`,
-    ['x-b3-traceid']: `${transactionId}`
+    ['x-b3-spanid']: `transaction-${transactionId}`,
+    ['x-b3-traceid']: `transaction-${transactionId}`
   })
+}
+
+type RTPPaymentOptionsProp = {
+  accountId: number
+  email: string
+}
+
+async function _rtpPaymentOptions(
+  {email, accountId}: RTPPaymentOptionsProp
+) {
+  return await rtpPaymentOptions({
+      product_code: 'DOMESTIC',
+      deposit_type: 'EMAIL',
+      deposit_handle: email
+    },
+    {
+      ['x-b3-spanid']: `account-${accountId}`,
+      ['x-b3-traceid']: `account-${accountId}`
+    }
+  )
 }
