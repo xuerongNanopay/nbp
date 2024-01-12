@@ -326,7 +326,7 @@ async function _idmTerminateProcessor(
     throw new Error('Unsupport status')
   }
 
-  await tx.transaction.update({
+  const updateTransaction = await tx.transaction.update({
     where: {
       id: transaction.id
     },
@@ -334,9 +334,13 @@ async function _idmTerminateProcessor(
       status: transfer.status === TransferStatus.CANCEL ? TransactionStatus.CANCEL : TransactionStatus.REJECT,
       endInfo: transfer.endInfo,
       terminatedAt: new Date()
+    },
+    select: {
+      id: true,
+      status: true
     }
   })
-  LOGGER.warn(`IDM Terminate Processor`, `Transfer \`${transfer.id} Fails.\``)
+  LOGGER.warn(`IDM Terminate Processor`, `Transaction \`${transaction.id} terminated in \`${updateTransaction.status}\`.\``)
   return false
 }
 
@@ -384,27 +388,77 @@ async function _nbpInitialProcessor(
     LOGGER.error(`NBP Initial Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
     throw new Error('Unsupport status')
   }
+
+  //TODO: call NBP
+  await tx.transfer.update({
+    where: {
+      id: transfer.id
+    },
+    data: {
+      status: TransferStatus.WAIT,
+      waitAt: new Date()
+    }
+  })
+
+  LOGGER.info(`IDM Complete Processor`, `Transfer \`${transfer.id} Initial Successfully.\``)
+  return false
 }
+
 async function _nbpCompleteProcessor(
   tx: PrismaTransaction, 
   transaction: TRANSACTION_PROJET_TYPE
 ): Promise<boolean> {
   const transfer = transaction.transfers[1]!
-  if (transfer.status !== TransferStatus.INITIAL) {
+  if (transfer.status !== TransferStatus.COMPLETE) {
     LOGGER.error(`NBP Complete Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
     throw new Error('Unsupport status')
   }
+
+  await tx.transaction.update({
+    where: {
+      id: transaction.id
+    },
+    data: {
+      status: TransactionStatus.COMPLETE,
+      completedAt: new Date(),
+      endInfo: 'Complete Successfully.'
+    }
+  })
+  LOGGER.error(`NBP Complete Processor`, `Transaction \`${transaction.id}\` completed sucessfully.`)
+  return false
 }
+
 async function _nbpTerminateProcessor(
   tx: PrismaTransaction, 
   transaction: TRANSACTION_PROJET_TYPE
 ): Promise<boolean> {
   const transfer = transaction.transfers[1]!
-  if (transfer.status !== TransferStatus.INITIAL) {
+  if (
+    transfer.status !== TransferStatus.CANCEL &&
+    transfer.status !== TransferStatus.FAIL
+  ) {
     LOGGER.error(`NBP Terminate Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
     throw new Error('Unsupport status')
   }
+
+  const updateTransaction = await tx.transaction.update({
+    where: {
+      id: transaction.id
+    },
+    data: {
+      status: transfer.status === TransferStatus.CANCEL ? TransactionStatus.CANCEL : TransactionStatus.REJECT,
+      endInfo: transfer.endInfo,
+      terminatedAt: new Date()
+    },
+    select: {
+      id: true,
+      status: true
+    }
+  })
+  LOGGER.error(`NBP Terminate Processor`, `Transaction \`${transaction.id}\` terminated in \`${updateTransaction.status}\``)
+  return false
 }
+
 //Retry only available on the last transfer.
 //And transfer status is FAIL.
 async function retryTransaction(transactionId: number) {
