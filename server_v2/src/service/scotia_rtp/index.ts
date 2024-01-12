@@ -13,7 +13,7 @@ import type {
 } from "@/partner/scotia_rtp/index.d.js";
 
 import {
-  requestForPayment 
+  requestForPayment, requestForPaymentStatus 
 } from "@/partner/scotia_rtp/index.js"
 
 //TODO: refactor, service API should base on the feature. Make it simple to use.
@@ -135,4 +135,19 @@ async function _requestForPayment(
   // } else {
   //   //TODO: Log error.
   // }
+}
+
+async function _requestForPaymentStatus(
+  {
+    paymentId,
+    transactionId
+  }: {
+    paymentId: string,
+    transactionId: string
+  }
+) {
+  return await requestForPaymentStatus(paymentId, {
+    ['x-b3-spanid']: `${transactionId}`,
+    ['x-b3-traceid']: `${transactionId}`
+  })
 }
