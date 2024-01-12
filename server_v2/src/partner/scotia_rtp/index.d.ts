@@ -647,6 +647,31 @@ export interface RequestForPaymentResult {
   }[]
 }
 
+//TODO: ask for API docs.
+export interface RequestForPaymentStatusResult {
+  ['data']?: {
+    ['payment_id']?: string
+    ['request_reference']?: string
+    ['request_amount']?: {
+      ['amount']: number
+      ['currency']: string
+    },
+    ['partial_fulfillment_allowed']: boolean,
+    ['request_date']: string
+    ['expiry_date']: string
+    ['request_status']: string
+    ['gateway_url']: string
+  }[],
+  ['notifications']?: {
+    ['severity']?: string
+    ['code']?: string
+    ['message']?: string
+    ['uuid']?: string
+    ['timestamp']?: string
+    ['metadata']?: any
+  }[]
+}
+
 export interface RequestForPaymentDetailResult {
   ['data']?: {
     ['creation_datetime']: string

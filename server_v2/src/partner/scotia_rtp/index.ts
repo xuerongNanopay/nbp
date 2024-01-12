@@ -16,6 +16,7 @@ import type {
   RequestForPaymentDetailResult, 
   RequestForPaymentRequest, 
   RequestForPaymentResult, 
+  RequestForPaymentStatusResult, 
   Token 
 } from "./index.d.js"
 import { getCredential, getPrivateKey } from "./config.js"
@@ -302,6 +303,50 @@ export async function requestForPayment(
       LOGGER.error(
         'scotia_rtp', 
         'function: requestForPayment', 
+        JSON.stringify(err)
+      )
+      throw new Error("RTP Connection Fail")
+    }
+  }
+}
+
+export async function requestForPaymentStatus (
+  paymentId: string,
+  optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
+) : Promise<RequestForPaymentStatusResult>  {
+  const endPoint = `treasury/payments/rtp/v1/requests?request_for_payment_id=${paymentId}`
+  let headers = _getDefaultHeaders()
+  const token = await _getToken()
+  if (!token) throw new Error('Fail to fetch acotia_rtp access token.')
+  headers = {
+    ...headers,
+    'Authorization': `Bearer ${token.access_token}`,
+    'Content-Type': 'application/json',
+    ...optionHeaders
+  }
+
+  try {
+    const response = await getAxios().get(
+      endPoint,
+      {
+        headers
+      }
+    ) as AxiosResponse<RequestForPaymentStatusResult>
+    return response.data
+  } catch (err) {
+    if ( err instanceof AxiosError ) {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: requestForPaymentStatus', 
+        `status: ${err.response?.status ?? "Empty status"}`,
+        `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
+        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+      )
+      throw new Error(err.message)
+    } else {
+      LOGGER.error(
+        'scotia_rtp', 
+        'function: requestForPaymentStatus', 
         JSON.stringify(err)
       )
       throw new Error("RTP Connection Fail")
