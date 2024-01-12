@@ -4,6 +4,7 @@ import { PEER_PUBLIC_KEY, PRIVATE_KEY } from '@/partner/scotia_rtp/config.js';
 import type { RTPHookRequest } from '@/partner/scotia_rtp/index.d.js';
 import { PRISMAService } from '@/service/prisma/index.js';
 import { CashInStatus } from '@prisma/client';
+import { ScotiaRTPService } from '@/service/scotia_rtp/index.js';
 
 //TODO: get data from parameter.
 export async function scotiaRTPHookHandler(rawData: string) {
@@ -25,7 +26,8 @@ export async function scotiaRTPHookHandler(rawData: string) {
     },
     select: {
       id: true,
-      status: true
+      status: true,
+      transactionId: true
     }
   })
   if (!cashIn) {
@@ -35,6 +37,12 @@ export async function scotiaRTPHookHandler(rawData: string) {
   if (cashIn.status !== CashInStatus.WAIT) {
     LOGGER.warn('Hook: scotiaRTPHookHandler', `Cash In \`${cashIn.id}\` is not in \`${CashInStatus.WAIT}\` but \`${cashIn.status}\``)
     throw new Error(`Unable to process payment_id: \`${request.payment_id}\``)
+  }
+
+  const paymentDetails = await ScotiaRTPService.requestForPaymentDetails({paymentId: request.payment_id, transactionId: cashIn.transactionId})
+  const paymentStatus = paymentDetails.data?.transaction_status ?? paymentDetails.data?.request_for_payment_status ?? null
+  if (!paymentStatus) {
+    LOGGER.error('Hook: scotiaRTPHookHandler', `Unable to fetch transaction status with paymentId \`${request.payment_id}\``)
   }
 
   

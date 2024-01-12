@@ -372,6 +372,7 @@ enum CashInStatus {
   INITIAL  @map("initial")
   WAIT     @map("wait")
   COMPLETE @map("complete")
+  Cancel   @map("cancel")
   FAIL     @map("fail")
 }
 
@@ -382,6 +383,8 @@ model CashIn {
 
   externalRef String?
   paymentLink String?
+
+  endInfo String?
 
   ownerId          Int
   paymentAccountId Int

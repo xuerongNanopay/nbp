@@ -2,14 +2,16 @@ import { v4 as uuidv4 } from 'uuid'
 import { RTP_CREDITOR_ACCOUNT_IDENTIFICATION, RTP_CREDITOR_NAME, RTP_PAYMENT_EXPIRY_MS, RTP_ULTIMATE_CREDITOR_EMAIL, RTP_ULTIMATE_CREDITOR_NAME } from "@/boot/env.js";
 import type {
   RTPPaymentOptionsResult,
+  RequestForPaymentDetailResult,
   RequestForPaymentRequest,
   RequestForPaymentResult,
   RequestForPaymentStatusResult
 } from "@/partner/scotia_rtp/index.d.js";
 
 import {
-  requestForPayment, requestForPaymentStatus, rtpPaymentOptions 
+  requestForPayment, requestForPaymentDetails, requestForPaymentStatus, rtpPaymentOptions 
 } from "@/partner/scotia_rtp/index.js"
+import { CashInStatus } from '@prisma/client'
 
 //TODO: refactor, service API should base on the feature. Make it simple to use.
 //TODO: Mock Service for development mode
@@ -18,14 +20,18 @@ export const ScotiaRTPService = await _getRealService()
 export interface ScotiaRTPService {
   requestForPayment(prop: ReqeustForPaymentProp): Promise<RequestForPaymentResult> 
   requestForPaymentStatus(prop: RequestForPaymentStatusProp): Promise<RequestForPaymentStatusResult> 
-  rtpPaymentOptions(prop: RTPPaymentOptionsProp): Promise<RTPPaymentOptionsResult> 
+  requestForPaymentDetails(prop: RequestForPaymentDetailsProp): Promise<RequestForPaymentDetailResult>
+  rtpPaymentOptions(prop: RTPPaymentOptionsProp): Promise<RTPPaymentOptionsResult>
+  cashInStatusMapper(status: string): CashInStatus
 }
 
 async function _getRealService(): Promise<ScotiaRTPService> {
   return {
     requestForPayment: _requestForPayment,
     requestForPaymentStatus: _requestForPaymentStatus,
-    rtpPaymentOptions: _rtpPaymentOptions
+    rtpPaymentOptions: _rtpPaymentOptions,
+    requestForPaymentDetails: _requestForPaymentDetails,
+    cashInStatusMapper: _cashInStatusMapper
   }
 }
 
@@ -141,6 +147,53 @@ async function _rtpPaymentOptions(
       ['x-b3-traceid']: rand16String
     }
   )
+}
+
+type RequestForPaymentDetailsProp = {
+  paymentId: string,
+  transactionId: number
+}
+
+async function _requestForPaymentDetails(
+  {transactionId, paymentId}: RequestForPaymentDetailsProp
+) : Promise<RequestForPaymentDetailResult> {
+  return await requestForPaymentDetails(paymentId,
+    {
+      ['x-b3-spanid']: _transactionIdentifier(transactionId),
+      ['x-b3-traceid']: _transactionIdentifier(transactionId),
+    }
+  )
+}
+
+function _cashInStatusMapper(status: string): CashInStatus {
+  switch(status) {
+    case "ACCC":
+      case "ACSP":
+      case "COMPLETED":
+      case "REALTIME_DEPOSIT_COMPLETED":
+      case "DEPOSIT_COMPLETE":
+        return CashInStatus.COMPLETE
+
+      case "RJCT":
+      case "DECLINED":
+        return CashInStatus.FAIL
+
+      case "FULFILLED":
+      case "AVAILABLE_TO_BE_FULFILLED":
+      case "INITIATED":
+        return CashInStatus.WAIT
+
+      case "REALTIME_DEPOSIT_FAILED":
+      case "DIRECT_DEPOSIT_FAILED":
+        return CashInStatus.FAIL
+
+      case "CANCELLED":
+      case "EXPIRED":
+        return CashInStatus.Cancel
+
+      default:
+        throw new Error(`Unsupport status \`${status}\``)
+  }
 }
 
 function _transactionIdentifier(transactionId: number) {
