@@ -30,7 +30,7 @@ create table transaction(
     quoteExpired datetime not null,
 
     completedAt timestamp null,
-    failedAt timestamp null,
+    terminatedAt timestamp null,
     refundedAt timestamp null,
     createdAt timestamp default current_timestamp,
     updatedAt timestamp default current_timestamp on update current_timestamp,

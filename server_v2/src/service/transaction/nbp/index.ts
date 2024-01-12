@@ -205,7 +205,7 @@ async function _cashInProcessor(transactionId: number): Promise<boolean> {
         },
         data: {
           status: TransactionStatus.REJECT,
-          failedAt: new Date(),
+          terminatedAt: new Date(),
           endInfo: 'Do not receive the payment'
         }
       })
@@ -332,8 +332,7 @@ async function _idmTerminateProcessor(
     data: {
       status: transfer.status === TransferStatus.CANCEL ? TransactionStatus.CANCEL : TransactionStatus.REJECT,
       endInfo: transfer.endInfo,
-      //TODO: support for cancel
-      failedAt: new Date()
+      terminatedAt: new Date()
     }
   })
 

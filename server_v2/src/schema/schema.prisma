@@ -443,7 +443,7 @@ model Transaction {
   confirmQuoteAt DateTime?
   quoteExpired   DateTime
   completedAt    DateTime?
-  failedAt       DateTime?
+  terminatedAt   DateTime?
   refundedAt     DateTime?
 
   fees      FeeDetail[]
