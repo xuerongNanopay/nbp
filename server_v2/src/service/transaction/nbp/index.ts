@@ -28,6 +28,7 @@ type TRANSACTION_PROJET_TYPE = Prisma.TransactionGetPayload<{
         id: true,
         name: true,
         status: true,
+        endInfo: true,
         next: {
           select: {
             id: true
@@ -56,6 +57,7 @@ const TRANSACTION_PROJECT = {
       id: true,
       name: true,
       status: true,
+      endInfo: true,
       next: {
         select: {
           id: true
@@ -103,6 +105,7 @@ export async function initialCashIn(transactionId: number): Promise<CashIn> {
       return ret[0]
     } catch(err: any) {
       //TODO: If fails What I should do?.
+      //put a cash in with fail status?
       throw Error("Transaction Initial failed.")
     }    
   })
@@ -239,21 +242,100 @@ async function _idmProcessor(transactionId: number): Promise<boolean> {
       case TransferStatus.INITIAL:
         return await _idmInitialProcessor(tx, transaction)
       case TransferStatus.COMPLETE:
-        return true
+        return await _idmCompleteProcessor(tx, transaction)
       case TransferStatus.CANCEL:
       case TransferStatus.FAIL:
-        return true
-      case TransferStatus.WAIT:
+        return await _idmTerminateProcessor(tx, transaction)
+      default:
+        LOGGER.warn('Transaction IDM Processor', `Transfer: \`${transfer.id}\` is in \`${transfer.status}\``)
         return false
     }
-    return false
   })
 }
 
+// Call IDM, and set transfer to COMPLETE, FAIL, or WAIT base on response.
 async function _idmInitialProcessor(
   tx: PrismaTransaction, 
   transaction: TRANSACTION_PROJET_TYPE
 ): Promise<boolean> {
+
+  const transfer = transaction.transfers[0]!
+  if (transfer.status !== TransferStatus.INITIAL) {
+    LOGGER.error(`IDM Initial Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
+    throw new Error('Unsupport status')
+  }
+
+  //TODO: Call IDM. now we approve as default.
+
+  tx.transfer.update({
+    where: {
+      id: transfer.id
+    },
+    data: {
+      status: TransferStatus.COMPLETE,
+      completeAt: new Date()
+    }
+  })
+  LOGGER.info(`IDM Initial Processor`, `Transfer \`${transfer.id} Initial Successfully.\``)
+  return true
+}
+
+// IDM Complete, move to next step.
+// Inital NBP transfer.
+async function _idmCompleteProcessor(
+  tx: PrismaTransaction, 
+  transaction: TRANSACTION_PROJET_TYPE
+): Promise<boolean> {
+
+  const transfer = transaction.transfers[0]!
+  if (transfer.status !== TransferStatus.INITIAL) {
+    LOGGER.error(`IDM Complete Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
+    throw new Error('Unsupport status')
+  }
+
+  await tx.transfer.update({
+    where: {
+      id: transfer.id
+    },
+    data: {
+      next: {
+        create: {
+          status: TransferStatus.INITIAL,
+          name: 'NBP',
+          ownerId: transaction.ownerId,
+          transactionId: transaction.id
+        }
+      }
+    }
+  })
+  return true
+}
+
+// IDM Fail or Cancel. Set the final state for transaction.
+async function _idmTerminateProcessor(
+  tx: PrismaTransaction, 
+  transaction: TRANSACTION_PROJET_TYPE
+): Promise<boolean> {
+  const transfer = transaction.transfers[0]!
+  if (
+    transfer.status !== TransferStatus.CANCEL &&
+    transfer.status !== TransferStatus.FAIL
+  ) {
+    LOGGER.error(`IDM Complete Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
+    throw new Error('Unsupport status')
+  }
+
+  await tx.transaction.update({
+    where: {
+      id: transaction.id
+    },
+    data: {
+      status: transfer.status === TransferStatus.CANCEL ? TransactionStatus.CANCEL : TransactionStatus.REJECT,
+      endInfo: transfer.endInfo,
+      //TODO: support for cancel
+      failedAt: new Date()
+    }
+  })
 
   return false
 }
