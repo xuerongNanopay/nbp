@@ -1,16 +1,9 @@
 import { RTP_CREDITOR_ACCOUNT_IDENTIFICATION, RTP_CREDITOR_NAME, RTP_PAYMENT_EXPIRY_MS, RTP_ULTIMATE_CREDITOR_EMAIL, RTP_ULTIMATE_CREDITOR_NAME } from "@/boot/env.js";
-import type { 
-  OptionHeader, 
-  RTPPaymentOptionsRequest,
+import type {
   RTPPaymentOptionsResult,
-  RTPPaymentRequest,
-  RTPPaymentResult,
-  RTPPaymentSummaryResult,
-  RequestForCancelPaymentRequest,
-  RequestForCancelResult,
-  RequestForPaymentDetailResult,
   RequestForPaymentRequest,
-  RequestForPaymentResult
+  RequestForPaymentResult,
+  RequestForPaymentStatusResult
 } from "@/partner/scotia_rtp/index.d.js";
 
 import {
@@ -19,47 +12,21 @@ import {
 
 //TODO: refactor, service API should base on the feature. Make it simple to use.
 //TODO: Mock Service for development mode
-// export const ScotiaRTPService = await _getRealService()
+export const ScotiaRTPService = await _getRealService()
 
 export interface ScotiaRTPService {
-  rtpPaymentOptions(
-    request: RTPPaymentOptionsRequest,
-    optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
-  ): Promise<RTPPaymentOptionsResult> 
-  rtpPayment(
-    request: RTPPaymentRequest,
-    optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
-  ): Promise<RTPPaymentResult> 
-  rtpPaymentSummary(
-    paymentId: string,
-    optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
-  ): Promise<RTPPaymentSummaryResult>
-  requestForPayment(
-    request: RTPPaymentRequest,
-    optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
-  ): Promise<RequestForPaymentResult>
-  requestForPaymentDetails(
-    paymentId: string,
-    optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
-  ): Promise<RequestForPaymentDetailResult>
-  cancelRequestForPayment(
-    paymentId: string,
-    request: RequestForCancelPaymentRequest,
-    optionHeaders: OptionHeader & Required<Pick<OptionHeader, 'x-b3-spanid' | 'x-b3-traceid'>>
-  ) : Promise<RequestForCancelResult>
+  requestForPayment(prop: ReqeustForPaymentProp): Promise<RequestForPaymentResult> 
+  requestForPaymentStatus(prop: RequestForPaymentStatusProp): Promise<RequestForPaymentStatusResult> 
+  rtpPaymentOptions(prop: RTPPaymentOptionsProp): Promise<RTPPaymentOptionsResult> 
 }
 
-// async function _getRealService(): Promise<ScotiaRTPService> {
-//   const rtp =  await import('@/partner/scotia_rtp/index.js')
-//   return {
-//     rtpPaymentOptions: rtp.rtpPaymentOptions,
-//     rtpPayment: rtp.rtpPayment,
-//     rtpPaymentSummary: rtp.rtpPaymentSummary,
-//     requestForPayment: rtp.requestForPayment,
-//     requestForPaymentDetails: rtp.requestForPaymentDetails,
-//     cancelRequestForPayment: rtp.cancelRequestForPayment
-//   }
-// }
+async function _getRealService(): Promise<ScotiaRTPService> {
+  return {
+    requestForPayment: _requestForPayment,
+    requestForPaymentStatus: _requestForPaymentStatus,
+    rtpPaymentOptions: _rtpPaymentOptions
+  }
+}
 
 type ReqeustForPaymentProp = {
   transactionId: string,
@@ -69,9 +36,10 @@ type ReqeustForPaymentProp = {
   debtor_email: string,
   remittance_information?: string
 }
+
 async function _requestForPayment(
   prop: ReqeustForPaymentProp
-) {
+): Promise<RequestForPaymentResult> {
   // Miss initiating_party?
   // Miss payment_condition?
   const request: RequestForPaymentRequest = {
