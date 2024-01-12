@@ -146,7 +146,7 @@ async function _tryProcessing(transactionId: number) {
     transaction.transfers.length === 2 &&
     transaction.transfers[1]!.name === 'NBP'
   ) {
-    // return await _nbpProcessor(transactionId)
+    return await _nbpProcessor(transactionId)
   } else {
     LOGGER.warn(
       'Transaction Processor', 
@@ -267,7 +267,7 @@ async function _idmInitialProcessor(
 
   //TODO: Call IDM. now we approve as default.
 
-  tx.transfer.update({
+  await tx.transfer.update({
     where: {
       id: transfer.id
     },
@@ -337,6 +337,41 @@ async function _idmTerminateProcessor(
   })
 
   return false
+}
+
+async function _nbpProcessor(transactionId: number): Promise<boolean> {
+  return await PRISMAService.$transaction(async (tx) => {
+    await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
+    const transaction = await tx.transaction.findFirstOrThrow({
+      where: {
+        id: transactionId
+      },
+      select: TRANSACTION_PROJECT
+    })
+    if (!(
+      transaction.status == TransactionStatus.PROCESS &&
+      !!transaction.transfers && 
+      transaction.transfers.length === 2 &&
+      transaction.transfers[1]!.name === 'NBP'
+    )) {
+      LOGGER.warn('Transaction NBP Processor', `Transaction: \`${transaction.id}\` is out of NBP processor scope`)
+      return false
+    }
+
+    const transfer = transaction.transfers[1]!
+    switch (transfer.status) {
+      case TransferStatus.INITIAL:
+        return await _idmInitialProcessor(tx, transaction)
+      case TransferStatus.COMPLETE:
+        return await _idmCompleteProcessor(tx, transaction)
+      case TransferStatus.CANCEL:
+      case TransferStatus.FAIL:
+        return await _idmTerminateProcessor(tx, transaction)
+      default:
+        LOGGER.warn('Transaction IDM Processor', `Transfer: \`${transfer.id}\` is in \`${transfer.status}\``)
+        return false
+    }
+  })
 }
 //Retry only available on the last transfer.
 //And transfer status is FAIL.
