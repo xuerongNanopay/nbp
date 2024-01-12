@@ -313,7 +313,7 @@ async function _idmCompleteProcessor(
 ): Promise<boolean> {
 
   const transfer = transaction.transfers[0]!
-  if (transfer.status !== TransferStatus.INITIAL) {
+  if (transfer.status !== TransferStatus.COMPLETE) {
     LOGGER.error(`IDM Complete Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
     throw new Error('Unsupport status')
   }
@@ -333,7 +333,7 @@ async function _idmCompleteProcessor(
       }
     }
   })
-  LOGGER.info(`IDM Complete Processor`, `Transfer \`${transfer.id} Complete Successfully.\``)
+  LOGGER.info(`IDM Complete Processor`, `Transfer \`${transfer.id}\` Complete Successfully.\``)
   return true
 }
 
@@ -425,7 +425,7 @@ async function _nbpInitialProcessor(
     }
   })
 
-  LOGGER.info(`IDM Complete Processor`, `Transfer \`${transfer.id} Initial Successfully.\``)
+  LOGGER.info(`NBP Complete Processor`, `Transfer \`${transfer.id}\` Initial Successfully.\``)
   return false
 }
 
@@ -449,7 +449,7 @@ async function _nbpCompleteProcessor(
       endInfo: 'Complete Successfully.'
     }
   })
-  LOGGER.error(`NBP Complete Processor`, `Transaction \`${transaction.id}\` completed sucessfully.`)
+  LOGGER.info(`NBP Complete Processor`, `Transaction \`${transaction.id}\` completed sucessfully.`)
   return false
 }
 
