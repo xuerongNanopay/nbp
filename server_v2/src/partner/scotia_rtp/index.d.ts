@@ -1014,6 +1014,12 @@ export interface RequestForCancelResult {
   }[]
 }
 
+// export interface RTPHook {
+//   ['sub']?: string
+//   ['aud']?: string
+//   ['']
+// }
+
 //TODO: find API
 // export interface AccountValidationRequest {
 //   ['accountInformation']: {

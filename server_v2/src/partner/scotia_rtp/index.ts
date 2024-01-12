@@ -19,9 +19,9 @@ import type {
   RequestForPaymentStatusResult, 
   Token 
 } from "./index.d.js"
-import { getCredential, getPrivateKey } from "./config.js"
+import { CREDENTIAL, PRIVATE_KEY } from "./config.js"
 import * as jose from 'jose'
-import { getAxios } from "./axios.js"
+import { getAxios } from "./config.js"
 import { LOGGER } from "@/utils/logUtil.js"
 import { Mutex } from "async-mutex"
 import { APIError } from "@/schema/error.js"
@@ -35,7 +35,7 @@ const mutex = new Mutex()
 // Request is core service for the API.
 // If it is outage for long time or cannot recover. We need to raise emergency alert.
 async function _requestToken(): Promise<Token|null> {
-  const credential = getCredential()
+  const credential = CREDENTIAL
   const endpoint = 'scotiabank/wam/v1/getToken'
   const basicAuth = base64Encode(`${credential.API_KEY}:${credential.API_SECRET}`)
   const formData = new FormData()
@@ -107,7 +107,7 @@ async function _getToken(): Promise<Token | null> {
 }
 
 async function _signJWT(credential: Credential): Promise<string> {
-  const privateKey = getPrivateKey()
+  const privateKey = PRIVATE_KEY
   const jwt = await new jose.SignJWT()
               .setProtectedHeader({
                 alg: 'RS256',
@@ -123,7 +123,7 @@ async function _signJWT(credential: Credential): Promise<string> {
 }
 
 function _getDefaultHeaders(): Record<string, string> {
-  const credential = getCredential()
+  const credential = CREDENTIAL
   return {
     'customer-profile-id': credential.CUSTOMER_PROFILE_ID,
     'x-country-code': credential.X_COUNTRY_CODE,

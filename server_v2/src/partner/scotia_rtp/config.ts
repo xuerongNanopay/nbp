@@ -1,22 +1,26 @@
-import type { Credential } from './index.d.js'
 import * as jose from 'jose'
+import axios from 'axios'
+import type { AxiosInstance } from 'axios'
+import { Credential } from './index.d.js'
 
 //TODO: Setup DB schema to store all configs
-const CREDENTIAL: Credential = _generateCredential()
-const PRIVATE_KEY = await _generatePrivateKey()
+export const CREDENTIAL: Credential = _generateCredential()
+export const PRIVATE_KEY = await _generatePrivateKey()
+const PEER_PUBLIC_KEY = await _generatePublicKey()
 const BASE_URL = "TODO"
 
-export function getPrivateKey() {
-  return PRIVATE_KEY
-}
+//TODO: our private key: using to sign and decrypt webhook.
+//TODO: peer public key: using to verify webhook.
 
-export function getCredential() {
-  return CREDENTIAL
-}
+export function getAxios(): AxiosInstance {
+  return AXIOS_INSTANCE
+} 
 
-export function getBaseUrl() {
-  return BASE_URL
-}
+//THINK: retry, and auth.
+const AXIOS_INSTANCE =  axios.create({
+  baseURL: BASE_URL,
+  timeout: 2000,
+})
 
 function _generateCredential(): Credential {
   return {
@@ -67,4 +71,13 @@ K5mX069IKG82CMqh3Mzptd7e7lyb9lsoGO0BAtjho3cWtha/UZ70vfaMzGuZ6JmQ
 ak6k+8+UFd93M4z0Qo74OhXB
 -----END PRIVATE KEY-----`
   return await jose.importPKCS8(pkcs8, alg)
+}
+
+async function _generatePublicKey(): Promise<jose.KeyLike> {
+  const alg = 'RS256'
+  const spki = `-----BEGIN PUBLIC KEY-----
+  MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEFlHHWfLk0gLBbsLTcuCrbCqoHqmM
+  YJepMC+Q+Dd6RBmBiA41evUsNMwLeN+PNFqib+xwi9JkJ8qhZkq8Y/IzGg==
+  -----END PUBLIC KEY-----`
+  return await jose.importSPKI(spki, alg)
 }
