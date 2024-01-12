@@ -484,11 +484,14 @@ async function cancelTransaction(transactionId: number) {
 }
 
 async function refundTransaction(transactionId: number) {
-
+  return await PRISMAService.$transaction(async (tx) => {
+    await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
+    //TODO: create table for refund.
+  })
 }
 
 function _isTransactionTeminate(status: TransactionStatus) {
-  return status === TransactionStatus.CANCEL || status === TransactionStatus.COMPLETE || status === TransactionStatus.REFUND
+  return status === TransactionStatus.CANCEL || status === TransactionStatus.REFUND
 }
 
 function _isTransactionRefund(status: TransactionStatus) {
