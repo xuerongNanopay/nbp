@@ -670,7 +670,53 @@ async function _NBPInitialTransferInitial(
       id: transactionId
     },
     select: {
-      destinationAmount: true
+      destinationAmount: true,
+      transactionPurpose: true,
+      owner: {
+        select: {
+          firstName: true,
+          lastName: true,
+          address1: true,
+          address2: true,
+          city: true,
+          province: {
+            select: {
+              name: true
+            }
+          },
+          countryCode: true,
+          identification: {
+            select: {
+              type: true,
+              value: true
+            }
+          }
+        }
+      },
+      destinationContact: {
+        select: {
+          type: true,
+          firstName: true,
+          lastName: true,
+          address1: true,
+          address2: true,
+          city: true,
+          province: {
+            select: {
+              name: true
+            }
+          },
+          countryCode: true,
+          institution: {
+            select: {
+              abbr: true
+            }
+          },
+          bankAccountNum: true,
+          branchNum: true,
+          iban: true,
+        }
+      }
     }
   })
 
@@ -680,7 +726,7 @@ async function _NBPInitialTransferInitial(
     Amount: transaction.destinationAmount/100.0,
     Pmt_Mode: 'ACCOUNT_TRANSFERS',
     Transaction_Date: dayjs().format('YYYY-MM-DD'),
-    Remitter_Name: 'TODO',
+    Remitter_Name: `${transaction.owner.firstName} ${transaction.owner.lastName}`,
     Remitter_Address: 'TODO',
     Remitter_Id_Type: 'DRIVING_LICENSE',
     Remitter_Id: 'DRIVING_LICENSE',
@@ -691,7 +737,7 @@ async function _NBPInitialTransferInitial(
     Beneficiary_Branch: 'TODO',
     Beneficiary_Account: 'TODO',
     Purpose_Remittance: 'TODO',
-    Originating_Country: 'TODO'
+    Originating_Country: 'Canada'
   })
 }
 
