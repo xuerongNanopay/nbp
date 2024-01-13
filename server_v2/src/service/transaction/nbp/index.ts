@@ -2,48 +2,21 @@ import { NBPService } from "@/service/nbp/index.js"
 import { PRISMAService } from "@/service/prisma/index.js"
 import { ScotiaRTPService } from "@/service/scotia_rtp/index.js"
 import { LOGGER } from "@/utils/logUtil.js"
+import {PrismaTransaction, TRANSACTION_PROJET_TYPE} from "./index.d.js"
 import { 
   CashIn, 
   CashInMethod, 
   CashInStatus, 
   Prisma, 
-  PrismaClient, 
   TransactionStatus, 
   TransferStatus 
 } from "@prisma/client"
-import { DefaultArgs } from "@prisma/client/runtime/library.js"
 import dayjs from "dayjs"
+import { nbpProcessor } from "./nbp.js"
+import { idmProcessor } from "./idm.js"
+import { scotialRTPCashIn } from "./cash_in.js"
 
-type PrismaTransaction = Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
-type TRANSACTION_PROJET_TYPE = Prisma.TransactionGetPayload<{
-  select: {
-    id: true,
-    status: true,
-    cashIn: {
-      select: {
-        id: true,
-        status: true,
-        cashInReceiveAt: true,
-        endInfo: true
-      }
-    },
-    transfers: {
-      select: {
-        id: true,
-        name: true,
-        status: true,
-        endInfo: true,
-        next: {
-          select: {
-            id: true
-          }
-        }
-      }
-    },
-    ownerId: true
-  }
-}>
-const TRANSACTION_PROJECT = {
+export const TRANSACTION_PROJECT = {
   id: true,
   status: true,
   cashIn: {
@@ -94,7 +67,7 @@ export async function initialCashIn(transactionId: number): Promise<CashIn> {
     if (!transaction) throw new Error(`Transaction \`${transactionId}\` no found`)
     if (transaction.status !== TransactionStatus.INITIAL) throw new Error(`Transaction \`${transactionId}\` is not in initial status`)
 
-    return await _scotialRTPCashIn(tx, transaction.id)
+    return await scotialRTPCashIn(tx, transaction.id)
   })
   if (_isCashInFinish(cashIn.status)) await processTransaction(cashIn.transactionId)
   return cashIn
@@ -141,14 +114,14 @@ async function _tryProcessing(transactionId: number) {
     transaction.transfers.length === 1 &&
     transaction.transfers[0]!.name === 'IDM'
   ) {
-    return await _idmProcessor(transactionId)
+    return await idmProcessor(transactionId)
   } else if (
     transaction.status == TransactionStatus.PROCESS &&
     !!transaction.transfers && 
     transaction.transfers.length === 2 &&
     transaction.transfers[1]!.name === 'NBP'
   ) {
-    return await _nbpProcessor(transactionId)
+    return await nbpProcessor(transactionId)
   } else {
     LOGGER.warn(
       'Transaction Processor', 
@@ -221,247 +194,6 @@ async function _cashInProcessor(transactionId: number): Promise<boolean> {
       return false
     }
   })
-}
-
-async function _idmProcessor(transactionId: number): Promise<boolean> {
-  return await PRISMAService.$transaction(async (tx) => {
-    await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
-    const transaction = await tx.transaction.findFirstOrThrow({
-      where: {
-        id: transactionId
-      },
-      select: TRANSACTION_PROJECT
-    })
-    if (!(
-      transaction.status == TransactionStatus.PROCESS &&
-      !!transaction.transfers && 
-      transaction.transfers.length === 1 &&
-      transaction.transfers[0]!.name === 'IDM'
-    )) {
-      LOGGER.warn('Transaction IDM Processor', `Transaction: \`${transaction.id}\` is out of IDM processor scope`)
-      return false
-    }
-
-    const transfer = transaction.transfers[0]!
-    switch (transfer.status) {
-      case TransferStatus.INITIAL:
-        return await _idmInitialProcessor(tx, transaction)
-      case TransferStatus.COMPLETE:
-        return await _idmCompleteProcessor(tx, transaction)
-      case TransferStatus.CANCEL:
-      case TransferStatus.FAIL:
-        return await _idmTerminateProcessor(tx, transaction)
-      default:
-        LOGGER.warn('Transaction IDM Processor', `No status change`, `Transfer: \`${transfer.id}\` is in \`${transfer.status}\``)
-        return false
-    }
-  })
-}
-
-// Call IDM, and set transfer to COMPLETE, FAIL, or WAIT base on response.
-async function _idmInitialProcessor(
-  tx: PrismaTransaction, 
-  transaction: TRANSACTION_PROJET_TYPE
-): Promise<boolean> {
-
-  const transfer = transaction.transfers[0]!
-  if (transfer.status !== TransferStatus.INITIAL) {
-    LOGGER.error(`IDM Initial Processor`, `transaction \`${transaction.id}\``, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
-    throw new Error('Unsupport status')
-  }
-
-  //TODO: Call IDM. now we approve as default.
-
-  await tx.transfer.update({
-    where: {
-      id: transfer.id
-    },
-    data: {
-      status: TransferStatus.COMPLETE,
-      completeAt: new Date()
-    }
-  })
-  LOGGER.info(`IDM Initial Processor`, `transaction \`${transaction.id}\``, `Transfer \`${transfer.id}\` Initial Successfully.\``)
-  return true
-}
-
-// IDM Complete, move to next step.
-// Inital NBP transfer.
-async function _idmCompleteProcessor(
-  tx: PrismaTransaction, 
-  transaction: TRANSACTION_PROJET_TYPE
-): Promise<boolean> {
-
-  const transfer = transaction.transfers[0]!
-  if (transfer.status !== TransferStatus.COMPLETE) {
-    LOGGER.error(`IDM Complete Processor`, `transaction \`${transaction.id}\``, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
-    throw new Error('Unsupport status')
-  }
-
-  await tx.transfer.update({
-    where: {
-      id: transfer.id
-    },
-    data: {
-      next: {
-        create: {
-          status: TransferStatus.INITIAL,
-          name: 'NBP',
-          ownerId: transaction.ownerId,
-          transactionId: transaction.id
-        }
-      }
-    }
-  })
-  LOGGER.info(`IDM Complete Processor`, `transaction \`${transaction.id}\``, `Transfer \`${transfer.id}\` Complete Successfully.\``)
-  return true
-}
-
-// IDM Fail or Cancel. Set the final state for transaction.
-async function _idmTerminateProcessor(
-  tx: PrismaTransaction, 
-  transaction: TRANSACTION_PROJET_TYPE
-): Promise<boolean> {
-  const transfer = transaction.transfers[0]!
-  if (
-    transfer.status !== TransferStatus.CANCEL &&
-    transfer.status !== TransferStatus.FAIL
-  ) {
-    LOGGER.error(`IDM Terminate Processor`, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
-    throw new Error('Unsupport status')
-  }
-
-  const updateTransaction = await tx.transaction.update({
-    where: {
-      id: transaction.id
-    },
-    data: {
-      status: transfer.status === TransferStatus.CANCEL ? TransactionStatus.CANCEL : TransactionStatus.REJECT,
-      endInfo: transfer.endInfo,
-      terminatedAt: new Date()
-    },
-    select: {
-      id: true,
-      status: true
-    }
-  })
-  LOGGER.warn(`IDM Terminate Processor`, `Transaction \`${transaction.id} terminated in \`${updateTransaction.status}\`.\``)
-  return false
-}
-
-async function _nbpProcessor(transactionId: number): Promise<boolean> {
-  return await PRISMAService.$transaction(async (tx) => {
-    await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
-    const transaction = await tx.transaction.findFirstOrThrow({
-      where: {
-        id: transactionId
-      },
-      select: TRANSACTION_PROJECT
-    })
-    if (!(
-      transaction.status == TransactionStatus.PROCESS &&
-      !!transaction.transfers && 
-      transaction.transfers.length === 2 &&
-      transaction.transfers[1]!.name === 'NBP'
-    )) {
-      LOGGER.warn('Transaction NBP Processor', `Transaction: \`${transaction.id}\` is out of NBP processor scope`)
-      return false
-    }
-
-    const transfer = transaction.transfers[1]!
-    switch (transfer.status) {
-      case TransferStatus.INITIAL:
-        return await _nbpInitialProcessor(tx, transaction)
-      case TransferStatus.COMPLETE:
-        return await _nbpCompleteProcessor(tx, transaction)
-      case TransferStatus.CANCEL:
-      case TransferStatus.FAIL:
-        return await _nbpTerminateProcessor(tx, transaction)
-      default:
-        LOGGER.warn('Transaction NBP Processor', `No status change`, `Transfer: \`${transfer.id}\` is in \`${transfer.status}\``)
-        return false
-    }
-  })
-}
-
-async function _nbpInitialProcessor(
-  tx: PrismaTransaction, 
-  transaction: TRANSACTION_PROJET_TYPE
-): Promise<boolean> {
-  const transfer = transaction.transfers[1]!
-  if (transfer.status !== TransferStatus.INITIAL) {
-    LOGGER.error(`NBP Initial Processor`, `transaction \`${transaction.id}\``, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
-    throw new Error('Unsupport status')
-  }
-
-  //TODO: call NBP
-  await tx.transfer.update({
-    where: {
-      id: transfer.id
-    },
-    data: {
-      status: TransferStatus.WAIT,
-      waitAt: new Date()
-    }
-  })
-
-  LOGGER.info(`NBP Complete Processor`, `transaction \`${transaction.id}\``, `Transfer \`${transfer.id}\` Initial Successfully.\``)
-  return false
-}
-
-async function _nbpCompleteProcessor(
-  tx: PrismaTransaction, 
-  transaction: TRANSACTION_PROJET_TYPE
-): Promise<boolean> {
-  const transfer = transaction.transfers[1]!
-  if (transfer.status !== TransferStatus.COMPLETE) {
-    LOGGER.error(`NBP Complete Processor`, `transaction \`${transaction.id}\``, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
-    throw new Error('Unsupport status')
-  }
-
-  await tx.transaction.update({
-    where: {
-      id: transaction.id
-    },
-    data: {
-      status: TransactionStatus.COMPLETE,
-      completedAt: new Date(),
-      endInfo: 'Complete Successfully.'
-    }
-  })
-  LOGGER.info(`NBP Complete Processor`, `Transaction \`${transaction.id}\` completed sucessfully.`)
-  return false
-}
-
-async function _nbpTerminateProcessor(
-  tx: PrismaTransaction, 
-  transaction: TRANSACTION_PROJET_TYPE
-): Promise<boolean> {
-  const transfer = transaction.transfers[1]!
-  if (
-    transfer.status !== TransferStatus.CANCEL &&
-    transfer.status !== TransferStatus.FAIL
-  ) {
-    LOGGER.error(`NBP Terminate Processor`, `transaction \`${transaction.id}\``, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
-    throw new Error('Unsupport status')
-  }
-
-  const updateTransaction = await tx.transaction.update({
-    where: {
-      id: transaction.id
-    },
-    data: {
-      status: transfer.status === TransferStatus.CANCEL ? TransactionStatus.CANCEL : TransactionStatus.REJECT,
-      endInfo: transfer.endInfo,
-      terminatedAt: new Date()
-    },
-    select: {
-      id: true,
-      status: true
-    }
-  })
-  LOGGER.error(`NBP Terminate Processor`, `Transaction \`${transaction.id}\` terminated in \`${updateTransaction.status}\``)
-  return false
 }
 
 //Retry only available on the last transfer.
@@ -572,93 +304,6 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
   })
 
   processTransaction(updateCashIn.transactionId)
-}
-
-//This function should not throw any Error.
-async function _scotialRTPCashIn(
-  tx: PrismaTransaction, 
-  transactionId: number
-) {
-    const transaction = await tx.transaction.findUniqueOrThrow({
-      where: {
-        id: transactionId
-      },
-      select: {
-        id: true,
-        debitAmount: true,
-        sourceAccountId: true,
-        sourceAccount: {
-          select: {
-            email: true
-          }
-        },
-        ownerId: true,
-        owner: {
-          select: {
-            firstName: true,
-            lastName: true
-          }
-        }
-      }
-    })
-    let cashIn
-    try {
-      const requestPaymentResult = await ScotiaRTPService.requestForPayment({
-        transactionId: transaction.id,
-        create_date_time: new Date(),
-        amount: transaction.debitAmount/100.0,
-        debtor_email: transaction.sourceAccount.email,
-        debtor_name: `${transaction.owner.firstName} ${transaction.owner.lastName}`
-      })
-      if (!!requestPaymentResult.data) {
-        LOGGER.info('_scotialRTPCashIn', `Transaction \`${transaction.id}\` Scotial RTP CashIn initial success with payment_id: \`${requestPaymentResult.data.payment_id}\``)
-        const requestPaymentStatusResult = await ScotiaRTPService.requestForPaymentStatus({paymentId: requestPaymentResult.data.payment_id!, transactionId: transaction.id})
-        if (
-          !!requestPaymentStatusResult.data && 
-          requestPaymentStatusResult.data.length > 0
-        ) {
-          cashIn = await tx.cashIn.create({
-            data: {
-              status: CashInStatus.WAIT,
-              method: CashInMethod.INTERAC,
-              ownerId: Number(transaction.ownerId),
-              transactionId: Number(transaction.id),
-              paymentLink: requestPaymentStatusResult.data[0]?.gateway_url ?? null,
-              externalRef: requestPaymentResult.data.payment_id,
-              externalRef1: requestPaymentResult.data.clearing_system_reference,
-              paymentAccountId: Number(transaction.sourceAccountId),
-            }
-          })
-          return cashIn
-        } else {
-          let endInfo
-          if ( !!requestPaymentStatusResult.notifications && requestPaymentStatusResult.notifications.length>0 ) {
-            endInfo = `code: \`${requestPaymentStatusResult.notifications[0]?.code}\`, message: \`${requestPaymentStatusResult.notifications[0]?.message}\``
-          }
-          LOGGER.error('_scotialRTPCashIn', `Transaction \`${transaction.id}\` Scotial RTP CashIn initial failed.`, endInfo)
-        }
-      } else {
-        let endInfo
-        if ( !!requestPaymentResult.notifications && requestPaymentResult.notifications.length>0 ) {
-          endInfo = `code: \`${requestPaymentResult.notifications[0]?.code}\`, message: \`${requestPaymentResult.notifications[0]?.message}\``
-        }
-        LOGGER.error('_scotialRTPCashIn', `Transaction \`${transaction.id}\` Scotial RTP CashIn initial failed.`, endInfo)
-
-      }
-    } catch(err) {
-      LOGGER.error('_scotialRTPCashIn', `Transaction \`${transaction.id}\` Scotial RTP CashIn initial failed.`, err)
-    }
-    cashIn = await tx.cashIn.create({
-      data: {
-        status: CashInStatus.Cancel,
-        method: CashInMethod.INTERAC,
-        ownerId: Number(transaction.ownerId),
-        transactionId: Number(transaction.id),
-        endInfo: 'Scotia Payment initial fails',
-        paymentAccountId: Number(transaction.sourceAccountId),
-      }
-    })
-    return cashIn
 }
 
 async function _NBPInitialTransferInitial(
