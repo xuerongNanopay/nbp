@@ -1,5 +1,5 @@
 import { LOGGER } from "@/utils/logUtil.js"
-import { TransactionStatus, TransferStatus } from "@prisma/client"
+import { IdentificationType, TransactionStatus, TransferStatus } from "@prisma/client"
 import {PrismaTransaction, TRANSACTION_PROJET_TYPE} from "./index.d.js"
 import { PRISMAService } from "@/service/prisma/index.js"
 import { TRANSACTION_PROJECT } from "./index.js"
@@ -153,6 +153,7 @@ async function _NBPInitialTransferInitial(
           address1: true,
           address2: true,
           city: true,
+          postalCode: true,
           province: {
             select: {
               name: true
@@ -175,6 +176,7 @@ async function _NBPInitialTransferInitial(
           address1: true,
           address2: true,
           city: true,
+          postalCode: true,
           province: {
             select: {
               name: true
@@ -193,10 +195,31 @@ async function _NBPInitialTransferInitial(
       }
     }
   })
-
-  const Remitter_Name = `${infos.owner.firstName} ${infos.owner.lastName}`
+  const remitter = infos.owner
+  const beneficiary = infos.destinationContact
+  const Remitter_Name = `${remitter.firstName} ${remitter.lastName}`
   const Transaction_Date = dayjs().format('YYYY-MM-DD')
   const Amount = infos.destinationAmount/100.0
+  const Remitter_Address = _buildAddressSummary({
+    address1: remitter.address1,
+    address2: remitter.address2,
+    city: remitter.city,
+    province: remitter.province.name,
+    countryCode: remitter.countryCode,
+    postCode: remitter.postalCode
+  })
+  const Remitter_Id_Type = _idTypeMapper(remitter.identification!.type)
+  const Remitter_Id = remitter.identification!.value
+  const Beneficiary_Name = `${beneficiary.firstName} ${beneficiary.lastName}`
+  const Beneficiary_Address = _buildAddressSummary({
+    address1: beneficiary.address1,
+    address2: beneficiary.address2,
+    city: beneficiary.city,
+    province: beneficiary.province.name,
+    countryCode: beneficiary.countryCode,
+    postCode: beneficiary.postalCode 
+  })
+
   NBPService.loadRemittanceAccounts({
     Currency: 'PKR',
     Global_Id: 'TODO',
@@ -204,10 +227,10 @@ async function _NBPInitialTransferInitial(
     Pmt_Mode: 'ACCOUNT_TRANSFERS',
     Transaction_Date,
     Remitter_Name,
-    Remitter_Address: 'TODO',
-    Remitter_Id_Type: 'DRIVING_LICENSE',
-    Remitter_Id: 'DRIVING_LICENSE',
-    Beneficiary_Name: 'TODO',
+    Remitter_Address,
+    Remitter_Id_Type,
+    Remitter_Id,
+    Beneficiary_Name,
     Beneficiary_Address: 'aa',
     Beneficiary_Contact: 'TODO',
     Beneficiary_Bank: 'NBP',
@@ -218,8 +241,46 @@ async function _NBPInitialTransferInitial(
   })
 }
 
+//TODO: refine.
+function _buildAddressSummary({
+  address1,
+  address2,
+  city,
+  province,
+  postCode,
+  countryCode
+}: {
+  address1: string | null | undefined
+  address2: string | null | undefined
+  city: string | null | undefined
+  province: string | null | undefined
+  postCode: string | null | undefined
+  countryCode: string | null | undefined
+}) {
+  let ret = ''
+  ret = !address1 ? ret : `${ret}${address1}, `
+  ret = !address2 ? ret : `${ret}${address2}, `
+  ret = !city ? ret : `${ret}${city}, `
+  ret = !province ? ret : `${ret}${province}, `
+  ret = !postCode ? ret : `${ret}${postCode}, `
+  ret = !countryCode ? ret : `${ret}${countryCode}, `
+  ret = !postCode ? ret : `${ret}${postCode}`
+
+  return ret
+}
 function _globalIdGenerator(transferId: number, prefix: string = 'PK') {
   const zero16 = '0000000000000000'
   const stringId = `${transferId}`
   return `${prefix}-${zero16.substring(0, 16-stringId.length)}${stringId}`
+}
+
+function _idTypeMapper(idType: IdentificationType) {
+  switch(idType) {
+    case IdentificationType.DRIVER_LICENSE:
+      return 'DRIVING_LICENSE'
+    case IdentificationType.PASSPORT:
+      return 'PASSPORT_NO'
+    default:
+      return 'OTHER'
+  }
 }
