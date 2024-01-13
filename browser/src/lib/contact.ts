@@ -33,7 +33,7 @@ export async function createContact(
       address2: contactData.addressLine2,
       city: contactData.city,
       countryCode: contactData.countryCode,
-      postCode: contactData.postalCode,
+      postalCode: contactData.postalCode,
       phoneNumber: contactData.phoneNumber,
       type: transferMethod,
       ownerId: session.user!.id,
@@ -227,7 +227,7 @@ const ContactSelect = {
       iso2Code: true
     }
   },
-  postCode: true,
+  postalCode: true,
   phoneNumber: true,
   bankAccountNum: true,
   branchNum: true,

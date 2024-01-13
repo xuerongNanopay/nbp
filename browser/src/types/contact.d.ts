@@ -60,7 +60,7 @@ export type Contact = Prisma.ContactGetPayload<{
       }
     },
     city: true,
-    postCode: true,
+    postalCode: true,
     phoneNumber: true,
     bankAccountNum: true,
     branchNum: true,

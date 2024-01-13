@@ -309,7 +309,7 @@ model Contact {
   city         String
   countryCode  String  @db.Char(2)
   country      Country @relation(fields: [countryCode], references: [iso2Code])
-  postCode     String?
+  postalCode   String?
   phoneNumber  String?
 
   institutionId  Int?
@@ -473,10 +473,10 @@ enum TransferStatus {
 }
 
 model Transfer {
-  id                Int            @id @default(autoincrement())
-  name              String
-  status            TransferStatus @default(INITIAL)
-  externalRef  String?
+  id          Int            @id @default(autoincrement())
+  name        String
+  status      TransferStatus @default(INITIAL)
+  externalRef String?
 
   retryAttempt Int @default(0)
 
