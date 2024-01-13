@@ -6,7 +6,7 @@ import { Credential } from './index.d.js'
 //TODO: Setup DB schema to store all configs
 export const CREDENTIAL: Credential = _generateCredential()
 export const PRIVATE_KEY = await _generatePrivateKey()
-const PEER_PUBLIC_KEY = await _generatePublicKey()
+export const PEER_PUBLIC_KEY = await _generatePublicKey()
 const BASE_URL = "TODO"
 
 //TODO: our private key: using to sign and decrypt webhook.
