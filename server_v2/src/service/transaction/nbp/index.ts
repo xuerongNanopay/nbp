@@ -609,7 +609,7 @@ async function _scotialRTPCashIn(
       })
       if (!!requestPaymentResult.data) {
         LOGGER.info('_scotialRTPCashIn', `Transaction \`${transaction.id}\` Scotial RTP CashIn initial success with payment_id: \`${requestPaymentResult.data.payment_id}\``)
-        const requestPaymentStatusResult = await ScotiaRTPService.requestForPaymentStatus({paymentId: cashIn.externalRef!, transactionId: cashIn.transactionId})
+        const requestPaymentStatusResult = await ScotiaRTPService.requestForPaymentStatus({paymentId: requestPaymentResult.data.payment_id!, transactionId: transaction.id})
         if (
           !!requestPaymentStatusResult.data && 
           requestPaymentStatusResult.data.length > 0
