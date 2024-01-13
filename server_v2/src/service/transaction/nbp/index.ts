@@ -21,7 +21,8 @@ type TRANSACTION_PROJET_TYPE = Prisma.TransactionGetPayload<{
       select: {
         id: true,
         status: true,
-        cashInReceiveAt: true
+        cashInReceiveAt: true,
+        endInfo: true
       }
     },
     transfers: {
@@ -47,7 +48,8 @@ const TRANSACTION_PROJECT = {
     select: {
       id: true,
       status: true,
-      cashInReceiveAt: true
+      cashInReceiveAt: true,
+      endInfo: true
     }
   },
   transfers: {
@@ -90,36 +92,7 @@ export async function initialCashIn(transactionId: number): Promise<CashIn> {
     if (!transaction) throw new Error(`Transaction \`${transactionId}\` no found`)
     if (transaction.status !== TransactionStatus.INITIAL) throw new Error(`Transaction \`${transactionId}\` is not in initial status`)
 
-    try {
-      //TODO: call RTP API to initial payment.
-      //Send Email to user.
-      //IF, RTP fail reject transaction.
-      const cashInPromise = tx.cashIn.create({
-        data: {
-          status: CashInStatus.WAIT,
-          method: CashInMethod.INTERAC,
-          ownerId: Number(transaction.ownerId),
-          transactionId: Number(transaction.id),
-          paymentAccountId: Number(transaction.sourceAccountId),
-          paymentLink: 'https//www.google.ca'
-        }
-      })
-      const transactionPromise = tx.transaction.update({
-        where: {
-          id: transaction.id
-        },
-        data: {
-          status: TransactionStatus.WAITING_FOR_PAYMENT
-        }
-      })
-      const ret = await Promise.all([cashInPromise, transactionPromise])
-      return ret[0]
-    } catch(err: any) {
-      //TODO: If fails What I should do?.
-      //put a cash in with fail status?
-      LOGGER.error('CashIn Initial', `transaction \`${transactionId}\``, err)
-      throw Error("Transaction Initial failed.")
-    }    
+    return await _scotialRTPCashIn(tx, transaction.id)
   })
   return cashIn
 }
@@ -235,7 +208,7 @@ async function _cashInProcessor(transactionId: number): Promise<boolean> {
         data: {
           status: TransactionStatus.REJECT,
           terminatedAt: new Date(),
-          endInfo: 'Do not receive the payment'
+          endInfo: transaction.cashIn.endInfo ?? 'Do not receive the payment'
         }
       })
       LOGGER.warn('Transaction CashIn Processor', `Transation \`${transactionId}\` Cash In failed.`)
@@ -596,6 +569,93 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
   })
 
   processTransaction(updateCashIn.transactionId)
+}
+
+//This function should not throw any Error.
+async function _scotialRTPCashIn(
+  tx: PrismaTransaction, 
+  transactionId: number
+) {
+    const transaction = await tx.transaction.findUniqueOrThrow({
+      where: {
+        id: transactionId
+      },
+      select: {
+        id: true,
+        debitAmount: true,
+        sourceAccountId: true,
+        sourceAccount: {
+          select: {
+            email: true
+          }
+        },
+        ownerId: true,
+        owner: {
+          select: {
+            firstName: true,
+            lastName: true
+          }
+        }
+      }
+    })
+    let cashIn
+    try {
+      const requestPaymentResult = await ScotiaRTPService.requestForPayment({
+        transactionId: transaction.id,
+        create_date_time: new Date(),
+        amount: transaction.debitAmount/100,
+        debtor_email: transaction.sourceAccount.email,
+        debtor_name: `${transaction.owner.firstName} ${transaction.owner.lastName}`
+      })
+      if (!!requestPaymentResult.data) {
+        LOGGER.info('_scotialRTPCashIn', `Transaction \`${transaction.id}\` Scotial RTP CashIn initial success with payment_id: \`${requestPaymentResult.data.payment_id}\``)
+        const requestPaymentStatusResult = await ScotiaRTPService.requestForPaymentStatus({paymentId: cashIn.externalRef!, transactionId: cashIn.transactionId})
+        if (
+          !!requestPaymentStatusResult.data && 
+          requestPaymentStatusResult.data.length > 0
+        ) {
+          cashIn = await tx.cashIn.create({
+            data: {
+              status: CashInStatus.WAIT,
+              method: CashInMethod.INTERAC,
+              ownerId: Number(transaction.ownerId),
+              transactionId: Number(transaction.id),
+              paymentLink: requestPaymentStatusResult.data[0]?.gateway_url ?? null,
+              externalRef: requestPaymentResult.data.payment_id,
+              externalRef1: requestPaymentResult.data.clearing_system_reference,
+              paymentAccountId: Number(transaction.sourceAccountId),
+            }
+          })
+          return cashIn
+        } else {
+          let endInfo
+          if ( !!requestPaymentStatusResult.notifications && requestPaymentStatusResult.notifications.length>0 ) {
+            endInfo = `code: \`${requestPaymentStatusResult.notifications[0]?.code}\`, message: \`${requestPaymentStatusResult.notifications[0]?.message}\``
+          }
+          LOGGER.error('_scotialRTPCashIn', `Transaction \`${transaction.id}\` Scotial RTP CashIn initial failed.`, endInfo)
+        }
+      } else {
+        let endInfo
+        if ( !!requestPaymentResult.notifications && requestPaymentResult.notifications.length>0 ) {
+          endInfo = `code: \`${requestPaymentResult.notifications[0]?.code}\`, message: \`${requestPaymentResult.notifications[0]?.message}\``
+        }
+        LOGGER.error('_scotialRTPCashIn', `Transaction \`${transaction.id}\` Scotial RTP CashIn initial failed.`, endInfo)
+
+      }
+    } catch(err) {
+      LOGGER.error('_scotialRTPCashIn', `Transaction \`${transaction.id}\` Scotial RTP CashIn initial failed.`, err)
+    }
+    cashIn = await tx.cashIn.create({
+      data: {
+        status: CashInStatus.Cancel,
+        method: CashInMethod.INTERAC,
+        ownerId: Number(transaction.ownerId),
+        transactionId: Number(transaction.id),
+        endInfo: 'Scotia Payment initial fails',
+        paymentAccountId: Number(transaction.sourceAccountId),
+      }
+    })
+    return cashIn
 }
 
 function _isTransactionTeminate(status: TransactionStatus) {

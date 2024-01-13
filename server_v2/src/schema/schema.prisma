@@ -382,6 +382,8 @@ model CashIn {
   method CashInMethod
 
   externalRef String?
+  externalRef1 String?
+  externalRef2 String?
   paymentLink String?
 
   endInfo String?

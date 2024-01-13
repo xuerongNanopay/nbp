@@ -91,7 +91,7 @@ create table fee_detail(
 
 create table cash_in(
     id serial primary key,
-    status enum ('initial', 'wait', 'complete', 'fail') not null default 'initial',
+    status enum ('initial', 'wait', 'complete', 'fail', 'cancel') not null default 'initial',
     method enum('interac') not null,
     paymentAccountId bigint unsigned not null,
 
@@ -100,6 +100,8 @@ create table cash_in(
 
     ownerId bigint unsigned not null,
     transactionId bigint unsigned not null,
+
+    endInfo varchar(255) null,
 
     cashInReceiveAt timestamp null,
     createdAt timestamp default current_timestamp,
