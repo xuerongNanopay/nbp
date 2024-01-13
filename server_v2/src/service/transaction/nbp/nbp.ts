@@ -4,6 +4,7 @@ import {PrismaTransaction, TRANSACTION_PROJET_TYPE} from "./index.d.js"
 import { PRISMAService } from "@/service/prisma/index.js"
 import { TRANSACTION_PROJECT } from "./index.js"
 import { NBPService } from "@/service/nbp/index.js"
+import { v4 as uuidv4 } from 'uuid'
 import dayjs from "dayjs"
 
 export async function nbpProcessor(transactionId: number): Promise<boolean> {
@@ -123,11 +124,24 @@ async function _nbpTerminateProcessor(
 
 async function _NBPInitialTransferInitial(
   tx: PrismaTransaction, 
-  transactionId: number
+  transaction: TRANSACTION_PROJET_TYPE
 ) {
-  const transaction = await tx.transaction.findUniqueOrThrow({
+  const nbpTransfer = transaction.transfers[1]!
+  const Global_Id = _globalIdGenerator(nbpTransfer.id)
+  await tx.transfer.update({
     where: {
-      id: transactionId
+      id: nbpTransfer.id
+    },
+    data: {
+      externalRef: Global_Id
+    },
+    select: {
+      id: true
+    }
+  })
+  const infos = await tx.transaction.findUniqueOrThrow({
+    where: {
+      id: transaction.id
     },
     select: {
       destinationAmount: true,
@@ -180,13 +194,16 @@ async function _NBPInitialTransferInitial(
     }
   })
 
+  const Remitter_Name = `${infos.owner.firstName} ${infos.owner.lastName}`
+  const Transaction_Date = dayjs().format('YYYY-MM-DD')
+  const Amount = infos.destinationAmount/100.0
   NBPService.loadRemittanceAccounts({
     Currency: 'PKR',
     Global_Id: 'TODO',
-    Amount: transaction.destinationAmount/100.0,
+    Amount,
     Pmt_Mode: 'ACCOUNT_TRANSFERS',
-    Transaction_Date: dayjs().format('YYYY-MM-DD'),
-    Remitter_Name: `${transaction.owner.firstName} ${transaction.owner.lastName}`,
+    Transaction_Date,
+    Remitter_Name,
     Remitter_Address: 'TODO',
     Remitter_Id_Type: 'DRIVING_LICENSE',
     Remitter_Id: 'DRIVING_LICENSE',
@@ -199,4 +216,10 @@ async function _NBPInitialTransferInitial(
     Purpose_Remittance: 'TODO',
     Originating_Country: 'Canada'
   })
+}
+
+function _globalIdGenerator(transferId: number, prefix: string = 'PK') {
+  const zero16 = '0000000000000000'
+  const stringId = `${transferId}`
+  return `${prefix}-${zero16.substring(0, 16-stringId.length)}${stringId}`
 }

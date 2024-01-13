@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 import { PRISMAService } from "@/service/prisma/index.js"
-import { finalizeCashInStatusFromRTPPaymentId } from "@/service/transaction/nbp/index.js"
 import { LOGGER } from "@/utils/logUtil.js"
 import { CashInMethod, CashInStatus } from "@prisma/client"
+import { finalizeCashInStatusFromRTPPaymentId } from '@/service/transaction/nbp/cash_in.js'
 
 export async function scotiaRTPCIStatusRefresher() {
   const cronIdentifier = uuidv4()

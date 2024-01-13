@@ -369,9 +369,11 @@ enum CashInMethod {
 }
 
 enum CashInStatus {
-  INITIAL @map("initial")
-  WAIT    @map("wait")
-  PAID    @map("paid")
+  INITIAL  @map("initial")
+  WAIT     @map("wait")
+  COMPLETE @map("complete")
+  Cancel   @map("cancel")
+  FAIL     @map("fail")
 }
 
 model CashIn {
@@ -379,8 +381,12 @@ model CashIn {
   status CashInStatus @default(INITIAL)
   method CashInMethod
 
-  externalRef String?
-  paymentLink String?
+  externalRef  String?
+  externalRef1 String?
+  externalRef2 String?
+  paymentLink  String?
+
+  endInfo String?
 
   ownerId          Int
   paymentAccountId Int
@@ -408,8 +414,8 @@ enum TransactionStatus {
 }
 
 model Transaction {
-  id Int @id @default(autoincrement())
-  name String
+  id     Int               @id @default(autoincrement())
+  name   String
   status TransactionStatus @default(QUOTE)
 
   sourceAccountId      Int
@@ -420,9 +426,9 @@ model Transaction {
   sourceAmount   Int
   sourceCurrency String @db.Char(3)
 
-  destinationAmount         Int
-  destinationCurrency       String @db.Char(3)
-  destinationName           String
+  destinationAmount   Int
+  destinationCurrency String @db.Char(3)
+  destinationName     String
 
   feeAmount   Int
   feeCurrency String @db.Char(3)
@@ -439,10 +445,12 @@ model Transaction {
 
   endInfo String?
 
+  transactionPurpose String?
+
   confirmQuoteAt DateTime?
   quoteExpired   DateTime
   completedAt    DateTime?
-  failedAt       DateTime?
+  terminatedAt   DateTime?
   refundedAt     DateTime?
 
   fees      FeeDetail[]
@@ -457,23 +465,22 @@ model Transaction {
 enum TransferStatus {
   INITIAL  @map("initial")
   WAIT     @map("wait")
-  COMPLETE @map("complete")
-  FAIL     @map("failed")
   RETRY    @map("retry")
+  // Terminal Status
   CANCEL   @map("cancel")
+  COMPLETE @map("complete")
+  FAIL     @map("fail")
 }
 
 model Transfer {
   id                Int            @id @default(autoincrement())
   name              String
   status            TransferStatus @default(INITIAL)
-  externalReference String?
+  externalRef  String?
 
   retryAttempt Int @default(0)
 
   ownerId       Int
-  nexTransferId Int?
-
   transactionId Int
   transaction   Transaction @relation(fields: [transactionId], references: [id])
 

@@ -48,8 +48,8 @@ create table transaction(
 create table transfer(
     id serial primary key,
     name varchar(128) not null,
-    externalReference varchar(128) null,
-    status enum('initial', 'wait', 'success', 'failed', 'retry', 'cancel') not null default 'initial',
+    externalRef varchar(128) null,
+    status enum('initial', 'wait', 'complete', 'fail', 'retry', 'cancel') not null default 'initial',
 
     retryAttempt int,
 

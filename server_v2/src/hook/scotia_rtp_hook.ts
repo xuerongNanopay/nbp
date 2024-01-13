@@ -2,7 +2,7 @@ import * as jose from 'jose'
 import { LOGGER } from "@/utils/logUtil.js"
 import { PEER_PUBLIC_KEY, PRIVATE_KEY } from '@/partner/scotia_rtp/config.js'
 import type { RTPHookRequest } from '@/partner/scotia_rtp/index.d.js'
-import { finalizeCashInStatusFromRTPPaymentId } from '@/service/transaction/nbp/index.js'
+import { finalizeCashInStatusFromRTPPaymentId } from '@/service/transaction/nbp/cash_in.js'
 
 //TODO: get data from parameter.
 export async function scotiaRTPHookHandler(rawData: string) {

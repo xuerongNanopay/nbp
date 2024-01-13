@@ -1,8 +1,5 @@
-import { NBPService } from "@/service/nbp/index.js"
 import { PRISMAService } from "@/service/prisma/index.js"
-import { ScotiaRTPService } from "@/service/scotia_rtp/index.js"
 import { LOGGER } from "@/utils/logUtil.js"
-import {PrismaTransaction, TRANSACTION_PROJET_TYPE} from "./index.d.js"
 import { 
   CashIn, 
   CashInStatus, 
@@ -221,38 +218,4 @@ function _isTransactionRefund(status: TransactionStatus) {
 
 function _isCashInFinish(status: CashInStatus) {
   return status === CashInStatus.COMPLETE || status === CashInStatus.Cancel || status === CashInStatus.FAIL
-}
-
-function _cashInStatusMapper(status: string): CashInStatus {
-  switch(status) {
-    //ACTC - Accepted Technical Validation 
-    //PDNG - Pending 
-    case "ACCC":
-    case "ACSP":
-    case "COMPLETED":
-    case "REALTIME_DEPOSIT_COMPLETED":
-    case "DEPOSIT_COMPLETE":
-      return CashInStatus.COMPLETE
-
-    case "RJCT":
-    case "DECLINED":
-      return CashInStatus.FAIL
-
-    case "FULFILLED":
-    case "AVAILABLE_TO_BE_FULFILLED":
-    case "INITIATED":
-    case "PDNG":
-      return CashInStatus.WAIT
-
-    case "REALTIME_DEPOSIT_FAILED":
-    case "DIRECT_DEPOSIT_FAILED":
-      return CashInStatus.FAIL
-
-    case "CANCELLED":
-    case "EXPIRED":
-      return CashInStatus.Cancel
-
-    default:
-      throw new Error(`Unsupport status \`${status}\``)
-  }
 }

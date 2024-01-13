@@ -476,7 +476,7 @@ model Transfer {
   id                Int            @id @default(autoincrement())
   name              String
   status            TransferStatus @default(INITIAL)
-  externalReference String?
+  externalRef  String?
 
   retryAttempt Int @default(0)
 
