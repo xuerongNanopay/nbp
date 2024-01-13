@@ -3,6 +3,8 @@ import { TransactionStatus, TransferStatus } from "@prisma/client"
 import {PrismaTransaction, TRANSACTION_PROJET_TYPE} from "./index.d.js"
 import { PRISMAService } from "@/service/prisma/index.js"
 import { TRANSACTION_PROJECT } from "./index.js"
+import { NBPService } from "@/service/nbp/index.js"
+import dayjs from "dayjs"
 
 export async function nbpProcessor(transactionId: number): Promise<boolean> {
   return await PRISMAService.$transaction(async (tx) => {
@@ -117,4 +119,84 @@ async function _nbpTerminateProcessor(
   })
   LOGGER.error(`NBP Terminate Processor`, `Transaction \`${transaction.id}\` terminated in \`${updateTransaction.status}\``)
   return false
+}
+
+async function _NBPInitialTransferInitial(
+  tx: PrismaTransaction, 
+  transactionId: number
+) {
+  const transaction = await tx.transaction.findUniqueOrThrow({
+    where: {
+      id: transactionId
+    },
+    select: {
+      destinationAmount: true,
+      transactionPurpose: true,
+      owner: {
+        select: {
+          firstName: true,
+          lastName: true,
+          address1: true,
+          address2: true,
+          city: true,
+          province: {
+            select: {
+              name: true
+            }
+          },
+          countryCode: true,
+          identification: {
+            select: {
+              type: true,
+              value: true
+            }
+          }
+        }
+      },
+      destinationContact: {
+        select: {
+          type: true,
+          firstName: true,
+          lastName: true,
+          address1: true,
+          address2: true,
+          city: true,
+          province: {
+            select: {
+              name: true
+            }
+          },
+          countryCode: true,
+          institution: {
+            select: {
+              abbr: true
+            }
+          },
+          bankAccountNum: true,
+          branchNum: true,
+          iban: true,
+        }
+      }
+    }
+  })
+
+  NBPService.loadRemittanceAccounts({
+    Currency: 'PKR',
+    Global_Id: 'TODO',
+    Amount: transaction.destinationAmount/100.0,
+    Pmt_Mode: 'ACCOUNT_TRANSFERS',
+    Transaction_Date: dayjs().format('YYYY-MM-DD'),
+    Remitter_Name: `${transaction.owner.firstName} ${transaction.owner.lastName}`,
+    Remitter_Address: 'TODO',
+    Remitter_Id_Type: 'DRIVING_LICENSE',
+    Remitter_Id: 'DRIVING_LICENSE',
+    Beneficiary_Name: 'TODO',
+    Beneficiary_Address: 'aa',
+    Beneficiary_Contact: 'TODO',
+    Beneficiary_Bank: 'NBP',
+    Beneficiary_Branch: 'TODO',
+    Beneficiary_Account: 'TODO',
+    Purpose_Remittance: 'TODO',
+    Originating_Country: 'Canada'
+  })
 }
