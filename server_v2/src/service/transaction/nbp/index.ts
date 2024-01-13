@@ -1,4 +1,5 @@
 import { PRISMAService } from "@/service/prisma/index.js"
+import { ScotiaRTPService } from "@/service/scotia_rtp/index.js"
 import { LOGGER } from "@/utils/logUtil.js"
 import { 
   CashIn, 
@@ -223,7 +224,10 @@ async function _cashInProcessor(transactionId: number): Promise<boolean> {
       })
       LOGGER.info('Transaction CashIn Processor', `Transation \`${transactionId}\``, `Cash In complete, Transaction status update to \`${newTransaction.status}\``)
       return true
-    } else if (transaction.cashIn.status === CashInStatus.FAIL) {
+    } else if (
+      transaction.cashIn.status === CashInStatus.FAIL ||
+      transaction.cashIn.status === CashInStatus.Cancel
+    ) {
       await tx.transaction.update({
         where: {
           id: transaction.id
@@ -501,10 +505,141 @@ async function refundTransaction(transactionId: number) {
   })
 }
 
+export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
+  const cashIn = await PRISMAService.cashIn.findFirst({
+    where: {
+      externalRef: paymentId
+    },
+    select: {
+      id: true,
+      status: true,
+      transactionId: true
+    }
+  })
+  if (!cashIn) {
+    LOGGER.error('func: updateCashInStatusFromRTPPaymentId', `Cash In no found with externalRef == \`${paymentId}\``)
+    throw new Error(`No associated record with payment_id: \`${paymentId}\``)
+  }
+  if (cashIn.status !== CashInStatus.WAIT) {
+    LOGGER.warn('func: updateCashInStatusFromRTPPaymentId', `Cash In \`${cashIn.id}\` is not in \`${CashInStatus.WAIT}\` but \`${cashIn.status}\``)
+    throw new Error(`Unable to process payment_id: \`${paymentId}\``)
+  }
+
+  const paymentDetails = await ScotiaRTPService.requestForPaymentDetails({paymentId: paymentId, transactionId: cashIn.transactionId})
+  const paymentStatus = paymentDetails.data?.transaction_status ?? paymentDetails.data?.request_for_payment_status ?? null
+  if (!paymentStatus) {
+    LOGGER.error('func: updateCashInStatusFromRTPPaymentId', `Unable to fetch transaction status with paymentId \`${paymentId}\``)
+    throw new Error(`Unable to fetch transaction status with paymentId \`${paymentId}\``)
+  }
+
+  const newCashInStatus = _cashInStatusMapper(paymentStatus as string)
+  if ( newCashInStatus === CashInStatus.WAIT ) {
+    LOGGER.info('func: updateCashInStatusFromRTPPaymentId', `CashIn \`${cashIn.id}\` still waiting`, `Fetch status: \`${paymentStatus}\``)
+    return
+  }
+  const updateCashIn = await PRISMAService.$transaction(async (tx) => {
+    await tx.$queryRaw`select id from cash_in where id = ${cashIn.id} for update`
+    const oldCashIn = await tx.cashIn.findUniqueOrThrow({
+      where: {
+        id: cashIn.id
+      },
+      select: {
+        id: true,
+        status: true,
+        transactionId: true
+      }
+    })
+    if (oldCashIn.status !== CashInStatus.WAIT) {
+      LOGGER.error('func: updateCashInStatusFromRTPPaymentId', `Expect CashIn \`${oldCashIn.id}\` status is \`${CashInStatus.WAIT}\`, but \`${oldCashIn.status}\``)
+      throw new Error(`Expect CashIn status is \`${CashInStatus.WAIT}\`, but \`${oldCashIn.status}\``)
+    }
+    if ( newCashInStatus === CashInStatus.COMPLETE ) {
+      const newCashIn = await tx.cashIn.update({
+        where: {
+          id: cashIn.id
+        },
+        data: {
+          status: newCashInStatus,
+          endInfo: 'Payment Completed.',
+          cashInReceiveAt: new Date()
+        },
+        select: {
+          id: true,
+          status: true,
+          transactionId: true
+        }
+      })
+      LOGGER.info('func: updateCashInStatusFromRTPPaymentId', `CashIn \`${oldCashIn.id}\` change from \`${oldCashIn.status}\` to \`${newCashIn.status}\``)
+      return newCashIn
+    } else if (newCashInStatus === CashInStatus.Cancel || newCashInStatus === CashInStatus.FAIL) {
+      const newCashIn = await tx.cashIn.update({
+        where: {
+          id: cashIn.id
+        },
+        data: {
+          status: newCashInStatus,
+          endInfo: newCashInStatus === CashInStatus.Cancel ? 'Payment Canceled.' : 'Payment failed.',
+          cashInReceiveAt: new Date()
+        },
+        select: {
+          id: true,
+          status: true,
+          transactionId: true
+        }
+      })
+      LOGGER.error('func: updateCashInStatusFromRTPPaymentId', `CashIn \`${oldCashIn.id}\` change from \`${oldCashIn.status}\` to \`${newCashIn.status}\``)
+      return newCashIn
+    } else {
+      LOGGER.error('func: updateCashInStatusFromRTPPaymentId', `CashIn \`${cashIn.id}\` reached Unspected state.`)
+      throw new Error(`Unable to process CashIn \`${cashIn.id}\``)
+    }
+  })
+
+  processTransaction(updateCashIn.transactionId)
+}
+
 function _isTransactionTeminate(status: TransactionStatus) {
   return status === TransactionStatus.CANCEL || status === TransactionStatus.REFUND
 }
 
 function _isTransactionRefund(status: TransactionStatus) {
   return status === TransactionStatus.REFUND_IN_PROGRESS || status === TransactionStatus.REFUND
+}
+
+function _isCashInFinish(status: CashInStatus) {
+  return status === CashInStatus.COMPLETE || status === CashInStatus.Cancel || status === CashInStatus.FAIL
+}
+
+function _cashInStatusMapper(status: string): CashInStatus {
+  switch(status) {
+    //ACTC - Accepted Technical Validation 
+    //PDNG - Pending 
+    case "ACCC":
+    case "ACSP":
+    case "COMPLETED":
+    case "REALTIME_DEPOSIT_COMPLETED":
+    case "DEPOSIT_COMPLETE":
+      return CashInStatus.COMPLETE
+
+    case "RJCT":
+    case "DECLINED":
+      return CashInStatus.FAIL
+
+    case "FULFILLED":
+    case "AVAILABLE_TO_BE_FULFILLED":
+    case "INITIATED":
+    case "PDNG":
+      return CashInStatus.WAIT
+
+    case "REALTIME_DEPOSIT_FAILED":
+    case "DIRECT_DEPOSIT_FAILED":
+      return CashInStatus.FAIL
+
+    case "CANCELLED":
+    case "EXPIRED":
+      return CashInStatus.Cancel
+
+    default:
+      throw new Error(`Unsupport status \`${status}\``)
+  }
 }

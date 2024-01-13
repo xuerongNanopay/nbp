@@ -1,10 +1,8 @@
 import * as jose from 'jose'
-import { LOGGER } from "@/utils/logUtil.js";
-import { PEER_PUBLIC_KEY, PRIVATE_KEY } from '@/partner/scotia_rtp/config.js';
-import type { RTPHookRequest } from '@/partner/scotia_rtp/index.d.js';
-import { PRISMAService } from '@/service/prisma/index.js';
-import { CashInStatus } from '@prisma/client';
-import { ScotiaRTPService } from '@/service/scotia_rtp/index.js';
+import { LOGGER } from "@/utils/logUtil.js"
+import { PEER_PUBLIC_KEY, PRIVATE_KEY } from '@/partner/scotia_rtp/config.js'
+import type { RTPHookRequest } from '@/partner/scotia_rtp/index.d.js'
+import { finalizeCashInStatusFromRTPPaymentId } from '@/service/transaction/nbp/index.js'
 
 //TODO: get data from parameter.
 export async function scotiaRTPHookHandler(rawData: string) {
@@ -20,30 +18,5 @@ export async function scotiaRTPHookHandler(rawData: string) {
 
   LOGGER.info('Hook: scotiaRTPHookHandler', `payment_id: \`${request.payment_id}\``, `request: \`${requestPayload}\``)
 
-  const cashIn = await PRISMAService.cashIn.findFirst({
-    where: {
-      externalRef: request.payment_id
-    },
-    select: {
-      id: true,
-      status: true,
-      transactionId: true
-    }
-  })
-  if (!cashIn) {
-    LOGGER.error('Hook: scotiaRTPHookHandler', `Cash In no found with externalRef == \`${request.payment_id}\``)
-    throw new Error(`No associated record with payment_id: \`${request.payment_id}\``)
-  }
-  if (cashIn.status !== CashInStatus.WAIT) {
-    LOGGER.warn('Hook: scotiaRTPHookHandler', `Cash In \`${cashIn.id}\` is not in \`${CashInStatus.WAIT}\` but \`${cashIn.status}\``)
-    throw new Error(`Unable to process payment_id: \`${request.payment_id}\``)
-  }
-
-  const paymentDetails = await ScotiaRTPService.requestForPaymentDetails({paymentId: request.payment_id, transactionId: cashIn.transactionId})
-  const paymentStatus = paymentDetails.data?.transaction_status ?? paymentDetails.data?.request_for_payment_status ?? null
-  if (!paymentStatus) {
-    LOGGER.error('Hook: scotiaRTPHookHandler', `Unable to fetch transaction status with paymentId \`${request.payment_id}\``)
-  }
-
-  
+  await finalizeCashInStatusFromRTPPaymentId(request.payment_id)
 }

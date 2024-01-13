@@ -11,7 +11,6 @@ import type {
 import {
   requestForPayment, requestForPaymentDetails, requestForPaymentStatus, rtpPaymentOptions 
 } from "@/partner/scotia_rtp/index.js"
-import { CashInStatus } from '@prisma/client'
 
 //TODO: refactor, service API should base on the feature. Make it simple to use.
 //TODO: Mock Service for development mode
@@ -22,7 +21,6 @@ export interface ScotiaRTPService {
   requestForPaymentStatus(prop: RequestForPaymentStatusProp): Promise<RequestForPaymentStatusResult> 
   requestForPaymentDetails(prop: RequestForPaymentDetailsProp): Promise<RequestForPaymentDetailResult>
   rtpPaymentOptions(prop: RTPPaymentOptionsProp): Promise<RTPPaymentOptionsResult>
-  cashInStatusMapper(status: string): CashInStatus
 }
 
 async function _getRealService(): Promise<ScotiaRTPService> {
@@ -31,7 +29,6 @@ async function _getRealService(): Promise<ScotiaRTPService> {
     requestForPaymentStatus: _requestForPaymentStatus,
     rtpPaymentOptions: _rtpPaymentOptions,
     requestForPaymentDetails: _requestForPaymentDetails,
-    cashInStatusMapper: _cashInStatusMapper
   }
 }
 
@@ -163,37 +160,6 @@ async function _requestForPaymentDetails(
       ['x-b3-traceid']: _transactionIdentifier(transactionId),
     }
   )
-}
-
-function _cashInStatusMapper(status: string): CashInStatus {
-  switch(status) {
-    case "ACCC":
-      case "ACSP":
-      case "COMPLETED":
-      case "REALTIME_DEPOSIT_COMPLETED":
-      case "DEPOSIT_COMPLETE":
-        return CashInStatus.COMPLETE
-
-      case "RJCT":
-      case "DECLINED":
-        return CashInStatus.FAIL
-
-      case "FULFILLED":
-      case "AVAILABLE_TO_BE_FULFILLED":
-      case "INITIATED":
-        return CashInStatus.WAIT
-
-      case "REALTIME_DEPOSIT_FAILED":
-      case "DIRECT_DEPOSIT_FAILED":
-        return CashInStatus.FAIL
-
-      case "CANCELLED":
-      case "EXPIRED":
-        return CashInStatus.Cancel
-
-      default:
-        throw new Error(`Unsupport status \`${status}\``)
-  }
 }
 
 function _transactionIdentifier(transactionId: number) {
