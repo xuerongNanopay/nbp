@@ -123,7 +123,7 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
     LOGGER.info('func: updateCashInStatusFromRTPPaymentId', `CashIn \`${cashIn.id}\` still waiting`, `Fetch status: \`${paymentStatus}\``)
     return
   }
-  const updateCashIn = await PRISMAService.$transaction(async (tx) => {
+  return await PRISMAService.$transaction(async (tx) => {
     await tx.$queryRaw`select id from cash_in where id = ${cashIn.id} for update`
     const oldCashIn = await tx.cashIn.findUniqueOrThrow({
       where: {
@@ -176,7 +176,7 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
       LOGGER.error('func: updateCashInStatusFromRTPPaymentId', `CashIn \`${oldCashIn.id}\` change from \`${oldCashIn.status}\` to \`${newCashIn.status}\``)
       return newCashIn
     } else {
-      LOGGER.error('func: updateCashInStatusFromRTPPaymentId', `CashIn \`${cashIn.id}\` reached Unspected state.`)
+      LOGGER.error('func: updateCashInStatusFromRTPPaymentId', `CashIn \`${cashIn.id}\` reached Unexpected state.`)
       throw new Error(`Unable to process CashIn \`${cashIn.id}\``)
     }
   })
