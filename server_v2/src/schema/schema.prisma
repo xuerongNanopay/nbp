@@ -381,10 +381,10 @@ model CashIn {
   status CashInStatus @default(INITIAL)
   method CashInMethod
 
-  externalRef String?
+  externalRef  String?
   externalRef1 String?
   externalRef2 String?
-  paymentLink String?
+  paymentLink  String?
 
   endInfo String?
 
@@ -444,6 +444,8 @@ model Transaction {
   cashIn  CashIn?
 
   endInfo String?
+
+  transactionPurpose String?
 
   confirmQuoteAt DateTime?
   quoteExpired   DateTime

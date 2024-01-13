@@ -26,6 +26,7 @@ create table transaction(
     ownerId bigint unsigned not null,
 
     endInfo varchar(255) null,
+    transactionPurpose varchar(255) null,
     confirmQuoteAt datetime null,
     quoteExpired datetime not null,
 
