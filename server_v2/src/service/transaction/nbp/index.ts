@@ -1,3 +1,4 @@
+import { NBPService } from "@/service/nbp/index.js"
 import { PRISMAService } from "@/service/prisma/index.js"
 import { ScotiaRTPService } from "@/service/scotia_rtp/index.js"
 import { LOGGER } from "@/utils/logUtil.js"
@@ -11,6 +12,7 @@ import {
   TransferStatus 
 } from "@prisma/client"
 import { DefaultArgs } from "@prisma/client/runtime/library.js"
+import dayjs from "dayjs"
 
 type PrismaTransaction = Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">
 type TRANSACTION_PROJET_TYPE = Prisma.TransactionGetPayload<{
@@ -94,6 +96,7 @@ export async function initialCashIn(transactionId: number): Promise<CashIn> {
 
     return await _scotialRTPCashIn(tx, transaction.id)
   })
+  if (_isCashInFinish(cashIn.status)) await processTransaction(cashIn.transactionId)
   return cashIn
 }
 
@@ -603,7 +606,7 @@ async function _scotialRTPCashIn(
       const requestPaymentResult = await ScotiaRTPService.requestForPayment({
         transactionId: transaction.id,
         create_date_time: new Date(),
-        amount: transaction.debitAmount/100,
+        amount: transaction.debitAmount/100.0,
         debtor_email: transaction.sourceAccount.email,
         debtor_name: `${transaction.owner.firstName} ${transaction.owner.lastName}`
       })
@@ -656,6 +659,40 @@ async function _scotialRTPCashIn(
       }
     })
     return cashIn
+}
+
+async function _NBPInitialTransferInitial(
+  tx: PrismaTransaction, 
+  transactionId: number
+) {
+  const transaction = await tx.transaction.findUniqueOrThrow({
+    where: {
+      id: transactionId
+    },
+    select: {
+      destinationAmount: true
+    }
+  })
+
+  NBPService.loadRemittanceAccounts({
+    Currency: 'PKR',
+    Global_Id: 'TODO',
+    Amount: transaction.destinationAmount/100.0,
+    Pmt_Mode: 'ACCOUNT_TRANSFERS',
+    Transaction_Date: dayjs().format('YYYY-MM-DD'),
+    Remitter_Name: 'TODO',
+    Remitter_Address: 'TODO',
+    Remitter_Id_Type: 'DRIVING_LICENSE',
+    Remitter_Id: 'DRIVING_LICENSE',
+    Beneficiary_Name: 'TODO',
+    Beneficiary_Address: 'aa',
+    Beneficiary_Contact: 'TODO',
+    Beneficiary_Bank: 'NBP',
+    Beneficiary_Branch: 'TODO',
+    Beneficiary_Account: 'TODO',
+    Purpose_Remittance: 'TODO',
+    Originating_Country: 'TODO'
+  })
 }
 
 function _isTransactionTeminate(status: TransactionStatus) {
