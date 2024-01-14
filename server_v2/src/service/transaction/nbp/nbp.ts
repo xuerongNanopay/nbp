@@ -1,11 +1,11 @@
 import { LOGGER } from "@/utils/logUtil.js"
-import { IdentificationType, TransactionStatus, TransferStatus } from "@prisma/client"
+import { ContactType, IdentificationType, TransactionStatus, TransferStatus } from "@prisma/client"
 import {PrismaTransaction, TRANSACTION_PROJET_TYPE} from "./index.d.js"
 import { PRISMAService } from "@/service/prisma/index.js"
 import { TRANSACTION_PROJECT } from "./index.js"
 import { NBPService } from "@/service/nbp/index.js"
-import { v4 as uuidv4 } from 'uuid'
 import dayjs from "dayjs"
+import type { LoadRemittanceAccountsRequest, LoadRemittanceCashRequest, LoadRemittanceRequest, LoadRemittanceThirdPartyRequest } from "@/partner/nbp/index.d.js"
 
 export async function nbpProcessor(transactionId: number): Promise<boolean> {
   return await PRISMAService.$transaction(async (tx) => {
@@ -127,18 +127,20 @@ async function _NBPInitialTransferInitial(
   transaction: TRANSACTION_PROJET_TYPE
 ) {
   const nbpTransfer = transaction.transfers[1]!
-  const Global_Id = _globalIdGenerator(nbpTransfer.id)
-  await tx.transfer.update({
-    where: {
-      id: nbpTransfer.id
-    },
-    data: {
-      externalRef: Global_Id
-    },
-    select: {
-      id: true
-    }
-  })
+  const Global_Id = nbpTransfer.externalRef ?? _globalIdGenerator(nbpTransfer.id)
+  if (!nbpTransfer.externalRef) {
+    await tx.transfer.update({
+      where: {
+        id: nbpTransfer.id
+      },
+      data: {
+        externalRef: Global_Id
+      },
+      select: {
+        id: true
+      }
+    })
+  }
   const infos = await tx.transaction.findUniqueOrThrow({
     where: {
       id: transaction.id
@@ -191,6 +193,11 @@ async function _NBPInitialTransferInitial(
           bankAccountNum: true,
           branchNum: true,
           iban: true,
+          relationship: {
+            select: {
+              type: true
+            }
+          }
         }
       }
     }
@@ -208,7 +215,7 @@ async function _NBPInitialTransferInitial(
     countryCode: remitter.countryCode,
     postCode: remitter.postalCode
   })
-  const Remitter_Id_Type = _idTypeMapper(remitter.identification!.type)
+  const Remitter_Id_Type = _idTypeMapper(remitter.identification!.type) as LoadRemittanceRequest['Remitter_Id_Type']
   const Remitter_Id = remitter.identification!.value
   const Beneficiary_Name = `${beneficiary.firstName} ${beneficiary.lastName}`
   const Beneficiary_Address = _buildAddressSummary({
@@ -219,26 +226,64 @@ async function _NBPInitialTransferInitial(
     countryCode: beneficiary.countryCode,
     postCode: beneficiary.postalCode 
   })
+  const Purpose_Remittance = infos.transactionPurpose!
 
-  NBPService.loadRemittanceAccounts({
-    Currency: 'PKR',
-    Global_Id: 'TODO',
+  const temp = {
+    Currency: 'PKR' as LoadRemittanceRequest['Currency'],
+    Global_Id,
     Amount,
-    Pmt_Mode: 'ACCOUNT_TRANSFERS',
     Transaction_Date,
     Remitter_Name,
     Remitter_Address,
     Remitter_Id_Type,
     Remitter_Id,
     Beneficiary_Name,
-    Beneficiary_Address: 'aa',
-    Beneficiary_Contact: 'TODO',
-    Beneficiary_Bank: 'NBP',
-    Beneficiary_Branch: 'TODO',
-    Beneficiary_Account: 'TODO',
-    Purpose_Remittance: 'TODO',
-    Originating_Country: 'Canada'
-  })
+    Beneficiary_Address,
+    Purpose_Remittance,
+    Originating_Country: 'Canada',
+  }
+
+  if (beneficiary.type === ContactType.CASH_PICKUP) {
+    const request: LoadRemittanceCashRequest = {
+      ...temp,
+      Pmt_Mode: 'CASH',
+      Beneficiary_Bank: 'NBP'
+    }
+  } else {
+    if (beneficiary.institution!.abbr === 'NBP') {
+      const request: LoadRemittanceAccountsRequest = {
+        ...temp,
+        Pmt_Mode: 'ACCOUNT_TRANSFERS',
+        Beneficiary_Bank: 'NBP',
+        Beneficiary_Account: beneficiary.iban ?? beneficiary.bankAccountNum!
+      }
+    } else {
+      const request: LoadRemittanceThirdPartyRequest = {
+        ...temp,
+        Pmt_Mode: 'THIRD_PARTY_PAYMENTS',
+        Beneficiary_Bank: beneficiary.institution!.abbr,
+        Beneficiary_Account: beneficiary.iban ?? beneficiary.bankAccountNum!
+      }
+    }
+  }
+  // NBPService.loadRemittanceAccounts({
+  //   Currency: 'PKR',
+  //   Global_Id: 'TODO',
+  //   Amount,
+  //   Pmt_Mode: 'ACCOUNT_TRANSFERS',
+  //   Transaction_Date,
+  //   Remitter_Name,
+  //   Remitter_Address,
+  //   Remitter_Id_Type,
+  //   Remitter_Id,
+  //   Beneficiary_Name,
+  //   Beneficiary_Address,
+  //   Beneficiary_Bank,
+  //   Beneficiary_Branch: 'TODO',
+  //   Beneficiary_Account: 'TODO',
+  //   Purpose_Remittance: 'TODO',
+  //   Originating_Country: 'Canada'
+  // })
 }
 
 //TODO: refine.

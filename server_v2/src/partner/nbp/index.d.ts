@@ -40,7 +40,7 @@ export interface AccountEnquiryResult {
   ['BankName']?: string
 }
 
-interface LoadRemittanceRequest {
+export interface LoadRemittanceRequest {
   ['Global_Id']: string
   ['Currency']: 'PKR'
   ['Amount']: number
@@ -78,13 +78,14 @@ export type LoadRemittanceCashRequest = LoadRemittanceRequest & {
 export type LoadRemittanceAccountsRequest = LoadRemittanceRequest & {
   ['Pmt_Mode']: 'ACCOUNT_TRANSFERS'
   ['Beneficiary_Bank']: 'NBP'
-  ['Beneficiary_Branch']: string
+  ['Beneficiary_Branch']?: string
   ['Beneficiary_Account']: string
 }
 
 export type LoadRemittanceThirdPartyRequest = LoadRemittanceRequest & {
   ['Pmt_Mode']: 'THIRD_PARTY_PAYMENTS'
-  ['Beneficiary_Branch']: string
+  ['Beneficiary_Bank']: string
+  ['Beneficiary_Branch']?: string
   ['Beneficiary_Account']: string
 }
 

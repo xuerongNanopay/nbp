@@ -9,7 +9,8 @@ import {
 } from "@prisma/client"
 import { nbpProcessor } from "./nbp.js"
 import { idmProcessor } from "./idm.js"
-import { scotialRTPCashIn } from "./cash_in.js"
+import { cashInProcessor, scotialRTPCashIn } from "./cash_in.js"
+import { TRANSACTION_PROJET_TYPE } from "./index.d.js"
 
 export const TRANSACTION_PROJECT = {
   id: true,
@@ -31,6 +32,7 @@ export const TRANSACTION_PROJECT = {
       name: true,
       status: true,
       endInfo: true,
+      externalRef: true,
       next: {
         select: {
           id: true
@@ -91,7 +93,7 @@ async function _processTransaction(transactionId: number): Promise<number> {
 }
 
 async function _tryProcessing(transactionId: number) {
-  const transaction = await PRISMAService.transaction.findUnique({
+  const transaction: TRANSACTION_PROJET_TYPE | null = await PRISMAService.transaction.findUnique({
     where: {
       id: transactionId
     },
@@ -102,7 +104,7 @@ async function _tryProcessing(transactionId: number) {
   if ( 
     transaction.status === TransactionStatus.WAITING_FOR_PAYMENT
   ) {
-    return await _cashInProcessor(transactionId)
+    return await cashInProcessor(transactionId)
   } else if (
     transaction.status == TransactionStatus.PROCESS &&
     !!transaction.transfers && 
@@ -126,69 +128,6 @@ async function _tryProcessing(transactionId: number) {
     )
     return false
   }
-}
-
-// Finilizing CashIn and initial IDM.
-async function _cashInProcessor(transactionId: number): Promise<boolean> {
-  return await PRISMAService.$transaction(async (tx) => {
-    await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
-    const transaction = await tx.transaction.findUniqueOrThrow({
-      where: {
-        id: transactionId
-      },
-      select: TRANSACTION_PROJECT
-    })    
-    if (transaction.status !== TransactionStatus.WAITING_FOR_PAYMENT) {
-      LOGGER.warn('Transaction CashIn Processor', `Transaction: \`${transaction.id}\` is out of Cash In processor scope`)
-      return false
-    }
-    if (!transaction.cashIn) throw Error(`Transaction \`${transactionId}\` miss cash_in during Cash In processor`)
-
-    if (transaction.cashIn.status === CashInStatus.COMPLETE) {
-      const newTransaction = await tx.transaction.update({
-        where: {
-          id: transaction.id
-        },
-        data: {
-          status: TransactionStatus.PROCESS,
-          transfers: {
-            create: [
-              {
-                status: TransferStatus.INITIAL,
-                name: 'IDM',
-                ownerId: transaction.ownerId
-              }
-            ]
-          }
-        },
-        select: {
-          id: true,
-          status: true
-        }
-      })
-      LOGGER.info('Transaction CashIn Processor', `Transation \`${transactionId}\``, `Cash In complete, Transaction status update to \`${newTransaction.status}\``)
-      return true
-    } else if (
-      transaction.cashIn.status === CashInStatus.FAIL ||
-      transaction.cashIn.status === CashInStatus.Cancel
-    ) {
-      await tx.transaction.update({
-        where: {
-          id: transaction.id
-        },
-        data: {
-          status: TransactionStatus.REJECT,
-          terminatedAt: new Date(),
-          endInfo: transaction.cashIn.endInfo ?? 'Do not receive the payment'
-        }
-      })
-      LOGGER.warn('Transaction CashIn Processor', `Transation \`${transactionId}\` Cash In failed.`)
-      return true
-    } else {
-      LOGGER.warn('Transaction CashIn Processor', `No status change`, `Transaction: \`${transactionId}\` has CashIn Status: \`${transaction.cashIn.status}\``)
-      return false
-    }
-  })
 }
 
 //Retry only available on the last transfer.

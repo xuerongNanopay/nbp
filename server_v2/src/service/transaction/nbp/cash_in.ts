@@ -1,8 +1,72 @@
 import { LOGGER } from "@/utils/logUtil.js"
-import { CashInMethod, CashInStatus } from "@prisma/client"
-import type {PrismaTransaction} from "./index.d.js"
+import { CashInMethod, CashInStatus, TransactionStatus, TransferStatus } from "@prisma/client"
+import type {PrismaTransaction, TRANSACTION_PROJET_TYPE} from "./index.d.js"
 import { ScotiaRTPService } from "@/service/scotia_rtp/index.js"
 import { PRISMAService } from "@/service/prisma/index.js"
+import { TRANSACTION_PROJECT } from "./index.js"
+
+// Finilizing CashIn and initial IDM.
+export async function cashInProcessor(transactionId: number): Promise<boolean> {
+  return await PRISMAService.$transaction(async (tx) => {
+    await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
+    const transaction: TRANSACTION_PROJET_TYPE = await tx.transaction.findUniqueOrThrow({
+      where: {
+        id: transactionId
+      },
+      select: TRANSACTION_PROJECT
+    })    
+    if (transaction.status !== TransactionStatus.WAITING_FOR_PAYMENT) {
+      LOGGER.warn('Transaction CashIn Processor', `Transaction: \`${transaction.id}\` is out of Cash In processor scope`)
+      return false
+    }
+    if (!transaction.cashIn) throw Error(`Transaction \`${transactionId}\` miss cash_in during Cash In processor`)
+
+    if (transaction.cashIn.status === CashInStatus.COMPLETE) {
+      const newTransaction = await tx.transaction.update({
+        where: {
+          id: transaction.id
+        },
+        data: {
+          status: TransactionStatus.PROCESS,
+          transfers: {
+            create: [
+              {
+                status: TransferStatus.INITIAL,
+                name: 'IDM',
+                ownerId: transaction.ownerId
+              }
+            ]
+          }
+        },
+        select: {
+          id: true,
+          status: true
+        }
+      })
+      LOGGER.info('Transaction CashIn Processor', `Transation \`${transactionId}\``, `Cash In complete, Transaction status update to \`${newTransaction.status}\``)
+      return true
+    } else if (
+      transaction.cashIn.status === CashInStatus.FAIL ||
+      transaction.cashIn.status === CashInStatus.Cancel
+    ) {
+      await tx.transaction.update({
+        where: {
+          id: transaction.id
+        },
+        data: {
+          status: TransactionStatus.REJECT,
+          terminatedAt: new Date(),
+          endInfo: transaction.cashIn.endInfo ?? 'Do not receive the payment'
+        }
+      })
+      LOGGER.warn('Transaction CashIn Processor', `Transation \`${transactionId}\` Cash In failed.`)
+      return true
+    } else {
+      LOGGER.warn('Transaction CashIn Processor', `No status change`, `Transaction: \`${transactionId}\` has CashIn Status: \`${transaction.cashIn.status}\``)
+      return false
+    }
+  })
+}
 
 //This function should not throw any Error.
 export async function scotialRTPCashIn(

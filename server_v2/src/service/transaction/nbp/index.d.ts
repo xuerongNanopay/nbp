@@ -24,6 +24,7 @@ export type TRANSACTION_PROJET_TYPE = Prisma.TransactionGetPayload<{
         name: true,
         status: true,
         endInfo: true,
+        externalRef: true,
         next: {
           select: {
             id: true
