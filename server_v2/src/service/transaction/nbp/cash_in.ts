@@ -205,7 +205,7 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
   }
 
   const newCashIn = await PRISMAService.$transaction(async (tx) => {
-    await tx.$queryRaw`select id from cash_in where id = ${cashIn.id} for update`
+    await tx.$queryRaw`select id from transaction where id = ${cashIn.transactionId} for update`
     const oldCashIn = await tx.cashIn.findUniqueOrThrow({
       where: {
         id: cashIn.id

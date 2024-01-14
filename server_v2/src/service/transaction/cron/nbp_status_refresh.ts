@@ -17,7 +17,8 @@ export async function nbpStatusRefresh() {
     select: {
       id: true,
       status: true,
-      externalRef: true
+      externalRef: true,
+      transactionId: true
     }
   })
 
@@ -30,7 +31,7 @@ export async function nbpStatusRefresh() {
   const newStatuses = statusesResult.transactionStatuses
   const ns = newStatuses.map((s) => {
     const transfer = nbpTransfers.find(t => t.externalRef === s.Global_Id)!
-    return {...s, transferId: transfer.id}
+    return {...s, transferId: transfer.id, transactionId: transfer.transactionId}
   })
   await finalizeNBPTransfers(ns)
   LOGGER.info('cron: nbpStatusRefresh end', `cronID: \`${cronIdentifier}\``)

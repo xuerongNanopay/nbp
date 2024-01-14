@@ -350,12 +350,12 @@ export async function finalizeIDMTransfer(tid: string, decision: 'ACCEPTED' | 'R
     LOGGER.warn('func: finalizeIDMTransfer', `IDMTransfer \`${idmTransfer.id}\` expect to be \`${TransferStatus.WAIT}\`, but \`${idmTransfer.status}\``,)
     return
   }
-  await updateIDMTransfer(idmTransfer.id, decision)
+  await updateIDMTransfer(idmTransfer.transactionId, idmTransfer.id, decision)
 }
 
-export async function updateIDMTransfer(transferId: number, status: 'ACCEPTED' | 'REJECTED' | 'ACCEPT' | 'DENY') {
+export async function updateIDMTransfer(transactionId: number, transferId: number, status: 'ACCEPTED' | 'REJECTED' | 'ACCEPT' | 'DENY') {
   const newIDMTransfer = await PRISMAService.$transaction(async (tx) => {
-    await tx.$queryRaw`select id from cash_in where id = ${transferId} for update`
+    await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
     const idmTransfer = await tx.transfer.findUniqueOrThrow({
       where: {
         id: transferId

@@ -331,12 +331,12 @@ function _buildAddressSummary({
   return ret
 }
 
-export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult&{transferId: number})[]) {
+export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult&{transferId: number, transactionId: number})[]) {
 
   for (const t of newStatuses) {
     try {
       const newNBPTransfer = await PRISMAService.$transaction(async (tx) => {
-        await tx.$queryRaw`select id from cash_in where id = ${t.transferId} for update`
+        await tx.$queryRaw`select id from transaction where id = ${t.transactionId} for update`
         const nbpTransfer = await tx.transfer.findUniqueOrThrow({
           where: {
             id: t.transferId
