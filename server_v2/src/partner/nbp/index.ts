@@ -42,9 +42,11 @@ export async function hello(): Promise<string> {
       LOGGER.error(
         'NBP', 
         'function: hello',
+        `code: ${err.code ?? 'Empty Code'}`,
+        `message: ${err.message ?? 'Empty Message'}`,
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty Response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -86,9 +88,11 @@ async function _requestToken(): Promise<Token|null> {
       LOGGER.error(
         'NBP', 
         'function: _requestToken', 
+        `code: ${err.code ?? 'Empty Code'}`,
+        `message: ${err.message ?? 'Empty Message'}`,
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty Response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
       )
     } else {
       LOGGER.error(
@@ -154,9 +158,11 @@ export async function bankList(): Promise<BankListResult> {
       LOGGER.error(
         'NBP', 
         'function: bankList',
+        `code: ${err.code ?? 'Empty Code'}`,
+        `message: ${err.message ?? 'Empty Message'}`,
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty Response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -205,9 +211,11 @@ export async function accountEnquiry(
       LOGGER.error(
         'NBP', 
         'function: accountEnquiry',
+        `code: ${err.code ?? 'Empty Code'}`,
+        `message: ${err.message ?? 'Empty Message'}`,
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty Response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -256,9 +264,11 @@ export async function loadRemittanceCash(
       LOGGER.error(
         'NBP', 
         'function: loadRemittanceCash',
+        `code: ${err.code ?? 'Empty Code'}`,
+        `message: ${err.message ?? 'Empty Message'}`,
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty Response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -307,9 +317,11 @@ export async function loadRemittanceAccounts(
       LOGGER.error(
         'NBP', 
         'function: loadRemittanceAccounts',
+        `code: ${err.code ?? 'Empty Code'}`,
+        `message: ${err.message ?? 'Empty Message'}`,
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty Response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -358,9 +370,11 @@ export async function loadRemittanceThirdParty(
       LOGGER.error(
         'NBP', 
         'function: loadRemittanceThirdParty',
+        `code: ${err.code ?? 'Empty Code'}`,
+        `message: ${err.message ?? 'Empty Message'}`,
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty Response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -409,9 +423,11 @@ export async function transactionStatusByDate(
       LOGGER.error(
         'NBP', 
         'function: transactionStatus',
+        `code: ${err.code ?? 'Empty Code'}`,
+        `message: ${err.message ?? 'Empty Message'}`,
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty Response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -460,9 +476,11 @@ export async function transactionStatusByIds(
       LOGGER.error(
         'NBP', 
         'function: transactionStatusByIds',
+        `code: ${err.code ?? 'Empty Code'}`,
+        `message: ${err.message ?? 'Empty Message'}`,
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty Response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request" : JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)

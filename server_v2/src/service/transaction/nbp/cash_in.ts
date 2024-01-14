@@ -60,7 +60,7 @@ export async function cashInProcessor(transactionId: number): Promise<boolean> {
         }
       })
       LOGGER.warn('Transaction CashIn Processor', `Transation \`${transactionId}\` Cash In failed.`)
-      return true
+      return false
     } else {
       LOGGER.warn('Transaction CashIn Processor', `No status change`, `Transaction: \`${transactionId}\` has CashIn Status: \`${transaction.cashIn.status}\``)
       return false
@@ -123,6 +123,14 @@ export async function scotialRTPCashIn(
               paymentAccountId: Number(transaction.sourceAccountId),
             }
           })
+          await tx.transaction.update({
+            where: {
+              id: transactionId
+            },
+            data: {
+              status: TransactionStatus.WAITING_FOR_PAYMENT
+            }
+          })
           return cashIn
         } else {
           let endInfo
@@ -150,6 +158,14 @@ export async function scotialRTPCashIn(
         transactionId: Number(transaction.id),
         endInfo: 'Scotia Payment initial fails',
         paymentAccountId: Number(transaction.sourceAccountId),
+      }
+    })
+    await tx.transaction.update({
+      where: {
+        id: transactionId
+      },
+      data: {
+        status: TransactionStatus.WAITING_FOR_PAYMENT
       }
     })
     return cashIn

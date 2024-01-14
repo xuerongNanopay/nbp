@@ -66,13 +66,16 @@ async function _requestToken(): Promise<Token|null> {
     }
   } catch (err) {
     if ( err instanceof AxiosError ) {
+      console.log('aaa', err.request.data)
       LOGGER.error(
         'scotia_rtp', 
         'function: _requestToken', 
-        `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
+  
+  `code: ${err.code ?? "Empty Code"}`,
+  `messsage: ${err.message ?? "Empty Message"}`,      `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
     } else {
       LOGGER.error(
@@ -161,11 +164,13 @@ export async function rtpPaymentOptions(
     if ( err instanceof AxiosError ) {
       LOGGER.error(
         'scotia_rtp', 
-        'function: rtpPaymentOptions', 
+        'function: rtpPaymentOptions',
+        `code: ${err.code ?? "Empty Code"}`,
+        `messsage: ${err.message ?? "Empty Message"}`, 
         `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -209,10 +214,12 @@ export async function rtpPayment(
       LOGGER.error(
         'scotia_rtp', 
         'function: rtpPayment', 
-        `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
+     
+     `code: ${err.code ?? "Empty Code"}`,
+     `messsage: ${err.message ?? "Empty Message"}`,   `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -254,11 +261,13 @@ export async function rtpPaymentSummary(
     if ( err instanceof AxiosError ) {
       LOGGER.error(
         'scotia_rtp', 
-        'function: rtpPaymentSummary', 
+        'function: rtpPaymentSummary',
+        `code: ${err.code ?? "Empty Code"}`,
+        `messsage: ${err.message ?? "Empty Message"}`, 
         `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -301,11 +310,13 @@ export async function requestForPayment(
     if ( err instanceof AxiosError ) {
       LOGGER.error(
         'scotia_rtp', 
-        'function: requestForPayment', 
+        'function: requestForPayment',
+        `code: ${err.code ?? "Empty Code"}`,
+        `messsage: ${err.message ?? "Empty Message"}`, 
         `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -347,11 +358,13 @@ export async function requestForPaymentStatus (
     if ( err instanceof AxiosError ) {
       LOGGER.error(
         'scotia_rtp', 
-        'function: requestForPaymentStatus', 
+        'function: requestForPaymentStatus',
+        `code: ${err.code ?? "Empty Code"}`,
+        `messsage: ${err.message ?? "Empty Message"}`,
         `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -393,11 +406,13 @@ export async function requestForPaymentDetails(
     if ( err instanceof AxiosError ) {
       LOGGER.error(
         'scotia_rtp', 
-        'function: requestForPaymentDetails', 
+        'function: requestForPaymentDetails',
+        `code: ${err.code ?? "Empty Code"}`,
+        `messsage: ${err.message ?? "Empty Message"}`, 
         `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -441,11 +456,13 @@ export async function cancelRequestForPayment(
     if ( err instanceof AxiosError ) {
       LOGGER.error(
         'scotia_rtp', 
-        'function: cancelRequestForPayment', 
+        'function: cancelRequestForPayment',
+        `code: ${err.code ?? "Empty Code"}`,
+        `messsage: ${err.message ?? "Empty Message"}`,
         `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
-        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
+        //`request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)

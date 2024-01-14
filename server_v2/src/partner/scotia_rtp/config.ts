@@ -35,7 +35,7 @@ function _generateCredential(): Credential {
     ['X_COUNTRY_CODE']: 'TODO',
     ['JWT_AUDIENCE']: 'TODO',
     ['JWT_KID']: 'TODO',
-    ['JWT_EXPIRY']: 'TODO'
+    ['JWT_EXPIRY']: '2h'
   }
 }
 
