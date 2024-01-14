@@ -348,13 +348,13 @@ export async function finalizeIDMTransfer(tid: string, decision: 'ACCEPTED' | 'R
   }
   if (idmTransfer.status !== TransferStatus.WAIT) {
     LOGGER.warn('func: finalizeIDMTransfer', `IDMTransfer \`${idmTransfer.id}\` expect to be \`${TransferStatus.WAIT}\`, but \`${idmTransfer.status}\``,)
-    return
+    return idmTransfer
   }
-  await updateIDMTransfer(idmTransfer.transactionId, idmTransfer.id, decision)
+  return await updateIDMTransfer(idmTransfer.transactionId, idmTransfer.id, decision)
 }
 
 export async function updateIDMTransfer(transactionId: number, transferId: number, status: 'ACCEPTED' | 'REJECTED' | 'ACCEPT' | 'DENY') {
-  const newIDMTransfer = await PRISMAService.$transaction(async (tx) => {
+  const updatedIDMTransfer = await PRISMAService.$transaction(async (tx) => {
     await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
     const idmTransfer = await tx.transfer.findUniqueOrThrow({
       where: {
@@ -362,18 +362,17 @@ export async function updateIDMTransfer(transactionId: number, transferId: numbe
       },
       select: {
         id: true,
-        externalRef: true,
         status: true,
         transactionId: true
       }
     })
     if (idmTransfer.status !== TransferStatus.WAIT) {
       LOGGER.warn('func: updateIDMTransfer', `IDMTransfer \`${idmTransfer.id}\` expect to be \`${TransferStatus.WAIT}\`, but \`${idmTransfer.status}\``,)
-      return null
+      return idmTransfer
     }
     const newStatus = _idmTransferStatusMapper(status, idmTransfer.transactionId)
 
-    if (newStatus === TransferStatus.WAIT) return null
+    if (newStatus === TransferStatus.WAIT) return idmTransfer
     
     if (newStatus === TransferStatus.FAIL) {
       const newTransfer = await tx.transfer.update({
@@ -413,10 +412,10 @@ export async function updateIDMTransfer(transactionId: number, transferId: numbe
     } else {
       LOGGER.warn('func: updateIDMTransfer', `IDMTransfer \`${idmTransfer.id}\` reach to unkown state.`)
     }
-    return null
+    return idmTransfer
   })
-  if (!!newIDMTransfer && isTransferFinish(newIDMTransfer.status)) await processTransaction(newIDMTransfer.id)
-
+  if (!!updatedIDMTransfer && isTransferFinish(updatedIDMTransfer.status)) await processTransaction(updatedIDMTransfer.transactionId)
+  return updatedIDMTransfer
 }
 
 function _idmTransferStatusMapper(idmStatus: string, transactionId: number): TransferStatus {

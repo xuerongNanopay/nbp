@@ -188,7 +188,7 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
   }
   if (cashIn.status !== CashInStatus.WAIT) {
     LOGGER.warn('func: updateCashInStatusFromRTPPaymentId', `Cash In \`${cashIn.id}\` is not in \`${CashInStatus.WAIT}\` but \`${cashIn.status}\``)
-    return
+    return cashIn
   }
 
   const paymentDetails = await ScotiaRTPService.requestForPaymentDetails({paymentId: paymentId, transactionId: cashIn.transactionId})
@@ -201,7 +201,7 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
   const newCashInStatus = _cashInStatusMapper(paymentStatus as string)
   if ( newCashInStatus === CashInStatus.WAIT ) {
     LOGGER.info('func: updateCashInStatusFromRTPPaymentId', `CashIn \`${cashIn.id}\` still waiting`, `Fetch status: \`${paymentStatus}\``)
-    return
+    return cashIn
   }
 
   const newCashIn = await PRISMAService.$transaction(async (tx) => {
@@ -262,6 +262,7 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
     }
   })
   if (_isCashInFinish(newCashIn.status)) await processTransaction(newCashIn.transactionId)
+  return newCashIn
 }
 
 function _isCashInFinish(status: CashInStatus) {

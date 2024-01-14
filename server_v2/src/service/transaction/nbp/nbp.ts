@@ -399,7 +399,7 @@ export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult
         }
         return null
       })
-      if (!!newNBPTransfer && isTransferFinish(newNBPTransfer.status)) await processTransaction(newNBPTransfer.id)
+      if (!!newNBPTransfer && isTransferFinish(newNBPTransfer.status)) await processTransaction(newNBPTransfer.transactionId)
     } catch (err) {
       LOGGER.error('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\``, err)
     }
