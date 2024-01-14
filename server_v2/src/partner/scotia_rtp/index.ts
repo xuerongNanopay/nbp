@@ -69,9 +69,10 @@ async function _requestToken(): Promise<Token|null> {
       LOGGER.error(
         'scotia_rtp', 
         'function: _requestToken', 
-        `status: ${err.response?.status ?? "Empty status"}`,
+        `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
-        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+        `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
+        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
     } else {
       LOGGER.error(
@@ -161,9 +162,10 @@ export async function rtpPaymentOptions(
       LOGGER.error(
         'scotia_rtp', 
         'function: rtpPaymentOptions', 
-        `status: ${err.response?.status ?? "Empty status"}`,
+        `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
-        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+        `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
+        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -207,9 +209,10 @@ export async function rtpPayment(
       LOGGER.error(
         'scotia_rtp', 
         'function: rtpPayment', 
-        `status: ${err.response?.status ?? "Empty status"}`,
+        `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
-        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+        `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
+        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -252,9 +255,10 @@ export async function rtpPaymentSummary(
       LOGGER.error(
         'scotia_rtp', 
         'function: rtpPaymentSummary', 
-        `status: ${err.response?.status ?? "Empty status"}`,
+        `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
-        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+        `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
+        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -298,9 +302,10 @@ export async function requestForPayment(
       LOGGER.error(
         'scotia_rtp', 
         'function: requestForPayment', 
-        `status: ${err.response?.status ?? "Empty status"}`,
+        `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
-        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+        `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
+        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -343,9 +348,10 @@ export async function requestForPaymentStatus (
       LOGGER.error(
         'scotia_rtp', 
         'function: requestForPaymentStatus', 
-        `status: ${err.response?.status ?? "Empty status"}`,
+        `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
-        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+        `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
+        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -388,9 +394,10 @@ export async function requestForPaymentDetails(
       LOGGER.error(
         'scotia_rtp', 
         'function: requestForPaymentDetails', 
-        `status: ${err.response?.status ?? "Empty status"}`,
+        `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
-        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+        `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
+        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
@@ -435,9 +442,10 @@ export async function cancelRequestForPayment(
       LOGGER.error(
         'scotia_rtp', 
         'function: cancelRequestForPayment', 
-        `status: ${err.response?.status ?? "Empty status"}`,
+        `httpCode: ${err.response?.status ?? "Empty httpCode"}`,
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
-        `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
+        `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
+        `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
       if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
