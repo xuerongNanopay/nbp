@@ -5,7 +5,15 @@ import { PRISMAService } from "@/service/prisma/index.js"
 import { TRANSACTION_PROJECT } from "./index.js"
 import { NBPService } from "@/service/nbp/index.js"
 import dayjs from "dayjs"
-import type { LoadRemittanceAccountsRequest, LoadRemittanceCashRequest, LoadRemittanceRequest, LoadRemittanceResult, LoadRemittanceThirdPartyRequest } from "@/partner/nbp/index.d.js"
+import type { 
+  LoadRemittanceAccountsRequest, 
+  LoadRemittanceCashRequest, 
+  LoadRemittanceRequest, 
+  LoadRemittanceResult, 
+  LoadRemittanceThirdPartyRequest,
+  TransactionStatusByIdsResult,
+  TransactionStatusResult
+} from "@/partner/nbp/index.d.js"
 import { APIError } from "@/schema/error.js"
 
 export async function nbpProcessor(transactionId: number): Promise<boolean> {
@@ -322,6 +330,15 @@ function _buildAddressSummary({
 
   return ret
 }
+
+export async function finalizeNBPTransfers(newStatuses: Record<number, TransactionStatusResult>) {
+
+  // await PRISMAService.$transaction(async(tx) => {
+  //   await tx.$queryRaw`select id from transfer where id = ${transferId} for update`
+
+  // })
+}
+
 function _globalIdGenerator(transferId: number, prefix: string = 'PK') {
   const zero16 = '0000000000000000'
   const stringId = `${transferId}`
@@ -336,5 +353,23 @@ function _idTypeMapper(idType: IdentificationType) {
       return 'PASSPORT_NO'
     default:
       return 'OTHER'
+  }
+}
+
+function nbpTransferStatusMapper(nbpStatus: string, transferId: string): TransferStatus {
+  switch(nbpStatus) {
+    case 'PENDGIN':
+    case 'IN_PROCESS':
+      return TransferStatus.WAIT
+    case 'CANCELLED':
+      return TransferStatus.CANCEL
+    case 'REJECTED':
+    case 'ERROR':
+      return TransferStatus.FAIL
+    case 'PAID':
+      return TransferStatus.COMPLETE
+    default:
+      LOGGER.error('func: _transferStatusMapper', `Transfer \`${transferId}\` failed mapping IDM status`, `Unsupport NBP status \`${nbpStatus}\``)
+      throw new Error(`Unsupport NBP status \`${nbpStatus}\``)
   }
 }

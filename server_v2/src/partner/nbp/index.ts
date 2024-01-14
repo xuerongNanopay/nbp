@@ -12,6 +12,7 @@ import type {
   LoadRemittanceThirdPartyRequest,
   RawToken,
   Token,
+  TransactionStatusByDateResult,
   TransactionStatusByIdsResult,
   TransactionStatusResult
 } from './index.d.js'
@@ -374,9 +375,9 @@ export async function loadRemittanceThirdParty(
   }
 }
 
-export async function transactionStatus(
+export async function transactionStatusByDate(
   date: string
-) : Promise<TransactionStatusResult> {
+) : Promise<TransactionStatusByDateResult> {
   const endPoint = 'api/v2/TransactionStatus'
   const credential = CREDENTIAL
   const headers = {
@@ -401,7 +402,7 @@ export async function transactionStatus(
       {
         headers
       }
-    ) as AxiosResponse<TransactionStatusResult>
+    ) as AxiosResponse<TransactionStatusByDateResult>
       return response.data
   } catch (err) {
     if ( err instanceof AxiosError ) {

@@ -6,7 +6,7 @@ import type {
   LoadRemittanceCashRequest,
   LoadRemittanceAccountsRequest,
   LoadRemittanceThirdPartyRequest,
-  TransactionStatusResult,
+  TransactionStatusByDateResult,
   TransactionStatusByIdsResult
 } from "@/partner/nbp/index.d.js"
 
@@ -20,7 +20,7 @@ export interface NBPService {
   loadRemittanceCash(request: LoadRemittanceCashRequest): Promise<LoadRemittanceResult>
   loadRemittanceAccounts(request: LoadRemittanceAccountsRequest): Promise<LoadRemittanceResult>
   loadRemittanceThirdParty(request: LoadRemittanceThirdPartyRequest): Promise<LoadRemittanceResult>
-  transactionStatus(date: string): Promise<TransactionStatusResult>
+  transactionStatusByDate(date: string): Promise<TransactionStatusByDateResult>
   transactionStatusByIds(...ids: string[]): Promise<TransactionStatusByIdsResult>
 }
 
@@ -33,7 +33,7 @@ async function _getRealService(): Promise<NBPService> {
     loadRemittanceCash: nbp.loadRemittanceCash,
     loadRemittanceAccounts: nbp.loadRemittanceAccounts,
     loadRemittanceThirdParty: nbp.loadRemittanceThirdParty,
-    transactionStatus: nbp.transactionStatus,
+    transactionStatusByDate: nbp.transactionStatusByDate,
     transactionStatusByIds: nbp.transactionStatusByIds
   }
 }

@@ -100,12 +100,12 @@ export interface TransactionStatusRequest {
   ['Date']: string
 }
 
-export interface TransactionStatusResult {
+export interface TransactionStatusByDateResult {
   ['ResponseCode']: string
   ['ResponseMessage']: string
   ['Global_Id']: string
   ['Tracking_Id']: string
-  ['Status']: 'PENDING' | 'CANCELLED' | 'REJECTED' | 'PAID' | 'IN_PROCESS' | 'IN_PROCESS'
+  ['Status']: 'PENDING' | 'CANCELLED' | 'REJECTED' | 'PAID' | 'IN_PROCESS' | 'ERROR'
   ['Status_Details']: string
   ['Beneficiary_Id_Type']?: string
   ['Beneficiary_Id_Number']?: string
@@ -120,12 +120,10 @@ export interface TransactionStatusResult {
   ['Processing_Time']?: string
 }
 
-export interface TransactionStatusByIdsResult {
-  ['ResponseCode']: string
-  ['ResponseMessage']: string
+export interface TransactionStatusResult {
   ['Global_Id']: string
   ['Tracking_Id']: string
-  ['Status']: 'PENDING' | 'CANCELLED' | 'REJECTED' | 'PAID' | 'IN_PROCESS' | 'IN_PROCESS'
+  ['Status']: 'PENDING' | 'CANCELLED' | 'REJECTED' | 'PAID' | 'IN_PROCESS' | 'ERROR'
   ['Status_Details']: string
   ['Beneficiary_Id_Type']?: string
   ['Beneficiary_Id_Number']?: string
@@ -138,4 +136,9 @@ export interface TransactionStatusByIdsResult {
   ['Beneficiary_Date_Of_Birth']?: string
   ['Processing_Date']?: string
   ['Processing_Time']?: string
+}
+export interface TransactionStatusByIdsResult {
+  ['ResponseCode']: string
+  ['ResponseMessage']: string
+  ['transactionStatuses']: TransactionStatusResult[]
 }
