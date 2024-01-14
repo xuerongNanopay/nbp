@@ -44,7 +44,7 @@ export async function hello(): Promise<string> {
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -154,7 +154,7 @@ export async function bankList(): Promise<BankListResult> {
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -204,7 +204,7 @@ export async function accountEnquiry(
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -254,7 +254,7 @@ export async function loadRemittanceCash(
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -304,7 +304,7 @@ export async function loadRemittanceAccounts(
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -354,7 +354,7 @@ export async function loadRemittanceThirdParty(
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -404,7 +404,7 @@ export async function transactionStatus(
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -454,7 +454,7 @@ export async function transactionStatusByIds(
         `httpCode: ${err.status ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(

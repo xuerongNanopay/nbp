@@ -6,6 +6,7 @@ import { TRANSACTION_PROJECT } from "./index.js"
 import { NBPService } from "@/service/nbp/index.js"
 import dayjs from "dayjs"
 import type { LoadRemittanceAccountsRequest, LoadRemittanceCashRequest, LoadRemittanceRequest, LoadRemittanceThirdPartyRequest } from "@/partner/nbp/index.d.js"
+import { APIError } from "@/schema/error.js"
 
 export async function nbpProcessor(transactionId: number): Promise<boolean> {
   return await PRISMAService.$transaction(async (tx) => {
@@ -243,47 +244,37 @@ async function _NBPInitialTransferInitial(
     Originating_Country: 'Canada',
   }
 
-  if (beneficiary.type === ContactType.CASH_PICKUP) {
-    const request: LoadRemittanceCashRequest = {
-      ...temp,
-      Pmt_Mode: 'CASH',
-      Beneficiary_Bank: 'NBP'
-    }
-  } else {
-    if (beneficiary.institution!.abbr === 'NBP') {
-      const request: LoadRemittanceAccountsRequest = {
+  try {
+    if (beneficiary.type === ContactType.CASH_PICKUP) {
+      const request: LoadRemittanceCashRequest = {
         ...temp,
-        Pmt_Mode: 'ACCOUNT_TRANSFERS',
-        Beneficiary_Bank: 'NBP',
-        Beneficiary_Account: beneficiary.iban ?? beneficiary.bankAccountNum!
+        Pmt_Mode: 'CASH',
+        Beneficiary_Bank: 'NBP'
       }
     } else {
-      const request: LoadRemittanceThirdPartyRequest = {
-        ...temp,
-        Pmt_Mode: 'THIRD_PARTY_PAYMENTS',
-        Beneficiary_Bank: beneficiary.institution!.abbr,
-        Beneficiary_Account: beneficiary.iban ?? beneficiary.bankAccountNum!
+      if (beneficiary.institution!.abbr === 'NBP') {
+        const request: LoadRemittanceAccountsRequest = {
+          ...temp,
+          Pmt_Mode: 'ACCOUNT_TRANSFERS',
+          Beneficiary_Bank: 'NBP',
+          Beneficiary_Account: beneficiary.iban ?? beneficiary.bankAccountNum!
+        }
+      } else {
+        const request: LoadRemittanceThirdPartyRequest = {
+          ...temp,
+          Pmt_Mode: 'THIRD_PARTY_PAYMENTS',
+          Beneficiary_Bank: beneficiary.institution!.abbr,
+          Beneficiary_Account: beneficiary.iban ?? beneficiary.bankAccountNum!
+        }
       }
     }
+  } catch(err) {
+    if (err instanceof APIError) {
+
+    } else {
+      
+    }
   }
-  // NBPService.loadRemittanceAccounts({
-  //   Currency: 'PKR',
-  //   Global_Id: 'TODO',
-  //   Amount,
-  //   Pmt_Mode: 'ACCOUNT_TRANSFERS',
-  //   Transaction_Date,
-  //   Remitter_Name,
-  //   Remitter_Address,
-  //   Remitter_Id_Type,
-  //   Remitter_Id,
-  //   Beneficiary_Name,
-  //   Beneficiary_Address,
-  //   Beneficiary_Bank,
-  //   Beneficiary_Branch: 'TODO',
-  //   Beneficiary_Account: 'TODO',
-  //   Purpose_Remittance: 'TODO',
-  //   Originating_Country: 'Canada'
-  // })
 }
 
 //TODO: refine.
