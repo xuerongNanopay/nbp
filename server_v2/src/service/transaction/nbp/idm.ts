@@ -5,6 +5,7 @@ import { ContactType, IdentificationType, TransactionStatus, TransferStatus } fr
 import { LOGGER } from "@/utils/logUtil.js"
 import type { TransferReqeust } from "@/partner/idm/index.d.js"
 import sha1 from 'sha1'
+import { IDMService } from "@/service/idm/index.js"
 
 export async function idmProcessor(transactionId: number): Promise<boolean> {
   return await PRISMAService.$transaction(async (tx) => {
@@ -52,20 +53,7 @@ async function _idmInitialProcessor(
     LOGGER.error(`IDM Initial Processor`, `transaction \`${transaction.id}\``, `Unable to processor Transfer \`${transfer.id}\` with status \`${transfer.status}\``)
     throw new Error('Unsupport status')
   }
-
-  //TODO: Call IDM. now we approve as default.
-
-  await tx.transfer.update({
-    where: {
-      id: transfer.id
-    },
-    data: {
-      status: TransferStatus.COMPLETE,
-      completeAt: new Date()
-    }
-  })
-  LOGGER.info(`IDM Initial Processor`, `transaction \`${transaction.id}\``, `Transfer \`${transfer.id}\` Initial Successfully.\``)
-  return true
+  return await _IDMTransferInitial(tx, transaction)
 }
 
 // IDM Complete, move to next step.
@@ -135,7 +123,7 @@ async function _idmTerminateProcessor(
 async function _IDMTransferInitial(
   tx: PrismaTransaction, 
   transaction: TRANSACTION_PROJET_TYPE
-) {
+): Promise<boolean> {
   const idmTransfer = transaction.transfers[0]!
   const t = await tx.transaction.findUniqueOrThrow({
     where: {
@@ -272,5 +260,71 @@ async function _IDMTransferInitial(
     memo12: t.destinationCurrency,
     man: `${remitter.id}`,
     dman: `${beneficiary.id}`
+  }
+
+  try {
+    const result = await IDMService.transferout(request)
+    const resultStatus = result?.res ?? result?.frp
+    if (!resultStatus) {
+      LOGGER.error('func: _IDMTransferInitial', `Transaction \`${t.id}\` failed to initial IDM`, 'Unsupport status received from IDM')
+      throw new Error('Fail to Initial IDM transfer')
+    }
+
+    const transferStatus = _transferStatusMapper(resultStatus, t.id)
+
+    if (transferStatus === TransferStatus.COMPLETE) {
+      await tx.transfer.update({
+        where: {
+          id: idmTransfer.id
+        },
+        data: {
+          status: TransferStatus.COMPLETE,
+          completeAt: new Date(),
+          endInfo: 'IDM complete successfully'
+        }
+      })
+      LOGGER.info('func: _IDMTransferInitial', `Transaction \`${t.id}\` complete IDM transfer`)
+      return true
+    } else if (transferStatus === TransferStatus.WAIT) {
+      await tx.transfer.update({
+        where: {
+          id: idmTransfer.id
+        },
+        data: {
+          status: TransferStatus.WAIT,
+          waitAt: new Date(),
+        }
+      })
+      LOGGER.info('func: _IDMTransferInitial', `Transaction \`${t.id}\` is waiting for IDM transfer to be MANUAL_REVIEW`)
+      return false
+    }
+  } catch (err) {
+    LOGGER.error('func: _IDMTransferInitial', `Transaction \`${t.id}\` failed to initial IDM`, err)
+  }
+  await tx.transfer.update({
+    where: {
+      id: idmTransfer.id
+    },
+    data: {
+      status: TransferStatus.FAIL,
+      failAt: new Date(),
+      endInfo: 'IDM check failed.'
+    }
+  })
+  LOGGER.info('func: _IDMTransferInitial', `Transaction \`${t.id}\` failed IDM check.`)
+  return true
+}
+
+function _transferStatusMapper(idmStatus: string, transactionId: number): TransferStatus {
+  switch(idmStatus) {
+    case "ACCEPT":
+      return TransferStatus.COMPLETE
+    case "DENY":
+      return TransferStatus.FAIL
+    case "MANUAL_REVIEW":
+      return TransferStatus.WAIT
+    default:
+      LOGGER.error('func: _transferStatusMapper', `Transaction \`${transactionId}\` failed to initial IDM`, `Unsupport IDM status \`${idmStatus}\``)
+      throw new Error(`Unsupport IDM status \`${idmStatus}\``)
   }
 }
