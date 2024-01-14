@@ -12,10 +12,13 @@ import {
   requestForPayment, requestForPaymentDetails, requestForPaymentStatus, rtpPaymentOptions 
 } from "@/partner/scotia_rtp/index.js"
 import { LOGGER } from '@/utils/logUtil.js';
+import { MockScotiaRTPService } from './mock.js';
 
 //TODO: refactor, service API should base on the feature. Make it simple to use.
 //TODO: Mock Service for development mode
-export const ScotiaRTPService = await _getRealService()
+//TODO: evironment config for toggle mock and real.
+// export const ScotiaRTPService = await _getRealService()
+export const ScotiaRTPService = MockScotiaRTPService
 
 export interface ScotiaRTPService {
   requestForPayment(prop: ReqeustForPaymentProp): Promise<RequestForPaymentResult> 
