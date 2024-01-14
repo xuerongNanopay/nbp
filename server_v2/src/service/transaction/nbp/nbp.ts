@@ -2,7 +2,7 @@ import { LOGGER } from "@/utils/logUtil.js"
 import { ContactType, IdentificationType, TransactionStatus, TransferStatus } from "@prisma/client"
 import {PrismaTransaction, TRANSACTION_PROJET_TYPE} from "./index.d.js"
 import { PRISMAService } from "@/service/prisma/index.js"
-import { TRANSACTION_PROJECT } from "./index.js"
+import { TRANSACTION_PROJECT, isTransferFinish, processTransaction } from "./index.js"
 import { NBPService } from "@/service/nbp/index.js"
 import dayjs from "dayjs"
 import type { 
@@ -331,12 +331,74 @@ function _buildAddressSummary({
   return ret
 }
 
-export async function finalizeNBPTransfers(newStatuses: Record<number, TransactionStatusResult>) {
+export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult&{transferId: number})[]) {
 
-  // await PRISMAService.$transaction(async(tx) => {
-  //   await tx.$queryRaw`select id from transfer where id = ${transferId} for update`
-
-  // })
+  for (const t of newStatuses) {
+    try {
+      const newTransfer = await PRISMAService.$transaction(async (tx) => {
+        await tx.$queryRaw`select id from cash_in where id = ${t.transferId} for update`
+        const nbpTransfer = await tx.transfer.findUniqueOrThrow({
+          where: {
+            id: t.transferId
+          },
+          select: {
+            id: true,
+            externalRef: true,
+            status: true,
+            transactionId: true
+          }
+        })
+        if (nbpTransfer.status !== TransferStatus.WAIT) {
+          LOGGER.warn('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\` expect to be \`${TransferStatus.WAIT}\`, but \`${nbpTransfer.status}\``,)
+          return
+        }
+        const newStatus = _nbpTransferStatusMapper(nbpTransfer.status, nbpTransfer.transactionId)
+        if (newStatus === TransferStatus.WAIT) return 
+        if (
+          newStatus === TransferStatus.CANCEL ||
+          newStatus === TransferStatus.FAIL
+        ) {
+          return await tx.transfer.update({
+            where: {
+              id: nbpTransfer.id
+            },
+            data: {
+              status: newStatus,
+              cancelAt: newStatus === TransferStatus.CANCEL ? new Date() : null,
+              failAt: newStatus === TransferStatus.FAIL ? new Date() : null,
+              endInfo: newStatus === TransferStatus.CANCEL ? 'NBP Transfer canceled' : 'NBP Transfer failed'
+            },
+            select: {
+              id: true,
+              status: true,
+              transactionId: true
+            }
+          })
+        } else if (newStatus === TransferStatus.COMPLETE) {
+          return await tx.transfer.update({
+            where: {
+              id: nbpTransfer.id
+            },
+            data: {
+              status: newStatus,
+              completeAt: new Date(),
+              endInfo: 'NBP Transfer successed.'
+            },
+            select: {
+              id: true,
+              status: true,
+              transactionId: true
+            }
+          })
+        } else {
+          LOGGER.warn('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\` reach to unkown state.`)
+        }
+      })
+      if (!!newTransfer && isTransferFinish(newTransfer.status)) await processTransaction(newTransfer.id)
+    } catch (err) {
+      LOGGER.error('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\``, err)
+    }
+  }
 }
 
 function _globalIdGenerator(transferId: number, prefix: string = 'PK') {
@@ -356,7 +418,7 @@ function _idTypeMapper(idType: IdentificationType) {
   }
 }
 
-function nbpTransferStatusMapper(nbpStatus: string, transferId: string): TransferStatus {
+function _nbpTransferStatusMapper(nbpStatus: string, transactionId: number): TransferStatus {
   switch(nbpStatus) {
     case 'PENDGIN':
     case 'IN_PROCESS':
@@ -369,7 +431,7 @@ function nbpTransferStatusMapper(nbpStatus: string, transferId: string): Transfe
     case 'PAID':
       return TransferStatus.COMPLETE
     default:
-      LOGGER.error('func: _transferStatusMapper', `Transfer \`${transferId}\` failed mapping IDM status`, `Unsupport NBP status \`${nbpStatus}\``)
+      LOGGER.error('func: _nbpTransferStatusMapper', `Transaction \`${transactionId}\` failed mapping IDM status`, `Unsupport NBP status \`${nbpStatus}\``)
       throw new Error(`Unsupport NBP status \`${nbpStatus}\``)
   }
 }

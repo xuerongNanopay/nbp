@@ -3,7 +3,7 @@ import { CashInMethod, CashInStatus, TransactionStatus, TransferStatus } from "@
 import type {PrismaTransaction, TRANSACTION_PROJET_TYPE} from "./index.d.js"
 import { ScotiaRTPService } from "@/service/scotia_rtp/index.js"
 import { PRISMAService } from "@/service/prisma/index.js"
-import { TRANSACTION_PROJECT } from "./index.js"
+import { TRANSACTION_PROJECT, processTransaction } from "./index.js"
 
 // Finilizing CashIn and initial IDM.
 export async function cashInProcessor(transactionId: number): Promise<boolean> {
@@ -187,7 +187,8 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
     LOGGER.info('func: updateCashInStatusFromRTPPaymentId', `CashIn \`${cashIn.id}\` still waiting`, `Fetch status: \`${paymentStatus}\``)
     return
   }
-  return await PRISMAService.$transaction(async (tx) => {
+
+  const newCashIn = await PRISMAService.$transaction(async (tx) => {
     await tx.$queryRaw`select id from cash_in where id = ${cashIn.id} for update`
     const oldCashIn = await tx.cashIn.findUniqueOrThrow({
       where: {
@@ -204,7 +205,7 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
       throw new Error(`Expect CashIn status is \`${CashInStatus.WAIT}\`, but \`${oldCashIn.status}\``)
     }
     if ( newCashInStatus === CashInStatus.COMPLETE ) {
-      const newCashIn = await tx.cashIn.update({
+      const newCashIn =  await tx.cashIn.update({
         where: {
           id: cashIn.id
         },
@@ -222,7 +223,7 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
       LOGGER.info('func: updateCashInStatusFromRTPPaymentId', `CashIn \`${oldCashIn.id}\` change from \`${oldCashIn.status}\` to \`${newCashIn.status}\``)
       return newCashIn
     } else if (newCashInStatus === CashInStatus.Cancel || newCashInStatus === CashInStatus.FAIL) {
-      const newCashIn = await tx.cashIn.update({
+      const newCashIn =  await tx.cashIn.update({
         where: {
           id: cashIn.id
         },
@@ -244,6 +245,11 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
       throw new Error(`Unable to process CashIn \`${cashIn.id}\``)
     }
   })
+  if (_isCashInFinish(newCashIn.status)) await processTransaction(newCashIn.transactionId)
+}
+
+function _isCashInFinish(status: CashInStatus) {
+  return status === CashInStatus.COMPLETE || status === CashInStatus.Cancel || status === CashInStatus.FAIL
 }
 
 function _cashInStatusMapper(status: string): CashInStatus {

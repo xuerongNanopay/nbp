@@ -158,3 +158,7 @@ function _isTransactionRefund(status: TransactionStatus) {
 function _isCashInFinish(status: CashInStatus) {
   return status === CashInStatus.COMPLETE || status === CashInStatus.Cancel || status === CashInStatus.FAIL
 }
+
+export function isTransferFinish(status: TransferStatus) {
+  return status === TransferStatus.CANCEL || status === TransferStatus.COMPLETE || status === TransferStatus.FAIL
+}

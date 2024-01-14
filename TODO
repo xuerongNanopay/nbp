@@ -1,2 +1,3 @@
-indexing cashing externalRef
+indexing cashin externalRef
 setting identification.ownerId unique
+indexing transfer externalRef

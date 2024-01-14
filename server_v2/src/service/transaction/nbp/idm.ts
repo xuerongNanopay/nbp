@@ -270,7 +270,7 @@ async function _IDMTransferInitial(
       throw new Error('Fail to Initial IDM transfer')
     }
 
-    const transferStatus = _transferStatusMapper(resultStatus, t.id)
+    const transferStatus = _idmTransferStatusMapper(resultStatus, t.id)
 
     if (transferStatus === TransferStatus.COMPLETE) {
       await tx.transfer.update({
@@ -315,7 +315,11 @@ async function _IDMTransferInitial(
   return true
 }
 
-function _transferStatusMapper(idmStatus: string, transactionId: number): TransferStatus {
+export async function finalizeIDMTransfer(tid: string) {
+
+}
+
+function _idmTransferStatusMapper(idmStatus: string, transactionId: number): TransferStatus {
   switch(idmStatus) {
     case "ACCEPT":
       return TransferStatus.COMPLETE
@@ -324,7 +328,7 @@ function _transferStatusMapper(idmStatus: string, transactionId: number): Transf
     case "MANUAL_REVIEW":
       return TransferStatus.WAIT
     default:
-      LOGGER.error('func: _transferStatusMapper', `Transaction \`${transactionId}\` failed to initial IDM`, `Unsupport IDM status \`${idmStatus}\``)
+      LOGGER.error('func: _idmTransferStatusMapper', `Transaction \`${transactionId}\` failed to initial IDM`, `Unsupport IDM status \`${idmStatus}\``)
       throw new Error(`Unsupport IDM status \`${idmStatus}\``)
   }
 }
