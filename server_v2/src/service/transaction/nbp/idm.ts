@@ -369,11 +369,11 @@ export async function updateIDMTransfer(transferId: number, status: 'ACCEPTED' |
     })
     if (idmTransfer.status !== TransferStatus.WAIT) {
       LOGGER.warn('func: updateIDMTransfer', `IDMTransfer \`${idmTransfer.id}\` expect to be \`${TransferStatus.WAIT}\`, but \`${idmTransfer.status}\``,)
-      return
+      return null
     }
     const newStatus = _idmTransferStatusMapper(status, idmTransfer.transactionId)
 
-    if (newStatus === TransferStatus.WAIT) return
+    if (newStatus === TransferStatus.WAIT) return null
     
     if (newStatus === TransferStatus.FAIL) {
       const newTransfer = await tx.transfer.update({
@@ -413,6 +413,7 @@ export async function updateIDMTransfer(transferId: number, status: 'ACCEPTED' |
     } else {
       LOGGER.warn('func: updateIDMTransfer', `IDMTransfer \`${idmTransfer.id}\` reach to unkown state.`)
     }
+    return null
   })
   if (!!newIDMTransfer && isTransferFinish(newIDMTransfer.status)) await processTransaction(newIDMTransfer.id)
 

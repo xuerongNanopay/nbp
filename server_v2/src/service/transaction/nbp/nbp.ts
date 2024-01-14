@@ -350,10 +350,10 @@ export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult
         })
         if (nbpTransfer.status !== TransferStatus.WAIT) {
           LOGGER.warn('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\` expect to be \`${TransferStatus.WAIT}\`, but \`${nbpTransfer.status}\``,)
-          return
+          return null
         }
         const newStatus = _nbpTransferStatusMapper(nbpTransfer.status, nbpTransfer.transactionId)
-        if (newStatus === TransferStatus.WAIT) return 
+        if (newStatus === TransferStatus.WAIT) return null
         if (
           newStatus === TransferStatus.CANCEL ||
           newStatus === TransferStatus.FAIL
@@ -397,6 +397,7 @@ export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult
         } else {
           LOGGER.warn('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\` reach to unkown state.`)
         }
+        return null
       })
       if (!!newNBPTransfer && isTransferFinish(newNBPTransfer.status)) await processTransaction(newNBPTransfer.id)
     } catch (err) {
