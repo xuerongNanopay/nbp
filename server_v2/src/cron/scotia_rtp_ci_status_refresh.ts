@@ -6,7 +6,7 @@ import { finalizeCashInStatusFromRTPPaymentId } from '@/service/transaction/nbp/
 
 export async function scotiaRTPCIStatusRefresher() {
   const cronIdentifier = uuidv4()
-  LOGGER.info('cron: scotiaRTPCIStatusRefresher initial', `cronID: \`${cronIdentifier}\``)
+  LOGGER.info('cron: scotiaRTPCIStatusRefresher start', `cronID: \`${cronIdentifier}\``)
   const cashIns = await PRISMAService.cashIn.findMany({
     where: {
       status: CashInStatus.WAIT,
