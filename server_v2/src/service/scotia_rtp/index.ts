@@ -11,6 +11,7 @@ import type {
 import {
   requestForPayment, requestForPaymentDetails, requestForPaymentStatus, rtpPaymentOptions 
 } from "@/partner/scotia_rtp/index.js"
+import { LOGGER } from '@/utils/logUtil.js';
 
 //TODO: refactor, service API should base on the feature. Make it simple to use.
 //TODO: Mock Service for development mode
@@ -21,6 +22,7 @@ export interface ScotiaRTPService {
   requestForPaymentStatus(prop: RequestForPaymentStatusProp): Promise<RequestForPaymentStatusResult> 
   requestForPaymentDetails(prop: RequestForPaymentDetailsProp): Promise<RequestForPaymentDetailResult>
   rtpPaymentOptions(prop: RTPPaymentOptionsProp): Promise<RTPPaymentOptionsResult>
+  emailLookUp(email: string): Promise<RTPPaymentOptionsResult>
 }
 
 async function _getRealService(): Promise<ScotiaRTPService> {
@@ -29,10 +31,11 @@ async function _getRealService(): Promise<ScotiaRTPService> {
     requestForPaymentStatus: _requestForPaymentStatus,
     rtpPaymentOptions: _rtpPaymentOptions,
     requestForPaymentDetails: _requestForPaymentDetails,
+    emailLookUp: _emailLookUp
   }
 }
 
-type ReqeustForPaymentProp = {
+export type ReqeustForPaymentProp = {
   transactionId: number,
   create_date_time: Date,
   amount: number,
@@ -108,7 +111,7 @@ async function _requestForPayment(
   })
 }
 
-type RequestForPaymentStatusProp = {
+export type RequestForPaymentStatusProp = {
   paymentId: string,
   transactionId: number
 }
@@ -125,8 +128,8 @@ async function _requestForPaymentStatus(
   })
 }
 
-type RTPPaymentOptionsProp = {
-  accountId: number
+export type RTPPaymentOptionsProp = {
+  accountId?: number
   email: string
 }
 
@@ -146,7 +149,7 @@ async function _rtpPaymentOptions(
   )
 }
 
-type RequestForPaymentDetailsProp = {
+export type RequestForPaymentDetailsProp = {
   paymentId: string,
   transactionId: number
 }
@@ -160,6 +163,15 @@ async function _requestForPaymentDetails(
       ['x-b3-traceid']: _transactionIdentifier(transactionId),
     }
   )
+}
+
+async function _emailLookUp(email: string): Promise<RTPPaymentOptionsResult> {
+  try {
+    return await _rtpPaymentOptions({email})
+  } catch(err) {
+    LOGGER.error('func: _emailLookUp', `look up email \`${email}\``, err)
+    throw new Error(`Fail to look up email \`${email}\``)
+  }
 }
 
 function _transactionIdentifier(transactionId: number) {

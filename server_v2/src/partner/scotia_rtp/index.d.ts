@@ -656,10 +656,10 @@ export interface RequestForPaymentStatusResult {
       ['amount']: number
       ['currency']: string
     },
-    ['partial_fulfillment_allowed']: boolean,
-    ['request_date']: string
-    ['expiry_date']: string
-    ['request_status']: string
+    ['partial_fulfillment_allowed']?: boolean,
+    ['request_date']?: string
+    ['expiry_date']?: string
+    ['request_status']?: string
     ['gateway_url']: string
   }[],
   ['notifications']?: {
