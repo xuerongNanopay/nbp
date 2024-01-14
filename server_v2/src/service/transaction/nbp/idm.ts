@@ -125,6 +125,21 @@ async function _IDMTransferInitial(
   transaction: TRANSACTION_PROJET_TYPE
 ): Promise<boolean> {
   const idmTransfer = transaction.transfers[0]!
+  const tid = idmTransfer.externalRef ?? _IDMTIDGenerator(idmTransfer.id)
+  if (!idmTransfer.externalRef) {
+    await tx.transfer.update({
+      where: {
+        id: idmTransfer.id
+      },
+      data: {
+        externalRef: tid
+      },
+      select: {
+        id: true
+      }
+    })
+  }
+
   const t = await tx.transaction.findUniqueOrThrow({
     where: {
       id: transaction.id
@@ -220,7 +235,7 @@ async function _IDMTransferInitial(
   const source = t.sourceAccount
 
   const request: TransferReqeust = {
-    tid: `${t.id}`,
+    tid,
     bfn: remitter.firstName,
     bmn: remitter.middleName,
     bln: remitter.lastName,
@@ -331,4 +346,10 @@ function _idmTransferStatusMapper(idmStatus: string, transactionId: number): Tra
       LOGGER.error('func: _idmTransferStatusMapper', `Transaction \`${transactionId}\` failed to initial IDM`, `Unsupport IDM status \`${idmStatus}\``)
       throw new Error(`Unsupport IDM status \`${idmStatus}\``)
   }
+}
+
+function _IDMTIDGenerator(transferId: number, prefix: string = 'IDM') {
+  const zero16 = '0000000000000000'
+  const stringId = `${transferId}`
+  return `${prefix}-${zero16.substring(0, 16-stringId.length)}${stringId}`
 }
