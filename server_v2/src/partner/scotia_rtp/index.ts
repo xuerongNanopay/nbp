@@ -165,7 +165,7 @@ export async function rtpPaymentOptions(
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -211,7 +211,7 @@ export async function rtpPayment(
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -256,7 +256,7 @@ export async function rtpPaymentSummary(
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -302,7 +302,7 @@ export async function requestForPayment(
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -347,7 +347,7 @@ export async function requestForPaymentStatus (
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -392,7 +392,7 @@ export async function requestForPaymentDetails(
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -439,7 +439,7 @@ export async function cancelRequestForPayment(
         `statusText: ${err.response?.statusText ?? "Empty statusText"}`,
         `data: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(

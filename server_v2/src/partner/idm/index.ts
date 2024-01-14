@@ -34,7 +34,7 @@ export async function transferout(
         `httpCode: ${err.code ?? 'Empty httpCode'}`,
         `response: ${!err.response?.data ? "Empty data" : JSON.stringify(err.response.data)}`,
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
       throw new Error(err.message ?? `IDM \`transferout\` fails with code \`${err.code}\``)
     } else {
       LOGGER.error(
