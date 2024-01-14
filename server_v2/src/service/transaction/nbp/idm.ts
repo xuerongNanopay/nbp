@@ -1,6 +1,6 @@
 import { PRISMAService } from "@/service/prisma/index.js"
 import {PrismaTransaction, TRANSACTION_PROJET_TYPE} from "./index.d.js"
-import { TRANSACTION_PROJECT } from "./index.js"
+import { TRANSACTION_PROJECT, isTransferFinish, processTransaction } from "./index.js"
 import { ContactType, IdentificationType, TransactionStatus, TransferStatus } from "@prisma/client"
 import { LOGGER } from "@/utils/logUtil.js"
 import type { TransferReqeust } from "@/partner/idm/index.d.js"
@@ -330,15 +330,101 @@ async function _IDMTransferInitial(
   return true
 }
 
-export async function finalizeIDMTransfer(tid: string) {
+export async function finalizeIDMTransfer(tid: string, decision: 'ACCEPTED' | 'REJECTED' ) {
+  const idmTransfer = await PRISMAService.transfer.findFirst({
+    where: {
+      externalRef: tid
+    },
+    select: {
+      id: true,
+      status: true,
+      transactionId: true
+    }
+  })
+
+  if(!idmTransfer) {
+    LOGGER.error('func: finalizeIDMTransfer', `IDMTransfer no found with externalRef == \`${tid}\``)
+    throw new Error(`IDM Transfer no found`)
+  }
+  if (idmTransfer.status !== TransferStatus.WAIT) {
+    LOGGER.warn('func: finalizeIDMTransfer', `IDMTransfer \`${idmTransfer.id}\` expect to be \`${TransferStatus.WAIT}\`, but \`${idmTransfer.status}\``,)
+    return
+  }
+  await updateIDMTransfer(idmTransfer.id, decision)
+}
+
+export async function updateIDMTransfer(transferId: number, status: 'ACCEPTED' | 'REJECTED' | 'ACCEPT' | 'DENY') {
+  const newIDMTransfer = await PRISMAService.$transaction(async (tx) => {
+    await tx.$queryRaw`select id from cash_in where id = ${transferId} for update`
+    const idmTransfer = await tx.transfer.findUniqueOrThrow({
+      where: {
+        id: transferId
+      },
+      select: {
+        id: true,
+        externalRef: true,
+        status: true,
+        transactionId: true
+      }
+    })
+    if (idmTransfer.status !== TransferStatus.WAIT) {
+      LOGGER.warn('func: updateIDMTransfer', `IDMTransfer \`${idmTransfer.id}\` expect to be \`${TransferStatus.WAIT}\`, but \`${idmTransfer.status}\``,)
+      return
+    }
+    const newStatus = _idmTransferStatusMapper(status, idmTransfer.transactionId)
+
+    if (newStatus === TransferStatus.WAIT) return
+    
+    if (newStatus === TransferStatus.FAIL) {
+      const newTransfer = await tx.transfer.update({
+        where: {
+          id: idmTransfer.id
+        },
+        data: {
+          status: TransferStatus.FAIL,
+          failAt: new Date(),
+          endInfo: 'IDM Transfer Rejected.'
+        },
+        select: {
+          id: true,
+          status: true,
+          transactionId: true
+        }
+      })
+      LOGGER.error('func: updateIDMTransfer', `IDMTransfer \`${idmTransfer.id}\ change from \`${idmTransfer.status}\` to \`${newTransfer.status}\`` )
+      return newTransfer
+    } else if (newStatus === TransferStatus.COMPLETE) {
+      const newTransfer = await tx.transfer.update({
+        where: {
+          id: idmTransfer.id
+        },
+        data: {
+          status: TransferStatus.COMPLETE,
+          completeAt: new Date(),
+          endInfo: 'IDM Transfer success.'
+        },
+        select: {
+          id: true,
+          status: true,
+          transactionId: true
+        }
+      })
+      LOGGER.info('func: updateIDMTransfer', `IDMTransfer \`${idmTransfer.id}\ change from \`${idmTransfer.status}\` to \`${newTransfer.status}\`` )
+    } else {
+      LOGGER.warn('func: updateIDMTransfer', `IDMTransfer \`${idmTransfer.id}\` reach to unkown state.`)
+    }
+  })
+  if (!!newIDMTransfer && isTransferFinish(newIDMTransfer.status)) await processTransaction(newIDMTransfer.id)
 
 }
 
 function _idmTransferStatusMapper(idmStatus: string, transactionId: number): TransferStatus {
   switch(idmStatus) {
     case "ACCEPT":
+    case "ACCEPTED":
       return TransferStatus.COMPLETE
     case "DENY":
+    case "REJECTED":
       return TransferStatus.FAIL
     case "MANUAL_REVIEW":
       return TransferStatus.WAIT

@@ -335,7 +335,7 @@ export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult
 
   for (const t of newStatuses) {
     try {
-      const newTransfer = await PRISMAService.$transaction(async (tx) => {
+      const newNBPTransfer = await PRISMAService.$transaction(async (tx) => {
         await tx.$queryRaw`select id from cash_in where id = ${t.transferId} for update`
         const nbpTransfer = await tx.transfer.findUniqueOrThrow({
           where: {
@@ -358,7 +358,7 @@ export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult
           newStatus === TransferStatus.CANCEL ||
           newStatus === TransferStatus.FAIL
         ) {
-          return await tx.transfer.update({
+          const newTransfer = await tx.transfer.update({
             where: {
               id: nbpTransfer.id
             },
@@ -374,8 +374,10 @@ export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult
               transactionId: true
             }
           })
+          LOGGER.error('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\ change from \`${nbpTransfer.status}\` to \`${newTransfer.status}\`` )
+          return newTransfer
         } else if (newStatus === TransferStatus.COMPLETE) {
-          return await tx.transfer.update({
+          const newTransfer = await tx.transfer.update({
             where: {
               id: nbpTransfer.id
             },
@@ -390,11 +392,13 @@ export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult
               transactionId: true
             }
           })
+          LOGGER.info('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\ change from \`${nbpTransfer.status}\` to \`${newTransfer.status}\`` )
+          return newTransfer
         } else {
           LOGGER.warn('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\` reach to unkown state.`)
         }
       })
-      if (!!newTransfer && isTransferFinish(newTransfer.status)) await processTransaction(newTransfer.id)
+      if (!!newNBPTransfer && isTransferFinish(newNBPTransfer.status)) await processTransaction(newNBPTransfer.id)
     } catch (err) {
       LOGGER.error('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\``, err)
     }

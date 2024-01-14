@@ -172,7 +172,7 @@ export async function finalizeCashInStatusFromRTPPaymentId(paymentId: string) {
   }
   if (cashIn.status !== CashInStatus.WAIT) {
     LOGGER.warn('func: updateCashInStatusFromRTPPaymentId', `Cash In \`${cashIn.id}\` is not in \`${CashInStatus.WAIT}\` but \`${cashIn.status}\``)
-    throw new Error(`Unable to process payment_id: \`${paymentId}\``)
+    return
   }
 
   const paymentDetails = await ScotiaRTPService.requestForPaymentDetails({paymentId: paymentId, transactionId: cashIn.transactionId})
