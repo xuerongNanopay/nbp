@@ -330,6 +330,7 @@ async function _IDMTransferInitial(
   return true
 }
 
+//Mainly use to calling from WebHook
 export async function finalizeIDMTransfer(tid: string, decision: 'ACCEPTED' | 'REJECTED' ) {
   const idmTransfer = await PRISMAService.transfer.findFirst({
     where: {

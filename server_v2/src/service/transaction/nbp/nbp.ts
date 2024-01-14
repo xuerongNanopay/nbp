@@ -331,6 +331,83 @@ function _buildAddressSummary({
   return ret
 }
 
+//TODO: abstract with finalizeNBPTransfers
+export async function finalizeNBPTransfer(transactionId: number, transferId: number) {
+  const newNBPTransfer = await PRISMAService.$transaction(async (tx) => {
+    await tx.$queryRaw`select id from transaction where id = ${transactionId} for update`
+    const nbpTransfer = await tx.transfer.findUniqueOrThrow({
+      where: {
+        id: transferId
+      },
+      select: {
+        id: true,
+        status: true,
+        externalRef: true,
+        transactionId: true
+      }
+    })
+    if (nbpTransfer.status !== TransferStatus.WAIT) {
+      LOGGER.warn('func: finalizeNBPTransfer', `NBPTransfer \`${transferId}\` expect to be \`${TransferStatus.WAIT}\`, but \`${nbpTransfer.status}\``,)
+      return nbpTransfer
+    }
+    const statusesResult = await NBPService.transactionStatusByIds(nbpTransfer.externalRef!)
+    if (!statusesResult.transactionStatuses || statusesResult.transactionStatuses.length !== 1) {
+      LOGGER.warn('func: finalizeNBPTransfer', `NBPTransfer do not receive any data from NBP with GLOBAL_ID \`${nbpTransfer.externalRef!}\``)
+    }
+    const statusResult = statusesResult.transactionStatuses[0]!
+    const newStatus = _nbpTransferStatusMapper(statusResult.Status, nbpTransfer.transactionId)
+    if (newStatus === TransferStatus.WAIT) return nbpTransfer
+    if (
+      newStatus === TransferStatus.CANCEL ||
+      newStatus === TransferStatus.FAIL
+    ) {
+      const newTransfer = await tx.transfer.update({
+        where: {
+          id: nbpTransfer.id
+        },
+        data: {
+          status: newStatus,
+          cancelAt: newStatus === TransferStatus.CANCEL ? new Date() : null,
+          failAt: newStatus === TransferStatus.FAIL ? new Date() : null,
+          endInfo: newStatus === TransferStatus.CANCEL ? 'NBP Transfer canceled' : 'NBP Transfer failed'
+        },
+        select: {
+          id: true,
+          status: true,
+          externalRef: true,
+          transactionId: true
+        }
+      })
+      LOGGER.error('func: finalizeNBPTransfer', `NBPTransfer \`${newTransfer.id}\ change from \`${nbpTransfer.status}\` to \`${newTransfer.status}\`` )
+      return newTransfer
+    } else if (newStatus === TransferStatus.COMPLETE) {
+      const newTransfer = await tx.transfer.update({
+        where: {
+          id: nbpTransfer.id
+        },
+        data: {
+          status: newStatus,
+          completeAt: new Date(),
+          endInfo: 'NBP Transfer successed.'
+        },
+        select: {
+          id: true,
+          status: true,
+          externalRef: true,
+          transactionId: true
+        }
+      })
+      LOGGER.info('func: finalizeNBPTransfer', `NBPTransfer \`${newTransfer.id}\ change from \`${nbpTransfer.status}\` to \`${newTransfer.status}\`` )
+      return newTransfer
+    } else {
+      LOGGER.warn('func: finalizeNBPTransfer', `NBPTransfer \`${nbpTransfer.id}\` reach to unkown state.`)
+    }
+    return nbpTransfer
+  })
+  if (!!newNBPTransfer && isTransferFinish(newNBPTransfer.status)) await processTransaction(newNBPTransfer.transactionId)
+  return newNBPTransfer
+}
+
 export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult&{transferId: number, transactionId: number})[]) {
 
   for (const t of newStatuses) {
@@ -343,17 +420,16 @@ export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult
           },
           select: {
             id: true,
-            externalRef: true,
             status: true,
             transactionId: true
           }
         })
         if (nbpTransfer.status !== TransferStatus.WAIT) {
-          LOGGER.warn('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\` expect to be \`${TransferStatus.WAIT}\`, but \`${nbpTransfer.status}\``,)
-          return null
+          LOGGER.warn('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\` expect to be \`${TransferStatus.WAIT}\`, but \`${nbpTransfer.status}\``)
+          return nbpTransfer
         }
-        const newStatus = _nbpTransferStatusMapper(nbpTransfer.status, nbpTransfer.transactionId)
-        if (newStatus === TransferStatus.WAIT) return null
+        const newStatus = _nbpTransferStatusMapper(t.Status, nbpTransfer.transactionId)
+        if (newStatus === TransferStatus.WAIT) return nbpTransfer
         if (
           newStatus === TransferStatus.CANCEL ||
           newStatus === TransferStatus.FAIL
@@ -397,7 +473,7 @@ export async function finalizeNBPTransfers(newStatuses: (TransactionStatusResult
         } else {
           LOGGER.warn('func: finalizeNBPTransfers', `NBPTransfer \`${t.transferId}\` reach to unkown state.`)
         }
-        return null
+        return nbpTransfer
       })
       if (!!newNBPTransfer && isTransferFinish(newNBPTransfer.status)) await processTransaction(newNBPTransfer.transactionId)
     } catch (err) {

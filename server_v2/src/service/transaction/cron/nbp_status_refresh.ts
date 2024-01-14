@@ -5,7 +5,7 @@ import { LOGGER } from '@/utils/logUtil.js'
 import { TransferStatus } from '@prisma/client'
 import { v4 as uuidv4 } from 'uuid'
 
-export async function nbpStatusRefresh() {
+export async function nbpStatusRefresher() {
   const cronIdentifier = uuidv4()
   LOGGER.info('cron: nbpStatusRefresh initial', `cronID: \`${cronIdentifier}\``)
 
