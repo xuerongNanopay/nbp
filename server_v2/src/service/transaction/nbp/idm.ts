@@ -1,8 +1,10 @@
 import { PRISMAService } from "@/service/prisma/index.js"
 import {PrismaTransaction, TRANSACTION_PROJET_TYPE} from "./index.d.js"
 import { TRANSACTION_PROJECT } from "./index.js"
-import { TransactionStatus, TransferStatus } from "@prisma/client"
+import { ContactType, IdentificationType, TransactionStatus, TransferStatus } from "@prisma/client"
 import { LOGGER } from "@/utils/logUtil.js"
+import type { TransferReqeust } from "@/partner/idm/index.d.js"
+import sha1 from 'sha1'
 
 export async function idmProcessor(transactionId: number): Promise<boolean> {
   return await PRISMAService.$transaction(async (tx) => {
@@ -128,4 +130,147 @@ async function _idmTerminateProcessor(
   })
   LOGGER.warn(`IDM Terminate Processor`, `Transaction \`${transaction.id} terminated in \`${updateTransaction.status}\`.\``)
   return false
+}
+
+async function _IDMTransferInitial(
+  tx: PrismaTransaction, 
+  transaction: TRANSACTION_PROJET_TYPE
+) {
+  const idmTransfer = transaction.transfers[0]!
+  const t = await tx.transaction.findUniqueOrThrow({
+    where: {
+      id: transaction.id
+    },
+    select: {
+      id: true,
+      destinationAmount: true,
+      destinationCurrency: true,
+      sourceAmount: true,
+      sourceCurrency: true,
+      transactionPurpose: true,
+      owner: {
+        select: {
+          id: true,
+          firstName: true,
+          middleName: true,
+          lastName: true,
+          address1: true,
+          address2: true,
+          city: true,
+          postalCode: true,
+          phoneNumber: true,
+          dob: true,
+          pob: true,
+          nationality: true,
+          province: {
+            select: {
+              abbr: true
+            }
+          },
+          countryCode: true,
+          identification: {
+            select: {
+              type: true,
+              value: true
+            }
+          },
+          occupation: {
+            select: {
+              type: true
+            }
+          },
+          logins: {
+            select: {
+              email: true
+            }
+          }
+        }
+      },
+      destinationContact: {
+        select: {
+          id: true,
+          type: true,
+          firstName: true,
+          middleName: true,
+          lastName: true,
+          address1: true,
+          address2: true,
+          city: true,
+          postalCode: true,
+          phoneNumber: true,
+          province: {
+            select: {
+              abbr: true
+            }
+          },
+          countryCode: true,
+          institution: {
+            select: {
+              abbr: true
+            }
+          },
+          bankAccountNum: true,
+          branchNum: true,
+          iban: true,
+          relationship: {
+            select: {
+              type: true
+            }
+          }
+        }
+      },
+      sourceAccount: {
+        select: {
+          id: true
+        }
+      },
+      createdAt: true
+    }
+  })
+  const remitter = t.owner
+  const beneficiary = t.destinationContact
+  const source = t.sourceAccount
+
+  const request: TransferReqeust = {
+    tid: `${t.id}`,
+    bfn: remitter.firstName,
+    bmn: remitter.middleName,
+    bln: remitter.lastName,
+    memo16: remitter.occupation.type,
+    bsn: remitter.address1,
+    bc: remitter.city,
+    bco: remitter.countryCode,
+    bs: remitter.province.abbr,
+    bz: remitter.postalCode,
+    phn: remitter.phoneNumber.replace(/-/g, ''),
+    tea: remitter.logins[0]?.email ?? null,
+    dob: `${remitter.dob.getTime()}`,
+    memo18: remitter.pob,
+    nationality: remitter.nationality,
+    passportId: remitter.identification!.type === IdentificationType.PASSPORT ? `CA:${remitter.identification?.value}` : null,
+    driverId: remitter.identification!.type === IdentificationType.DRIVER_LICENSE ? `CA:${remitter.identification?.value}` : null,
+    nationalId: remitter.identification!.type === IdentificationType.PROVINCAL_ID ? `CA:${remitter.identification?.value}` : null,
+    phash: sha1(`${source.id}`),
+    sfn: beneficiary.firstName,
+    smn: beneficiary.middleName,
+    sln: beneficiary.lastName,
+    dpach: beneficiary.type === ContactType.BANK_ACCOUNT ? sha1(beneficiary.iban ?? beneficiary.bankAccountNum!) : null,
+    memo9: beneficiary.type === ContactType.BANK_ACCOUNT ? beneficiary.institution?.abbr : null,
+    memo17: beneficiary.type === ContactType.CASH_PICKUP,
+    dph: beneficiary.phoneNumber ?? null,
+    memo20: beneficiary.relationship?.type,
+    ssn: beneficiary.address1,
+    sc: beneficiary.city,
+    ss: beneficiary.province.abbr,
+    sco: beneficiary.countryCode,
+    sz: beneficiary.postalCode,
+    memo15: t.transactionPurpose,
+    tti: `${t.createdAt.getTime()}`,
+    amt: `${t.sourceAmount/100.0}`,
+    ccy: t.sourceCurrency,
+    memo13: `${t.destinationAmount/100.0}`,
+    memo12: t.destinationCurrency,
+    man: `${remitter.id}`,
+    dman: `${beneficiary.id}`
+  }
 }
