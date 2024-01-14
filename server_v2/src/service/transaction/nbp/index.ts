@@ -67,6 +67,9 @@ export async function initialCashIn(transactionId: number): Promise<CashIn> {
     return await scotialRTPCashIn(tx, transaction.id)
   })
   if (_isCashInFinish(cashIn.status)) await processTransaction(cashIn.transactionId)
+  if ( cashIn.status === CashInStatus.Cancel || cashIn.status === CashInStatus.FAIL ) {
+    throw new Error(`Transaction \`${transactionId}\` failed to initial payment.`)
+  }
   return cashIn
 }
 
