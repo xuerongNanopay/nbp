@@ -272,13 +272,25 @@ async function _NBPTransferInitial(
       }
     })
     return false
-  } catch(err) {
+  } catch(err: any) {
     let endInfo: string
     if (err instanceof APIError) {
-      LOGGER.info('func: _NBPInitialTransferInitial', `Transaction \`${transaction.id}\` failed to initialNBP transfer.`, `code: \`${err.response?.ResponseCode}\` message: \`${err.response?.ResponseMessage}\``)
+      endInfo = err.response?.ResponseMessage ?? "NPB Initial Failed"
+      LOGGER.error('func: _NBPInitialTransferInitial', `Transaction \`${transaction.id}\` failed to initialNBP transfer.`, `code: \`${err.response?.ResponseCode}\` message: \`${err.response?.ResponseMessage}\``)
     } else {
-
+      endInfo = err.message ?? "NPB Initial Failed"
+      LOGGER.error('func: _NBPInitialTransferInitial', `Transaction \`${transaction.id}\` failed to initialNBP transfer.`, err)
     }
+    await tx.transfer.update({
+      where: {
+        id: nbpTransfer.id
+      },
+      data: {
+        status: TransferStatus.FAIL,
+        failAt: new Date(),
+        endInfo: endInfo
+      }
+    })
   }
   return true
 }
