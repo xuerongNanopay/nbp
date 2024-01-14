@@ -167,7 +167,7 @@ export async function rtpPaymentOptions(
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
         `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -214,7 +214,7 @@ export async function rtpPayment(
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
         `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -260,7 +260,7 @@ export async function rtpPaymentSummary(
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
         `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -307,7 +307,7 @@ export async function requestForPayment(
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
         `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -353,7 +353,7 @@ export async function requestForPaymentStatus (
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
         `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -399,7 +399,7 @@ export async function requestForPaymentDetails(
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
         `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(
@@ -447,7 +447,7 @@ export async function cancelRequestForPayment(
         `response: ${!err.response?.data ? "Empty response" : JSON.stringify(err.response.data)}`,
         `request: ${!err.request ? "Empty Request": JSON.stringify(err.request)}`
       )
-      if ( !!err.response ) throw new APIError({httpCode: err.response.status, data: err.response.data, request: err.request})
+      if ( !!err.response ) throw new APIError({httpCode: err.response.status, response: err.response.data, request: err.request})
       throw new Error(err.message ?? err.name ?? err.code)
     } else {
       LOGGER.error(

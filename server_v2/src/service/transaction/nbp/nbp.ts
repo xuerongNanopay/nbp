@@ -5,7 +5,7 @@ import { PRISMAService } from "@/service/prisma/index.js"
 import { TRANSACTION_PROJECT } from "./index.js"
 import { NBPService } from "@/service/nbp/index.js"
 import dayjs from "dayjs"
-import type { LoadRemittanceAccountsRequest, LoadRemittanceCashRequest, LoadRemittanceRequest, LoadRemittanceThirdPartyRequest } from "@/partner/nbp/index.d.js"
+import type { LoadRemittanceAccountsRequest, LoadRemittanceCashRequest, LoadRemittanceRequest, LoadRemittanceResult, LoadRemittanceThirdPartyRequest } from "@/partner/nbp/index.d.js"
 import { APIError } from "@/schema/error.js"
 
 export async function nbpProcessor(transactionId: number): Promise<boolean> {
@@ -54,18 +54,7 @@ async function _nbpInitialProcessor(
   }
 
   //TODO: call NBP
-  await tx.transfer.update({
-    where: {
-      id: transfer.id
-    },
-    data: {
-      status: TransferStatus.WAIT,
-      waitAt: new Date()
-    }
-  })
-
-  LOGGER.info(`NBP Complete Processor`, `transaction \`${transaction.id}\``, `Transfer \`${transfer.id}\` Initial Successfully.\``)
-  return false
+  return _NBPTransferInitial(tx, transaction)
 }
 
 async function _nbpCompleteProcessor(
@@ -123,10 +112,10 @@ async function _nbpTerminateProcessor(
   return false
 }
 
-async function _NBPInitialTransferInitial(
+async function _NBPTransferInitial(
   tx: PrismaTransaction, 
   transaction: TRANSACTION_PROJET_TYPE
-) {
+): Promise<boolean> {
   const nbpTransfer = transaction.transfers[1]!
   const Global_Id = nbpTransfer.externalRef ?? _globalIdGenerator(nbpTransfer.id)
   if (!nbpTransfer.externalRef) {
@@ -245,12 +234,14 @@ async function _NBPInitialTransferInitial(
   }
 
   try {
+    let result: LoadRemittanceResult
     if (beneficiary.type === ContactType.CASH_PICKUP) {
       const request: LoadRemittanceCashRequest = {
         ...temp,
         Pmt_Mode: 'CASH',
         Beneficiary_Bank: 'NBP'
       }
+      result = await NBPService.loadRemittanceCash(request)
     } else {
       if (beneficiary.institution!.abbr === 'NBP') {
         const request: LoadRemittanceAccountsRequest = {
@@ -259,6 +250,7 @@ async function _NBPInitialTransferInitial(
           Beneficiary_Bank: 'NBP',
           Beneficiary_Account: beneficiary.iban ?? beneficiary.bankAccountNum!
         }
+        result = await NBPService.loadRemittanceAccounts(request)
       } else {
         const request: LoadRemittanceThirdPartyRequest = {
           ...temp,
@@ -266,15 +258,29 @@ async function _NBPInitialTransferInitial(
           Beneficiary_Bank: beneficiary.institution!.abbr,
           Beneficiary_Account: beneficiary.iban ?? beneficiary.bankAccountNum!
         }
+        result = await NBPService.loadRemittanceThirdParty(request)
       }
     }
+    LOGGER.info('func: _NBPInitialTransferInitial', `Transaction \`${transaction.id}\` initialed NBP transfer successfully.`)
+    await tx.transfer.update({
+      where: {
+        id: nbpTransfer.id
+      },
+      data: {
+        status: TransferStatus.WAIT,
+        waitAt: new Date()
+      }
+    })
+    return false
   } catch(err) {
+    let endInfo: string
     if (err instanceof APIError) {
-
+      LOGGER.info('func: _NBPInitialTransferInitial', `Transaction \`${transaction.id}\` failed to initialNBP transfer.`, `code: \`${err.response?.ResponseCode}\` message: \`${err.response?.ResponseMessage}\``)
     } else {
-      
+
     }
   }
+  return true
 }
 
 //TODO: refine.
