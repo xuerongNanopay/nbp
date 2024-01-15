@@ -6,8 +6,9 @@
   "main": "app.js",
   "scripts": {
     "clean": "rm -rf ./dist",
-    "compile": "npm run clean && tsc && tsc-alias",
-    "start": "npm run clean && npm run compile && node ./dist/app.js",
+    "build": "npm run clean && tsc && tsc-alias",
+    "start": "node ./dist/app.js",
+    "dev": "npm run build && node ./dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prismaGen": "npx prisma generate --schema=./src/schema/schema.prisma",
     "prismaFormat": "npx prisma format --schema=./src/schema/schema.prisma"

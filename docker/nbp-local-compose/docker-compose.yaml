@@ -22,6 +22,16 @@ services:
       MYSQL_ROOT_PASSWORD: '123456'
     networks:
       - nbp-local-compose-network
+  nbp_server:
+    build: ../../server_v2 
+    container_name: nbp_server
+    hostname: nbp_server
+    env_file:
+      - ./server.env
+    ports:
+      - 3040:3040
+    networks:
+      - nbp-local-compose-network
 
 networks:
   nbp-local-compose-network:
