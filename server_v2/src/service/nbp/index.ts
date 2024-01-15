@@ -9,9 +9,11 @@ import type {
   TransactionStatusByDateResult,
   TransactionStatusByIdsResult
 } from "@/partner/nbp/index.d.js"
+import { MockNBPService } from "./mock.js"
 
 //TODO: Mock Service for development mode
-export const NBPService = await _getRealService()
+// export const NBPService = await _getRealService()
+export const NBPService = MockNBPService
 
 export interface NBPService {
   hello(): Promise<string>

@@ -61,7 +61,6 @@ async function _nbpInitialProcessor(
     throw new Error('Unsupport status')
   }
 
-  //TODO: call NBP
   return _NBPTransferInitial(tx, transaction)
 }
 
@@ -296,7 +295,8 @@ async function _NBPTransferInitial(
       data: {
         status: TransferStatus.FAIL,
         failAt: new Date(),
-        endInfo: endInfo
+        // endInfo: endInfo
+        endInfo: 'NBP Transfer Initial Failed'
       }
     })
   }
