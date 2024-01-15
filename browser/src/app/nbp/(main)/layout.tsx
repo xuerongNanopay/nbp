@@ -9,6 +9,7 @@ export default async function MainLayout({
 }: {
   children: React.ReactNode
 }) {
+  //TODO: using middleware for auth guard.
   const session = await fetchSession()
   if(!session || !session.login) redirect('/nbp/sign_in')
 
