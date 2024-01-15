@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import cookie from 'cookie'
-import { AAAA, fetchSessionFromRawCookies } from './lib/session'
+import { fetchSessionFromRawCookies } from './lib/session'
 
 // TODO: IF cookie is about to expire and user still active then delay expiration for 1 hours.
 export async function middleware(request: NextRequest) {

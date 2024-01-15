@@ -38,7 +38,7 @@ export async function fetchSession(): ReturnType<typeof cookieSessionStore.loadS
     return null
   }
 }
-export async function AAAA() {}
+
 export async function fetchSessionFromRawCookies(cookies: Record<string, string>): ReturnType<typeof cookieSessionStore.loadSession> {
   const cookieData: {name: string, value: string}[] = []
   for (const key in cookies) {
