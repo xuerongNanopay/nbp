@@ -6,9 +6,12 @@ import {
 import { getCurrencyRate } from '@/lib/currencyRate'
 import { fetchSession } from '@/lib/session'
 import { getTransactionsByOwnerId } from '@/lib/transaction'
+import { redirect } from 'next/navigation'
 
 export default async function Dashboard() {
   const session = await fetchSession()
+  //TODO: rethink. I don't like this.
+  if(!session || !session.login) redirect('/nbp/sign_in')
   const currencyRate = await getCurrencyRate(session!, "CAD", "PKR")
 
   const transactions = await getTransactionsByOwnerId(session!, {from: 0, size: 10})
