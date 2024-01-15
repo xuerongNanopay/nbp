@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  nbp_browser:
+    build: ../../browser 
+    container_name: nbp_browser
+    hostname: nbp_browser
+    env_file:
+      - ./browser.env
+    ports:
+      - 3000:3000
+    networks:
+      - nbp-local-compose-network
+  mysql:
+    container_name: mysql_8
+    image: mysql:8.1
+    ports:
+      - "3306:3306"
+    volumes:
+      - ../data/mysql_8:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456'
+    networks:
+      - nbp-local-compose-network
+
+networks:
+  nbp-local-compose-network:
+    driver: bridge
