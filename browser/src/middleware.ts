@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server'
 import cookie from 'cookie'
 import { fetchSessionFromRawCookies } from './lib/session'
 
+// INVESTIGATE: middleware is incompatable with winston logger. issue: https://github.com/vercel/next.js/discussions/50509
 // TODO: IF cookie is about to expire and user still active then delay expiration for 1 hours.
 export async function middleware(request: NextRequest) {
   // console.log(request.url)
