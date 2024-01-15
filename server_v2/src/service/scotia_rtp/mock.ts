@@ -33,7 +33,8 @@ export const MockScotiaRTPService: ScotiaRTPService = {
   requestForPaymentDetails: async (prop: RequestForPaymentDetailsProp): Promise<RequestForPaymentDetailResult> => {
     // 80 percent of transaction will pass
     // This will allow us to test unhappy path as well.
-    const random_boolean = Math.random() < 0.8;
+    // const random_boolean = Math.random() < 0.8;
+    const random_boolean = Math.random() < 1;
     return {
       data: {
         transaction_status: random_boolean ? 'ACSP' : 'RJCT',
