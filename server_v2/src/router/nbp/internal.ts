@@ -57,7 +57,7 @@ type UpdateNBPTransferPostParams = {
 }
 
 ROUTER.post('/update_nbp_transfer', async (req, res) => {
-  const request = req.body as UpdateIDMTransferPostParams
+  const request = req.body as UpdateNBPTransferPostParams
   try {
     const transfer = await refreshNBPTransferStatus(request.transactionId)
     res.status(200).json({
