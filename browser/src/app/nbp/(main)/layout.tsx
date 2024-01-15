@@ -10,7 +10,7 @@ export default async function MainLayout({
   children: React.ReactNode
 }) {
   const session = await fetchSession()
-  if(!session || !session.login) redirect('/nbp/sign_out')
+  if(!session || !session.login) redirect('/nbp/sign_in')
 
   if (session.login.status === LoginStatus.AWAIT_VERIFY) redirect('/nbp/verify_email')
   if (session.user === null) redirect('/nbp/onboarding')
