@@ -2,11 +2,13 @@ import type {
   TransferReqeust, 
   TransferResult 
 } from "@/partner/idm/index.d.js"
+import { MOCKIDMService } from "./mock.js"
 
 //TODO: Mock Service for development mode
-export const IDMService = await _getRealService()
+// export const IDMService = await _getRealService()
+export const IDMService = MOCKIDMService
 
-interface IDMService {
+export interface IDMService {
   transferout(request: TransferReqeust): Promise<TransferResult>
 }
 
