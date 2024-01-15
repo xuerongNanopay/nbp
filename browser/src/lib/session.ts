@@ -3,7 +3,6 @@ import { cookies as nextCookies } from 'next/headers'
 import { JWTExpired } from "jose/errors"
 import type { Session } from '@/types/auth'
 import { JWT_SECRET, SESSION_AGE } from '@/constants/env'
-import { LOGGER } from '@/utils/logUtil'
 
 if ( ! JWT_SECRET ) {
   console.error("JWT_SECRET does not provide")
@@ -34,7 +33,25 @@ export async function fetchSession(): ReturnType<typeof cookieSessionStore.loadS
     return sessionPayload
   } catch ( err ) {
     if ( !(err instanceof JWTExpired) ) {
-      LOGGER.error("Session parse error: ", err)
+      console.error("Session parse error: ", err)
+    }
+    return null
+  }
+}
+export async function AAAA() {}
+export async function fetchSessionFromRawCookies(cookies: Record<string, string>): ReturnType<typeof cookieSessionStore.loadSession> {
+  const cookieData: {name: string, value: string}[] = []
+  for (const key in cookies) {
+    cookieData.push({name: key, value: cookies[key]})
+  }
+  try {
+    let sessionPayload = await cookieSessionStore.loadSession(cookieData)
+    if ( sessionPayload == null ) return null
+
+    return sessionPayload
+  } catch ( err ) {
+    if ( !(err instanceof JWTExpired) ) {
+      console.error("Session parse error: ", err)
     }
     return null
   }
