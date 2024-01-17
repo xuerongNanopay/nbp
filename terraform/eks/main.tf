@@ -15,6 +15,12 @@ module "vpc" {
   public_subnet_az2_cidr = var.public_subnet_az2_cidr
   private_subnet_az1_cidr = var.private_subnet_az1_cidr
   private_subnet_az2_cidr = var.private_subnet_az2_cidr
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = 1
+  }
+  public_subnet_tags = {
+    "kubernetes.io/role/elb" = 1
+  }
 }
 
 module "nat_gateway" {
