@@ -2,7 +2,10 @@ resource "random_pet" "APP_NAME" {
   length = 1
 }
 
-variable "APP_NAME" {
-  type = string
-  default = "${random_pet.APP_NAME.id}"
-}
+variable "region" {}
+variable "environment"{}
+variable "app_name" {}
+
+variable "vpc_cidr"{}
+variable "public_subnet_az1_cidr" {}
+variable "public_subnet_az2_cidr" {}
