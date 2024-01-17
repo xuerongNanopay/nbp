@@ -62,7 +62,7 @@ resource "aws_iam_role_policy_attachment" "eks_cluster_AmazonEKSClusterPolicy" {
 }
 
 resource "aws_eks_cluster" "eks_cluster" {
-  name = var.app_name
+  name = "${var.app_name}-${var.environment}-eks-cluster"
   role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
@@ -74,7 +74,45 @@ resource "aws_eks_cluster" "eks_cluster" {
     ]
   }
 
+  tags = {
+    Name = "${var.app_name}-${var.environment}-eks-cluster"
+  }
+
   depends_on = [ aws_iam_role_policy_attachment.eks_cluster_AmazonEKSClusterPolicy ]
+}
+
+resource "aws_eks_addon" "esk_addon_vpc-cni" {
+  cluster_name = aws_eks_cluster.eks_cluster.name
+  addon_name   = "vpc-cni"
+  addon_version = data.aws_eks_addon_version.vpc-cni_latest.version
+}
+resource "aws_eks_addon" "esk_addon_kube-proxy" {
+  cluster_name = aws_eks_cluster.eks_cluster.name
+  addon_name   = "kube-proxy"
+  addon_version = data.aws_eks_addon_version.kube-proxy_latest.version
+}
+resource "aws_eks_addon" "esk_addon_coredns" {
+  cluster_name = aws_eks_cluster.eks_cluster.name
+  addon_name   = "coredns"
+  addon_version = data.aws_eks_addon_version.coredns_lastest.version
+}
+
+data "aws_eks_addon_version" "vpc-cni_latest" {
+  addon_name         = "vpc-cni"
+  kubernetes_version = aws_eks_cluster.eks_cluster.version
+  most_recent        = true
+}
+
+data "aws_eks_addon_version" "kube-proxy_latest" {
+  addon_name         = "kube-proxy"
+  kubernetes_version = aws_eks_cluster.eks_cluster.version
+  most_recent        = true
+}
+
+data "aws_eks_addon_version" "coredns_lastest" {
+  addon_name         = "coredns"
+  kubernetes_version = aws_eks_cluster.eks_cluster.version
+  most_recent        = true
 }
 
 resource "aws_iam_role" "eks_node_role" {
@@ -115,4 +153,40 @@ resource "aws_iam_role_policy_attachment" "eks_node_AmazonEKS_CNI_Policy" {
 resource "aws_iam_role_policy_attachment" "eks_node_AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role = aws_iam_role.eks_node_role.name
+}
+
+resource "aws_eks_node_group" "eks_private_node_group" {
+  cluster_name = aws_eks_cluster.eks_cluster.name
+  node_group_name = "${var.app_name}-${var.environment}-eks-node-group"
+  node_role_arn = aws_iam_role.eks_node_role.arn
+
+  subnet_ids = [
+    module.vpc.private_subnet_az1_id,
+    module.vpc.private_subnet_az2_id,
+    module.vpc.public_subnet_az1_id,
+    module.vpc.public_subnet_az2_id
+  ]
+
+  capacity_type = "ON_DEMAND"
+  instance_types = ["t3.small"]
+
+  scaling_config {
+    desired_size = 2
+    max_size = 2
+    min_size = 2
+  }
+
+  update_config {
+    max_unavailable = 1
+  }
+
+  tags = {
+    Name = "${var.app_name}-${var.environment}-eks-node-group"
+  }
+
+  depends_on = [ 
+    aws_iam_role_policy_attachment.eks_node_AmazonEC2ContainerRegistryReadOnly,
+    aws_iam_role_policy_attachment.eks_node_AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.eks_node_AmazonEKSWorkerNodePolicy
+  ]
 }

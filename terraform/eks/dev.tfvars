@@ -1,6 +1,6 @@
 region = "us-east-2"
-environment = "test"
-app_name = "eks"
+environment = "development"
+app_name = "nbp"
 
 vpc_cidr = "192.168.0.0/16"
 public_subnet_az1_cidr = "192.168.0.0/18"
