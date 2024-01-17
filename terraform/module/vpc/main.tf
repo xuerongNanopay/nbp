@@ -77,9 +77,12 @@ resource "aws_subnet" "private_subnet_za1" {
   availability_zone = data.aws_availability_zones.available_zones.names[0]
   map_public_ip_on_launch = false
   
-  tags = {
-    Name = "${var.app_name}-${var.environment}-private-az1"
-  }
+  tags = merge(
+    {
+      Name = "${var.app_name}-${var.environment}-private-az1"
+    },
+    var.private_subnet_tags
+  )
 }
 
 resource "aws_subnet" "private_subnet_za2" {
@@ -88,7 +91,10 @@ resource "aws_subnet" "private_subnet_za2" {
   availability_zone = data.aws_availability_zones.available_zones.names[1]
   map_public_ip_on_launch = false
 
-  tags = {
-    Name = "${var.app_name}-${var.environment}-private-az2"
-  }
+  tags = merge(
+    {
+      Name = "${var.app_name}-${var.environment}-private-az2"
+    },
+    var.private_subnet_tags
+  )
 }
