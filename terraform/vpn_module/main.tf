@@ -13,9 +13,17 @@ resource "aws_vpc" "vpc" {
   enable_dns_support = true
 
   tags = {
-    Name = "${var.app_name}-${var.environment}-VPC"
+    Name = "${var.app_name}-${var.environment}-vpc"
   }
 }
+
+resource "aws_default_route_table" "default_route_table" {
+  default_route_table_id = aws_vpc.vpc.default_route_table_id
+  tags = {
+    Name = "${var.app_name}-${var.environment}-default-rt"
+  }
+}
+
 
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.vpc.id
@@ -25,18 +33,10 @@ resource "aws_internet_gateway" "internet_gateway" {
   }
 }
 
-resource "aws_route_table" "public_route_table_01" {
-  vpc_id = aws_vpc.xrw_ue1_vpc.id
-
-  tags = {
-    Name = "${var.app_name}-${var.environment}-public-route-table"
-  }
-}
-
 resource "aws_subnet" "public_subnet_za1" {
   vpc_id     = aws_vpc.vpc.id
   cidr_block = var.public_subnet_az1_cidr
-  availability_zone = data.aws_availability_zones.available_zones.names[0]
+  availability_zone = data.aws_availability_zones.available_zones.names[1]
   map_public_ip_on_launch = true
 
   tags = {
@@ -47,7 +47,7 @@ resource "aws_subnet" "public_subnet_za1" {
 resource "aws_subnet" "public_subnet_za2" {
   vpc_id     = aws_vpc.vpc.id
   cidr_block = var.public_subnet_az2_cidr
-  availability_zone = data.aws_availability_zones.available_zones.names[1]
+  availability_zone = data.aws_availability_zones.available_zones.names[0]
   map_public_ip_on_launch = true
   
   tags = {
@@ -101,12 +101,28 @@ resource "aws_subnet" "private_subnet_za2" {
   }
 }
 
-resource "aws_route_table_association" "private_subnet_1_rt_association" {
-  subnet_id      = aws_subnet.private_subnet_za1.id
-  route_table_id = aws_route_table.private_route_table.id
+resource "aws_eip" "eip" {
+  domain = "vpc"
+
+    tags = {
+    Name = "${var.app_name}-${var.environment}-nat-gateway-ip"
+  }
 }
 
-resource "aws_route_table_association" "private_subnet_2_rt_association" {
-  subnet_id      = aws_subnet.private_subnet_za2.id
-  route_table_id = aws_route_table.private_route_table.id
+
+resource "aws_nat_gateway" "nat_gateway" {
+  allocation_id = aws_eip.eip.id
+  subnet_id = aws_subnet.public_subnet_za1.id
+  connectivity_type = "public"
+
+    tags = {
+    Name = "${var.app_name}-${var.environment}-nat-gateway"
+  }
+}
+
+resource "aws_route" "nat_route" {
+  route_table_id = aws_default_route_table.default_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id = aws_nat_gateway.nat_gateway.id
+  depends_on = [ aws_default_route_table.default_route_table ]
 }
