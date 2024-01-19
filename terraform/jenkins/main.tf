@@ -7,9 +7,9 @@ locals {
     user_data = <<-EOT
       #!/bin/bash
       sudo apt-get update -y
+      cd /tmp/
       wget https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.deb
-      sudo apt-get install ./mount-s3.deb
-      rm -f ./mount-s3.deb
+      sudo apt-get install ./mount-s3.deb -y
 
       sudo mkdir /mount_s3
       sudo mount-s3 ${var.bucket_name} /mount_s3
@@ -39,7 +39,8 @@ resource "aws_security_group" "from_my_home" {
     to_port          = 0
     protocol         = "-1"
     # Check you public ip. It may change over time
-    cidr_blocks      = [var.my_public_ip]
+    # cidr_blocks      = [var.my_public_ip]
+    cidr_blocks      = ["0.0.0.0/0"]
   }
 
   egress {
@@ -66,7 +67,8 @@ data "aws_iam_policy_document" "s3_access" {
     effect  = "Allow"
     actions = ["s3:*"]
     resources = [
-      var.bucket_arn
+      var.bucket_arn,
+      "${module.s3.s3_bucket_arn}/*"
     ]
   }
 }
