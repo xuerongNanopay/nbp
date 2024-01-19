@@ -73,7 +73,12 @@ resource "terraform_data" "push_jenkins_data" {
   triggers_replace = module.jenkins.instance_id
   provisioner "local-exec" {
     when = create
-    command = "sleep 30 && scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ./jenkins_docker ubuntu@${module.jenkins.public_ip}:~/jenkins_docker"
+    interpreter = ["/bin/bash", "-c"]
+    command = <<EOT
+      sleep 20 && \
+      scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ./jenkins_docker ubuntu@${module.jenkins.public_ip}:~/jenkins_docker && \
+      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@${module.jenkins.public_ip} '[[ -f ~/jenkins_docker/jenkins-volumn.tgz ]] && (cd ~/jenkins_docker && tar xzf jenkins-volumn.tgz) || echo "No jenkins-volumn.tgz"'
+    EOT
   }
 }
 
@@ -81,8 +86,12 @@ resource "terraform_data" "pull_jenkins_data" {
   triggers_replace = aws_route53_record.demain.id
   provisioner "local-exec" {
     when = destroy
-    command = "scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@jenkins.xrw.io:~/jenkins_docker ."
-    on_failure = continue
+    interpreter = ["/bin/bash", "-c"]
+    command = <<EOT
+      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@jenkins.xrw.io 'test ~/jenkins_docker/jenkins-volumn.tgz && rm ~/jenkins_docker/jenkins-volumn.tgz && test ~/jenkins_docker/volumn && cd ~/jenkins_docker && tar czf jenkins-volumn.tgz ./volumn' && \
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@jenkins.xrw.io:~/jenkins_docker/jenkins-volumn.tgz ./jenkins_docker
+    EOT
+    # on_failure = continue
   }
 }
 
