@@ -21,9 +21,17 @@ resource "aws_key_pair" "key_pair" {
   public_key = file("~/.ssh/xrw_ec2.pub")
 }
 
+data "aws_vpc" "selected" {
+  id = var.vpc_id
+}
+
+data "aws_subnet" "selected" {
+  id = var.subnet_id
+}
+
 resource "aws_security_group" "from_my_home" {
   name        = "${var.app_name}-${var.environment}-from-my-gome-sg"
-  vpc_id      = var.vpc_id
+  vpc_id      = data.aws_vpc.selected.id
 
   ingress {
     description      = "from my home only"
@@ -99,7 +107,7 @@ module "jenkins" {
   app_name = var.app_name
   vpc_security_group_ids = [aws_security_group.from_my_home.id]
   iam_instance_profile = aws_iam_instance_profile.jenkins_instance_profile.name
-  subnet_id = var.subnet_id
+  subnet_id = data.aws_subnet.selected.id
   user_data = local.user_data
   key_name = aws_key_pair.key_pair.id
 }
