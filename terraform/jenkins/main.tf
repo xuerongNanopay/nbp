@@ -88,7 +88,9 @@ resource "terraform_data" "pull_jenkins_data" {
     when = destroy
     interpreter = ["/bin/bash", "-c"]
     command = <<EOT
-      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@jenkins.xrw.io 'test ~/jenkins_docker/jenkins-volumn.tgz && rm ~/jenkins_docker/jenkins-volumn.tgz && test ~/jenkins_docker/volumn && cd ~/jenkins_docker && tar czf jenkins-volumn.tgz ./volumn' && \
+      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@jenkins.xrw.io '[[ -f ~/jenkins_docker/jenkins-volumn.tgz ]] && (rm ~/jenkins_docker/jenkins-volumn.tgz) || echo "No jenkins-volumn.tgz"' && \
+      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@jenkins.xrw.io 'cd ~/jenkins_docker && sudo tar czf jenkins-volumn.tgz ./volumn' && \
+      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@jenkins.xrw.io 'cd ~/jenkins_docker && sudo docker compose down' && \
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@jenkins.xrw.io:~/jenkins_docker/jenkins-volumn.tgz ./jenkins_docker
     EOT
     # on_failure = continue
