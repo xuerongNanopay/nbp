@@ -11,8 +11,8 @@ locals {
       wget https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.deb
       sudo apt-get install ./mount-s3.deb -y
 
-      sudo mkdir /mount_s3
-      sudo mount-s3 ${var.bucket_name} /mount_s3
+      sudo mkdir /jenkin_mount
+      sudo mount-s3 ${var.bucket_name} /jenkin_mount
     EOT
 }
 
@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "s3_access" {
     actions = ["s3:*"]
     resources = [
       var.bucket_arn,
-      "${module.s3.s3_bucket_arn}/*"
+      "${var.bucket_arn}/*"
     ]
   }
 }
