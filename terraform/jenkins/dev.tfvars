@@ -1,6 +1,6 @@
 region = "us-east-2"
 environment = "development"
-app_name = "single_public_ec2"
+app_name = "jenkin_test_instance"
 
 vpc_cidr = "192.168.0.0/16"
 public_subnet_az1_cidr = "192.168.0.0/18"
