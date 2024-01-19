@@ -7,12 +7,6 @@ locals {
     user_data = <<-EOT
       #!/bin/bash
       sudo apt-get update -y
-      cd /tmp/
-      wget https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.deb
-      sudo apt-get install ./mount-s3.deb -y
-
-      sudo mkdir /jenkins_mount
-      sudo mount-s3 ${var.bucket_name} /jenkins_mount
 
       # Install docker.
       sudo apt-get update
@@ -23,10 +17,6 @@ locals {
       echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
       sudo apt-get update -y
       sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-
-      # Install jenkins using docker
-      sudo docker compose -f /jenkins_mount/docker-compose.yaml up
-
     EOT
 }
 
@@ -67,56 +57,6 @@ resource "aws_security_group" "jenkins_sg" {
   }
 }
 
-data "aws_iam_policy_document" "ec2_assume_role" {
-  statement {
-    effect = "Allow"
-    principals {
-      identifiers = ["ec2.amazonaws.com"]
-      type        = "Service"
-    }
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-data "aws_iam_policy_document" "s3_access" {
-  statement {
-    effect  = "Allow"
-    actions = ["s3:*"]
-    resources = [
-      var.bucket_arn,
-      "${var.bucket_arn}/*"
-    ]
-  }
-}
-
-data "aws_iam_policy" "AmazonSSMManagedInstanceCore" {
-  name = "AmazonSSMManagedInstanceCore"
-}
-
-resource "aws_iam_instance_profile" "jenkins_instance_profile" {
-  name = "${var.app_name}-${var.environment}-ec2-role"
-  role = aws_iam_role.ec2_assume_role.name
-}
-resource "aws_iam_policy" "s3_access" {
-  name   = "${var.app_name}-${var.environment}-s3-access"
-  policy = data.aws_iam_policy_document.s3_access.json
-}
-
-resource "aws_iam_role" "ec2_assume_role" {
-  name = "${var.environment}_ec2_assume_role"
-  assume_role_policy = data.aws_iam_policy_document.ec2_assume_role.json
-}
-
-resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
-  policy_arn = data.aws_iam_policy.AmazonSSMManagedInstanceCore.arn
-  role       = aws_iam_role.ec2_assume_role.name
-}
-
-resource "aws_iam_role_policy_attachment" "s3_access" {
-  policy_arn = aws_iam_policy.s3_access.arn
-  role       = aws_iam_role.ec2_assume_role.name
-}
-
 module "jenkins" {
   source = "../module/instance"
   instance_type = "t2.small"
@@ -124,10 +64,26 @@ module "jenkins" {
   environment = var.environment
   app_name = var.app_name
   vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
-  iam_instance_profile = aws_iam_instance_profile.jenkins_instance_profile.name
   subnet_id = data.aws_subnet.selected.id
   user_data = local.user_data
   key_name = aws_key_pair.key_pair.id
+}
+
+resource "terraform_data" "push_jenkins_data" {
+  triggers_replace = module.jenkins.instance_id
+  provisioner "local-exec" {
+    when = create
+    command = "sleep 30 && scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ./jenkins_docker ubuntu@${module.jenkins.public_ip}:~/jenkins_docker"
+  }
+}
+
+resource "terraform_data" "pull_jenkins_data" {
+  triggers_replace = aws_route53_record.demain.id
+  provisioner "local-exec" {
+    when = destroy
+    command = "scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@jenkins.xrw.io:~/jenkins_docker ."
+    on_failure = continue
+  }
 }
 
 data "aws_route53_zone" "hosted_zone" {
