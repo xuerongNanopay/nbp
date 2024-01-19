@@ -13,6 +13,20 @@ locals {
 
       sudo mkdir /jenkins_mount
       sudo mount-s3 ${var.bucket_name} /jenkins_mount
+
+      # Install docker.
+      sudo apt-get update
+      sudo apt-get install ca-certificates curl gnupg
+      sudo install -m 0755 -d /etc/apt/keyrings
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+      sudo chmod a+r /etc/apt/keyrings/docker.gpg
+      echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      sudo apt-get update -y
+      sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+
+      # Install jenkins using docker
+      sudo docker compose -f /jenkins_mount/docker-compose.yaml up
+
     EOT
 }
 
@@ -34,43 +48,22 @@ resource "aws_security_group" "jenkins_sg" {
   vpc_id      = data.aws_vpc.selected.id
 
   ingress {
-    description      = "ssh my home only"
+    description      = "my home only"
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
     cidr_blocks      = [var.my_public_ip]
   }
-  ingress {
-    description      = "for mountpoint-s3 wget"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    # This IP may change over time
-    cidr_blocks      = ["54.231.198.232/32", "16.182.73.96/32", "16.182.103.200/32"]
-  }
-  ingress {
-    description      = "for mountpoint-s3 wget"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    # This IP may change over time
-    cidr_blocks      = ["54.231.198.232/32", "16.182.73.96/32", "16.182.103.200/32"]
-  }
-  # ingress {
-  #   description      = "from my home only"
-  #   from_port        = 0
-  #   to_port          = 0
-  #   protocol         = "-1"
-  #   # Check you public ip. It may change over time
-  #   # cidr_blocks      = [var.my_public_ip]
-  #   cidr_blocks      = ["0.0.0.0/0"]
-  # }
 
   egress {
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.app_name}-${var.environment}-jenkins-sg"
   }
 }
 

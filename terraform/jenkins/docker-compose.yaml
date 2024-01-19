@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 10s
+    privileged: true
+    user: root
+    ports:
+      - 80:8080
+      - 50000:50000
+    container_name: jenkins-lts
+    volumes:
+      - /jenkins_mount/jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
