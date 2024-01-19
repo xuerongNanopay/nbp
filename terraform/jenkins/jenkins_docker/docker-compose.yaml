@@ -13,5 +13,5 @@ services:
       - 50000:50000
     container_name: jenkins-lts
     volumes:
-      - /jenkins_mount/jenkins_data:/var/jenkins_home
+      - ./volumn:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
