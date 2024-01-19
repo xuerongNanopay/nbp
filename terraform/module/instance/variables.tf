@@ -9,6 +9,11 @@ variable "volume_size" {
   type = number
 }
 
+variable "instance_ami" {
+  type = string
+  default = null
+}
+
 variable "instance_type" {
   default = "t2.micro"
   description = "aws instance type to lunch jenkins"
@@ -31,4 +36,9 @@ variable "key_name" {
   description = "Key name of the Key Pair to use for the instance; which can be managed using the `aws_key_pair` resource"
   type        = string
   default     = null
+}
+
+variable "iam_instance_profile" {
+  type = string
+  default = null
 }

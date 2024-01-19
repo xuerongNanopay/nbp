@@ -6,41 +6,14 @@ provider "aws" {
 locals {
     user_data = <<-EOT
       #!/bin/bash
-      echo "Hello Terraform!"
+      sudo apt-get update -y
+      wget https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.deb
+      sudo apt-get install ./mount-s3.deb
+      rm -f ./mount-s3.deb
+
+      sudo mkdir /mount_s3
+      sudo mount-s3 ${var.bucket_name} /mount_s3
     EOT
-}
-
-module "vpc" {
-  source = "../module/vpc"
-
-  region = var.region
-  environment = var.environment
-  app_name = var.app_name
-
-  vpc_cidr = var.vpc_cidr
-  public_subnet_az1_cidr = var.public_subnet_az1_cidr
-  public_subnet_az2_cidr = var.public_subnet_az2_cidr
-  private_subnet_az1_cidr = var.private_subnet_az1_cidr
-  private_subnet_az2_cidr = var.private_subnet_az2_cidr
-  private_subnet_tags = {
-    "kubernetes.io/role/internal-elb" = 1
-  }
-  public_subnet_tags = {
-    "kubernetes.io/role/elb" = 1
-  }
-}
-
-module "nat_gateway" {
-  source = "../module/nat-gateway"
-
-  environment = var.environment
-  app_name = var.app_name
-  vpc_id = module.vpc.vpc_id
-  public_subnet_az1_id = module.vpc.public_subnet_az1_id
-  public_subnet_az2_id = module.vpc.public_subnet_az2_id
-  private_subnet_az1_id = module.vpc.private_subnet_az1_id
-  private_subnet_az2_id = module.vpc.private_subnet_az2_id
-  internet_gateway = module.vpc.internet_gateway
 }
 
 resource "aws_key_pair" "key_pair" {
@@ -50,7 +23,7 @@ resource "aws_key_pair" "key_pair" {
 
 resource "aws_security_group" "from_my_home" {
   name        = "${var.app_name}-${var.environment}-from-my-gome-sg"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = var.vpc_id
 
   ingress {
     description      = "from my home only"
@@ -69,13 +42,64 @@ resource "aws_security_group" "from_my_home" {
   }
 }
 
+data "aws_iam_policy_document" "ec2_assume_role" {
+  statement {
+    effect = "Allow"
+    principals {
+      identifiers = ["ec2.amazonaws.com"]
+      type        = "Service"
+    }
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+data "aws_iam_policy_document" "s3_access" {
+  statement {
+    effect  = "Allow"
+    actions = ["s3:*"]
+    resources = [
+      var.bucket_arn
+    ]
+  }
+}
+
+data "aws_iam_policy" "AmazonSSMManagedInstanceCore" {
+  name = "AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_instance_profile" "jenkins_instance_profile" {
+  name = "${var.app_name}-${var.environment}-ec2-role"
+  role = aws_iam_role.ec2_assume_role.name
+}
+resource "aws_iam_policy" "s3_access" {
+  name   = "${var.app_name}-${var.environment}-s3-access"
+  policy = data.aws_iam_policy_document.s3_access.json
+}
+
+resource "aws_iam_role" "ec2_assume_role" {
+  name = "${var.environment}_ec2_assume_role"
+  assume_role_policy = data.aws_iam_policy_document.ec2_assume_role.json
+}
+
+resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
+  policy_arn = data.aws_iam_policy.AmazonSSMManagedInstanceCore.arn
+  role       = aws_iam_role.ec2_assume_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "s3_access" {
+  policy_arn = aws_iam_policy.s3_access.arn
+  role       = aws_iam_role.ec2_assume_role.name
+}
+
 module "jenkins" {
   source = "../module/instance"
+  instance_type = "t2.small"
   instance_name = "jenkins"
   environment = var.environment
   app_name = var.app_name
   vpc_security_group_ids = [aws_security_group.from_my_home.id]
-  subnet_id = module.vpc.public_subnet_az1_id
+  iam_instance_profile = aws_iam_instance_profile.jenkins_instance_profile.name
+  subnet_id = var.subnet_id
   user_data = local.user_data
   key_name = aws_key_pair.key_pair.id
 }
