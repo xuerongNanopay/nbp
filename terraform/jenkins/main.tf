@@ -11,8 +11,8 @@ locals {
       wget https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.deb
       sudo apt-get install ./mount-s3.deb -y
 
-      sudo mkdir /jenkin_mount
-      sudo mount-s3 ${var.bucket_name} /jenkin_mount
+      sudo mkdir /jenkins_mount
+      sudo mount-s3 ${var.bucket_name} /jenkins_mount
     EOT
 }
 
@@ -29,19 +29,42 @@ data "aws_subnet" "selected" {
   id = var.subnet_id
 }
 
-resource "aws_security_group" "from_my_home" {
-  name        = "${var.app_name}-${var.environment}-from-my-gome-sg"
+resource "aws_security_group" "jenkins_sg" {
+  name        = "${var.app_name}-${var.environment}-jenkins-sg"
   vpc_id      = data.aws_vpc.selected.id
 
   ingress {
-    description      = "from my home only"
+    description      = "ssh my home only"
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
-    # Check you public ip. It may change over time
-    # cidr_blocks      = [var.my_public_ip]
-    cidr_blocks      = ["0.0.0.0/0"]
+    cidr_blocks      = [var.my_public_ip]
   }
+  ingress {
+    description      = "for mountpoint-s3 wget"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    # This IP may change over time
+    cidr_blocks      = ["54.231.198.232/32", "16.182.73.96/32", "16.182.103.200/32"]
+  }
+  ingress {
+    description      = "for mountpoint-s3 wget"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    # This IP may change over time
+    cidr_blocks      = ["54.231.198.232/32", "16.182.73.96/32", "16.182.103.200/32"]
+  }
+  # ingress {
+  #   description      = "from my home only"
+  #   from_port        = 0
+  #   to_port          = 0
+  #   protocol         = "-1"
+  #   # Check you public ip. It may change over time
+  #   # cidr_blocks      = [var.my_public_ip]
+  #   cidr_blocks      = ["0.0.0.0/0"]
+  # }
 
   egress {
     from_port        = 0
@@ -107,7 +130,7 @@ module "jenkins" {
   instance_name = "jenkins"
   environment = var.environment
   app_name = var.app_name
-  vpc_security_group_ids = [aws_security_group.from_my_home.id]
+  vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
   iam_instance_profile = aws_iam_instance_profile.jenkins_instance_profile.name
   subnet_id = data.aws_subnet.selected.id
   user_data = local.user_data
