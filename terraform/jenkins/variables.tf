@@ -1,16 +1,17 @@
+variable "region" {}
 variable "environment"{}
 variable "app_name" {}
 
-variable "subnet_id" {}
+variable "vpc_cidr"{}
+variable "public_subnet_az1_cidr" {}
+variable "public_subnet_az2_cidr" {}
+variable "private_subnet_az1_cidr" {}
+variable "private_subnet_az2_cidr" {}
 
-variable "instance_type" {
-  default = "t2.large"
-  description = "aws instance type to lunch jenkins"
+variable "domain_name" {
+  default = "xrw.io"
+  description = "domain name"
   type = string
 }
 
-variable "vpc_security_group_ids" {
-  description = "A list of security group IDs to associate with"
-  type        = list(string)
-  default     = null
-}
+variable "my_public_ip" {}
