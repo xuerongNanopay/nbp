@@ -21,8 +21,6 @@ locals {
     EOT
 }
 
-# sudo docker compose -f /home/ubuntu/nbp/docker/nbp-local-compose/docker-compose.yaml up -d
-
 resource "aws_key_pair" "key_pair" {
   key_name = "${var.app_name}-${var.environment}-key-pair"
   public_key = file("~/.ssh/xrw_ec2.pub")
@@ -88,20 +86,20 @@ module "nbp" {
   key_name = aws_key_pair.key_pair.id
 }
 
-# resource "terraform_data" "push_jenkins_data" {
-#   triggers_replace = module.nbp.instance_id
-#   provisioner "local-exec" {
-#     when = create
-#     interpreter = ["/bin/bash", "-c"]
-#     command = <<EOT
-#       sleep 20 && \
-#       scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ../../docker/data/mysql_dump/nbp.sql ubuntu@${module.nbp.public_ip}:~/nbp.sql && \
-#       ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@${module.nbp.public_ip} 'sudo docker exec -i mysql_8 sh -c "exec mysql -u root -p123456 nbp < nbp.sql"'
-#     EOT
-#     on_failure = continue
-#   }
-# }
-
+resource "terraform_data" "push_jenkins_data" {
+  triggers_replace = module.nbp.instance_id
+  provisioner "local-exec" {
+    when = create
+    interpreter = ["/bin/bash", "-c"]
+    command = <<EOT
+      sleep 20 && \
+      scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ../../docker/data/mysql_dump/nbp.sql ubuntu@${module.nbp.public_ip}:~/nbp.sql
+    EOT
+    on_failure = continue
+  }
+}
+# sudo docker compose -f /home/ubuntu/nbp/docker/nbp-local-compose/docker-compose.yaml up -d
+# ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@${module.nbp.public_ip} 'sudo docker exec -i mysql_8 sh -c "exec mysql -u root -p123456 nbp < nbp.sql"'
 # resource "terraform_data" "pull_jenkins_data" {
 #   triggers_replace = aws_route53_record.demain.id
 #   provisioner "local-exec" {
