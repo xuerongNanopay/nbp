@@ -20,13 +20,13 @@ function assertENVNumber(key: string, DEFAULT?: number): number {
   if (!value) {
     if (!DEFAULT) {
       console.error(`Environment variable \`${key}\` should not be EMPTY.`)
-      process.exit(1)
+      throw new Error(`Environment Variable \`{key}\` do not provide.`)
     }
     return DEFAULT
   }
   if (isNaN(parseInt(value))) {
     console.error(`Environment variable \`${key}\` should be a number. But get: \`${key}\``)
-    process.exit(1)
+    throw new Error(`Environment Variable \`{key}\` do not provide.`)
   }
   return parseInt(value)
 }
@@ -36,7 +36,7 @@ function assertENVString(key: string, DEFAULT?: string): string {
   if (!value) {
     if (!DEFAULT) {
       console.error(`Environment variable \`${key}\` should not be EMPTY.`)
-      process.exit(1)
+      throw new Error(`Environment Variable \`{key}\` do not provide.`)
     }
     return DEFAULT
   }
