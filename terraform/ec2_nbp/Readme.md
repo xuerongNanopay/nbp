@@ -10,9 +10,6 @@ build compose
 ```
 sudo docker compose -f=/home/ubuntu/nbp/docker/nbp-ec2-compose/docker-compose.yaml build
 ```
-```
-sudo docker compose -f=/home/ubuntu/nbp/docker/nbp-ec2-compose/docker-compose-db.yaml build
-```
 down compose
 ```
 sudo docker compose -f=/home/ubuntu/nbp/docker/nbp-ec2-compose/docker-compose.yaml down
@@ -22,5 +19,5 @@ up compose
 sudo docker compose -f=/home/ubuntu/nbp/docker/nbp-ec2-compose/docker-compose.yaml up
 ```
 ```
-sudo docker compose -f=/home/ubuntu/nbp/docker/nbp-ec2-compose/docker-compose-db.yaml up
+sudo docker compose -f=/home/ubuntu/nbp/docker/nbp-ec2-compose/docker-compose-db.yaml up -d
 ```
