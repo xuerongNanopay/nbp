@@ -18,6 +18,7 @@ services:
       - "3306:3306"
     volumes:
       - ../data/mysql_8:/var/lib/mysql
+      - ../data/mysql_dump:/tmp/dump
     environment:
       MYSQL_ROOT_PASSWORD: '123456'
     networks:
