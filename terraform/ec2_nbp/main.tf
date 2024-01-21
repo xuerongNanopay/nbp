@@ -18,6 +18,7 @@ locals {
       sudo apt-get update -y
       sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
       sudo git clone https://github.com/xuerongNanopay/nbp.git /home/ubuntu/nbp
+      sudo docker compose -f=/home/ubuntu/nbp/docker/nbp-ec2-compose/docker-compose.yaml up -d
     EOT
 }
 

@@ -9,10 +9,12 @@ services:
     #   - ./browser.env
     # environment:
     #   - NODE_ENV=dev
+    depends_on:
+      - mysql
     ports:
       - 3000:3000
     networks:
-      - nbp-local-compose-network
+      - nbp-ec2-network
   mysql:
     container_name: mysql_8
     image: mysql:8.1
@@ -24,18 +26,20 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: '123456'
     networks:
-      - nbp-local-compose-network
+      - nbp-ec2-network
   nbp_server:
     build: ../../server_v2 
     container_name: nbp_server
     hostname: nbp_server
+    depends_on:
+      - mysql
     env_file:
       - ./server.env
     ports:
       - 3040:3040
     networks:
-      - nbp-local-compose-network
+      - nbp-ec2-network
 
 networks:
-  nbp-local-compose-network:
-    driver: bridge
+  nbp-ec2-network:
+    external: true
