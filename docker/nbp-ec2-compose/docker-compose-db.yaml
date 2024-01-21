@@ -7,7 +7,6 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ../data/mysql_8:/var/lib/mysql
       - /tmp/:/tmp/
     environment:
       MYSQL_ROOT_PASSWORD: '123456'

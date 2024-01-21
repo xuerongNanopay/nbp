@@ -26,7 +26,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: '123456'
     networks:
-      - nbp-ec2-network
+      - nbp-ec2-compose_nbp-ec2-network
   nbp_server:
     build: ../../server_v2 
     container_name: nbp_server
@@ -38,8 +38,8 @@ services:
     ports:
       - 3040:3040
     networks:
-      - nbp-ec2-network
+      - nbp-ec2-compose_nbp-ec2-network
 
 networks:
-  nbp-ec2-network:
+  nbp-ec2-compose_nbp-ec2-network:
     external: true
