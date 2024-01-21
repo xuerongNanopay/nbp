@@ -17,8 +17,11 @@ locals {
       echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
       sudo apt-get update -y
       sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+      sudo git clone https://github.com/xuerongNanopay/nbp.git /home/ubuntu/nbp
     EOT
 }
+
+# sudo docker compose -f /home/ubuntu/nbp/docker/nbp-local-compose/docker-compose.yaml up -d
 
 resource "aws_key_pair" "key_pair" {
   key_name = "${var.app_name}-${var.environment}-key-pair"
@@ -86,15 +89,16 @@ module "nbp" {
 }
 
 # resource "terraform_data" "push_jenkins_data" {
-#   triggers_replace = module.jenkins.instance_id
+#   triggers_replace = module.nbp.instance_id
 #   provisioner "local-exec" {
 #     when = create
 #     interpreter = ["/bin/bash", "-c"]
 #     command = <<EOT
 #       sleep 20 && \
-#       scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ./jenkins_docker ubuntu@${module.jenkins.public_ip}:~/jenkins_docker && \
-#       ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@${module.jenkins.public_ip} '[[ -f ~/jenkins_docker/jenkins-volumn.tgz ]] && (cd ~/jenkins_docker && tar xzf jenkins-volumn.tgz) || echo "No jenkins-volumn.tgz"'
+#       scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ../../docker/data/mysql_dump/nbp.sql ubuntu@${module.nbp.public_ip}:~/nbp.sql && \
+#       ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ubuntu@${module.nbp.public_ip} 'sudo docker exec -i mysql_8 sh -c "exec mysql -u root -p123456 nbp < nbp.sql"'
 #     EOT
+#     on_failure = continue
 #   }
 # }
 
@@ -124,7 +128,7 @@ resource "aws_route53_record" "demain" {
   ttl     = "300"
 
 
-  records = [module.jenkins.public_ip]
+  records = [module.nbp.public_ip]
 
-  depends_on = [ module.jenkins ]
+  depends_on = [ module.nbp ]
 }
