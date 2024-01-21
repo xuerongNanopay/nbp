@@ -10,7 +10,7 @@ services:
     # environment:
     #   - NODE_ENV=dev
     ports:
-      - 3000:3000
+      - 80:3000
     networks:
       - nbp-ec2-compose_nbp-ec2-network
   nbp_server:

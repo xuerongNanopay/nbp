@@ -7,8 +7,9 @@ import { fetchSessionFromRawCookies } from './lib/session'
 // TODO: IF cookie is about to expire and user still active then delay expiration for 1 hours.
 export async function middleware(request: NextRequest) {
   // console.log(request.url)
-  const allCookies = cookie.parse(request.headers.get('cookie') ?? '')
-  console.log(await fetchSessionFromRawCookies(allCookies))
+  // TODO: not the best way.
+  // const allCookies = cookie.parse(request.headers.get('cookie') ?? '')
+  // console.log(await fetchSessionFromRawCookies(allCookies))
   
   // const url = new URL(request.url)
   // console.log(url)
