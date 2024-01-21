@@ -93,7 +93,7 @@ resource "terraform_data" "push_jenkins_data" {
     interpreter = ["/bin/bash", "-c"]
     command = <<EOT
       sleep 20 && \
-      scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ../../docker/data/mysql_dump/nbp.sql ubuntu@${module.nbp.public_ip}:~/nbp.sql
+      scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/xrw_ec2 ../../docker/data/mysql_dump/nbp.sql ubuntu@${module.nbp.public_ip}:/tmp/nbp.sql
     EOT
     on_failure = continue
   }
