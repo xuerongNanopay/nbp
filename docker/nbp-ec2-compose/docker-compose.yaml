@@ -5,8 +5,8 @@ services:
     build: ../../browser 
     container_name: nbp_browser
     hostname: nbp_browser
-    # env_file:
-    #   - ./browser.env
+    env_file:
+      - ./browser.env
     # environment:
     #   - NODE_ENV=dev
     ports:
