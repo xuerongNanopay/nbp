@@ -56,7 +56,15 @@ resource "aws_security_group" "nbp_sg" {
   }
 
     ingress {
-    description      = "export 3000"
+    description      = "export 80"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+    ingress {
+    description      = "export 3040"
     from_port        = 3040
     to_port          = 3040
     protocol         = "tcp"
