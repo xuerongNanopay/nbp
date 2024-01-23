@@ -8,14 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
+    var hasSession = true
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        if hasSession {
+            SignInView()
+        } else {
+            DashBoardView()
         }
-        .padding()
     }
 }
 
