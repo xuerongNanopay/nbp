@@ -60,7 +60,7 @@ struct SignInView: View {
                     .padding(.top, 5)
                 
                 Button(action: {
-                    print("Sign In button click")
+                    print("Sign In with email: \(email) and password: \(password)")
                 }) {
                   Text("Sign In")
                     .font(.headline)
