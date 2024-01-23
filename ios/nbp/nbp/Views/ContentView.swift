@@ -11,9 +11,9 @@ struct ContentView: View {
     var hasSession = true
     var body: some View {
         if hasSession {
-            SignIn()
+            SignInView()
         } else {
-            DashBoard()
+            DashBoardView()
         }
     }
 }

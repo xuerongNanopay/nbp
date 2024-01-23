@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct DashBoard: View {
+struct DashBoardView: View {
     var body: some View {
         let _ = print("DashBoard creating")
         Text("Dash board").bold()
@@ -15,5 +15,5 @@ struct DashBoard: View {
 }
 
 #Preview {
-    DashBoard()
+    DashBoardView()
 }

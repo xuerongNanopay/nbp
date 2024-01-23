@@ -11,8 +11,9 @@
 		76269DBA2B5E3FFB00CAAB3E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DB92B5E3FFB00CAAB3E /* ContentView.swift */; };
 		76269DBC2B5E3FFD00CAAB3E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76269DBB2B5E3FFD00CAAB3E /* Assets.xcassets */; };
 		76269DBF2B5E3FFD00CAAB3E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76269DBE2B5E3FFD00CAAB3E /* Preview Assets.xcassets */; };
-		76269DC72B5E40FE00CAAB3E /* SignIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DC62B5E40FE00CAAB3E /* SignIn.swift */; };
-		76269DC92B5E420800CAAB3E /* DashBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DC82B5E420800CAAB3E /* DashBoard.swift */; };
+		76269DC72B5E40FE00CAAB3E /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DC62B5E40FE00CAAB3E /* SignInView.swift */; };
+		76269DC92B5E420800CAAB3E /* DashBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DC82B5E420800CAAB3E /* DashBoardView.swift */; };
+		76269DD12B5F5A4500CAAB3E /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DD02B5F5A4500CAAB3E /* SignUpView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,8 +22,9 @@
 		76269DB92B5E3FFB00CAAB3E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		76269DBB2B5E3FFD00CAAB3E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		76269DBE2B5E3FFD00CAAB3E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		76269DC62B5E40FE00CAAB3E /* SignIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignIn.swift; sourceTree = "<group>"; };
-		76269DC82B5E420800CAAB3E /* DashBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashBoard.swift; sourceTree = "<group>"; };
+		76269DC62B5E40FE00CAAB3E /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		76269DC82B5E420800CAAB3E /* DashBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashBoardView.swift; sourceTree = "<group>"; };
+		76269DD02B5F5A4500CAAB3E /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,9 +77,11 @@
 		76269DC52B5E40DA00CAAB3E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				76269DCF2B5F55C200CAAB3E /* Components */,
+				76269DCC2B5F4F5A00CAAB3E /* Resources */,
+				76269DCB2B5F3A4F00CAAB3E /* Authentications */,
 				76269DB92B5E3FFB00CAAB3E /* ContentView.swift */,
-				76269DC62B5E40FE00CAAB3E /* SignIn.swift */,
-				76269DC82B5E420800CAAB3E /* DashBoard.swift */,
+				76269DC82B5E420800CAAB3E /* DashBoardView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -87,6 +91,29 @@
 			children = (
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		76269DCB2B5F3A4F00CAAB3E /* Authentications */ = {
+			isa = PBXGroup;
+			children = (
+				76269DC62B5E40FE00CAAB3E /* SignInView.swift */,
+				76269DD02B5F5A4500CAAB3E /* SignUpView.swift */,
+			);
+			path = Authentications;
+			sourceTree = "<group>";
+		};
+		76269DCC2B5F4F5A00CAAB3E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		76269DCF2B5F55C200CAAB3E /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -159,9 +186,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76269DC72B5E40FE00CAAB3E /* SignIn.swift in Sources */,
+				76269DC72B5E40FE00CAAB3E /* SignInView.swift in Sources */,
+				76269DD12B5F5A4500CAAB3E /* SignUpView.swift in Sources */,
 				76269DBA2B5E3FFB00CAAB3E /* ContentView.swift in Sources */,
-				76269DC92B5E420800CAAB3E /* DashBoard.swift in Sources */,
+				76269DC92B5E420800CAAB3E /* DashBoardView.swift in Sources */,
 				76269DB82B5E3FFB00CAAB3E /* nbpApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
