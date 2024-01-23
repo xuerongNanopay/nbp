@@ -7,4 +7,4 @@ subnet_id = "subnet-951fead8"
 bucket_arn="arn:aws:s3:::xrw-jenkins-mount"
 bucket_name="xrw-jenkins-mount"
 
-my_public_ip = "67.71.20.89/32"
+my_public_ip = "67.70.120.104/32"

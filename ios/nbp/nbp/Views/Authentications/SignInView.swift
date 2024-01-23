@@ -80,6 +80,7 @@ struct SignInView: View {
                         print("Sign Up button click")
                     }) {
                         Text("Create an account")
+                            .foregroundStyle(.green300)
                     }
                 }
                 .frame(maxWidth: .infinity)
