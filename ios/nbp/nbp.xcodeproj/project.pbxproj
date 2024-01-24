@@ -15,6 +15,7 @@
 		76269DF12B5F68DC00CAAB3E /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF02B5F68DC00CAAB3E /* SignUpView.swift */; };
 		76269DF32B5F691400CAAB3E /* DashBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF22B5F691400CAAB3E /* DashBoardView.swift */; };
 		76269DF72B60A50800CAAB3E /* ADInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF62B60A50800CAAB3E /* ADInput.swift */; };
+		76269DFA2B60D28100CAAB3E /* FormValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF92B60D28100CAAB3E /* FormValidator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		76269DF02B5F68DC00CAAB3E /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		76269DF22B5F691400CAAB3E /* DashBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashBoardView.swift; sourceTree = "<group>"; };
 		76269DF62B60A50800CAAB3E /* ADInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADInput.swift; sourceTree = "<group>"; };
+		76269DF92B60D28100CAAB3E /* FormValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormValidator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,7 @@
 				76269DDE2B5F664A00CAAB3E /* nbpApp.swift */,
 				76269DE22B5F664C00CAAB3E /* Assets.xcassets */,
 				76269DE42B5F664C00CAAB3E /* Preview Content */,
+				76269DF82B60D1EA00CAAB3E /* Utils */,
 				76269DEC2B5F687500CAAB3E /* Views */,
 			);
 			path = nbp;
@@ -101,6 +104,14 @@
 				76269DF62B60A50800CAAB3E /* ADInput.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		76269DF82B60D1EA00CAAB3E /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				76269DF92B60D28100CAAB3E /* FormValidator.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -177,6 +188,7 @@
 				76269DF32B5F691400CAAB3E /* DashBoardView.swift in Sources */,
 				76269DEF2B5F68CB00CAAB3E /* SignInView.swift in Sources */,
 				76269DF72B60A50800CAAB3E /* ADInput.swift in Sources */,
+				76269DFA2B60D28100CAAB3E /* FormValidator.swift in Sources */,
 				76269DE12B5F664A00CAAB3E /* ContentView.swift in Sources */,
 				76269DDF2B5F664A00CAAB3E /* nbpApp.swift in Sources */,
 			);
