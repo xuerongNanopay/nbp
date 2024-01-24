@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nbp-browser-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nbp-browser
+  template:
+    metadata:
+      labels:
+        app: nbp-browser
+    spec:
+      containers:
+        - name: nbp-broswer-container
+          image: xuerong/nbp-browser:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nbp-browser-service
+spec:
+  selector:
+    app: nbp-browser
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
