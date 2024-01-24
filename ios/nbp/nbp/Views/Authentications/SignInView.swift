@@ -25,34 +25,11 @@ struct SignInView: View {
                     .font(.title)
                     .bold()
                     .padding(.bottom, 10)
-                VStack(alignment: .leading) {
-                    Text("Email or Username")
-                        .font(.subheadline)
-                        .foregroundStyle(.gray)
-                        .padding(.bottom, -5)
-                    TextField("", text: $email)
-                        .padding(10)
-                        .accentColor(Color("green_700"))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color("green_700"), lineWidth: 2)
-                        }
-                }
-                .padding(.bottom, 10)
                 
-                VStack(alignment: .leading) {
-                    Text("Password")
-                        .font(.subheadline)
-                        .foregroundStyle(.gray)
-                        .padding(.bottom, -5)
-                    SecureField("", text: $password)
-                        .padding(10)
-                        .accentColor(Color("green_700"))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color("green_700"), lineWidth: 2)
-                        }
-                }
+                ADInput(title: "Email or Username", value: $email).padding(.bottom, 10)
+                
+                ADInput(title: "Password", value: $password, adInputType: .password).padding(.bottom, 10)
+                
                 //TODO: change to Nav Link
                 Text("ForgetPassword?")
                     .foregroundStyle(.gray)
