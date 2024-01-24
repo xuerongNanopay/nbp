@@ -34,7 +34,7 @@ struct SignInView: View {
                     
                     ADInput(title: "Password", value: $password, adInputType: .password).padding(.bottom, 5)
                     
-                    NavigationLink(value: AuthRouter.SignUp) {
+                    NavigationLink(value: AuthRouter.ForgetPassword) {
                         Text("Forget Password?")
                             .foregroundColor(.gray)
                             .frame(maxWidth: .infinity, alignment: .trailing)
