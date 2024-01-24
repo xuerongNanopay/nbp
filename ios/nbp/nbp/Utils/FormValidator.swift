@@ -7,7 +7,9 @@
 
 import Foundation
 
+//Currently need(Make it simple for now): email, password, noEmptyString, number.
 struct FormValidator {
+    static let rEmail = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
     
     static func trim(_ value: String) -> String {
         return value.trimmingCharacters(in: .whitespaces)
