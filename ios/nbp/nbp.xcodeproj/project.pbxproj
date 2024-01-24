@@ -16,6 +16,7 @@
 		76269DF32B5F691400CAAB3E /* DashBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF22B5F691400CAAB3E /* DashBoardView.swift */; };
 		76269DF72B60A50800CAAB3E /* ADInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF62B60A50800CAAB3E /* ADInput.swift */; };
 		76269DFA2B60D28100CAAB3E /* FormValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF92B60D28100CAAB3E /* FormValidator.swift */; };
+		76269DFC2B615A8500CAAB3E /* FormTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DFB2B615A8500CAAB3E /* FormTypes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		76269DF22B5F691400CAAB3E /* DashBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashBoardView.swift; sourceTree = "<group>"; };
 		76269DF62B60A50800CAAB3E /* ADInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADInput.swift; sourceTree = "<group>"; };
 		76269DF92B60D28100CAAB3E /* FormValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormValidator.swift; sourceTree = "<group>"; };
+		76269DFB2B615A8500CAAB3E /* FormTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormTypes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				76269DF92B60D28100CAAB3E /* FormValidator.swift */,
+				76269DFB2B615A8500CAAB3E /* FormTypes.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -187,6 +190,7 @@
 				76269DF12B5F68DC00CAAB3E /* SignUpView.swift in Sources */,
 				76269DF32B5F691400CAAB3E /* DashBoardView.swift in Sources */,
 				76269DEF2B5F68CB00CAAB3E /* SignInView.swift in Sources */,
+				76269DFC2B615A8500CAAB3E /* FormTypes.swift in Sources */,
 				76269DF72B60A50800CAAB3E /* ADInput.swift in Sources */,
 				76269DFA2B60D28100CAAB3E /* FormValidator.swift in Sources */,
 				76269DE12B5F664A00CAAB3E /* ContentView.swift in Sources */,
