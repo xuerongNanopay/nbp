@@ -15,16 +15,13 @@ struct SignUpView: View {
     var body: some View {
         let _ = print("SignUp creating")
         VStack {
-            Image("nbp_auth_header")
-                .resizable()
-                .frame(width: 400, height: 150)
 
             Spacer()
-            VStack(alignment: .leading) {
+            VStack(alignment: .center) {
                 Text("Create an ccount")
                     .font(.title)
                     .bold()
-                    .padding(.bottom, 10)
+                    .padding(.bottom, 20)
                 ADInput(title: "Email or Username", value: $email).padding(.bottom, 5)
                 ADInput(title: "Password", value: $password, adInputType: .password).padding(.bottom, 5)
                 ADInput(title: "Password", value: $rePassword, adInputType: .password).padding(.bottom, 5)
@@ -48,8 +45,15 @@ struct SignUpView: View {
             
             Spacer()
             Spacer()
-            Spacer()
         }
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Image("nbp_navbar_icon")
+                    .resizable()
+                    .frame(width: 35, height: 35)
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

@@ -78,7 +78,6 @@ struct SignInView: View {
                     Text("TODO: ForgetPassword")
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Sign In")
             .navigationBarHidden(true)
         }
