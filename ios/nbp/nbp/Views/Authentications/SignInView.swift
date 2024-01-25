@@ -67,6 +67,8 @@ struct SignInView: View {
                 .padding(.horizontal)
                 
                 Spacer()
+                Spacer()
+                Spacer()
             }
             .navigationDestination(for: AuthRouter.self) { route in
                 switch route {

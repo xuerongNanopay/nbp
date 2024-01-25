@@ -18,8 +18,8 @@ struct SignUpView: View {
             Image("nbp_auth_header")
                 .resizable()
                 .frame(width: 400, height: 150)
-                .padding(.bottom, 40)
-                        
+
+            Spacer()
             VStack(alignment: .leading) {
                 Text("Create an ccount")
                     .font(.title)
@@ -42,13 +42,14 @@ struct SignUpView: View {
                     .cornerRadius(10)
                 }
                 .padding(.top, 15)
-//                .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+//                .disabled(true)
             }
             .padding(.horizontal)
             
-//            Spacer()
+            Spacer()
+            Spacer()
+            Spacer()
         }
-        .frame(maxHeight: .infinity, alignment: .topLeading)
     }
 }
 
