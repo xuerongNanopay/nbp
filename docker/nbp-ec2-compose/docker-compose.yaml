@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   nbp_browser:
-    build: ../../browser 
+    image: xuerong/nbp-browser
     container_name: nbp_browser
     hostname: nbp_browser
     env_file:
@@ -14,7 +14,7 @@ services:
     networks:
       - nbp-ec2-compose_nbp-ec2-network
   nbp_server:
-    build: ../../server_v2 
+    build: xuerong/nbp-server
     container_name: nbp_server
     hostname: nbp_server
     env_file:
