@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: nbp-ingress
-  namespace: nbp
+  # namespace: nbp
 spec:
   ingressClassName: nginx
   rules:

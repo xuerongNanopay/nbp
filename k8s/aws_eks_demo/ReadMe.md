@@ -9,11 +9,6 @@ kubectl apply -f=browser.yaml
 kubectl delete -f=browser.yaml
 ```
 
-Apply nginx_ingress
-``` 
-kubectl apply -f=nginx-ingress.1.9.5.yaml
-```
-
 Ussage:
 ```
 kubectl create namespace ingress-nginx
@@ -31,14 +26,17 @@ aws acm list-certificates --region us-east-1
 Set Up Ngix Ingress Controller
 ```
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-kubectl create ns nginx-ingress
-helm install nginx-ingress ingress-nginx/ingress-nginx -n nginx-ingress
-# Up to this point, you should be above to acess http from browser, and will return 404 Error.
-
-
-
+ helm repo update
+helm upgrade --install ingress-nginx ingress-nginx \
+             --repo https://kubernetes.github.io/ingress-nginx \
+             --namespace ingress-nginx --create-namespace
 # Check
-kubectl get all -n ingress-nginx
+kubectl get pods -n ingress-nginx
+```
+
+Apply Ingress
+```
+kubectl apply -f=ingress.yaml
 ```
 
 Trouble
