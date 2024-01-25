@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nbp-browser-deployment
+  namespace: nbp
 spec:
   replicas: 1
   selector:
@@ -20,6 +21,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nbp-browser-service
+  namespace: nbp
 spec:
   selector:
     app: nbp-browser
