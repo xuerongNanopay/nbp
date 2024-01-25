@@ -14,7 +14,7 @@ services:
     networks:
       - nbp-ec2-compose_nbp-ec2-network
   nbp_server:
-    build: xuerong/nbp-server
+    image: xuerong/nbp-server
     container_name: nbp_server
     hostname: nbp_server
     env_file:

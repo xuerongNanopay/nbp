@@ -5,4 +5,4 @@ app_name = "nbp"
 vpc_id = "vpc-7d0b7a07"
 subnet_id = "subnet-951fead8"
 
-my_public_ip = "67.71.20.89/32"
+my_public_ip = "67.70.120.104/32"
