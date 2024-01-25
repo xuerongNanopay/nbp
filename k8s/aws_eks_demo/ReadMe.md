@@ -43,3 +43,6 @@ Trouble
 ```
 kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission
 ```
+
+TODO:
+external DNS

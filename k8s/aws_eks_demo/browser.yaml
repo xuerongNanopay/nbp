@@ -25,7 +25,7 @@ metadata:
 spec:
   selector:
     app: nbp-browser
-  # type: LoadBalancer
+  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 80
