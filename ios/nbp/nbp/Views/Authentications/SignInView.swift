@@ -75,7 +75,7 @@ struct SignInView: View {
                 case .SignUp:
                     SignUpView()
                 case .ForgetPassword:
-                    Text("TODO: ForgetPassword")
+                    ForgetPasswordView()
                 }
             }
             .navigationTitle("Sign In")
