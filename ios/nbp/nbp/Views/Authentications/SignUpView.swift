@@ -18,7 +18,7 @@ struct SignUpView: View {
 
             Spacer()
             VStack(alignment: .center) {
-                Text("Create an ccount")
+                Text("Create an account")
                     .font(.title)
                     .bold()
                     .padding(.bottom, 20)
@@ -41,11 +41,11 @@ struct SignUpView: View {
                 .padding(.top, 15)
 //                .disabled(true)
             }
-            .padding(.horizontal)
             
             Spacer()
             Spacer()
         }
+        .padding(.horizontal)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Image("nbp_navbar_icon")
