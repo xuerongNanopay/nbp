@@ -15,11 +15,13 @@
 		76269DF12B5F68DC00CAAB3E /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF02B5F68DC00CAAB3E /* SignUpView.swift */; };
 		76269DF32B5F691400CAAB3E /* DashBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF22B5F691400CAAB3E /* DashBoardView.swift */; };
 		76269DF72B60A50800CAAB3E /* ADInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF62B60A50800CAAB3E /* ADInput.swift */; };
-		76269DFC2B615A8500CAAB3E /* FormTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DFB2B615A8500CAAB3E /* FormTypes.swift */; };
+		76269DFC2B615A8500CAAB3E /* FormValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DFB2B615A8500CAAB3E /* FormValidator.swift */; };
 		76269DFE2B63292D00CAAB3E /* ForgetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DFD2B63292D00CAAB3E /* ForgetPasswordView.swift */; };
 		76269E032B63523600CAAB3E /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E022B63523600CAAB3E /* Session.swift */; };
 		76269E072B6355E700CAAB3E /* VerifyEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E062B6355E700CAAB3E /* VerifyEmailView.swift */; };
 		76269E0A2B63561600CAAB3E /* UserOnboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E092B63561600CAAB3E /* UserOnboardView.swift */; };
+		76269E0C2B6375E800CAAB3E /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E0B2B6375E800CAAB3E /* Form.swift */; };
+		76269E0E2B64316A00CAAB3E /* Wrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E0D2B64316A00CAAB3E /* Wrappers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,11 +34,13 @@
 		76269DF02B5F68DC00CAAB3E /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		76269DF22B5F691400CAAB3E /* DashBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashBoardView.swift; sourceTree = "<group>"; };
 		76269DF62B60A50800CAAB3E /* ADInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADInput.swift; sourceTree = "<group>"; };
-		76269DFB2B615A8500CAAB3E /* FormTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormTypes.swift; sourceTree = "<group>"; };
+		76269DFB2B615A8500CAAB3E /* FormValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormValidator.swift; sourceTree = "<group>"; };
 		76269DFD2B63292D00CAAB3E /* ForgetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgetPasswordView.swift; sourceTree = "<group>"; };
 		76269E022B63523600CAAB3E /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		76269E062B6355E700CAAB3E /* VerifyEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyEmailView.swift; sourceTree = "<group>"; };
 		76269E092B63561600CAAB3E /* UserOnboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserOnboardView.swift; sourceTree = "<group>"; };
+		76269E0B2B6375E800CAAB3E /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
+		76269E0D2B64316A00CAAB3E /* Wrappers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wrappers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,7 +124,8 @@
 		76269DF82B60D1EA00CAAB3E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				76269DFB2B615A8500CAAB3E /* FormTypes.swift */,
+				76269DFB2B615A8500CAAB3E /* FormValidator.swift */,
+				76269E0D2B64316A00CAAB3E /* Wrappers.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -129,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				76269E022B63523600CAAB3E /* Session.swift */,
+				76269E0B2B6375E800CAAB3E /* Form.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -225,9 +231,11 @@
 				76269DF32B5F691400CAAB3E /* DashBoardView.swift in Sources */,
 				76269DEF2B5F68CB00CAAB3E /* SignInView.swift in Sources */,
 				76269E072B6355E700CAAB3E /* VerifyEmailView.swift in Sources */,
-				76269DFC2B615A8500CAAB3E /* FormTypes.swift in Sources */,
+				76269E0C2B6375E800CAAB3E /* Form.swift in Sources */,
+				76269DFC2B615A8500CAAB3E /* FormValidator.swift in Sources */,
 				76269DFE2B63292D00CAAB3E /* ForgetPasswordView.swift in Sources */,
 				76269E0A2B63561600CAAB3E /* UserOnboardView.swift in Sources */,
+				76269E0E2B64316A00CAAB3E /* Wrappers.swift in Sources */,
 				76269DF72B60A50800CAAB3E /* ADInput.swift in Sources */,
 				76269DE12B5F664A00CAAB3E /* ContentView.swift in Sources */,
 				76269DDF2B5F664A00CAAB3E /* nbpApp.swift in Sources */,

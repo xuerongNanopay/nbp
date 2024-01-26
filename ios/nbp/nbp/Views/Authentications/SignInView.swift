@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct SignInView: View {
-    @State var email: String = ""
-    @State var password: String = ""
+    @State var signInData = SignInFormData()
     
     enum AuthRouter {
         case SignUp, ForgetPassword
@@ -30,9 +29,9 @@ struct SignInView: View {
                         .bold()
                         .padding(.bottom, 10)
                     
-                    ADInput(title: "Email or Username", value: $email).padding(.bottom, 10)
+                    ADInput(title: "Email or Username", value: $signInData.email, hint: signInData.emailHint).padding(.bottom, 10)
                     
-                    ADInput(title: "Password", value: $password, adInputType: .password).padding(.bottom, 5)
+                    ADInput(title: "Password", value: $signInData.password, adInputType: .password, hint: signInData.passwordHint).padding(.bottom, 5)
                     
                     NavigationLink(value: AuthRouter.ForgetPassword) {
                         Text("Forget Password?")
@@ -41,7 +40,9 @@ struct SignInView: View {
                     }
                     
                     Button(action: {
-                        print("Sign In with email: \(email) and password: \(password)")
+                        if signInData.isValid() {
+                            print("Sign In form Success\(signInData)")
+                        }
                     }) {
                     Text("Sign In")
                         .font(.headline)
@@ -80,6 +81,9 @@ struct SignInView: View {
             }
             .navigationTitle("Sign In")
             .navigationBarHidden(true)
+            .onAppear {
+                signInData.resetHint()
+            }
         }
         .accentColor(.green700)
     }

@@ -11,6 +11,7 @@ struct ADInput: View {
     var title: String
     @Binding var value: String
     var adInputType = ADInputType.text
+    var hint = ""
     
     enum ADInputType {
         case text, password
@@ -38,6 +39,11 @@ struct ADInput: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color("green_700"), lineWidth: 2)
                 }
+            if !hint.isEmpty {
+                Text(hint)
+                    .foregroundStyle(.red)
+                    .font(.footnote)
+            }
         }
     }
     
@@ -47,5 +53,6 @@ struct ADInput: View {
     Group {
         ADInput(title: "Email and Password", value: .constant("email"))
         ADInput(title: "Passowrd", value: .constant("password"), adInputType: .password)
+        ADInput(title: "Passowrd", value: .constant("password"), adInputType: .password, hint: "invalid password")
     }
 }
