@@ -41,8 +41,15 @@ struct FormValidator {
         return ""
     }
 
-    static func failFastPhoneValidator(_ phone: String) -> String {
-        return phone
+    static func failFastPhoneValidator(_ phoneNumber: String) -> String {
+        let phoneNumber = phoneNumber.trimmingCharacters(in: .whitespacesAndNewlines)
+        if phoneNumber.isEmpty {
+            return "Phone Number is required."
+        }
+        if phoneNumber.range(of: phonePattern.0, options: .regularExpression) == nil {
+            return phonePattern.1
+        }
+        return ""
     }
     
     static func failFastAdultAgeValidator(_ age: Int32) -> String {
