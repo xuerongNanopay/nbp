@@ -8,14 +8,27 @@
 // F is short-cut of Form
 import Foundation
 
-let rEmail = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+let emailPattern = #"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"#
+let phonePattern = #"^\(?\d{3}\)?[ -]?\d{3}[ -]?\d{4}$"#
+let passwordPattern =
+    // At least 8 characters
+    #"(?=.{8,})"# +
+    // At least one capital letter
+    #"(?=.*[A-Z])"# +
+    // At least one lowercase letter
+    #"(?=.*[a-z])"# +
+    // At least one digit
+    #"(?=.*\d)"# +
+    // At least one special character
+    #"(?=.*[ !$%&?._-])"#
 
-protocol FValidator {
-    var errors: [String] { get }
+protocol FormData {
+    var errors: [String]? { get }
     func isValid() -> Bool
 }
 
 typealias FEmail = String
+typealias FPhoneNumber = String
 typealias FPassword = String
 typealias FAge = Int32
 typealias FInt = Int32
@@ -26,32 +39,31 @@ typealias FIntArr = [Int32]
 typealias FStringArr = [String]
 
 
-extension FEmail: FValidator {
-    var errors: [String] {
+extension FEmail: FormData {
+    var errors: [String]? {
         var results: [String] = []
-        if self.isEmpty {
+        if self.isEmpty && self.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             results.append("Email is required.")
         }
-        return results
+        if self.range(of: emailPattern, options: .regularExpression) != nil {
+            results.append("Invalid Email Format")
+        }
+        return results.isEmpty ? nil : results
     }
     func isValid() -> Bool {
-        return true
+        return errors == nil
     }
 }
 
-extension Optional<FEmail>: FValidator {
-    var errors: [String] {
+extension Optional<FEmail>: FormData {
+    var errors: [String]? {
         if self == nil {
-            return []
+            return nil
         } else {
             return self!.errors
         }
     }
     func isValid() -> Bool {
-        if self == nil {
-            return true
-        } else {
-            return self!.isValid()
-        }
+        return errors == nil
     }
 }
