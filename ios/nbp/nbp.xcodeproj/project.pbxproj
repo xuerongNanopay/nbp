@@ -15,10 +15,11 @@
 		76269DF12B5F68DC00CAAB3E /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF02B5F68DC00CAAB3E /* SignUpView.swift */; };
 		76269DF32B5F691400CAAB3E /* DashBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF22B5F691400CAAB3E /* DashBoardView.swift */; };
 		76269DF72B60A50800CAAB3E /* ADInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF62B60A50800CAAB3E /* ADInput.swift */; };
-		76269DFA2B60D28100CAAB3E /* FormValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DF92B60D28100CAAB3E /* FormValidator.swift */; };
 		76269DFC2B615A8500CAAB3E /* FormTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DFB2B615A8500CAAB3E /* FormTypes.swift */; };
 		76269DFE2B63292D00CAAB3E /* ForgetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269DFD2B63292D00CAAB3E /* ForgetPasswordView.swift */; };
 		76269E032B63523600CAAB3E /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E022B63523600CAAB3E /* Session.swift */; };
+		76269E072B6355E700CAAB3E /* VerifyEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E062B6355E700CAAB3E /* VerifyEmailView.swift */; };
+		76269E0A2B63561600CAAB3E /* UserOnboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E092B63561600CAAB3E /* UserOnboardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,10 +32,11 @@
 		76269DF02B5F68DC00CAAB3E /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		76269DF22B5F691400CAAB3E /* DashBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashBoardView.swift; sourceTree = "<group>"; };
 		76269DF62B60A50800CAAB3E /* ADInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADInput.swift; sourceTree = "<group>"; };
-		76269DF92B60D28100CAAB3E /* FormValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormValidator.swift; sourceTree = "<group>"; };
 		76269DFB2B615A8500CAAB3E /* FormTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormTypes.swift; sourceTree = "<group>"; };
 		76269DFD2B63292D00CAAB3E /* ForgetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgetPasswordView.swift; sourceTree = "<group>"; };
 		76269E022B63523600CAAB3E /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		76269E062B6355E700CAAB3E /* VerifyEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyEmailView.swift; sourceTree = "<group>"; };
+		76269E092B63561600CAAB3E /* UserOnboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserOnboardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,10 +90,11 @@
 		76269DEC2B5F687500CAAB3E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				76269E052B63559300CAAB3E /* Main */,
+				76269E042B63558400CAAB3E /* Onboard */,
 				76269DF52B60A1E400CAAB3E /* Components */,
 				76269DE02B5F664A00CAAB3E /* ContentView.swift */,
 				76269DED2B5F688D00CAAB3E /* Authentications */,
-				76269DF22B5F691400CAAB3E /* DashBoardView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -117,7 +120,6 @@
 		76269DF82B60D1EA00CAAB3E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				76269DF92B60D28100CAAB3E /* FormValidator.swift */,
 				76269DFB2B615A8500CAAB3E /* FormTypes.swift */,
 			);
 			path = Utils;
@@ -129,6 +131,23 @@
 				76269E022B63523600CAAB3E /* Session.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		76269E042B63558400CAAB3E /* Onboard */ = {
+			isa = PBXGroup;
+			children = (
+				76269E062B6355E700CAAB3E /* VerifyEmailView.swift */,
+				76269E092B63561600CAAB3E /* UserOnboardView.swift */,
+			);
+			path = Onboard;
+			sourceTree = "<group>";
+		};
+		76269E052B63559300CAAB3E /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				76269DF22B5F691400CAAB3E /* DashBoardView.swift */,
+			);
+			path = Main;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -205,10 +224,11 @@
 				76269DF12B5F68DC00CAAB3E /* SignUpView.swift in Sources */,
 				76269DF32B5F691400CAAB3E /* DashBoardView.swift in Sources */,
 				76269DEF2B5F68CB00CAAB3E /* SignInView.swift in Sources */,
+				76269E072B6355E700CAAB3E /* VerifyEmailView.swift in Sources */,
 				76269DFC2B615A8500CAAB3E /* FormTypes.swift in Sources */,
 				76269DFE2B63292D00CAAB3E /* ForgetPasswordView.swift in Sources */,
+				76269E0A2B63561600CAAB3E /* UserOnboardView.swift in Sources */,
 				76269DF72B60A50800CAAB3E /* ADInput.swift in Sources */,
-				76269DFA2B60D28100CAAB3E /* FormValidator.swift in Sources */,
 				76269DE12B5F664A00CAAB3E /* ContentView.swift in Sources */,
 				76269DDF2B5F664A00CAAB3E /* nbpApp.swift in Sources */,
 			);

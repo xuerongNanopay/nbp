@@ -17,4 +17,8 @@ struct Session {
     struct User {
         var id: Int32
     }
+    
+    enum Status {
+        case Unauth, Auth, Onboarding
+    }
 }
