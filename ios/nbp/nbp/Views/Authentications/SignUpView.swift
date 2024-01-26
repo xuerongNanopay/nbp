@@ -24,7 +24,7 @@ struct SignUpView: View {
                     .padding(.bottom, 20)
                 ADInput(title: "Email or Username", value: $email).padding(.bottom, 5)
                 ADInput(title: "Password", value: $password, adInputType: .password).padding(.bottom, 5)
-                ADInput(title: "Password", value: $rePassword, adInputType: .password).padding(.bottom, 5)
+                ADInput(title: "Repeat Password", value: $rePassword, adInputType: .password).padding(.bottom, 5)
                 
                 Button(action: {
                     print("Sign Up with email: \(email) and password: \(password)")
