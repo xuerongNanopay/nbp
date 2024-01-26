@@ -10,6 +10,7 @@ import SwiftUI
 struct SignInView: View {
     @State var signInData = SignInFormData()
     @State var isSubmitting = false
+    @State private var showAlert = false
     
     enum AuthRouter {
         case SignUp, ForgetPassword
@@ -43,8 +44,15 @@ struct SignInView: View {
                         
                         Button(action: {
                             if signInData.isValid() {
-                                print("Sign In form Success\(signInData)")
-                                isSubmitting = true
+                                Task {
+                                    print("Sign In form Success\(signInData)")
+                                    isSubmitting = true
+                                    
+                                    try await Task.sleep(nanoseconds: UInt64(4 * Double(NSEC_PER_SEC)))
+                                    
+                                    isSubmitting = false
+                                    showAlert = true
+                                }
                             }
                         }) {
                         Text("Sign In")
@@ -57,6 +65,11 @@ struct SignInView: View {
                             .cornerRadius(10)
                         }
                         .padding(.top, 15)
+                        .alert("Error", isPresented: $showAlert) {
+                            Button("Close") { }
+                        } message: {
+                            Text("TOTO: error message")
+                        }
                         
                         HStack() {
                             Text("Not a User Yet?")
