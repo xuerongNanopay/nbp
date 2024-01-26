@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct SignUpView: View {
-    @State var email: String = ""
-    @State var password: String = ""
-    @State var rePassword: String = ""
+    @State var signUpData = SignUpFormData()
+    @State var isSubmitting = false
+    @State private var showAlert = false
 
     var body: some View {
         let _ = print("SignUp creating")
@@ -22,12 +22,22 @@ struct SignUpView: View {
                     .font(.title)
                     .bold()
                     .padding(.bottom, 20)
-                ADInput(title: "Email or Username", value: $email).padding(.bottom, 5)
-                ADInput(title: "Password", value: $password, adInputType: .password).padding(.bottom, 5)
-                ADInput(title: "Repeat Password", value: $rePassword, adInputType: .password).padding(.bottom, 5)
+                ADInput(title: "Email", value: $signUpData.email, hint: signUpData.emailHint).padding(.bottom, 5)
+                ADInput(title: "Password", value: $signUpData.password, adInputType: .password, hint: signUpData.passwordHint).padding(.bottom, 5)
+                ADInput(title: "Repeat Password", value: $signUpData.rePassword, adInputType: .password, hint: signUpData.rePaswordHint).padding(.bottom, 5)
                 
                 Button(action: {
-                    print("Sign Up with email: \(email) and password: \(password)")
+                    if signUpData.isValid() {
+                        Task {
+                            print("Sign In form Success\(signUpData)")
+                            isSubmitting = true
+                            
+                            try await Task.sleep(nanoseconds: UInt64(4 * Double(NSEC_PER_SEC)))
+                            
+                            isSubmitting = false
+                            showAlert = true
+                        }
+                    }
                 }) {
                 Text("Sign Up")
                     .font(.headline)
@@ -39,7 +49,6 @@ struct SignUpView: View {
                     .cornerRadius(10)
                 }
                 .padding(.top, 15)
-//                .disabled(true)
             }
             
             Spacer()
@@ -54,6 +63,19 @@ struct SignUpView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        
+        if isSubmitting {
+            VStack {
+                Spacer()
+                ProgressView()
+                    .controlSize(.large)
+                    .progressViewStyle(CircularProgressViewStyle(tint: Color.white))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.gray.opacity(0.5))
+                Spacer()
+            }
+            .ignoresSafeArea()
+        }
     }
 }
 

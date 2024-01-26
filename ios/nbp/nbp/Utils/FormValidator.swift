@@ -55,6 +55,20 @@ struct FormValidator {
         return "aaaa"
     }
     
+    static func failFastPasswordValidator(_ password: String) -> String {
+        let password = password.trimmingCharacters(in: .whitespacesAndNewlines)
+        if password.isEmpty {
+            return "Password is required."
+        }
+        
+        for pattern in passwordPatterns {
+            if password.range(of: pattern.0, options: .regularExpression) == nil {
+                return pattern.1
+            }
+        }
+        return ""
+    }
+    
     static func failFastRequireValidator(_ value: String, _ hint: String = "Require") -> String {
         return value.isEmpty ? hint : ""
     }
