@@ -23,6 +23,7 @@ struct ADInput: View {
             TextField("", text: $value)
         case .password:
             SecureField("", text: $value)
+                .textContentType(.oneTimeCode)
         }
     }
     

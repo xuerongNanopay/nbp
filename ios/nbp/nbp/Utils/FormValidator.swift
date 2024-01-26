@@ -26,7 +26,7 @@ let passwordPatterns = [
     (#"(?=.*[A-Z])"#, "At least one capital letter"),
     (#"(?=.*[a-z])"#, "At least one lowercase letter"),
     (#"(?=.*\d)"#, "At least one digit"),
-    (#"(?=.*[ !$%&?._-])"#, "At least one special character")
+    (#"(?=.*[ !$%&?._-])"#, "At least one special character(!$%&?._-)")
 ]
 
 struct FormValidator {

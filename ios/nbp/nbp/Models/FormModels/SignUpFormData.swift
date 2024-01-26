@@ -39,7 +39,7 @@ struct SignUpFormData: Codable {
             valid = false
         }
         
-        hint = FormValidator.failFastRequireValidator(password, "Password is required.")
+        hint = FormValidator.failFastPasswordValidator(password)
         if !hint.isEmpty {
             passwordHint = hint
             valid = false
