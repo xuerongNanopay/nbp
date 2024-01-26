@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct ForgetPasswordView: View {
-    @State var email: String = ""
+    @State private var forgetPasswordData = ForgetPasswordFormData()
+    @State private var isSubmitting = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     
     var body: some View {
         let _ = print("ForgetPassword View creating")
@@ -23,10 +26,10 @@ struct ForgetPasswordView: View {
                 .multilineTextAlignment(.center)
                 .padding(.bottom, 20)
             
-            ADInput(title: "Email", value: $email).padding(.bottom, 10)
+            ADInput(title: "Email", value: $forgetPasswordData.email).padding(.bottom, 10)
             
             Button(action: {
-                print("Forget password: \(email)")
+//                print("Forget password: \(email)")
             }) {
             Text("Submit")
                 .font(.headline)

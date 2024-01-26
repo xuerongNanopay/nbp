@@ -17,7 +17,6 @@ struct SignUpView: View {
         let _ = print("SignUp creating")
         ZStack {
             VStack {
-
                 Spacer()
                 VStack(alignment: .center) {
                     Text("Create an account")
@@ -31,7 +30,7 @@ struct SignUpView: View {
                     Button(action: {
                         if signUpData.isValid() {
                             Task {
-                                print("Sign In form Success\(signUpData)")
+                                print("Sign Up form Success\(signUpData)")
                                 isSubmitting = true
                                 
                                 try await Task.sleep(nanoseconds: UInt64(4 * Double(NSEC_PER_SEC)))
@@ -53,7 +52,14 @@ struct SignUpView: View {
                         .background(Color("green_700"))
                         .cornerRadius(10)
                     }
-                    .padding(.top, 15)
+                    .padding(.top, 15)                        
+                    .alert("Error", isPresented: $showAlert) {
+                        Button("Close") {
+                            alertMessage = ""
+                        }
+                    } message: {
+                        Text(alertMessage)
+                    }
                 }
                 
                 Spacer()
