@@ -30,21 +30,15 @@ let passwordPatterns = [
 ]
 
 struct FormValidator {
-    static func emailValidator(_ email: String) -> [String] {
-        var results: [String] = []
+    static func failFastEmailValidator(_ email: String) -> String {
         let email = email.trimmingCharacters(in: .whitespacesAndNewlines)
         if email.isEmpty {
-            results.append("Email is required.")
+            return "Email is required."
         }
         if email.range(of: emailPattern.0, options: .regularExpression) == nil {
-            results.append(emailPattern.1)
+            return emailPattern.1
         }
-        return results
-    }
-    
-    static func failFastEmailValidator(_ email: String) -> String {
-        let results = emailValidator(email)
-        return results.isEmpty ? "" : results.first!
+        return ""
     }
 
     static func failFastPhoneValidator(_ phone: String) -> String {
