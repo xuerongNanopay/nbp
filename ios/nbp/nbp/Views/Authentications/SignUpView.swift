@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct SignUpView: View {
-    @State var signUpData = SignUpFormData()
-    @State var isSubmitting = false
+    @State private var signUpData = SignUpFormData()
+    @State private var isSubmitting = false
     @State private var showAlert = false
+    @State private var alertMessage = ""
 
     var body: some View {
         let _ = print("SignUp creating")
@@ -38,6 +39,9 @@ struct SignUpView: View {
                                 isSubmitting = false
                                 showAlert = true
                             }
+                        } else {
+                            alertMessage = "Please check all your inputs."
+                            showAlert = true
                         }
                     }) {
                     Text("Sign Up")

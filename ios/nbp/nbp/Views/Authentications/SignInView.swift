@@ -11,6 +11,7 @@ struct SignInView: View {
     @State var signInData = SignInFormData()
     @State var isSubmitting = false
     @State private var showAlert = false
+    @State private var alertMessage = ""
     
     enum AuthRouter {
         case SignUp, ForgetPassword
@@ -53,6 +54,9 @@ struct SignInView: View {
                                     isSubmitting = false
                                     showAlert = true
                                 }
+                            } else {
+                                alertMessage = "Please check all your inputs."
+                                showAlert = true
                             }
                         }) {
                         Text("Sign In")
@@ -66,9 +70,11 @@ struct SignInView: View {
                         }
                         .padding(.top, 15)
                         .alert("Error", isPresented: $showAlert) {
-                            Button("Close") { }
+                            Button("Close") { 
+                                alertMessage = ""
+                            }
                         } message: {
-                            Text("TOTO: error message")
+                            Text(alertMessage)
                         }
                         
                         HStack() {
