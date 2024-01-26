@@ -23,6 +23,7 @@
 		76269E0C2B6375E800CAAB3E /* SignInFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E0B2B6375E800CAAB3E /* SignInFormData.swift */; };
 		76269E0E2B64316A00CAAB3E /* Wrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E0D2B64316A00CAAB3E /* Wrappers.swift */; };
 		76269E112B6467EB00CAAB3E /* SignUpFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E102B6467EB00CAAB3E /* SignUpFormData.swift */; };
+		76269E132B646BF700CAAB3E /* ForgetPasswordFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E122B646BF700CAAB3E /* ForgetPasswordFormData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		76269E0B2B6375E800CAAB3E /* SignInFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInFormData.swift; sourceTree = "<group>"; };
 		76269E0D2B64316A00CAAB3E /* Wrappers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wrappers.swift; sourceTree = "<group>"; };
 		76269E102B6467EB00CAAB3E /* SignUpFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpFormData.swift; sourceTree = "<group>"; };
+		76269E122B646BF700CAAB3E /* ForgetPasswordFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgetPasswordFormData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +165,7 @@
 			children = (
 				76269E0B2B6375E800CAAB3E /* SignInFormData.swift */,
 				76269E102B6467EB00CAAB3E /* SignUpFormData.swift */,
+				76269E122B646BF700CAAB3E /* ForgetPasswordFormData.swift */,
 			);
 			path = FormModels;
 			sourceTree = "<group>";
@@ -248,6 +251,7 @@
 				76269DFE2B63292D00CAAB3E /* ForgetPasswordView.swift in Sources */,
 				76269E0A2B63561600CAAB3E /* UserOnboardView.swift in Sources */,
 				76269E0E2B64316A00CAAB3E /* Wrappers.swift in Sources */,
+				76269E132B646BF700CAAB3E /* ForgetPasswordFormData.swift in Sources */,
 				76269DF72B60A50800CAAB3E /* ADInput.swift in Sources */,
 				76269DE12B5F664A00CAAB3E /* ContentView.swift in Sources */,
 				76269DDF2B5F664A00CAAB3E /* nbpApp.swift in Sources */,
