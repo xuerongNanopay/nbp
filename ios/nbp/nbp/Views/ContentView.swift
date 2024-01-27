@@ -11,7 +11,8 @@ struct ContentView: View {
     var hasSession = true
     var body: some View {
         if hasSession {
-            SignInView()
+//            SignInView()
+        VerifyEmailView()
         } else {
             DashBoardView()
         }
