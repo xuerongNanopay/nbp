@@ -18,7 +18,7 @@ struct OnboardingFormData: Codable {
     
     var address1 = ""
     var address1Hint = ""
-    var address2 = ""
+    var address2: String?
     var address2Hint = ""
     var city = ""
     var cityHint = ""
@@ -95,6 +95,27 @@ struct OnboardingFormData: Codable {
         hint = FormValidator.failFastRequireValidator(lastName, "Lastname is required.")
         if !hint.isEmpty {
             lastNameHint = hint
+            valid = false
+        }
+
+        hint = FormValidator.failFastRequireValidator(address1, "Required")
+        if !hint.isEmpty {
+            address1Hint = hint
+            valid = false
+        }
+        hint = FormValidator.failFastRequireValidator(city, "Required")
+        if !hint.isEmpty {
+            cityHint = hint
+            valid = false
+        }
+        hint = FormValidator.failFastRequireValidator(provinceCode, "Required")
+        if !hint.isEmpty {
+            provinceCodeHint = hint
+            valid = false
+        }
+        hint = FormValidator.failFastRequireValidator(countryCode, "Required")
+        if !hint.isEmpty {
+            countryCodeHint = hint
             valid = false
         }
         
