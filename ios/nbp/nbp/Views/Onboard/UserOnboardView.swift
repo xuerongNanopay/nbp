@@ -7,10 +7,9 @@
 
 import SwiftUI
 
-let minStep = 1
-let maxStep = 1
-
 struct UserOnboardView: View {
+    static let minStep = 1
+    static let maxStep = 1
     @State var step = minStep
     @State var onboardingFormData = OnboardingFormData()
     
@@ -41,7 +40,7 @@ struct UserOnboardView: View {
 
                 
                 VStack {
-                    if step > minStep {
+                    if step > UserOnboardView.minStep {
                         Button(action: {
                             step -= 1
                         }) {
@@ -58,7 +57,7 @@ struct UserOnboardView: View {
                         }
                     }
                     
-                    if step != maxStep {
+                    if step != UserOnboardView.maxStep {
                         Button(action: {
                             let valid = onboardingFormData.isValid()
                             if valid {
@@ -76,7 +75,7 @@ struct UserOnboardView: View {
                         }
                     }
                     
-                    if step == maxStep {
+                    if step == UserOnboardView.maxStep {
                         Button(action: {
                             let valid = onboardingFormData.isValid()
                             
@@ -175,6 +174,8 @@ struct UserAddressFormView: View {
     @Binding var lastName: String
     var lastNameHint: String
     
+    
+    
     var body: some View {
         VStack {
             Text("Your Residential Address and Phone Number")
@@ -190,17 +191,17 @@ struct UserAddressFormView: View {
     }
 }
 
-func ??<T>(lhs: Binding<Optional<T>>, rhs: T) -> Binding<T> {
-    Binding(
-        get: { lhs.wrappedValue ?? rhs },
-        set: { lhs.wrappedValue = $0 }
-    )
-}
-
-#Preview("Usr Onboard View") {
+#Preview("User Onboard View") {
     UserOnboardView()
 }
 
-//#Preview("Usr Data View") {
-//    UserFullNameFormView()
-//}
+#Preview("User Fullname Form") {
+    UserFullNameFormView(
+        firstName: .constant(""),
+        firstNameHint: "",
+        middleName: .constant(""),
+        middleNameHint: "",
+        lastName: .constant(""),
+        lastNameHint: ""
+    )
+}

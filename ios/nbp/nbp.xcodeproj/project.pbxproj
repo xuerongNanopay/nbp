@@ -25,6 +25,7 @@
 		76269E112B6467EB00CAAB3E /* SignUpFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E102B6467EB00CAAB3E /* SignUpFormData.swift */; };
 		76269E132B646BF700CAAB3E /* ForgetPasswordFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E122B646BF700CAAB3E /* ForgetPasswordFormData.swift */; };
 		76269E152B6DE0EE00CAAB3E /* OnboardingFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E142B6DE0EE00CAAB3E /* OnboardingFormData.swift */; };
+		76269E182B6ECB6D00CAAB3E /* OperatorOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E172B6ECB6D00CAAB3E /* OperatorOverride.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,7 @@
 		76269E102B6467EB00CAAB3E /* SignUpFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpFormData.swift; sourceTree = "<group>"; };
 		76269E122B646BF700CAAB3E /* ForgetPasswordFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgetPasswordFormData.swift; sourceTree = "<group>"; };
 		76269E142B6DE0EE00CAAB3E /* OnboardingFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFormData.swift; sourceTree = "<group>"; };
+		76269E172B6ECB6D00CAAB3E /* OperatorOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorOverride.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +102,7 @@
 		76269DEC2B5F687500CAAB3E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				76269E162B6ECB4E00CAAB3E /* Utils */,
 				76269E052B63559300CAAB3E /* Main */,
 				76269E042B63558400CAAB3E /* Onboard */,
 				76269DF52B60A1E400CAAB3E /* Components */,
@@ -171,6 +174,14 @@
 				76269E142B6DE0EE00CAAB3E /* OnboardingFormData.swift */,
 			);
 			path = FormModels;
+			sourceTree = "<group>";
+		};
+		76269E162B6ECB4E00CAAB3E /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				76269E172B6ECB6D00CAAB3E /* OperatorOverride.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,6 +259,7 @@
 				76269DF32B5F691400CAAB3E /* DashBoardView.swift in Sources */,
 				76269E112B6467EB00CAAB3E /* SignUpFormData.swift in Sources */,
 				76269E152B6DE0EE00CAAB3E /* OnboardingFormData.swift in Sources */,
+				76269E182B6ECB6D00CAAB3E /* OperatorOverride.swift in Sources */,
 				76269DEF2B5F68CB00CAAB3E /* SignInView.swift in Sources */,
 				76269E072B6355E700CAAB3E /* VerifyEmailView.swift in Sources */,
 				76269E0C2B6375E800CAAB3E /* SignInFormData.swift in Sources */,
