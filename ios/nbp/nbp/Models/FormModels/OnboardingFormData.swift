@@ -26,22 +26,31 @@ struct OnboardingFormData: Codable {
         resetHint()
     }
     
+    mutating func sanitise() {
+        firstName = firstName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if middleName != nil {
+            middleName = middleName!.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : middleName!.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        lastName = lastName.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
     
     mutating func isValid() -> Bool {
         resetHint()
+        sanitise()
         var valid = true
         var hint: String = ""
         
         hint = FormValidator.failFastRequireValidator(firstName, "Firstname is required.")
         if !hint.isEmpty {
             firstNameHint = hint
-            valid = true
+            valid = false
         }
         
         hint = FormValidator.failFastRequireValidator(lastName, "Lastname is required.")
         if !hint.isEmpty {
             lastNameHint = hint
-            valid = true
+            valid = false
         }
         
         return valid

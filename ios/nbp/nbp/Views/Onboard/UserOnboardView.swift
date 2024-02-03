@@ -7,39 +7,92 @@
 
 import SwiftUI
 
+let minStep = 1
+let maxStep = 1
+
 struct UserOnboardView: View {
+    @State var step = minStep
     @State var onboardingFormData = OnboardingFormData()
+    
+    @ViewBuilder var formView: some View {
+        switch step {
+        case 1:
+            UserFullNameFormView(
+                firstName: $onboardingFormData.firstName,
+                firstNameHint: onboardingFormData.firstNameHint,
+                middleName: $onboardingFormData.middleName ?? "",
+                middleNameHint: onboardingFormData.middleNameHint,
+                lastName: $onboardingFormData.lastName,
+                lastNameHint: onboardingFormData.lastNameHint
+            )
+        default:
+            Text("Error")
+        }
+    }
     
     var body: some View {
         NavigationStack {
             VStack {
                 ScrollView(showsIndicators: false) {
-                    UserNameView(
-                        firstName: $onboardingFormData.firstName,
-                        firstNameHint: onboardingFormData.firstNameHint,
-//                            middleName: $onboardingFormData.middleName,
-                        middleNameHint: onboardingFormData.middleNameHint,
-                        lastName: $onboardingFormData.lastName,
-                        lastNameHint: onboardingFormData.lastNameHint
-                    )
-                    .padding(.leading, 1)
-                    .padding(.trailing, 1)
+                    formView
+                        .padding(.horizontal, 2)
                 }
                 .padding(.top, 25)
 
                 
                 VStack {
-                    Button(action: {
-                        let _ = onboardingFormData.isValid()
-                    }) {
-                    Text("Next")
-                        .font(.headline)
-                        .bold()
-                        .padding()
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .background(Color("green_700"))
-                        .cornerRadius(10)
+                    if step > minStep {
+                        Button(action: {
+                            step -= 1
+                        }) {
+                            Text("Back")
+                                .font(.headline)
+                                .bold()
+                                .padding()
+                                .foregroundColor(Color("green_700"))
+                                .frame(maxWidth: .infinity)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color("green_700"), lineWidth: 2)
+                                )
+                        }
+                    }
+                    
+                    if step != maxStep {
+                        Button(action: {
+                            let valid = onboardingFormData.isValid()
+                            if valid {
+                                step += 1
+                            }
+                        }) {
+                            Text("Next")
+                                .font(.headline)
+                                .bold()
+                                .padding()
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .background(Color("green_700"))
+                                .cornerRadius(10)
+                        }
+                    }
+                    
+                    if step == maxStep {
+                        Button(action: {
+                            let valid = onboardingFormData.isValid()
+                            
+                            if valid {
+                                //TODO: Submit
+                            }
+                        }) {
+                            Text("Submit")
+                                .font(.headline)
+                                .bold()
+                                .padding()
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .background(Color("green_700"))
+                                .cornerRadius(10)
+                        }
                     }
                 }
                 .padding(.bottom)
@@ -67,20 +120,18 @@ struct UserOnboardView: View {
     }
 }
 
-enum OnboardingFormStepper {
-    case UserNameView
-}
-
-
-
-struct UserNameView: View {
+//MARK: UserFullNameFormView
+struct UserFullNameFormView: View {
+    typealias AssocType = UserFullNameFormView
+    
     @Binding var firstName: String
     var firstNameHint: String
-    var middleName: Binding<String>? = nil
+    @Binding var middleName: String
     var middleNameHint: String
     @Binding var lastName: String
     var lastNameHint: String
-
+    
+    
     var body: some View {
         VStack {
             Text("Let's Get to Know You!")
@@ -101,8 +152,8 @@ struct UserNameView: View {
             
             ADInput(
                 title: "Middle Name",
-                value: $firstName,
-                hint: firstNameHint
+                value: $middleName,
+                hint: middleNameHint
             ).padding(.bottom, 10)
             
             ADInput(
@@ -114,10 +165,42 @@ struct UserNameView: View {
     }
 }
 
+//MARK: UserAddressFormView
+struct UserAddressFormView: View {
+    
+    @Binding var firstName: String
+    var firstNameHint: String
+    @Binding var middleName: String
+    var middleNameHint: String
+    @Binding var lastName: String
+    var lastNameHint: String
+    
+    var body: some View {
+        VStack {
+            Text("Your Residential Address and Phone Number")
+                .font(.title3)
+                .bold()
+                .padding(.bottom)
+            
+            Text("We require this information to continue setting up your Foree Remittance account.")
+                .font(.subheadline)
+                .multilineTextAlignment(.center)
+                .padding(.bottom)
+        }
+    }
+}
+
+func ??<T>(lhs: Binding<Optional<T>>, rhs: T) -> Binding<T> {
+    Binding(
+        get: { lhs.wrappedValue ?? rhs },
+        set: { lhs.wrappedValue = $0 }
+    )
+}
+
 #Preview("Usr Onboard View") {
     UserOnboardView()
 }
 
 //#Preview("Usr Data View") {
-//    UserNameView()
+//    UserFullNameFormView()
 //}
