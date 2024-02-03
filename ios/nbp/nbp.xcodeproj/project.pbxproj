@@ -24,6 +24,7 @@
 		76269E0E2B64316A00CAAB3E /* Wrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E0D2B64316A00CAAB3E /* Wrappers.swift */; };
 		76269E112B6467EB00CAAB3E /* SignUpFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E102B6467EB00CAAB3E /* SignUpFormData.swift */; };
 		76269E132B646BF700CAAB3E /* ForgetPasswordFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E122B646BF700CAAB3E /* ForgetPasswordFormData.swift */; };
+		76269E152B6DE0EE00CAAB3E /* OnboardingFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269E142B6DE0EE00CAAB3E /* OnboardingFormData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		76269E0D2B64316A00CAAB3E /* Wrappers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wrappers.swift; sourceTree = "<group>"; };
 		76269E102B6467EB00CAAB3E /* SignUpFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpFormData.swift; sourceTree = "<group>"; };
 		76269E122B646BF700CAAB3E /* ForgetPasswordFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgetPasswordFormData.swift; sourceTree = "<group>"; };
+		76269E142B6DE0EE00CAAB3E /* OnboardingFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFormData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,6 +168,7 @@
 				76269E0B2B6375E800CAAB3E /* SignInFormData.swift */,
 				76269E102B6467EB00CAAB3E /* SignUpFormData.swift */,
 				76269E122B646BF700CAAB3E /* ForgetPasswordFormData.swift */,
+				76269E142B6DE0EE00CAAB3E /* OnboardingFormData.swift */,
 			);
 			path = FormModels;
 			sourceTree = "<group>";
@@ -244,6 +247,7 @@
 				76269DF12B5F68DC00CAAB3E /* SignUpView.swift in Sources */,
 				76269DF32B5F691400CAAB3E /* DashBoardView.swift in Sources */,
 				76269E112B6467EB00CAAB3E /* SignUpFormData.swift in Sources */,
+				76269E152B6DE0EE00CAAB3E /* OnboardingFormData.swift in Sources */,
 				76269DEF2B5F68CB00CAAB3E /* SignInView.swift in Sources */,
 				76269E072B6355E700CAAB3E /* VerifyEmailView.swift in Sources */,
 				76269E0C2B6375E800CAAB3E /* SignInFormData.swift in Sources */,
