@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct UserOnboardView: View {
-    static let minStep = 1
-    static let maxStep = 1
+    static let minStep: UInt8 = 1
+    static let maxStep: UInt8 = 2
     @State var step = minStep
     @State var onboardingFormData = OnboardingFormData()
     
@@ -23,6 +23,23 @@ struct UserOnboardView: View {
                 middleNameHint: onboardingFormData.middleNameHint,
                 lastName: $onboardingFormData.lastName,
                 lastNameHint: onboardingFormData.lastNameHint
+            )
+        case 2:
+            UserAddressAndPhoneFormView(
+                address1: $onboardingFormData.address1,
+                address1Hint: onboardingFormData.address1Hint,
+                address2: $onboardingFormData.address2  ?? "",
+                address2Hint: onboardingFormData.address2Hint,
+                city: $onboardingFormData.city,
+                cityHint: onboardingFormData.cityHint,
+                provinceCode: $onboardingFormData.provinceCode,
+                provinceCodeHint: onboardingFormData.provinceCodeHint,
+                countryCode: $onboardingFormData.countryCode,
+                countryCodeHint: onboardingFormData.countryCodeHint,
+                postalCode: $onboardingFormData.postalCode,
+                postalCodeHint: onboardingFormData.postalCodeHint,
+                phoneNumber: $onboardingFormData.phoneNumber,
+                phoneNumberHint: onboardingFormData.phoneNumberHint
             )
         default:
             Text("Error")
@@ -59,7 +76,7 @@ struct UserOnboardView: View {
                     
                     if step != UserOnboardView.maxStep {
                         Button(action: {
-                            let valid = onboardingFormData.isValid()
+                            let valid = onboardingFormData.isValid(step)
                             if valid {
                                 step += 1
                             }
@@ -94,7 +111,7 @@ struct UserOnboardView: View {
                         }
                     }
                 }
-                .padding(.bottom)
+                .padding(.vertical)
             }
             .padding(.horizontal)
             .toolbar {
@@ -121,7 +138,6 @@ struct UserOnboardView: View {
 
 //MARK: UserFullNameFormView
 struct UserFullNameFormView: View {
-    typealias AssocType = UserFullNameFormView
     
     @Binding var firstName: String
     var firstNameHint: String
@@ -129,7 +145,7 @@ struct UserFullNameFormView: View {
     var middleNameHint: String
     @Binding var lastName: String
     var lastNameHint: String
-    
+
     
     var body: some View {
         VStack {
@@ -164,22 +180,28 @@ struct UserFullNameFormView: View {
     }
 }
 
-//MARK: UserAddressFormView
-struct UserAddressFormView: View {
+//MARK: UserAddressAndPhoneFormView
+struct UserAddressAndPhoneFormView: View {
     
-    @Binding var firstName: String
-    var firstNameHint: String
-    @Binding var middleName: String
-    var middleNameHint: String
-    @Binding var lastName: String
-    var lastNameHint: String
-    
-    
+    @Binding var  address1: String
+    var address1Hint: String
+    @Binding var  address2: String
+    var address2Hint: String
+    @Binding var  city: String
+    var cityHint: String
+    @Binding var  provinceCode: String
+    var provinceCodeHint: String
+    @Binding var  countryCode: String
+    var countryCodeHint: String
+    @Binding var  postalCode: String
+    var postalCodeHint: String
+    @Binding var  phoneNumber: String
+    var phoneNumberHint: String
     
     var body: some View {
         VStack {
             Text("Your Residential Address and Phone Number")
-                .font(.title3)
+                .font(.system(size: 14))
                 .bold()
                 .padding(.bottom)
             
@@ -187,6 +209,48 @@ struct UserAddressFormView: View {
                 .font(.subheadline)
                 .multilineTextAlignment(.center)
                 .padding(.bottom)
+            
+            ADInput(
+                title: "Address Line 1",
+                value: $address1,
+                hint: address1Hint
+            ).padding(.bottom, 10)
+            
+            ADInput(
+                title: "Address Line 2",
+                value: $address2,
+                hint: address2Hint
+            ).padding(.bottom, 10)
+            
+            ADInput(
+                title: "City",
+                value: $city,
+                hint: cityHint
+            ).padding(.bottom, 10)
+            
+            ADInput(
+                title: "Province",
+                value: $provinceCode,
+                hint: provinceCodeHint
+            ).padding(.bottom, 10)
+            
+            ADInput(
+                title: "Country",
+                value: $countryCode,
+                hint: countryCodeHint
+            ).padding(.bottom, 10)
+
+            ADInput(
+                title: "Postal Code",
+                value: $postalCode,
+                hint: postalCodeHint
+            ).padding(.bottom, 10)
+
+            ADInput(
+                title: "PhoneNumber",
+                value: $phoneNumber,
+                hint: phoneNumberHint
+            ).padding(.bottom, 10)
         }
     }
 }
@@ -195,7 +259,7 @@ struct UserAddressFormView: View {
     UserOnboardView()
 }
 
-#Preview("User Fullname Form") {
+#Preview("User Fullname Form Wizard") {
     UserFullNameFormView(
         firstName: .constant(""),
         firstNameHint: "",
@@ -205,3 +269,23 @@ struct UserAddressFormView: View {
         lastNameHint: ""
     )
 }
+
+#Preview("User Address and Phone Form Wizard") {
+    UserAddressAndPhoneFormView(
+        address1: .constant(""),
+        address1Hint: "",
+        address2: .constant(""),
+        address2Hint: "",
+        city: .constant(""),
+        cityHint: "",
+        provinceCode: .constant(""),
+        provinceCodeHint: "",
+        countryCode: .constant(""),
+        countryCodeHint: "",
+        postalCode: .constant(""),
+        postalCodeHint: "",
+        phoneNumber: .constant(""),
+        phoneNumberHint: ""
+    )
+}
+

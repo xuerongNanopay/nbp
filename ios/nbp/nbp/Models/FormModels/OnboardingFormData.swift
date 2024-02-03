@@ -79,8 +79,7 @@ struct OnboardingFormData: Codable {
         phoneNumber = phoneNumber.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    
-    mutating func isValid() -> Bool {
+    mutating func isValid(_ level: UInt8 = 0) -> Bool {
         resetHint()
         sanitise()
         var valid = true
@@ -96,6 +95,10 @@ struct OnboardingFormData: Codable {
         if !hint.isEmpty {
             lastNameHint = hint
             valid = false
+        }
+        
+        if level == 1 {
+            return valid
         }
 
         hint = FormValidator.failFastRequireValidator(address1, "Required")
